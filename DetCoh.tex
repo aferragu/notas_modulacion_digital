@@ -1,10 +1,10 @@
 \newpage
 
-\section{Detección coherente para la modulaci\'on pasabanda lineal}
+\section{Detección coherente para la modulación pasabanda lineal}
 
-Pasamos ahora a estudiar el problema de detecci\'on de una señal
+Pasamos ahora a estudiar el problema de detección de una señal
 digital pasabanda, cuando se recibe contaminada de ruido blanco.
-Comenzamos con el caso de modulaci\'on lineal, binaria,
+Comenzamos con el caso de modulación lineal, binaria,
 $x_c(t)=\sum_k a_kp(t-kT_s)\cos(\omega_c t)$, donde $a_k=\{0,A\}$ (ASK) o $a_k=\pm A$ (BPSK). Después
 generalizamos.
 
@@ -16,8 +16,8 @@ x_c(t) = \sum_k a_kp(t-kT_s)\cos(\omega_c t) =
 \sum_k a_k \tilde{p}(t-kT_s),
 \]
 donde definimos el pulso de radio frecuencia $\tilde{p}(t) =
-p(t)\cos(\omega_c t)$.  La f\'ormula de la derecha corresponde a una onda PAM con pulso b\'asico
-$\tilde{p}(t)$, por tanto el decector óptimo en presencia de ruido blanco consistir\'ia del diagrama de
+p(t)\cos(\omega_c t)$.  La fórmula de la derecha corresponde a una onda PAM con pulso básico
+$\tilde{p}(t)$, por tanto el decector óptimo en presencia de ruido blanco consistiría del diagrama de
 bloques
 
 \begin{figure}[htb]
@@ -122,7 +122,7 @@ DSB, combinada con una detección óptima de banda base.
     \begin{itemize}
         \item El filtro acoplado de banda base también elimina la
         frecuencia doble $2f_c$.
-        \item Colocamos una ganancia $2$ en el oscilador local. Esto simplifica las expresiones evitando el factor $\frac{1}{2}$ que aparec\'ia en la detección
+        \item Colocamos una ganancia $2$ en el oscilador local. Esto simplifica las expresiones evitando el factor $\frac{1}{2}$ que aparecía en la detección
         sincrónica analógica.
         Otra forma de motivarlo es observar que
         $||\tilde{p}||^2=\frac{1}{2}||p||^2$, y $K$ en el filtro
@@ -239,7 +239,7 @@ La hipótesis $B\gg f_s$ se utilizó en la aproximación de arriba. % En
 de detección de banda base, polar o unipolar, con el doble de
 ruido: $\sigma^2=\eta f_s$.
 
-%Calculamos las correspondientes probabilidades de error \'optimas:
+%Calculamos las correspondientes probabilidades de error óptimas:
 
 
 \begin{description}
@@ -282,7 +282,7 @@ para NRZ.
     \end{center}
  \end{description}
 
-A continuaci\'on, generalizamos el detector coherente y el an\'alisis de probabilidad de error para
+A continuación, generalizamos el detector coherente y el análisis de probabilidad de error para
 las modulaciones pasabanda M-arias.
 
 \newpage
@@ -294,7 +294,7 @@ x_c(t)+ n(t) = \sum_k p(t-kT_s)\left[a_k\cos(\omega_ct)-b_k\sen(\omega_ct)\right
 n(t),\]
 donde $a_k=\pm A$, $b_k=\pm A$
 independientes y equiprobables, y  el ruido es Gaussiano de densidad espectral de
-potencia $\frac{\eta}{2}$ en la banda de inter\'es.
+potencia $\frac{\eta}{2}$ en la banda de interés.
 
 \subsubsection*{Detector coherente (para pulsos NRZ)}
 
@@ -368,13 +368,13 @@ Q\left(\frac{A}{\sigma}\right).\]
 Para comparar correctamente con las modulaciones binarias,
 conviene considerar la probabilidad de error de bit
 \[
-P_e(\text{bit})=Q\left(\frac{A}{\sigma}\right),\] y tambi\'en
-introducir la \emph{energ\'ia media por bit}, que considera que
+P_e(\text{bit})=Q\left(\frac{A}{\sigma}\right),\] y también
+introducir la \emph{energía media por bit}, que considera que
 cada pulso lleva 2 bits:
 \[
 \overline{E_b} = \frac{1}{2}\overline{E_p}.
 \]
-Se obtiene entonces (igual que en BPSK) la expresi\'on
+Se obtiene entonces (igual que en BPSK) la expresión
 \[
 P_e(\text{bit}) = Q\left(\sqrt{\frac{2
 \overline{E_b}}{\eta}}\right).
@@ -389,7 +389,7 @@ A,\pm 3A,\ldots,\pm(\sqrt{M}-1)A$ para $a_k$ y $b_k$
 
 En el intervalo $[k T_s, (k+1)T_s]$, la onda enviada
 $\left[a_k\cos(\omega_ct)-b_k\sen(\omega_ct)\right]$ es sinusoidal con envolvente compleja (fasor) $(a_k+jb_k)$, punto de la constelación.
-En ausencia de ruido, la correlaci\'on con las componentes $\cos(\omega_ct)$ y $\sen(\omega_ct)$ producir\'ia precisamente los s\'imbolos $a_k$, $b_k$. El efecto del ruido es ``borronear" los puntos de la constelaci\'on. La tarea del detector es clasificar cual fue el punto enviado, lo que se hace mediante umbrales en las componentes en fase y cuadratura.
+En ausencia de ruido, la correlación con las componentes $\cos(\omega_ct)$ y $\sen(\omega_ct)$ produciría precisamente los símbolos $a_k$, $b_k$. El efecto del ruido es ``borronear" los puntos de la constelación. La tarea del detector es clasificar cual fue el punto enviado, lo que se hace mediante umbrales en las componentes en fase y cuadratura.
 
 El detector es igual al 4QAM, excepto que cada variable $y_k$, $z_k$ se compara con más umbrales.
 
@@ -429,7 +429,7 @@ El detector es igual al 4QAM, excepto que cada variable $y_k$, $z_k$ se compara 
 %    \FloatBarrier
 
 
-Recordando la detecci\'on M-aria en banda base,
+Recordando la detección M-aria en banda base,
 $P_e(a_k)=2\frac{M_a-1}{M_a} Q\left(\frac{A}{\sigma}\right)$.
 
 Incluyendo $M_a=\sqrt{M}$, y considerando también $P_e(b_k)$
@@ -564,7 +564,7 @@ aproximación para $M\geq 4$ y $A \gg \sigma$:
     \item[QAM] $P_e\approx 4 Q\left(\sqrt{\frac{3\overline{E_p}}{M\eta}}\right)$
     \item[PSK] $P_e\approx 2 Q\left(\sqrt{\frac{2\pi^2\overline{E_p}}{M^2\eta}}\right)$.
  \end{description}
-El argumento de la funci\'on $Q(\cdot)$ cae más rápido con $M$ en
+El argumento de la función $Q(\cdot)$ cae más rápido con $M$ en
 PSK que en QAM
 \\$\Longrightarrow P_e$ es mayor (peor) en PSK que en QAM.  \\
 
@@ -613,7 +613,7 @@ que
 \[P_e(\text{bit})=\text{``BER''} = \col{\frac{P_e(\text{simb})}{\log_2(M)}}\]
 
 %\newpage
-\subsubsection*{Coficaci\'on de Gray}
+\subsubsection*{Coficación de Gray}
 
 Para MPSK, la constelación es esencialmente unidimensional (en un
 círculo), por lo tanto podemos generar codigos de Gray en forma

@@ -1,24 +1,24 @@
-\section{Modulaci\'on pasabanda $M$-aria y su espectro de potencia}
+\section{Modulación pasabanda $M$-aria y su espectro de potencia}
 
 Para introducir estas modulaciones es conveniente recurrir a la nocion
 de \emph{envolvente compleja} que fue ampliamente utilizada
-para la modulaci\'on pasabanda anal\'ogica. Recordamos que se plantea
-la relaci\'on
+para la modulación pasabanda analógica. Recordamos que se plantea
+la relación
 \[x_c(t) = \Re\left[x_{ce}(t)\e^{j\omega_ct}\right], \]
 donde $x_{ce}(t)=x_i(t)+jx_q(t) $ es una se\~nal compleja de banda base que juega el rol de un
 fasor, variando en el tiempo lentamente respecto de las variaciones de
 la portadora.
 
-En el caso de la modulaci\'on digital, se considera una envolvente compleja
+En el caso de la modulación digital, se considera una envolvente compleja
 \[
 x_{ce}(t) =  \sum_k  \underbrace{(a_k + j b_k)}_{c_k} p(t-kT_s)
 % =  \underbrace{\sum a_k p(t-kT_s)}_{x_i(t)} + j \underbrace{\sum b_k p(t-kT_s)}_{x_q(t)}.
 \]
 La expresión anterior
 es una generalización de la onda PAM a señales complejas: un tren de pulsos
-multiplicados por s\'imbolos complejos $c_k=a_k + j b_k$, que
-var\'ian en un conjunto discreto llamado
- {\em constelación de s\'imbolos }.
+multiplicados por símbolos complejos $c_k=a_k + j b_k$, que
+varían en un conjunto discreto llamado
+ {\em constelación de símbolos }.
 %
 \begin{minipage}{0.45\textwidth}
     \bpgf{Imagenes/MDPasa/MDPasa-3}
@@ -106,8 +106,8 @@ La onda pasabanda correspondiente a esta envolvente compleja es
 
 \subsection*{Densidad espectral de potencia, onda pasabanda $M$-aria}
 
-En el caso general $M$-ario, se puede obtener tambi\'en la densidad espectral de potencia  a partir de
-la de su envolvente compleja, generalizando la f\'ormula (\ref{eq:dep}).
+En el caso general $M$-ario, se puede obtener también la densidad espectral de potencia  a partir de
+la de su envolvente compleja, generalizando la fórmula (\ref{eq:dep}).
 \[
     \col{S_{x_c}(f) = \frac{1}{4}S_{x_{ce}}(f-f_c) +
     \frac{1}{4}S_{x_{ce}}(f+f_c)}
@@ -115,18 +115,18 @@ la de su envolvente compleja, generalizando la f\'ormula (\ref{eq:dep}).
 La pregunta es entonces como calcular la densidad espectral de potencia para la onda \emph{compleja} de
 banda base
 \[x_{ce}(t) = \sum \underbrace{(a_k+j b_k)}_{c_k} p(t-kT_s),\]
-donde suponemos que los s\'imbolos $\{c_k\}$ son variables aleatorias complejas, independientes e
+donde suponemos que los símbolos $\{c_k\}$ son variables aleatorias complejas, independientes e
 identicamente distribuidas. Suponemos, sin perder generalidad, que $E[c_k]=0$, es decir que la
-costelaci\'on es balanceada alrededor del cero, con puntos equiprobables.
+costelación es balanceada alrededor del cero, con puntos equiprobables.
 
 \newpage
 
-La respuesta es que se puede utilizar la misma f\'ormula de antes (con $\mu=0$):
+La respuesta es que se puede utilizar la misma fórmula de antes (con $\mu=0$):
 \[
     S_{x_{ce}} = \sigma_c^2 f_s |\hat{P}(f)|^2,
         \]
-donde ahora $\sigma_c^2 = E[|c_k|^2] = E[a_k^2 + b_k^2]$, varianza del m\'odulo de los s\'imbolos.
-Con este m\'etodo consideramos los dos casos principales.
+donde ahora $\sigma_c^2 = E[|c_k|^2] = E[a_k^2 + b_k^2]$, varianza del módulo de los símbolos.
+Con este método consideramos los dos casos principales.
 
 \subsubsection*{Modulación MPSK}
 
@@ -180,13 +180,13 @@ Por tanto
             S_{x_{ce}}(f) = A^2 f_s |\hat{P}(f)|^2
             \Rightarrow S_{x_c}(f) = \frac{A^2 f_s}{4}\left(|\hat{P}(f-f_c)|^2+|\hat{P}(f+f_c)|^2\right),
         \end{gathered}\]% \right\rbrace\,\text{igual que BPSK.}
-que es el mismo resultado que en BPSK, independiente del n\'umero de puntos $M$ de la constelaci\'on.
+que es el mismo resultado que en BPSK, independiente del número de puntos $M$ de la constelación.
 
 \newpage
 
 \subsubsection*{Modulación QAM}
 
-Aqu\'i la constelaci\'on se describe en coordenadas cartesianas, $c_k = a_k+j b_k$, donde
+Aquí la constelación se describe en coordenadas cartesianas, $c_k = a_k+j b_k$, donde
 cada coordenada toma $M_a$, $M_b$ valores polares, $M=M_a M_b$.
 
 \begin{figure}[htb]
@@ -207,7 +207,7 @@ cada coordenada toma $M_a$, $M_b$ valores polares, $M=M_a M_b$.
 \FloatBarrier
 
 
-Tenemos entonces que $\sigma_c^2 = \sigma_a^2+\sigma_b^2$, y cada uno de estos t\'erminos se calcula como
+Tenemos entonces que $\sigma_c^2 = \sigma_a^2+\sigma_b^2$, y cada uno de estos términos se calcula como
 \[
 \sigma_a^2 = \frac{2}{M_a}\left(A^2 +
 (3A)^2+\cdots+(M_a-1)^2A^2\right) = \frac{M_a^2-1}{3}A^2.\]

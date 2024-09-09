@@ -1,7 +1,7 @@
 \section{Modulación y procesos estacionarios}\label{sec.modest}
 
 Sea $x(t)$, proceso estacionario con autocorrelación $R_x(\tau)$,
-densidad espectral de potencia $S_x(f)$. Para esta secci\'on suponemos tambi\'en que
+densidad espectral de potencia $S_x(f)$. Para esta sección suponemos también que
 el valor medio $E[x(t)]=0$.
 
 Nos interesa estudiar la
@@ -16,7 +16,7 @@ Estudiamos dos alternativas.
 
 Como ya se vio, una sinusoide de fase aleatoria uniforme es un proceso estacionario. Definimos entonces
 \[z(t)=x(t)\cos(\omega_ct+\theta),\qquad \theta\sim U[0,2\pi],\text{ indep de }x(t).\]
-Usando la independencia, se ve que $z(t)$ es un proceso estacionario cuya autocorrelaci\'on es el
+Usando la independencia, se ve que $z(t)$ es un proceso estacionario cuya autocorrelación es el
 producto de las autocorrelaciones de $x(t)$ y del coseno de fase
 aleatoria:
 \begin{align*}
@@ -32,13 +32,13 @@ Este modelo puede ser útil para estudiar situaciones en que no hay sincronismo 
 
 \item Introducir una componente en cuadratura.
 
-Complementamos aqu\'i $x(t)$ con otro proceso $y(t)$ ``en
+Complementamos aquí $x(t)$ con otro proceso $y(t)$ ``en
 cuadratura",  y consideramos el proceso con envolvente compleja
 $x(t) + j y(t)$, es decir
 \[
 u(t)=x(t)\cos(\omega_ct)  -y(t)\sen(\omega_ct).\]
 
-Suponemos que $y(t)$ es un proceso aleatorio estacionario de iguales caracter\'isticas que
+Suponemos que $y(t)$ es un proceso aleatorio estacionario de iguales características que
 $x(t)$, en particular de media 0 y $R_y(\tau)=R_x(\tau)$. Suponemos inicialmente que ambos procesos son
 \emph{incoherentes}, es decir
 \[
@@ -50,15 +50,15 @@ En ese caso tendremos
                                  + R_y(\tau)\sen(\omega_ct)\sen\left(\omega_c(t-\tau)\right) \\
                                  = & \ R_x(\tau)\cos(\omega_c\tau),
             \end{align*}
-en el que se utiliz\'o para el \'ultimo paso una identidad trigonom\'etrica. Concluimos entonces que
+en el que se utilizó para el último paso una identidad trigonométrica. Concluimos entonces que
 el proceso $u(t)$ es estacionario, con densidad espectral de potencia
 \[
 S_u(f)=\frac{S_x(f-f_c)+S_x(f+f_c)}{2}.
 \]
-El hecho que $S_u(f)=2 S_z(f)$ se explica intuitivamente porque a trav\'es del proceso $y(t)$ se introdujo
+El hecho que $S_u(f)=2 S_z(f)$ se explica intuitivamente porque a través del proceso $y(t)$ se introdujo
 ``el doble de ruido".
 
-De hecho, el procedimiento anterior puede generalizarse al caso en que $y(t)$ tenga correlaci\'on cruzada no nula
-$R_{xy}(\tau)$, bajo cierta restricci\'on, lo cual se aplica al estudio del ruido pasabanda que se ver\'a a continuaci\'on.
-Como esa generalizaci\'on es algo t\'ecnica la incluimos en el Ap\'endice A al final de estas notas.
+De hecho, el procedimiento anterior puede generalizarse al caso en que $y(t)$ tenga correlación cruzada no nula
+$R_{xy}(\tau)$, bajo cierta restricción, lo cual se aplica al estudio del ruido pasabanda que se verá a continuación.
+Como esa generalización es algo técnica la incluimos en el Apéndice A al final de estas notas.
 \end{enumerate}

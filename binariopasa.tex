@@ -1,37 +1,37 @@
-\section{Modulaci\'on pasabanda binaria y su espectro de potencia}
+\section{Modulación pasabanda binaria y su espectro de potencia}
 %
 %Al igual que en el caso de banda base, comenzamos el estudio de estas formas de onda
 %analizando la densidad espectral de potencia correspondiente.
 
-\subsection*{Modulaci\'on pasabanda binaria lineal}
+\subsection*{Modulación pasabanda binaria lineal}
 
-Consideramos aqu\'i la onda
+Consideramos aquí la onda
 \[
 x_c(t) = \sum_k a_k p(t-kT_s) \cos(\omega_c t),
 \]
-donde los s\'imbolos $\{a_k\}$ son I.I.D., binarios. Esta se\~nal puede interpretarse
-como el resultado de una modulaci\'on anal\'ogica en banda lateral doble (DSB) aplicado a la onda PAM de banda base $x(t) = \sum_k a_k p(t-kT_s)$.
+donde los símbolos $\{a_k\}$ son I.I.D., binarios. Esta se\~nal puede interpretarse
+como el resultado de una modulación analógica en banda lateral doble (DSB) aplicado a la onda PAM de banda base $x(t) = \sum_k a_k p(t-kT_s)$.
 El caso de ASK corresponde a una onda PAM unipolar, mientras que el de BPSK corresponde a la polar.
 
 \newpage
 
-Podemos utilizar esta identificaci\'on para obtener la densidad espectral de potencia de la onda modulada:
+Podemos utilizar esta identificación para obtener la densidad espectral de potencia de la onda modulada:
 
 \begin{equation}
     \label{eq:dep}
     \col{S_{x_c}(f) = \frac{S_x(f-f_c) + S_x(f+f_c)}{4}}\tag{\#}
 \end{equation}
 
-\noindent donde recordamos la expresi\'on para la densidad espectral de potencia en banda base:
+\noindent donde recordamos la expresión para la densidad espectral de potencia en banda base:
 \[
 S_x(f) = \sigma_a^2 f_s |\hat{P}(f)|^2 + \mu^2 f_s^2 \sum_{n=-\infty}^{+\infty} |\hat{P}(n f_s)|^2\delta(f-nf_s).
 \]
-Aqu\'i $\mu$ y $\sigma_a^2$ son la media y varianza, respectivamente, de los s\'imbolos I.I.D. $\{a_k\}$, y \\ $\hat{P}(f)$ la
+Aquí $\mu$ y $\sigma_a^2$ son la media y varianza, respectivamente, de los símbolos I.I.D. $\{a_k\}$, y \\ $\hat{P}(f)$ la
 transformada de Fourier del pulso de banda base.
 
 
-\paragraph{Comentario.} En rigor, para justificar esta f\'ormula a partir de los procesos estacionarios hab\'ia que introducir
-un retardo aleatorio en la onda PAM, y tambi\'en para obtener (\ref{eq:dep}) de la modualaci\'on DSB se inclu\'ia una fase aleatoria.
+\paragraph{Comentario.} En rigor, para justificar esta fórmula a partir de los procesos estacionarios había que introducir
+un retardo aleatorio en la onda PAM, y también para obtener (\ref{eq:dep}) de la modualación DSB se incluía una fase aleatoria.
 Ignoramos estos temas de aquí en mas, interpretando las densidades
 espectrales en el sentido de las señales determinísticas de
 potencia finita.
@@ -41,7 +41,7 @@ potencia finita.
 
 La onda pasabanda BPSK $x_c(t)$ corresponde a modular una onda PAM
 de banda base $x(t)$ {\em polar, binaria}, con $a_k=\pm A$.
-Recordemos que \'esta tiene densidad espectral de potencia $S_x(f)
+Recordemos que ésta tiene densidad espectral de potencia $S_x(f)
 = A^2 f_s |\hat{P}(f)|^2$. Bosquejamos la correspondiente
 $S_{x_c}(f)$ en dos casos particulares.
 
@@ -93,7 +93,7 @@ $S_{x_c}(f)$ en dos casos particulares.
 \end{minipage}
 
 El segundo caso ocupa una banda mucho mayor (en principio,
-infinita). En general se utiliza alg\'un criterio pr\'actico que considera un ancho de banda efectivo
+infinita). En general se utiliza algún criterio práctico que considera un ancho de banda efectivo
 para esos casos. Por ejemplo, considerar solamente el ``lóbulo central'' de la densidad espectral,
 que tiene $90\%$ de la potencia.
 \FloatBarrier
@@ -145,8 +145,8 @@ donde $f_k=\pm f_\Delta$, y los pulsos son NRZ.
     \endpgfgraphicnamed}
 \end{minipage}
 
-Notar que la onda FSK puede verse como la superposici\'on de dos ondas ASK,
-una en cada frecuencia, activadas por los s\'imbolos opuestos.
+Notar que la onda FSK puede verse como la superposición de dos ondas ASK,
+una en cada frecuencia, activadas por los símbolos opuestos.
 ?`Es posible evaluar su espectro de potencia superponiendo los de ASK?
 Esto no esta justificado ya que las ondas ASK no son independientes, pero nos
 sirve para tener una idea:
@@ -166,7 +166,7 @@ sirve para tener una idea:
 \FloatBarrier
 
 
-\noindent La evaluaci\'on rigurosa del problema no es sencilla (recordar que tampoco era sencillo evaluar espectros de FM).
+\noindent La evaluación rigurosa del problema no es sencilla (recordar que tampoco era sencillo evaluar espectros de FM).
 Un caso resuelto por Sunde (ver libros) es para
 $f_\Delta=\frac{f_s}{2}$. El resultado tiene la forma (\ref{eq:dep}), trasladando el espectro pasabajos
 
@@ -193,8 +193,8 @@ $f_\Delta=\frac{f_s}{2}$. El resultado tiene la forma (\ref{eq:dep}), trasladand
 
 %
 
-Concluimos que la onda FSK ocupa un ancho de banda algo mayor que las modulaciones lineales ASK, BPSK, una vez m\'as en
-forma consistente con la situaci\'on en las modulaciones anal\'ogicas correspondientes.
+Concluimos que la onda FSK ocupa un ancho de banda algo mayor que las modulaciones lineales ASK, BPSK, una vez más en
+forma consistente con la situación en las modulaciones analógicas correspondientes.
 
 
 
@@ -203,11 +203,11 @@ forma consistente con la situaci\'on en las modulaciones anal\'ogicas correspond
 pasabanda}
 
 Notar que en todas las modulaciones consideradas el ancho de banda
-es como mínimo el doble que la correspondiente situaci\'on de banda base.
-Ello implica que la eficiencia espectral en bps/Hz ser\'a la mitad.
+es como mínimo el doble que la correspondiente situación de banda base.
+Ello implica que la eficiencia espectral en bps/Hz será la mitad.
 
 Por ejemplo, si usamos BPSK con pulsos ideales de Nyquist, ocupa una banda $f_s$,
 y obtiene una eficiencia espectral igual a 1, comparado con 2 en el caso de banda base.
 
-La forma de compensar esto es enviando m\'as bits por s\'imbolo, es decir para a modulaciones $M$-arias;
-las estudiamos a continuaci\'on.
+La forma de compensar esto es enviando más bits por símbolo, es decir para a modulaciones $M$-arias;
+las estudiamos a continuación.

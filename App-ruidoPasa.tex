@@ -1,7 +1,7 @@
 \section{Envolvente Compleja para procesos estacionarios}
 
-Para el estudio de procesos estoc\'asticos modulados se ha utilizado extensamente
-la envolvente compleja. En este Ap\'endice se discute el sustento matem\'atico de ese an\'alisis. 
+Para el estudio de procesos estocásticos modulados se ha utilizado extensamente
+la envolvente compleja. En este Apéndice se discute el sustento matemático de ese análisis. 
 
 
 Comenzamos considerando un proceso aleatorio $x(t) + j y(t)$ a valores complejos,
@@ -15,8 +15,8 @@ R_y(\tau)&=\ R_x(\tau);\\
                     \end{cases}
                 \tag{\#}
 \end{equation*}
-La primera condición, ya impuesta en la Secci\'on \ref{sec.modest},  implica que $x(t)$, $y(t)$ tienen
-características similares, en particular tienen la misma potencia media. La segunda condición es menos intuitiva, notar que es m\'as general que la hip\'otesis de incoherencia ($R_{xy}\equiv 0$) considerada en la Secci\'on \ref{sec.modest}. Una versi\'on  equivalente ser\'ia  $R_{yx}(\tau)=-R_{xy}(\tau)$, ya que
+La primera condición, ya impuesta en la Sección \ref{sec.modest},  implica que $x(t)$, $y(t)$ tienen
+características similares, en particular tienen la misma potencia media. La segunda condición es menos intuitiva, notar que es más general que la hipótesis de incoherencia ($R_{xy}\equiv 0$) considerada en la Sección \ref{sec.modest}. Una versión  equivalente sería  $R_{yx}(\tau)=-R_{xy}(\tau)$, ya que
 \[R_{yx}(\tau)=E\left[y(t)x(t-\tau)\right]=E\left[x(t)y(t+\tau)\right]=R_{xy}(-\tau).\]
 
  Otra forma de representar
@@ -47,7 +47,7 @@ compleja'' $x(t)+jy(t)$, con velocidad $\omega_c$. Definimos:
           \end{array}\right].
 \end{equation*}
 
-El siguiente Lema generaliza el an\'alisis de procesos modulados de la Secci\'on \ref{sec.modest}.
+El siguiente Lema generaliza el análisis de procesos modulados de la Sección \ref{sec.modest}.
 
 
 \begin{lemaSN}
@@ -75,21 +75,21 @@ El siguiente Lema generaliza el an\'alisis de procesos modulados de la Secci\'on
                                  = & \
                                  R_x(\tau)\cos(\omega_c\tau)+R_{xy}(\tau)\sen(\omega_c\tau).
             \end{align*}
-            Aquí la primera igualdad es por definici\'on, la segunda utiliza  \eqref{eq:imp}, y la
+            Aquí la primera igualdad es por definición, la segunda utiliza  \eqref{eq:imp}, y la
             tercera identidades trigonométricas. Como el resultado depende solo de $\tau$, el proceso $u(t)$ es
             estacionario en sentido amplio. El análisis para
             $v(t)$, y para la correlación cruzada $R_{uv}$ es
-            an\'alogo.
+            análogo.
         \end{proof}
 \end{lemaSN}
 
-\subsection*{Aplicaci\'on a la envolvente compleja}
+\subsection*{Aplicación a la envolvente compleja}
 Recordemos el procedimiento para hallar la
 envolvente compleja $x_{ce}(t)$ para señales pasabanda
 determinísticas $x_c(t)$. En Fourier,
 %$\hat{X}_{ce}(f)=2u(f+f_c)\hat{X}_c(f+f_c)$:
 truncábamos a frecuencias positivas, $2 u(f)\hat{X}_c(f)$, y
-trasladamos hacia atr\'as $f_c$ en frecuencia. Un diagrama de
+trasladamos hacia atrás $f_c$ en frecuencia. Un diagrama de
 bloques es:
 \begin{figure}[htb]
     \centering\begin{minipage}{\textwidth}
@@ -193,27 +193,27 @@ $\omega_c$ por $-\omega_c$) tenemos
                             \underbrace{S_n(f-f_c)u\left(-(f-f_c)\right)}_{\oldstylenums{1}}\right\rbrace.
                 %\end{aligned}
 \end{align*}
-Aparece aqu\'i la {\em diferencia} de los dos espectros
+Aparece aquí la {\em diferencia} de los dos espectros
 considerados anteriormente. Como consecuencia: si $S_n(f)$ es simétrica respecto de $f_c$, 
 $S_{n_in_q}=0 \Rightarrow n_i(t), n_q(t)$ no correlacionados.
 
-Hemos probado entonces el Teorema enunciado en la Secci\'on \ref{sec.ruidopasa}. 
+Hemos probado entonces el Teorema enunciado en la Sección \ref{sec.ruidopasa}. 
 
 \paragraph{Notas:} 
 \begin{itemize}
 \item  $n_i$, $n_q$ son estacionarios, pasabajos, con
 $S_{n_i}(f)=S_{n_q}(f)$ simétrico respecto de $f=0$. Cuando son no
-correlacionadas entre s\'i, corresponde a un ruido pasabanda 
-simétrico respecto de $f_c$. Un ruido pasabanda asim\'etrico indica correlaci\'on
+correlacionadas entre sí, corresponde a un ruido pasabanda 
+simétrico respecto de $f_c$. Un ruido pasabanda asimétrico indica correlación
 (informalmente, dependencia) entre las componentes en fase y
 cuadratura. En un extremo de dependencia, cuando
 $n_q=\mathcal{H}{n_i}$, el ruido pasabanda será SSB (por encima de
 $f_c$).%
 \item De acuerdo al Lema, $n_i$, $n_q$
-``heredan" la propiedad \eqref{eq:imp} que cumpl\'ian $n$,
-$\check{n}$. Se deduce de aqu\'i que si uno realiza una nueva modulaci\'on del tipo 
+``heredan" la propiedad \eqref{eq:imp} que cumplían $n$,
+$\check{n}$. Se deduce de aquí que si uno realiza una nueva modulación del tipo 
 \[n'(t)=n_i(t)\cos(\omega'_ct)-n_q(t)\sen(\omega'_ct)\]
-se obtendr\'a un proceso estacionario pasabanda, en banda
+se obtendrá un proceso estacionario pasabanda, en banda
 $|f|\in[f'_c-B,f'_c+B]$. 
 \end{itemize}
 
