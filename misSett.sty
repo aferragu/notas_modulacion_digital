@@ -3,15 +3,16 @@
 
 \usepackage{amsmath}
 \usepackage{array}
-\usepackage{amssymb}
+%\usepackage{amssymb}
 \usepackage{amsthm}
 %\usepackage{mathtools}
 \usepackage{ifthen}
-\usepackage[latin1]{inputenc}
-\usepackage{lmodern}
+\usepackage[utf8]{inputenc}
+%\usepackage{lmodern}
+\usepackage[adobe-utopia]{mathdesign}
+\usepackage[T1]{fontenc}
 \usepackage{graphicx}
 \usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
-\AtBeginDocument{\sffamily}
 \setlength{\parskip}{\baselineskip}
 \usepackage[spanish,english]{babel}
 \usepackage{float}
@@ -39,7 +40,7 @@
 \usepackage{pifont}
 
 %-------------------------------------------------------------------------------------------------------
-                                         %Para im醙enes lindas
+                                         %Para im谩genes lindas
 \floatstyle{boxed}
 \newfloat{figura}{thpb}{fig}[section]
 \floatname{figura}{Figura}
@@ -47,28 +48,28 @@
 
 
 
-\newcommand\mypart[1]{\clearpage\part[#1]{\Large\sffamily{}#1}}
-\AtBeginDocument{\renewcommand{\partname}{Cap韙ulo}}
+\newcommand\mypart[1]{\clearpage\part[#1]{\Large{}#1}}
+\AtBeginDocument{\renewcommand{\partname}{Cap铆tulo}}
 
 
 \renewcommand{\section}{\@startsection {section}{1}{0pt}%
     {-3.5ex plus -1ex minus -.2ex}%
     {2.3ex plus .2ex}%
-    {\FloatBarrier\normalfont\normalsize\bfseries\sffamily\MakeUppercase}}
+    {\FloatBarrier\normalfont\normalsize\bfseries\MakeUppercase}}
 
 \renewcommand{\subsection}{\@startsection {subsection}{2}{0pt}%
     {-3.25ex plus -1ex minus -.2ex}%
     {1ex plus .2ex}%
-    {\FloatBarrier\indent\normalfont\normalsize\sffamily\bfseries}}
+    {\FloatBarrier\indent\normalfont\normalsize\bfseries}}
 
 \renewcommand{\subsubsection}{\@startsection {subsubsection}{3}{0pt}%
     {-3.25ex plus -1ex minus -.2ex}%
     {1ex plus .2ex}%
-    {\indent\normalfont\normalsize\sffamily\itshape}}
+    {\indent\normalfont\normalsize\itshape}}
 
 
-\AtBeginDocument{\renewcommand{\contentsname}{蚽dice}\setcounter{tocdepth}{2}}
-\AtBeginDocument{\renewcommand{\proofname}{Demostraci髇}}
+\AtBeginDocument{\renewcommand{\contentsname}{脥ndice}\setcounter{tocdepth}{2}}
+\AtBeginDocument{\renewcommand{\proofname}{Demostraci贸n}}
 
 
 \renewcommand{\theequation}{\thesection.\arabic{equation}}
@@ -100,29 +101,29 @@
 
 \renewcommand\descriptionlabel[1]{\textbf{\textsf{#1:}}}
 
-\newcommand{\refer}[1]{{\itshape ver \hyperref[#1]{secci髇~\ref{#1}~- \nameref{#1}, en la p醙ina~\pageref{#1}}}}
+\newcommand{\refer}[1]{{\itshape ver \hyperref[#1]{secci贸n~\ref{#1}~- \nameref{#1}, en la p谩gina~\pageref{#1}}}}
 \newcommand{\refFigura}[1]{{(\itshape ver \hyperref[#1]{\normalsize Figura~\ref{#1}})}}
-\newcommand{\myref}[1]{secci髇~\ref{#1}~- \nameref{#1}, en la p醙ina~\pageref{#1}}
+\newcommand{\myref}[1]{secci贸n~\ref{#1}~- \nameref{#1}, en la p谩gina~\pageref{#1}}
 
 
 \newtheorem{teorema}{Teorema}
 \newtheorem{corolario}[teorema]{Corolario}
 \newtheorem{lema}[teorema]{Lema}
-\newtheorem{proposicion}[teorema]{Proposici髇}
-\newtheorem{definicion}{Definici髇}
+\newtheorem{proposicion}[teorema]{Proposici贸n}
+\newtheorem{definicion}{Definici贸n}
 \newtheorem{remark}{Nota}
 \newtheorem{problema}{Problema}
 \newtheorem{ejemplo}{Ejemplo}
-\newtheorem{condicion}{Condici髇}
+\newtheorem{condicion}{Condici贸n}
 \@addtoreset{ejemplo}{part}
 
 \newtheorem*{corolarioSN}{Corolario}
 \newtheorem*{lemaSN}{Lema}
-\newtheorem*{proposicionSN}{Proposici髇}
-\newtheorem*{definicionSN}{Definici髇}
+\newtheorem*{proposicionSN}{Proposici贸n}
+\newtheorem*{definicionSN}{Definici贸n}
 \newtheorem*{remarkSN}{Nota}
 \newtheorem*{remarksSN}{Notas}
-\newtheorem*{condicionSN}{Condici髇}
+\newtheorem*{condicionSN}{Condici贸n}
 \newtheorem*{conclusionSN}{Conclusion}
 \newtheorem*{propiedadesSN}{Propiedades}
 
