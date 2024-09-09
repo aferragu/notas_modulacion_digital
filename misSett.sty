@@ -1,0 +1,171 @@
+%\NeedsTeXFormat{Latex2e}[1996/06/01]
+\ProvidesPackage{misSett}[2007/12/28 v1.0 (PWD)]
+
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{amssymb}
+\usepackage{amsthm}
+%\usepackage{mathtools}
+\usepackage{ifthen}
+\usepackage[latin1]{inputenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
+\AtBeginDocument{\sffamily}
+\setlength{\parskip}{\baselineskip}
+\usepackage[spanish,english]{babel}
+\usepackage{float}
+\usepackage[    pdftex,unicode=true,
+        pdfdisplaydoctitle=true,
+        colorlinks,
+        linkcolor=black,]{hyperref}
+
+\graphicspath{Imagenes/}
+\usepackage[usenames,dvipsnames]{color}
+
+\usepackage[font={scriptsize,sf},format=plain,labelfont={bf},labelsep=period,skip=-0.5pt,justification=centering]{caption}
+%\usepackage[font+=scriptsize,skip=-0.5pt]{subcaption}
+
+\usepackage{indentfirst}
+\usepackage{placeins}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{positioning}
+\usetikzlibrary{calc}
+\usetikzlibrary{shapes.geometric}
+\usepackage{circuitikz}
+\usepackage{rotating}
+\usepackage{lscape}
+\usepackage{pifont}
+
+%-------------------------------------------------------------------------------------------------------
+                                         %Para imágenes lindas
+\floatstyle{boxed}
+\newfloat{figura}{thpb}{fig}[section]
+\floatname{figura}{Figura}
+%-------------------------------------------------------------------------------------------------------
+
+
+
+\newcommand\mypart[1]{\clearpage\part[#1]{\Large\sffamily{}#1}}
+\AtBeginDocument{\renewcommand{\partname}{Capítulo}}
+
+
+\renewcommand{\section}{\@startsection {section}{1}{0pt}%
+    {-3.5ex plus -1ex minus -.2ex}%
+    {2.3ex plus .2ex}%
+    {\FloatBarrier\normalfont\normalsize\bfseries\sffamily\MakeUppercase}}
+
+\renewcommand{\subsection}{\@startsection {subsection}{2}{0pt}%
+    {-3.25ex plus -1ex minus -.2ex}%
+    {1ex plus .2ex}%
+    {\FloatBarrier\indent\normalfont\normalsize\sffamily\bfseries}}
+
+\renewcommand{\subsubsection}{\@startsection {subsubsection}{3}{0pt}%
+    {-3.25ex plus -1ex minus -.2ex}%
+    {1ex plus .2ex}%
+    {\indent\normalfont\normalsize\sffamily\itshape}}
+
+
+\AtBeginDocument{\renewcommand{\contentsname}{Índice}\setcounter{tocdepth}{2}}
+\AtBeginDocument{\renewcommand{\proofname}{Demostración}}
+
+
+\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\@addtoreset{equation}{section}
+\renewcommand{\thefigure}{\scriptsize\thesection.\arabic{figure}}
+\@addtoreset{figure}{section}
+
+
+
+%usage:\rfrac{num}{den}
+\newcommand{\rfrac}[2]{\ensuremath{\,^{#1}\!/\!_{#2}}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\R}{\mathbb{R}}
+\DeclareMathOperator{\sen}{sen}
+\DeclareMathOperator{\sinc}{sinc}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\var}{Var}
+\renewcommand{\Re}{Re}
+\renewcommand{\Im}{Im}
+\renewcommand{\d}{\ensuremath{\mathrm{d}}}
+\newcommand{\epi}[1][\ensuremath{f_c}]{\e^{j2\pi #1 t}}
+\newcommand{\mepi}[1][\ensuremath{f_c}]{\e^{-j2\pi #1 t}}
+\newcommand{\back}{$\phantom{1}$}
+
+%% cajas de color rojo, arreglado en 2011.
+
+\newcommand{\col}[1]{\protect\color{Red}
+{\boxed{\normalcolor #1}}\normalcolor\normalfont}
+
+\renewcommand\descriptionlabel[1]{\textbf{\textsf{#1:}}}
+
+\newcommand{\refer}[1]{{\itshape ver \hyperref[#1]{sección~\ref{#1}~- \nameref{#1}, en la página~\pageref{#1}}}}
+\newcommand{\refFigura}[1]{{(\itshape ver \hyperref[#1]{\normalsize Figura~\ref{#1}})}}
+\newcommand{\myref}[1]{sección~\ref{#1}~- \nameref{#1}, en la página~\pageref{#1}}
+
+
+\newtheorem{teorema}{Teorema}
+\newtheorem{corolario}[teorema]{Corolario}
+\newtheorem{lema}[teorema]{Lema}
+\newtheorem{proposicion}[teorema]{Proposición}
+\newtheorem{definicion}{Definición}
+\newtheorem{remark}{Nota}
+\newtheorem{problema}{Problema}
+\newtheorem{ejemplo}{Ejemplo}
+\newtheorem{condicion}{Condición}
+\@addtoreset{ejemplo}{part}
+
+\newtheorem*{corolarioSN}{Corolario}
+\newtheorem*{lemaSN}{Lema}
+\newtheorem*{proposicionSN}{Proposición}
+\newtheorem*{definicionSN}{Definición}
+\newtheorem*{remarkSN}{Nota}
+\newtheorem*{remarksSN}{Notas}
+\newtheorem*{condicionSN}{Condición}
+\newtheorem*{conclusionSN}{Conclusion}
+\newtheorem*{propiedadesSN}{Propiedades}
+
+%%%%COMANDOS PARA TIKZ
+
+\newcommand{\specleft}[1]{%
+\draw [domain=#1-0.95:#1-0.4-0.001, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
+\draw [domain=#1-0.4+0.001:#1, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});}
+
+\newcommand{\specright}[1]{%
+\draw [domain=#1:#1+0.4-0.001, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
+\draw [domain=#1+0.4+0.001:#1+0.95, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});}
+
+\newcommand{\specleftf}[1]{%
+\draw [domain=#1-0.95:#1-0.4-0.001, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
+\draw [domain=#1-0.4+0.001:#1, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))}) -- (#1,0);}
+
+\newcommand{\specrightf}[1]{%
+\draw [domain=#1:#1+0.4-0.001, samples=200] (#1,0) -- plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
+\draw [domain=#1+0.4+0.001:#1+0.95, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});}
+
+
+\newcommand{\specfull}[1]{\specleft{#1}\specright{#1}}
+
+\newenvironment{blockdiagram}[1][]{%
+\begin{tikzpicture}[
+     block/.style={
+    % The shape:
+    rectangle,
+    % The size:
+    minimum size=6mm,draw,
+    % The border:
+    thick,
+    },
+    operator/.style={
+    circle,draw,
+    minimum size=7mm,
+    inner sep=1mm,
+    thick},
+    punto/.style={coordinate},auto,
+    etiqueta/.style={rectangle,inner sep=0mm},
+    multD/.style={isosceles triangle,draw,isosceles triangle apex angle=50,shape border rotate =-90,thick},#1]
+}{\end{tikzpicture}}
+
+
+\newcommand{\bpgf}[1]{\beginpgfgraphicnamed{#1}}
