@@ -91,27 +91,27 @@ En general es difícil calcular el espectro ``de voltaje'', o sea
 la transformada de Fourier de la propia señal, dado que depende de
 la sucesión de símbolos que es en principio arbitraria.
 Daremos sin embargo una expresión para el espectro \emph{de potencia}
-de la señal PAM en funci\'on de la estadística del proceso de proceso de símbolos, y
+de la señal PAM en función de la estadística del proceso de proceso de símbolos, y
 de la forma del pulso.
 
-Recordamos que en la Secci\'on \ref{sec.estoc} ya se un analiz\'o un ejemplo de este tipo: la ``onda binaria
-aleatoria'' obtenida por s\'imbolos independientes, idénticamente distribuidos (I.I.D.), $a_k=\pm 1$,
+Recordamos que en la Sección \ref{sec.estoc} ya se un analizó un ejemplo de este tipo: la ``onda binaria
+aleatoria'' obtenida por símbolos independientes, idénticamente distribuidos (I.I.D.), $a_k=\pm 1$,
 y pulsos $p(t)=p_{[0,T_s]}(t)$. Es decir, una onda PAM con codificación de línea polar,
-NRZ. Interesa generalizar el estudio a otros pulsos y otras estad\'isticas de
-s\'imbolos.
+NRZ. Interesa generalizar el estudio a otros pulsos y otras estadísticas de
+símbolos.
 
-El caso m\'as utilizado es el siguiente: los s\'imbolos siguen siendo I.I.D., pero con cualquier
-distribuci\'on de probabilidad con media $E[a_k]=\mu$, y varianza $E[a_k^2]- \mu^2 = \sigma^2$.
-El pulso $p(t)$ puede ser cualquiera de energ\'ia finita, con transformada de Fourier $\hat{P}(f)$.
- La f\'ormula para la densidad de potencia de la onda PAM es
+El caso más utilizado es el siguiente: los símbolos siguen siendo I.I.D., pero con cualquier
+distribución de probabilidad con media $E[a_k]=\mu$, y varianza $E[a_k^2]- \mu^2 = \sigma^2$.
+El pulso $p(t)$ puede ser cualquiera de energía finita, con transformada de Fourier $\hat{P}(f)$.
+ La fórmula para la densidad de potencia de la onda PAM es
 
 \begin{center}
 \col{S_x(f) = \sigma^2 f_s \left|\hat{P}(f)\right|^2 + \mu^2 f_s^2 \sum_{n=-\infty}^{+\infty}\left|\hat{P}(nf_s)\right|^2 \delta(f-nf_s)}
 \end{center}
 
-Remitimos al Ap\'endice C de estas notas para una demostraci\'on de esta f\'ormula, incluyendo una generalizaci\'on a procesos de s\'imbolos no necesariamente independientes. Una precisi\'on es que para invocar la teor\'ia de procesos estacionarios, es necesario (como en la Secci\'on \ref{sec.estoc}) agregar a la onda un retardo aleatorio. No proseguiremos con este punto.
+Remitimos al Apéndice \ref{appendix:pam} de estas notas para una demostración de esta fórmula, incluyendo una generalización a procesos de símbolos no necesariamente independientes. Una precisión es que para invocar la teoría de procesos estacionarios, es necesario (como en la Sección \ref{sec.estoc}) agregar a la onda un retardo aleatorio. No proseguiremos con este punto.
 
-Analizamos lo que dice la f\'ormula anterior para el caso de pulsos NRZ.
+Analizamos lo que dice la fórmula anterior para el caso de pulsos NRZ.
 
 \begin{ejemplo}[pulso NRZ]
     $p(t)=\begin{cases}
@@ -195,7 +195,7 @@ Si particularizamos al caso de la onda binaria aleatoria, $a_k=\pm 1$, I.I.D., t
         \endpgfgraphicnamed\end{minipage}
     \end{center}
 
-    Aquí s\'i hay informaci\'on de sincronismo para $\mu\neq 0$.
+    Aquí sí hay información de sincronismo para $\mu\neq 0$.
 \end{ejemplo}
 
 \paragraph{Pregunta} ¿Qué porcentaje de la energía de un pulso rectangular entra en las distintas bandas?
@@ -247,9 +247,9 @@ Sea $p(t)$  \begin{minipage}{5cm}
 \begin{equation}
     \label{eq:dig2}S_x(f) = \sigma^2 f_s \left|\hat{P}(f)\right|^2 + \mu^2 f_s^2 \sum_{n=-\infty}^{+\infty} \left|\hat{P}(nf_s)\right|^2\delta(f-nf_s)\tag{\textasteriskcentered}
 \end{equation}
-Escribamos la onda PAM como superposici\'on de dos t\'erminos:
+Escribamos la onda PAM como superposición de dos términos:
 \[x(t)= \underbrace{\sum_k (a_k-\mu) p(t-kT_s)}_{\text{aleatorio, media $0$}} +  \underbrace{\mu\sum_k p(t-kT_s)}_{\text{periódico, $z(t)$}}.\]
-Analizamos por Fourier el t\'ermino peri\'odico:
+Analizamos por Fourier el término periódico:
 \begin{align*}
     z(t) & = \mu \cdot p(t) \ast \sum_k \delta(t-kT_s)  \\
     \Rightarrow \hat{Z}(f)  & = \mu \hat{P}(f) f_s \sum_n \delta(f-nf_s) = \sum_n \mu f_s \hat{P}(nf_s) \delta(f-nf_s),
@@ -258,9 +258,9 @@ de donde obtenemos la siguiente serie de Fourier:
 \begin{align*}%\label{serfouz}
 z(t) = \sum_n \mu f_s \hat{P}(nf_s)\e^{jn\omega_s t}.
 \end{align*}
-La densidad espectral de potencia de esta superposici\'on de sinusoides es
+La densidad espectral de potencia de esta superposición de sinusoides es
 \[S_z(f) = \sum_n \mu^2 f_s^2\left|\hat{P}(nf_s)\right|^2 \delta(f-nf_s) = \text{2º término de \eqref{eq:dig2}}.\]
-Es decir que los dos t\'erminos del espectro de potencia  \eqref{eq:dig2} se interpretan como:
+Es decir que los dos términos del espectro de potencia  \eqref{eq:dig2} se interpretan como:
 \begin{itemize}
     \item Un espectro continuo, que representa la parte aleatoria, con media $0$.
     \item Un espectro discreto que representa la parte determinística, periódica.
@@ -271,7 +271,7 @@ Es decir que los dos t\'erminos del espectro de potencia  \eqref{eq:dig2} se int
 
 \subsection*{Potencia de la señal digital}
 
-Integrando la expresi\'on \eqref{eq:dig2} en frecuencia, tenemos
+Integrando la expresión \eqref{eq:dig2} en frecuencia, tenemos
 \begin{align*} \langle x^2 \rangle &= \sigma^2
 f_s\displaystyle\int_{-\infty}^{+\infty}\left|\hat{P}(f)\right|^2\d
 f + \langle z^2\rangle \\
@@ -285,28 +285,28 @@ es la energía del pulso $p(t)$.
 %        \col{\langle x^2\rangle  } Potencia de señal digital.
 %    \end{center}
 
-Tambi\'en se acostumbra definir la \emph{energ\'ia media} del pulso aleatorio $a_k p(t-kT_s)$,
+También se acostumbra definir la \emph{energía media} del pulso aleatorio $a_k p(t-kT_s)$,
 que esta dada por
 \begin{align*}
     \overline{E_p} = E[a_k^2] \|p\|^2  = (\mu^2+ \sigma^2)\|p\|^2 .
 \end{align*}
 
 
-\noindent Hay algunos casos particulares en que la parte peri\'odica cumple  $\langle
+\noindent Hay algunos casos particulares en que la parte periódica cumple  $\langle
 z^2\rangle = \mu^2 \|p\|^2 f_s$. En este caso, tendremos:
 \begin{align*}
     \langle x^2\rangle  & = \overline{E_p} f_s,
 \end{align*}
-f\'ormula con interpretaci\'on intuitiva: env\'io un pulso de energ\'ia media $\overline{E_p}$, cada $T_s$ segundos,
-la potencia media es $\overline{E_p}/T_s = \overline{E_p} f_s$. Sin embargo, para que esta interpretaci\'on sea v\'alida es necesario que los pulsos
-sucesivos sean ortogonales entre s\'i, lo cual se cumple s\'olo en algunos casos, como detallamos a continuaci\'on.
+fórmula con interpretación intuitiva: envío un pulso de energía media $\overline{E_p}$, cada $T_s$ segundos,
+la potencia media es $\overline{E_p}/T_s = \overline{E_p} f_s$. Sin embargo, para que esta interpretación sea válida es necesario que los pulsos
+sucesivos sean ortogonales entre sí, lo cual se cumple sólo en algunos casos, como detallamos a continuación.
 
 
 Validez de la fórmula $\langle x^2\rangle  =
 {\overline{E_p}}{f_s}$:
 \begin{itemize}
-    \item Siempre que $\mu=0$, o sea $x(t)$ es una señal polar. Aqu\'i la parte peri\'odica desaparece.
-    \item El pulso $p(t)$ tiene duraci\'on menor o igual a $T_s$.
+    \item Siempre que $\mu=0$, o sea $x(t)$ es una señal polar. Aquí la parte periódica desaparece.
+    \item El pulso $p(t)$ tiene duración menor o igual a $T_s$.
     \item Los pulsos son de Nyquist ideales (definidos más adelante).
 \end{itemize}
 
@@ -315,4 +315,4 @@ $[0,T_s]\Rightarrow \mu p(t)$ es un período de $z(t)$
 \[\Rightarrow \langle z^2\rangle  = \frac{1}{T_s} \int_0^{T_s} z^2(t)\d t = \frac{\mu^2}{T_s}\int_0^{T_s} p(t)^2\d t=
  \mu^2
 \|p\|^2 f_s.\]
-Alternativamente, notar que en este caso los pulsos $p(t-kT_s)$ y $p(t-lT_s)$ son ortogonales para $k\neq l$, ya que no se solapan. Esta ortogonalidad tambi\'en se cumplir\'a en el tercer caso, como se ver\'a despu\'es.
+Alternativamente, notar que en este caso los pulsos $p(t-kT_s)$ y $p(t-lT_s)$ son ortogonales para $k\neq l$, ya que no se solapan. Esta ortogonalidad también se cumplirá en el tercer caso, como se verá después.

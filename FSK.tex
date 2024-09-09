@@ -1,4 +1,4 @@
-\section{An\'alsis de FSK y su detector coherente}
+\section{Análsis de FSK y su detector coherente}
 
 Sea la onda FSK
 \[ x_c(t)=\sum_k A p_R(t-kT_s)\cos\left(2\pi(f_c+f_k)t\right),\]
@@ -18,7 +18,7 @@ onda FSK.
 }
 \subsection*{Continuidad de fase (entre un símbolo y otro)}
 \noindent Suponemos $f_c T_s$ entero, sin pérdida de generalidad.
-    En un per\'iodo de símbolo \opciones{$f_k=f_\Delta$}{$f_k=-f_\Delta$}, el cambio de fase es \opciones{$\Delta\phi^+=2\pi f_\Delta T_s$}{$\Delta\phi^-=-2\pi f_\Delta
+    En un período de símbolo \opciones{$f_k=f_\Delta$}{$f_k=-f_\Delta$}, el cambio de fase es \opciones{$\Delta\phi^+=2\pi f_\Delta T_s$}{$\Delta\phi^-=-2\pi f_\Delta
     T_s$}.
 
     Para que la onda sea continua, este cambio debe ser igual (a menos de $2\pi m$)
@@ -145,7 +145,7 @@ Aquí usamos que la norma del primer término es $\frac{T_s}{2}$.
     excitado por ruido blanco $(\frac{\eta}{2})$.  Entonces $n^- - n^+ = (h\ast
     n)\big|_{t=T_s}$.
     \[\Rightarrow E\left[(n^- - n^+)^2\right] = \frac{\eta}{2} \int_{-\infty}^{+\infty} |\hat{H}(f)|^2 \d f= \frac{\eta}{2} \|h\|^2 = \frac{\eta}{2T_s^2} \int_0^{T_s} 16 \sen^2(\omega_c t)\sen^2(\omega_\Delta t)\d t.\]
-    Como $\sen^2(\omega_c t)$ var\'ia muy rápido, lo aproximo por su valor medio
+    Como $\sen^2(\omega_c t)$ varía muy rápido, lo aproximo por su valor medio
     $\frac{1}{2}$.
     \begin{align*}
         \Rightarrow \sigma^2 &= \frac{\eta}{2T_s^2}8\int_0^{T_s}\sen^2(\omega_\Delta t)\d t\\
@@ -166,8 +166,8 @@ Aquí usamos que la norma del primer término es $\frac{T_s}{2}$.
 Mediante correlación y comparación con umbrales puedo detectar
 ASK, BPSK, BFSK con performance similar. También QAM, M-PSK de más
 eficiencia espectral. Es común representar este desempeño en
-términos de una gráfica de $P_e$, en escala logar\'itmica, en
-funci\'on de $\frac{\overline{E_p}}{\eta}$ en dB.
+términos de una gráfica de $P_e$, en escala logarítmica, en
+función de $\frac{\overline{E_p}}{\eta}$ en dB.
 
 
 

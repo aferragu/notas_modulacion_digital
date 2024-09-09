@@ -21,7 +21,7 @@ a la que se superpone el ruido blanco. La forma de pulso $p(t)$
 incorpora la distorsión del canal.
 \item $x_R(t) = \sum_k a_k
 p_R(t-kT_s)$, la onda a la salida del filtro de recepción, a la
-que se superpone el ruido $n(t)$. \'Este tiene media nula y
+que se superpone el ruido $n(t)$. éste tiene media nula y
 varianza
 \[\sigma^2=E[n(t)^2]=\frac{\eta}{2}\displaystyle\int^{+\infty}_{\infty}
 |\hat{H}_R(f)|^2\d f.\]
@@ -33,7 +33,7 @@ pulso transmitida.
     \renewcommand\theenumi{\Roman{enumi}}
     \item \textbf{Comunicación con pulsos de Nyquist ideales}.
     \label{item:1}
-    Es decir $p_T(t) = \sinc(\pi f_s t)$, con $f_s=2B$. \'Este es el caso más simple, donde la señal transmitida pasa sin distorsión por el
+    Es decir $p_T(t) = \sinc(\pi f_s t)$, con $f_s=2B$. éste es el caso más simple, donde la señal transmitida pasa sin distorsión por el
     canal:
  \[ p(t) = \sinc(\pi f_s t), \quad \hat{P}(f) = T_s
     p_{[-\frac{f_s}{2},\frac{f_s}{2}]}(f).\]
@@ -54,7 +54,7 @@ pulso transmitida.
      \langle x ^2 \rangle = \int_{-\infty}^\infty S_x(f)\d f =
      \mu^2 + \sigma_a^2 T_s 2B = \mu^2 + \sigma_a^2 = E[a_k^2].
      \]
-     Notar que como $\|p\|^2 = \int_{-\infty}^\infty |\hat{P}(f)|^2 \d f = T_s$ se verifica en particular para este caso la f\'ormula
+     Notar que como $\|p\|^2 = \int_{-\infty}^\infty |\hat{P}(f)|^2 \d f = T_s$ se verifica en particular para este caso la fórmula
      anunciada en la sección anterior,
      \[\langle x^2 \rangle = E[a_k^2] \|p\|^2 f_s = \overline{E_p}
      f_s.\]
@@ -63,7 +63,7 @@ pulso transmitida.
     filtro de recepción simplemente un pasabajos ideal $[-B,B]$,
     que rechaza al ruido fuera de banda. Notar que:
     \begin{itemize}
-    \item La señal de recepci\'on sigue intacta, $p_R(t) = p(t)$, es decir no hay ISI en la detecci\'on.
+    \item La señal de recepción sigue intacta, $p_R(t) = p(t)$, es decir no hay ISI en la detección.
     \item El ruido de recepción tiene $\sigma^2=\eta B = \frac{\eta f_s}{2}$.
     \end{itemize}
 %
@@ -72,7 +72,7 @@ pulso transmitida.
     canal, para las codificaciones de línea polar o unipolar.
 
     \begin{description}
-        \item[Caso polar binario] $a_k=\pm A$, umbral \'optimo
+        \item[Caso polar binario] $a_k=\pm A$, umbral óptimo
         $A_0=0$, $\langle x^2 \rangle = A^2$.
         \[ \Rightarrow \ \ P_e = Q\left(\frac{A}{\sigma}\right) = Q\left(\sqrt{\frac{\langle x^2 \rangle}{\sigma^2}}\right) = Q\left(\sqrt{\frac{S}{N}}\right).\]
         que es la misma expresión que obtuvimos con pulsos NRZ.
@@ -92,7 +92,7 @@ pulso transmitida.
         \end{itemize}
         \vspace{1ex}
 
-        \item[Caso unipolar binario] $a_k = \{0,A\}$, umbral \'optimo
+        \item[Caso unipolar binario] $a_k = \{0,A\}$, umbral óptimo
         $A_0=\frac{A}{2}$, $\langle x^2 \rangle = S = \frac{A^2}{2}$.
        % Entonces $S_x(f) = \sigma^2 f_s |\hat{P}(f)|^2 + \mu^2 f_s^2 \hat{P}(f)^2 = \frac{A^2}{4} T_s p_{[-\frac{f_s}{2},\frac{f_s}{2}]}(f) + \frac{A^2}{4}\delta(f)$
         \begin{align*}
@@ -121,7 +121,7 @@ pulso transmitida.
 \Rightarrow \sigma^2 = \frac{\eta f_s}{2}(1+\alpha).
 \]
 Aquí no buscamos expresiones en términos de $\frac{S}{N}$, en
-particular la f\'ormula sencilla para la potencia de la señal PAM
+particular la fórmula sencilla para la potencia de la señal PAM
 no se aplica. Generalizamos las expresiones para la probabilidad
 de error en términos de $\frac{\overline{E}_p}{\eta}$. La energía
 media del pulso es
@@ -145,12 +145,12 @@ media del pulso es
     Supongamos que el canal tiene $B$ grande y los pulsos $p(t)$ llegan esencialmente rectangulares, ¿qué hago con $H_R$? El dilema es:
     \begin{itemize}
         \item Filtro muy ancho, no deforma pulsos pero pasa mucho ruido a la etapa de
-        detecci\'on.
+        detección.
         \item Filtro angosto, reduce el ruido pero deforma los pulsos, introduce ISI.
     \end{itemize}
     Para este tipo de pulsos la estrategia de ``dejarlos pasar intactos'', que tomamos de la comunicación analógica, no
     es la apropiada.
-    En realidad, aqu\'i no importa dejar la onda intacta sino lograr la máxima amplitud en el momento del
-    muestreo, en relaci\'on al ruido. La optimización del filtro de
-    detecci\'on para estos fines se verá a continuación.
+    En realidad, aquí no importa dejar la onda intacta sino lograr la máxima amplitud en el momento del
+    muestreo, en relación al ruido. La optimización del filtro de
+    detección para estos fines se verá a continuación.
 \end{enumerate}

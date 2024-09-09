@@ -96,13 +96,13 @@ p\left(-(t-\tau)\right)\Rightarrow \col{h(t) = K p(\tau-t)}.\]
 \end{figure}
 \FloatBarrier
 
-Concluimos que la respuesta impulsiva del filtro \'optimo tiene la
+Concluimos que la respuesta impulsiva del filtro óptimo tiene la
 forma del pulso incidente, invertido en el tiempo: se dice que el
-filtro \'optimo est\'a {\bf acoplado (o apareado)}  al pulso.
+filtro óptimo está {\bf acoplado (o apareado)}  al pulso.
 
 Para interpretar el resultado en el dominio del tiempo, conviene
 escribir el pulso de salida $p_R =h\ast p$ para el filtro
-\'optimo:
+óptimo:
 \begin{align*}
             p_R(t) = (h\ast p) (t)  & = \int_{-\infty}^{+\infty}
 h(t-\sigma) p (\sigma)\d \sigma\\
@@ -111,11 +111,11 @@ h(t-\sigma) p (\sigma)\d \sigma\\
 K \int_{-\infty}^{+\infty} p(\tau - t + \sigma) p (\sigma)\d
 \sigma \\ & = K r_p(t - \tau).
         \end{align*}
-Aquí $r_p(\cdot)$ es la autocorrelaci\'on del pulso como señal de
+Aquí $r_p(\cdot)$ es la autocorrelación del pulso como señal de
 cuadrado integrable. Como la autocorrelación es máxima en cero, el
 pulso de salida toma su amplitud máxima en el instante de muestreo
 $t=\tau$. En otras palabras: el detector basado en este filtro y
-muestreo en $t=\tau$ est\'a {\em correlacionando} la señal de
+muestreo en $t=\tau$ está {\em correlacionando} la señal de
 entrada $a_0 p(t) + n(t)$ con la forma de onda conocida del pulso.
 
 
@@ -125,9 +125,9 @@ entrada $a_0 p(t) + n(t)$ con la forma de onda conocida del pulso.
         \item La constante $K$ es arbitraria, escalar el filtro no
         cambia el cociente de \eqref{eq:op}. Una elección cómoda es
 $K=\dfrac{1}{||p||^2}=\dfrac{1}{r_p(0)}$: de ese modo el pulso de
-salida $p_R(t)$ tiene valor m\'aximo igual a 1, alcanzado en
+salida $p_R(t)$ tiene valor máximo igual a 1, alcanzado en
 $t=\tau$. En ese caso la amplitud $A'$ de muestreo coincide con la
-amplitud $A$ de los s\'imbolos de entrada.
+amplitud $A$ de los símbolos de entrada.
         \item $\tau$ sería idealmente arbitrario, excepto que en la
 práctica queremos $h(t)$ causal. Entonces tomo $\tau$ igual a la
 duración del pulso $p(t)$ (si $p(t)=\sinc$ hay que truncarlo).
