@@ -1,0 +1,222 @@
+\section{Envolvente Compleja para procesos estacionarios}
+
+Para el estudio de procesos estoc\'asticos modulados se ha utilizado extensamente
+la envolvente compleja. En este Ap\'endice se discute el sustento matem\'atico de ese an\'alisis. 
+
+
+Comenzamos considerando un proceso aleatorio $x(t) + j y(t)$ a valores complejos,
+donde  $x(t)$, $y(t)$ son procesos estacionarios de media 0, que cumplen siguientes condiciones: 
+\begin{equation*}
+    \label{eq:imp}
+    \begin{cases}
+R_y(\tau)&=\ R_x(\tau);\\
+                    R_{xy}(\tau)&=\ E\left[x(t)y(t-\tau)\right]\text{ impar en
+                    $\tau$}.
+                    \end{cases}
+                \tag{\#}
+\end{equation*}
+La primera condición, ya impuesta en la Secci\'on \ref{sec.modest},  implica que $x(t)$, $y(t)$ tienen
+características similares, en particular tienen la misma potencia media. La segunda condición es menos intuitiva, notar que es m\'as general que la hip\'otesis de incoherencia ($R_{xy}\equiv 0$) considerada en la Secci\'on \ref{sec.modest}. Una versi\'on  equivalente ser\'ia  $R_{yx}(\tau)=-R_{xy}(\tau)$, ya que
+\[R_{yx}(\tau)=E\left[y(t)x(t-\tau)\right]=E\left[x(t)y(t+\tau)\right]=R_{xy}(-\tau).\]
+
+ Otra forma de representar
+\eqref{eq:imp} es en frecuencia:
+
+\[\begin{cases} S_y(f)&= \ S_x(f);\\
+                S_{xy}(f)&= \ \mathcal{F}\left[R_{xy}(\tau)\right]\text{ es imaginario
+                puro}.
+              \end{cases}\tag{\#}\]
+
+
+Introducimos ahora la modulación, rotando la ``envolvente
+compleja'' $x(t)+jy(t)$, con velocidad $\omega_c$. Definimos:
+\[u(t)+jv(t)=[x(t)+jy(t)]\e^{j\omega_ct}.\]
+
+\begin{equation*}
+    \left[\begin{array}{c}
+            u(t)\\
+            v(t)
+          \end{array}\right]
+    = \underbrace{\left[\begin{array}{cc}
+                \cos(\omega_ct) & -\sen(\omega_ct)\\
+                \sen(\omega_ct) & \cos(\omega_ct)
+            \end{array}\right]}_{\text{matriz de rotación}}
+    \left[\begin{array}{c}
+            x(t)\\
+            y(t)
+          \end{array}\right].
+\end{equation*}
+
+El siguiente Lema generaliza el an\'alisis de procesos modulados de la Secci\'on \ref{sec.modest}.
+
+
+\begin{lemaSN}
+    Si $\left(x(t),y(t)\right)$ son procesos estacionarios, de media 0, que cumplen las propiedades de \eqref{eq:imp},
+    entonces $\left(u(t),v(t)\right)$ también  son
+    procesos estacionarios de media 0 que cumplen  \eqref{eq:imp}. En particular:
+    \begin{align*}
+%    \[\left\lbrace\begin{gathered}
+                R_u(\tau)=R_v(\tau)&=R_x(\tau)\cos(\omega_c\tau)+R_{xy}(\tau)\sen(\omega_c\tau),\\
+                R_{uv}(\tau)&=R_{xy}(\tau)\cos(\omega_c\tau)-R_x(\tau)\sen(\omega_c\tau). %\text{ (impar en $\tau$)}
+              \end{align*}%gathered}\right.\tag{\#}\]
+
+        \begin{proof} Es inmediato que
+        $u(t)=x(t)\cos(\omega_ct)-y(t)\sen(\omega_ct)$ tiene media
+        0 si $x(t)$, $y(t)$ la tienen. Estudiamos ahora la autocorrelación de
+        $u(t)$.
+            \begin{align*}
+                E\left[u(t)u(t-\tau)\right]  = & \ R_x(\tau)\cos(\omega_ct)\cos\left(\omega_c(t-\tau)\right)
+                                 + R_y(\tau)\sen(\omega_ct)\sen\left(\omega_c(t-\tau)\right) \\
+                                & - R_{xy}(\tau)\cos(\omega_ct)\sen\left(\omega_c(t-\tau)\right)
+                                  - R_{yx}(\tau)\sen(\omega_ct)\cos\left(\omega_c(t-\tau)\right)\\
+                                 = & \ R_x(\tau)\left[\cos(\omega_ct)\cos\left(\omega_c(t-\tau)\right)+\sen(\omega_ct)\sen\left(\omega_c(t-\tau)\right)\right] +\\
+                                & + R_{xy}(\tau)\left[\sen(\omega_ct)\cos\left(\omega_c(t-\tau)\right)
+                                - \cos(\omega_ct)\sen\left(\omega_c(t-\tau)\right)\right]    \\
+                                 = & \
+                                 R_x(\tau)\cos(\omega_c\tau)+R_{xy}(\tau)\sen(\omega_c\tau).
+            \end{align*}
+            Aquí la primera igualdad es por definici\'on, la segunda utiliza  \eqref{eq:imp}, y la
+            tercera identidades trigonométricas. Como el resultado depende solo de $\tau$, el proceso $u(t)$ es
+            estacionario en sentido amplio. El análisis para
+            $v(t)$, y para la correlación cruzada $R_{uv}$ es
+            an\'alogo.
+        \end{proof}
+\end{lemaSN}
+
+\subsection*{Aplicaci\'on a la envolvente compleja}
+Recordemos el procedimiento para hallar la
+envolvente compleja $x_{ce}(t)$ para señales pasabanda
+determinísticas $x_c(t)$. En Fourier,
+%$\hat{X}_{ce}(f)=2u(f+f_c)\hat{X}_c(f+f_c)$:
+truncábamos a frecuencias positivas, $2 u(f)\hat{X}_c(f)$, y
+trasladamos hacia atr\'as $f_c$ en frecuencia. Un diagrama de
+bloques es:
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/ruidoPasa/ruidoPasa-2}
+    \begin{blockdiagram}
+        \matrix[row sep=5mm, column sep=10mm]{
+        \node [etiqueta] (inicio) {$x_c(t)\quad $}; &  \node[block] (filtro) {$2u(f)$}; & \node [operator] (mult) {$\times$}; & \node[etiqueta] (salida) {$\quad x_{ce}(t)$};\\
+        & & \node[etiqueta] (mod) {$\mepi$};&\\
+        };
+        \draw [->] (inicio) -- (filtro);
+        \draw [->] (filtro) -- (mult);
+        \draw [->] (mult) -- (salida);
+        \draw [->] (mod) -- (mult);
+    \end{blockdiagram}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+\FloatBarrier
+
+También recordar que $2u(f)=1+j\hat{H}(f)$, siendo
+$\hat{H}(f)=-j\sgn(f)$ el filtro de Hilbert:
+
+\begin{figure}[htb]
+    \centering \begin{minipage}{\textwidth}
+    \bpgf{Imagenes/ruidoPasa/ruidoPasa-3}
+    \begin{blockdiagram}
+        \matrix[row sep=5mm, column sep=10mm]{
+        \node [etiqueta] (inicio) {$x_c(t)\quad $}; &  \node [punto] (p) {}; & & & \node[operator] (sum) {$+$};& \node [operator] (mult) {$\times$}; & \node[etiqueta] (salida) {$\quad x_{ce}(t)$};\\
+        & & \node[block] (hil) {$\mathcal{H}$}; & \node[block] (j) {$j$}; & & \node[etiqueta] (mod) {$\mepi$};&\\
+        };
+        \draw [->] (inicio) -- (p) -- (sum);
+        \draw [->] (p) |- (hil);
+        \draw [->] (hil) -- (j);
+        \draw [->] (j) -| (sum);
+        \draw [->] (sum) -- (mult);
+        \draw [->] (mult) -- (salida);
+        \draw [->] (mod) -- (mult);
+    \end{blockdiagram}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+\FloatBarrier
+
+Aplicamos ahora el diagrama de la figura anterior al ruido pasabanda. O sea, sustituimos la
+entrada $x_c(t)$ por un ruido $n(t)$ que cumple $S_n(f)=0$ fuera de la
+banda $[f_c-B,f_c+B]$. Tenemos: 
+\[
+n_{ce}(t)=n_i(t)+jn_q(t) = \left(n + j\mathcal{H}n\right)
+\e^{-j\omega_ct},\]
+\begin{equation*}
+    \left[\begin{array}{c}
+            n_i(t)\\
+            n_q(t)
+          \end{array}\right]
+    = \left[\begin{array}{cc}
+                \cos(\omega_ct) & \sen(\omega_ct)\\
+                -\sen(\omega_ct) & \cos(\omega_ct)
+            \end{array}\right]
+    \left[\begin{array}{c}
+            n(t)\\
+            \mathcal{H}n(t)
+          \end{array}\right].
+\end{equation*}
+
+\paragraph{Notas:} Sea $\check{n}=\mathcal{H}n$ (transformada de Hilbert del ruido).
+Como $\mathcal{H}$ es LTI, $\Rightarrow \check{n}(t)$ es un
+proceso estacionario, y se cumple:
+\[\begin{cases} S_{\check{n}}(f)& =\left|\hat{H}(f)\right|^2S_n(f)=S_n(f);\\
+                S_{n\check{n}} &= \underbrace{\overline{\hat{H}(f)}}_{\text{\tiny imag puro}}\underbrace{S_n(f)}_{\text{\tiny  real}}    
+    \text{  imaginario
+                puro}.
+              \end{cases}\tag{\#}\]
+
+
+%\newpage
+Por lo tanto $n, \check{n}$ cumplen las hipótesis \eqref{eq:imp} del
+Lema. Entonces (cambiando $\omega_c$ por $-\omega_c$), tenemos que
+$(n_i,n_q)$ son procesos estacionarios, y
+\begin{align*}
+    R_{n_i}(\tau)=R_{n_q}(\tau) & = R_n(\tau)\cos(\omega_c\tau)+R_{n\check{n}}\sen(-\omega_c\tau)\\
+                    & = R_{n}(\tau)\cos(\omega_c\tau) +
+                    R_{\check{n}n}\sen(\omega_c\tau).
+\end{align*}
+¿Cómo es el espectro de $n_i$, $n_q$?
+\begin{align*}
+    S_{n_i}(f)  & = S_n(f) \ast \left[\frac{\delta(f-f_c)+\delta(f+f_c)}{2}\right] +
+              \left[\hat{H}(f)S_n(f)\right]\ast j\left[\frac{-\delta(f-f_c)+\delta(f+f_c)}{2}\right]\\
+            & = \left(S_n(f)\underbrace{\left(\frac{1-j\hat{H}(f)}{2}\right)}_{u(-f)}\right)\ast\delta(f-f_c)+
+            \left(S_n(f)\underbrace{\left(\frac{1+j\hat{H}(f)}{2}\right)}_{u(f)}\right)\ast\delta(f+f_c).\\
+%\Longrightarrow 
+& = \underbrace{S_n(f-f_c)u\left(-(f-f_c)\right)}_{\oldstylenums{1}}+
+    \underbrace{S_n(f+f_c)u(f+f_c)}_{\oldstylenums{2}}.
+\end{align*}
+
+\noindent Por otra parte, utilizando la segunda condición del lema (cambiando
+$\omega_c$ por $-\omega_c$) tenemos
+\begin{align*}
+    R_{n_in_q} & =R_n(\tau)\sen(\omega_c\tau)-R_{\check{n}n}(\tau)\cos(\omega_c\tau)\\
+    \Rightarrow %\begin{aligned}
+                    S_{n_in_q}  & = S_n(f) \ast \left[\frac{-j\delta(f-f_c)+j\delta(f+f_c)}{2}\right] - \left[\hat{H}(f)S_n(f)\right] \ast \left[\frac{\delta(f-f_c)+\delta(f+f_c)}{2}\right]\\
+                            & = j \left\lbrace\left[S_n(f)\left(\frac{1+j\hat{H}(f)}{2}\right)\right] \ast \delta(f+f_c) - \left[S_n(f)\left(\frac{1-j\hat{H}(f)}{2}\right)\right] \ast \delta(f-f_c)\right\rbrace\\
+                            & = j \left\lbrace\underbrace{S_n(f+f_c)u(f+f_c)}_{\oldstylenums{2}}-
+                            \underbrace{S_n(f-f_c)u\left(-(f-f_c)\right)}_{\oldstylenums{1}}\right\rbrace.
+                %\end{aligned}
+\end{align*}
+Aparece aqu\'i la {\em diferencia} de los dos espectros
+considerados anteriormente. Como consecuencia: si $S_n(f)$ es simétrica respecto de $f_c$, 
+$S_{n_in_q}=0 \Rightarrow n_i(t), n_q(t)$ no correlacionados.
+
+Hemos probado entonces el Teorema enunciado en la Secci\'on \ref{sec.ruidopasa}. 
+
+\paragraph{Notas:} 
+\begin{itemize}
+\item  $n_i$, $n_q$ son estacionarios, pasabajos, con
+$S_{n_i}(f)=S_{n_q}(f)$ simétrico respecto de $f=0$. Cuando son no
+correlacionadas entre s\'i, corresponde a un ruido pasabanda 
+simétrico respecto de $f_c$. Un ruido pasabanda asim\'etrico indica correlaci\'on
+(informalmente, dependencia) entre las componentes en fase y
+cuadratura. En un extremo de dependencia, cuando
+$n_q=\mathcal{H}{n_i}$, el ruido pasabanda será SSB (por encima de
+$f_c$).%
+\item De acuerdo al Lema, $n_i$, $n_q$
+``heredan" la propiedad \eqref{eq:imp} que cumpl\'ian $n$,
+$\check{n}$. Se deduce de aqu\'i que si uno realiza una nueva modulaci\'on del tipo 
+\[n'(t)=n_i(t)\cos(\omega'_ct)-n_q(t)\sen(\omega'_ct)\]
+se obtendr\'a un proceso estacionario pasabanda, en banda
+$|f|\in[f'_c-B,f'_c+B]$. 
+\end{itemize}
+
+%
+
+
