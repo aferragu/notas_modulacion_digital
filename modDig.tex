@@ -1,0 +1,123 @@
+\section{Introducción a la Modulación Digital}
+
+Hasta ahora estudiamos sistemas con:
+\begin{itemize}
+    \item Mensaje analógico $x(t)$;
+    \item $x_c(t)$ que depende en forma continua del mensaje.
+\end{itemize}
+
+Pasamos ahora a sistemas que comunican una sucesión de símbolos
+$\{a_k\}_{k\in\mathbb{Z}}, a_k\in \mathcal{A}$, alfabeto finito.
+Caso típico $\mathcal{A}=\{0,1\}$, comunicación binaria. También
+se usan sistemas M-arios, con $M$ símbolos.
+
+\paragraph{Motivación}
+\begin{enumerate}
+    \item Símbolos codifican muchas cosas (texto, imágenes, o señales analógicas muestreadas y cuantificadas).
+    \item En un canal con distorsión y/o ruido, recuperar una señal analógica implica deshacer la distorsión. En el caso digital, solo hace falta una detección de qué símbolo se transmitió.
+\end{enumerate}
+
+
+\begin{ejemplo}$\phantom{1}$
+
+    \FloatBarrier
+
+    \begin{figure}[htb]
+        \centering\begin{minipage}{\textwidth}
+        \bpgf{Imagenes/modDig/modDig-1}
+        \begin{tikzpicture}
+            \draw (0,0) -- (1,0) -- (1,1) -- (2,1) node [anchor=south west] {$x(t)$} -- (2,0) -- (3,0);
+            \begin{scope}[shift={(5,0)}]
+                \draw (0,0) -- (5,0);
+                \draw (0,1) -- (5,1);
+                \path (2.5,0.5) node {CANAL};
+            \end{scope}
+            \begin{scope}[shift={(12,0)}]
+                \draw (-0.5,0) -- (0,0);
+                \draw plot [domain=0:1,samples=200] (\x,{sin(pi*\x r)+0.1*rand});
+                \draw (1,0) -- (1.5,0) node [anchor=south] {$y(t)$};
+            \end{scope}
+        \end{tikzpicture}
+        \endpgfgraphicnamed\end{minipage}
+    \end{figure}
+    \FloatBarrier
+
+    $y(t)$ llega muy distorsionada, pero a partir de ella puedo decidir si el pulso es hacia arriba o hacia abajo, en forma relativamente sencilla (en comparación con lo que sería recomponer una forma de onda analógica). En particular, esto permite regenerar el pulso.
+
+\end{ejemplo}
+
+
+    No es que la comunicación digital esté libre de errores; si
+    pretendemos transmisión libre de errores, hay límites
+    intrínsecos de información que puede pasar por el canal.
+    La ventaja es de \emph{implementación}, trabajar
+    con símbolos discretos abre más posibilidades. La digitalización
+    llegó a todo (telecomunicaciones y electrónica) en forma
+    paralela.
+%
+%     al igual que lo que ocurre al
+%    comparar electrónica digital vs. analógica. La a todo en
+%    forma paralela.
+
+%\end{remarkSN}
+
+Aún si transmitimos símbolos, la comunicación digital interactúa
+con aspectos analógicos a dos niveles:
+
+
+\begin{itemize}
+    \item los símbolos pueden venir de una conversión A/D de un mensaje analógico.
+    \item para enviar los símbolos por un canal analógico se deben representar
+    por formas de onda. Un caso típico: tren de pulsos $\displaystyle \sum_k a_k p(t-kT_s)$ ``PAM'': \emph{pulse amplitude modulation}.
+\end{itemize}
+
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/modDig/modDig-2}
+    \begin{blockdiagram}
+        \matrix[row sep=5mm, column sep=10mm]{
+        & \node[etiqueta] (inicio) {$x(t)$}; &\\
+        \node[etiqueta] (otro) {\begin{minipage}{3cm}
+                        otras fuentes de símbolos (texto, imágenes, ...)
+                    \end{minipage}}; & \node[block] (conv) {A/D}; &\\
+        & \node[block] (mod) {MOD. DIGITAL}; &\\
+        & & \node [block] (canal) {CANAL};\\
+        };
+        \draw [->] (inicio) -- (conv);
+        \draw [->] (conv) -- (mod);
+        \draw [->] (otro) |- (mod);
+        \draw [->] (mod) |- node [anchor=north] {$\sum a_k p(t-kT_s)$} (canal);
+    \end{blockdiagram}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+
+La idea de PCM (pulse-code-modulation, enviar mensajes analógicos
+codificados en trenes de pulsos) data de 1937.  Hoy en día, es más
+natural pensar en la comunicación de símbolos como la operación
+básica, independiente del origen de los símbolos.
+
+Nos concentraremos primero entonces en la capa inferior del
+diagrama: cómo enviar símbolos discretos por un canal.
+
+\subsection*{Algunos parámetros}
+\begin{itemize}
+    \item Velocidad de señalización, $f_s$. Se mide en baudios $=
+    \rfrac{\text{símbolos}}{seg}$.
+    \item Velocidad de transmisión de información, $vti$. Se mide en $bps$.
+
+    Si tengo $M$ símbolos en el alfabeto, cada uno tiene $\log_2(M)$ bits de información.
+    \[\Rightarrow vti= f_s \log_2(M).\]
+    \item Ancho de banda, $B$ del canal en $Hz$.
+    \item Eficiencia espectral en $\rfrac{bps}{Hz}$:
+    $\frac{vti}{B}$.
+\end{itemize}
+
+O sea, $vti$ es c\'omo se ve la velocidad en la capa superior
+(ej.: ADSL $512\,Kbps$). Esa velocidad, como veremos, dependerá
+del ancho de banda físico, $B$.
+
+La relación entre ellos depende de cómo se elijan las formas de onda que representan los símbolos. Dos temas:
+\begin{itemize}
+    \item la forma de los pulsos.
+    \item como se mapean los símbolos en pulsos: ``codificación de línea''.
+\end{itemize}

@@ -1,0 +1,89 @@
+\section{Repetidores y regeneración}
+
+Supongamos se transmite una onda digital de banda base por un
+cable largo. Al propagarse la onda se introduce atenuación, que
+debe compensarse por amplificación posterior. Una estrategia
+comúnmente usada es dividir el cable en tramos y amplificar en
+cada tramo. Ejemplo de uso: cajas subterráneas en telefonía.
+
+\begin{figure}[htb]
+ \begin{center}\begin{minipage}{\textwidth}
+  \bpgf{Imagenes/repReg/repReg-1}
+  \begin{blockdiagram}
+    \matrix[row sep=5mm, column sep=10mm]{
+        & \node[etiqueta] (ruido1) {$n_1$}; & & \node[etiqueta] (ruido2) {$n_2$}; & & & \node[etiqueta] (ruidom) {$n_m$};\\
+        \node[etiqueta] (inicio) {$x(t)$}; & \node[operator] (sum1) {$+$}; & \node[block] (amp1) {AMP}  node [above right=5mm] {$y_1(t)$} node [below=3mm] {\begin{minipage}{1.5cm}\centering ganancia\\ $\frac{1}{a}$\end{minipage}}; & \node[operator] (sum2) {$+$}; & \node[block] (amp2) {AMP}; & \node[etiqueta] (puntos) {$\ldots$}; & \node[operator] (summ) {$+$}; & \node[block] (ampm) {AMP}; & \node[etiqueta] (salida) {$y(t)$};\\
+    };
+    \draw [->,ultra thick] (inicio) -- node [anchor=north] {\begin{minipage}{20mm}\centering TR.1\\ atenuación $a$ ($a\ll 1$)\end{minipage}} (sum1);
+    \draw [->] (sum1) -- (amp1);
+    \draw [->] (ruido1) -- (sum1);
+    \draw [->,ultra thick] (amp1) -- node [anchor=north] {TR. 2} (sum2);
+    \draw [->] (ruido2) -- (sum2);
+    \draw [->] (sum2) -- (amp2);
+    \draw [->,ultra thick] (amp2) -- (puntos);
+    \draw [->,ultra thick] (puntos) -- (summ);
+    \draw [->] (ruidom) -- (summ);
+    \draw [->] (summ) -- (ampm);
+    \draw [->] (ampm) -- (salida);
+  \end{blockdiagram}
+  \endpgfgraphicnamed\end{minipage}
+ \end{center}
+
+\end{figure}
+\FloatBarrier
+
+Suponemos que cada etapa tiene ruido aleatorio de varianza
+$E[n_i^2] = \sigma^2$.
+
+\[y_1 = \frac{1}{a}(a x + n_1) = x+ \frac{n_1}{a} \qquad \Longrightarrow \left(\frac{S}{N}\right)_1 =
+\frac{\langle x^2 \rangle}{\frac{\langle n_1^2\rangle}{a^2}} = a^2
+\frac{\langle x^2\rangle}{\sigma^2}.\]
+
+Para la segunda etapa:
+\[y_2 = \frac{1}{a}(a y_1 +n_2) = y_1 + \frac{n_2}{a} = x + \frac{n_1+n_2}{a}.\]
+
+Por el mismo razonamiento,
+\[y(t) = y_m(t) = x(t) + \frac{n_1+n_2+\cdots+n_m}{a}.\]
+
+\begin{align*}
+ \left(\frac{S}{N}\right)_m & = \frac{\langle x^2 \rangle}{\frac{1}{a^2} E\left[(n_1+n_2+\cdots+n_m)^2\right]} =
+  \frac{a^2 \langle x^2\rangle}{m \sigma^2}, \qquad \text{suponiendo ruidos independientes.}
+%\Rightarrow                   & =
+\end{align*}
+\[{\col{ \left(\frac{S}{N}\right)_m = \frac{1}{m}
+\left(\frac{S}{N}\right)_1}}\]
+
+ Vemos que la relación señal-ruido se degrada linealmente en $m$. Por lo tanto
+la $P_e$ se degrada fuertemente (por ejemplo,
+$P_e=Q\left(\sqrt{\frac{S}{N}}\right)$ para el caso polar, con
+pulsos ideales).
+
+\begin{ejemplo}[numérico] Señal polar, $\left(\frac{S}{N}\right)_1 = 100 \  (20\,dB)$, $m=20$
+repetidores.
+  \[ \Rightarrow \left(\frac{S}{N}\right)_m = 5 \Rightarrow P_e  = Q(\sqrt{5}) = 1.29\cdot 10^{-2}, \quad\text{muy alto.}\]
+ \end{ejemplo}
+
+\subsection*{Repetidor regenerativo}
+
+En vez de solo amplificar (señal y ruido), realiza una detección y
+regenera la señal PAM. Sea $p$ la probabilidad de error de una
+etapa, $p=Q\left(\sqrt{\left(\frac{S}{N}\right)_1}\right)$.
+
+Suponemos $p\ll 1$ y errores independientes en cada etapa.
+Calculamos la probabilidad de error de $m$ etapas. Notar que
+\[1 - P_e(m\text{ etapas})  = (1-P_e(1 \text{ etapa}))^m \]
+(es decir, para no tener errores en un s\'imbolo exijo no tenerlos
+en ninguna de las $m$ detecciones independientes). Por tanto
+\[P_e(m\text{ etapas}) = 1 -(1-p)^m  \approx 1-(1-mp) = mp.\]
+En este caso, $P_e$ se deteriora linealmente con $m$.
+
+Volviendo al ejemplo, $p=Q(10) = 7.7\cdot 10^{-24}$ para una
+etapa, por tanto
+\[ P_e (20 \text{ etapas}) \approx 20 p = 1.5\cdot 10^{-22},\]
+muchísimo más bajo que en el caso no regenerativo.
+
+\paragraph{Moraleja}$\phantom{1}$
+\begin{itemize}
+ \item Es mejor regenerar.
+ \item Esta es una de las mayores ventajas de la comunicación digital por sobre la analógica.
+\end{itemize}

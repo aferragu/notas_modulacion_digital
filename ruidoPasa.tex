@@ -1,0 +1,135 @@
+\section{Análisis del ruido pasabanda}\label{sec.ruidopasa}
+
+Consideremos el ruido obtenido a la salida de un filtro pasabanda
+de recepción:
+\begin{figure}[htb]
+    \centering%\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/ruidoPasa/ruidoPasa-1}
+    \begin{blockdiagram}
+        \matrix[row sep=5mm, column sep=10mm]{
+             \node[punto] (inicio) {}; & \node[block] (filtro) {$[f_c-B,f_c+B]$}; & \node[etiqueta] (salida) {$\quad n(t)$};\\
+        };
+        \draw [->] (inicio) -- (filtro);
+        \draw [->] (filtro) -- (salida);
+    \end{blockdiagram}
+
+    \endpgfgraphicnamed %\end{minipage}
+\end{figure}
+\FloatBarrier
+
+$n(t)$ es estacionario, con densidad espectral de potencia
+$S_n(f)$ que es de tipo pasabanda, es decir $S_n(f)=0$ fuera de la
+banda $[f_c-B,f_c+B]$. Dentro de la banda, consideramos cualquier
+densidad espectral, en particular no tiene por qué ser constante
+en la banda ni simétrica respecto de $f_c$ (el filtro puede ser no
+ideal, y/o el ruido de entrada no ser blanco). Suponemos que el
+ruido es de media nula.
+
+Para estudiar el efecto de dicho ruido en la demodulaci\'on, es conveniente tener una
+representaci\'on de \emph{envolvente compleja} para el ruido:
+$n_{ce}(t)=n_i(t)+jn_q(t)$ tal que
+$n(t)=\Re\left[n_{ce}(t)\epi\right]$.
+%
+%\paragraph{Preguntas:} ¿Cómo definir $n_{ce}(t)$? ¿Es
+%estacionario?
+
+%
+{\bf Preguntas:} ¿Cómo definir $n_{ce}(t)$? ¿Es estacionario?
+
+Esta pregunta es en cierto sentido la inversa de la considerada en la secci\'on anterior.
+All\'i se part\'ia de un proceso estacionario de banda base, y se buscaba un proceso modulado que tambi\'en fuese
+estacionario. La respuesta tiene cierto grado de dificultad matem\'atica, por lo cual la diferimos para el Ap\'endice A.
+Pero el resultado es afirmativo, lo indicamos en el siguiente enunciado:
+
+
+\subsection*{Teorema}
+Un proceso estacionario pasabanda $n(t)$, con densidad espectral
+de potencia $S_n(f)$ concentrada en la banda
+$|f|\in[f_c-B,f_c+B]$, puede escribirse como
+\[n(t)=n_i(t)\cos(\omega_ct)-n_q(t)\sen(\omega_ct),\]
+donde $n_i$, $n_q$ son procesos estacionarios pasabajos con igual
+densidad espectral (concentrada en la banda $[-B,B]$):
+\begin{center}
+    \col{S_{n_i}(f)=S_{n_q}(f)=\underbrace{S_n(f-f_c)u\left(-(f-f_c)\right)}_{\oldstylenums{1}}+
+    \underbrace{S_n(f+f_c)u(f+f_c)}_{\oldstylenums{2}}},
+\end{center}
+%
+%\begin{gather*}
+%    S_{n_i}(f)=S_n(f-f_c)u(f_c-f) + S_n(f+f_c)u(f+f_c),
+%\end{gather*}
+e igual potencia media  $E[n_i^2]=E[n_q^2]=E[n^2]$.
+
+\noindent Además, si $S_n(f)$ es
+simétrica respecto de $f_c$, entonces $n_i$, $n_q$ son incoherentes
+(con correlaci\'on cruzada nula).
+
+
+
+\paragraph{Representaci\'on gr\'afica:} Para interpretar la expresi\'on para la densidad espectral de
+potencia de $n_i$, $n_q$, recurrimos al siguiente bosquejo:
+
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/ruidoPasa/ruidoPasa-4}
+        \begin{tikzpicture}
+        \draw [->] (0,-6.5) -- (0,1.5) node [anchor=west] {$S_n(f)$};
+        \draw [->] (-5,0) -- (5,0) node [anchor=north] {$f$};
+        \begin{scope}[shift={(3,0)}]
+            \draw (-1,0) .. controls (-0.5,0.3) and (-0.3,0.5) .. (0,0.5);
+            \draw (0,0.5) .. controls (0.3,0.5) and (0.45,0.25) .. (0.5,0);
+            \draw [dotted] (0,0) node [anchor=north] {$f_c$}--(0,0.5);
+        \end{scope}
+
+        \begin{scope}[shift={(-3,0)},xscale=-1]
+            \draw (-1,0) .. controls (-0.5,0.3) and (-0.3,0.5) .. (0,0.5);
+            \draw (0,0.5) .. controls (0.3,0.5) and (0.45,0.25) .. (0.5,0);
+            \draw [dotted] (0,0) node [anchor=north] {$-f_c$} -- (0,0.5);
+        \end{scope}
+
+        \begin{scope}[shift={(0,-2)}]
+            \draw [->] (-5,0) -- (5,0) node [anchor=north] {$f$};
+            \begin{scope}[xscale=-1]
+            \draw (-1,0) .. controls (-0.5,0.3) and (-0.3,0.5) .. (0,0.5);
+            \draw (0,0.5) .. controls (0.3,0.5) and (0.45,0.25) .. (0.5,0);
+            \end{scope}
+            \path (0,0.5) node [anchor=south west] {$\oldstylenums{1}: S_n(f-f_c)u(f_c-f)$};
+        \end{scope}
+
+        \begin{scope}[shift={(0,-4)}]
+            \draw [->] (-5,0) -- (5,0) node [anchor=north] {$f$};
+            \draw (-1,0) .. controls (-0.5,0.3) and (-0.3,0.5) .. (0,0.5);
+            \draw (0,0.5) .. controls (0.3,0.5) and (0.45,0.25) .. (0.5,0);
+            \path (0,0.5) node [anchor=south west] {$\oldstylenums{2}: S_n(f+f_c)u(f+f_c)$};
+        \end{scope}
+
+        \begin{scope}[shift={(0,-6)}]
+            \draw [->] (-5,0) -- (5,0) node [anchor=north] {$f$};
+            \draw (-1,0) .. controls (-0.5,0.3) .. (-0.5,0.3);
+            \draw (-0.5,0.3) .. controls (-0.35,0.75) and (-0.15,1) .. (0,1);
+            \begin{scope}[xscale=-1]
+            \draw (-1,0) .. controls (-0.5,0.25) .. (-0.5,0.3);
+            \draw (-0.5,0.3) .. controls (-0.35,0.75) and (-0.15,1) .. (0,1);
+            \end{scope}
+
+            \path (1,1) node {$S_{n_i}(f)$};
+        \end{scope}
+    \end{tikzpicture}
+    \endpgfgraphicnamed \end{minipage}
+\end{figure}
+\FloatBarrier
+ Notar que se deduce del diagrama la identidad para la potencia total:
+\[\langle{n_i^2}\rangle=E[n_i^2]
+=\int S_{n_i}(f)\d f= \int \text{ \oldstylenums{1} }  + \int
+\text{ \oldstylenums{2} } = \int S_n(f)\d f=E[n^2].\]
+
+
+
+\paragraph{Nota:} Dados $n_i$, $n_q$ como arriba, para cualquier $\omega'_c$ la expresión
+\[n'(t)=n_i(t)\cos(\omega'_ct)-n_q(t)\sen(\omega'_ct)\]
+es siempre un proceso estacionario pasabanda, en la banda
+$|f|\in[f'_c-B,f'_c+B]$.
+
+Esto se deduce de lo visto en la secci\'on anterior para el
+caso de $n_i$, $n_q$ incoherentes. Es también cierto en el caso general
+(remitirse al Ap\'endice A).
+
