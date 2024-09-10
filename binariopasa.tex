@@ -31,7 +31,7 @@ transformada de Fourier del pulso de banda base.
 
 
 \paragraph{Comentario.} En rigor, para justificar esta fórmula a partir de los procesos estacionarios había que introducir
-un retardo aleatorio en la onda PAM, y también para obtener (\ref{eq:dep}) de la modualación DSB se incluía una fase aleatoria.
+un retardo aleatorio en la onda PAM, y también para obtener (\ref{eq:dep}) de la modulación DSB se incluía una fase aleatoria.
 Ignoramos estos temas de aquí en mas, interpretando las densidades
 espectrales en el sentido de las señales determinísticas de
 potencia finita.
@@ -39,13 +39,7 @@ potencia finita.
 
 \subsubsection*{Caso de modulación BPSK}
 
-La onda pasabanda BPSK $x_c(t)$ corresponde a modular una onda PAM
-de banda base $x(t)$ {\em polar, binaria}, con $a_k=\pm A$.
-Recordemos que ésta tiene densidad espectral de potencia $S_x(f)
-= A^2 f_s |\hat{P}(f)|^2$. Bosquejamos la correspondiente
-$S_{x_c}(f)$ en dos casos particulares.
-
-
+La onda pasabanda BPSK $x_c(t)$ corresponde a modular una onda PAM de banda base $x(t)$ {\em polar, binaria}, con $a_k=\pm A$. Recordemos que ésta tiene densidad espectral de potencia $S_x(f)= A^2 f_s |\hat{P}(f)|^2$. Bosquejamos la correspondiente $S_{x_c}(f)$ en dos casos particulares.
 
 \begin{minipage}{0.5\textwidth}
 \begin{enumerate}
@@ -118,7 +112,7 @@ que tiene $90\%$ de la potencia.
 \FloatBarrier
 
 La combinación de ASK con pulsos de Nyquist es en principio
-tambíen posible, pero no de uso práctico ya que ASK se motiva
+también posible, pero no de uso práctico ya que ASK se motiva
 principalmente por razones de simplicidad.
 
 
@@ -170,10 +164,10 @@ sirve para tener una idea:
 Un caso resuelto por Sunde (ver libros) es para
 $f_\Delta=\frac{f_s}{2}$. El resultado tiene la forma (\ref{eq:dep}), trasladando el espectro pasabajos
 
-\begin{minipage}{0.5\textwidth}
+\begin{minipage}{0.6\textwidth}
 \begin{align*} S_{x}(f) =& \frac{A^2}{4}\left[\delta(f-\frac{f_s}{2})+\delta(f+\frac{f_s}{2})\right]\\& + \frac{4 A^2 T_s \cos^2(\pi T_s f)}{\pi^2 (4 T_s^2 f^2 - 1)^2}.\end{align*}
 \end{minipage}\hfil
-\begin{minipage}{0.5\textwidth}
+\begin{minipage}{0.4\textwidth}
     \resizebox{\textwidth}{!}{
 %\begin{figure}[htb]
 %    \centering
