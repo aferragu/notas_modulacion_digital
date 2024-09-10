@@ -35,11 +35,11 @@ Si el filtro tuviese la fase correcta, muestreando en $T_s$ tengo la detección 
             & \node [punto] (p) {};\\
             \node [etiqueta] (inicio) {$a_k p(t-kT_s)\cos(\omega_c t+\theta)$}; & \node[operator] (sum) {$+$}; & \node[block] (filtro) {$h(t)$}; & \node [block] (det) {DET. ENV.};& \node [block] (delim) {COMP.};\\
         };
-        \draw [->] (inicio) -- (sum);
-        \draw [->] (p) -- (sum);
-        \draw [->] (sum) -- (filtro);
-        \draw [->] (filtro) -- (det);
-        \draw [->] (det) -- (delim);
+        \draw [-stealth] (inicio) -- (sum);
+        \draw [-stealth] (p) -- (sum);
+        \draw [-stealth] (sum) -- (filtro);
+        \draw [-stealth] (filtro) -- (det);
+        \draw [-stealth] (det) -- (delim);
     \end{blockdiagram}
     \endpgfgraphicnamed
 \end{figure}
@@ -58,13 +58,13 @@ Si el filtro tuviese la fase correcta, muestreando en $T_s$ tengo la detección 
                 \& \& \node[block] (pasa2) {PASA: $[f_c-\frac{\Delta f}{2},f_c]$}; \& \node [block] (det2) {DET. ENV.};\\
             };
             \draw (inicio) -- (p);
-            \draw [->] (p) |- (pasa1);
-            \draw [->] (pasa1) -- (det1);
-            \draw [->]  (det1) -| (sum);
-            \draw [->] (p) |- (pasa2);
-            \draw [->] (pasa2) -- (det2);
-            \draw [->]  (det2) -| (sum);
-            \draw [->] (sum) -- (comp);
+            \draw [-stealth] (p) |- (pasa1);
+            \draw [-stealth] (pasa1) -- (det1);
+            \draw [-stealth]  (det1) -| (sum);
+            \draw [-stealth] (p) |- (pasa2);
+            \draw [-stealth] (pasa2) -- (det2);
+            \draw [-stealth]  (det2) -| (sum);
+            \draw [-stealth] (sum) -- (comp);
         \end{blockdiagram}
         \endpgfgraphicnamed}
     \end{center}
@@ -87,12 +87,12 @@ diferencias de fase con el símbolo anterior.
             \node [etiqueta] (inicio) {$x_c(t)$}; \& \node[block] (pasa1) {PASABANDA}; \& \node [punto] (p) {}; \& \&\node [operator] (mult) {$\times$}; \& \node [block] (pasa2) {PASABAJOS}; \& \node[block] (comp) {COMP};\\
             \& \& \& \node [block] (ret) {Retardo $T_s$};\\
         };
-        \draw [->] (inicio) -- (pasa1);
-        \draw [->] (pasa1) -- (p) -- (mult);
-        \draw [->] (p) |- (ret);
-        \draw [->] (ret) -| (mult);
-        \draw [->] (mult) -- (pasa2);
-        \draw [->] (pasa2) -- (comp);
+        \draw [-stealth] (inicio) -- (pasa1);
+        \draw [-stealth] (pasa1) -- (p) -- (mult);
+        \draw [-stealth] (p) |- (ret);
+        \draw [-stealth] (ret) -| (mult);
+        \draw [-stealth] (mult) -- (pasa2);
+        \draw [-stealth] (pasa2) -- (comp);
     \end{blockdiagram}
     \endpgfgraphicnamed}
 \end{center}

@@ -1,12 +1,13 @@
-\documentclass[a4paper,11pt]{article}
+\documentclass[a4paper,11pt]{report}
 
 %%% REVISION 2024: NOTAS DE MODULACION DIGITAL UNICAMENTE
 
 \usepackage{misSett}
 
-\pgfrealjobname{ModulacionDigital}
+%\pgfrealjobname{ModulacionDigital}
 %\usetikzlibrary{external}
-%\tikzexternalize[prefix=figuras/]
+%\tikzexternalize[prefix=figuras/,optimize=false]
+
 
 \listfiles
 \begin{document}
@@ -15,7 +16,7 @@
 \author{\LARGE Prof. Fernando Paganini \\ \\ \\
 \Large Versión electrónica 2024 elaborada  por \\ \\
 \Large Andrés Ferragut y Fabián Kozynski}
-\date{\LARGE Revisado en: 2024} %\selectlanguage{spanish}\today}
+\date{\LARGE Revisado en: 2024} 
 
 \maketitle
 
@@ -23,47 +24,47 @@
 
 \tableofcontents
 
-\mypart{Introducción}
+\chapter{Introducción}
 \input{intro}
 \input{modulacion}
 
-\mypart{Procesos aleatorios}
+\chapter{Procesos aleatorios}
 \input{ruido}
-\newpage
+%\newpage
 \input{prob}
 \input{estoc}
-\newpage
+% \newpage
 \input{modEst}
 \input{ruidoPasa}
-\newpage
+% \newpage
 
-\mypart{Modulación Digital en Banda Base}
+% \mypart{Modulación Digital en Banda Base}
 
-\input{modDig}
-\input{codLinBB}
-\newpage%
-\input{formPuls}%
-\input{detDig}
-\input{digBB}
-\newpage
-\input{filAc}%%%% hubo cambio de \newpage en compilacion final, ver %%% adentro de filAc
-\newpage
-\input{repReg}
+% \input{modDig}
+% \input{codLinBB}
+% \newpage%
+% \input{formPuls}%
+% \input{detDig}
+% \input{digBB}
+% \newpage
+% \input{filAc}
+% \newpage
+% \input{repReg}
 
-\mypart{Modulación Digital Pasabanda}%
-\input{MDPasa}
-\input{binariopasa}
-\input{Mariopasa}%
-\input{DetCoh}
-%\input{FSK.tex}
-\input{incoh.tex}
-%
-\mypart{Apéndices}
+% \mypart{Modulación Digital Pasabanda}%
+% \input{MDPasa}
+% \input{binariopasa}
+% \input{Mariopasa}%
+% \input{DetCoh}
+% %\input{FSK.tex}
+% \input{incoh.tex}
+% %
+% \mypart{Apéndices}
 
-\appendix
+% \appendix
 
-\input{App-ruidoPasa}
+% \input{App-ruidoPasa}
 
-\input{Ap-dens-esp-dig}
+% \input{Ap-dens-esp-dig}
 
 \end{document}

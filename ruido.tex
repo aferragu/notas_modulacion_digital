@@ -20,8 +20,8 @@ Características:
     \centering\begin{minipage}{0.8\textwidth}
     \bpgf{Imagenes/ruido/ruido-1}
     \begin{tikzpicture}
-        \draw[->]  (-0.5,0) -- (8,0) node [anchor=north] {$t$};
-        \draw[->] (0,-1) -- (0,3) node [anchor=west] {$x$};
+        \draw[-stealth]  (-0.5,0) -- (8,0) node [anchor=north] {$t$};
+        \draw[-stealth] (0,-1) -- (0,3) node [anchor=west] {$x$};
         \draw [samples=50,domain=0:7] plot (\x,{cos(\x r)+(0.5*exp(\x*0.05)-exp(-\x*0.1))+0.3*rand});
     \end{tikzpicture}
     \endpgfgraphicnamed\end{minipage}
@@ -63,8 +63,8 @@ figura anterior con otra, %$\tilde{x}(t)$
     \centering\begin{minipage}{0.8\textwidth}
                 \bpgf{Imagenes/ruido/ruido-2}
                 \begin{tikzpicture}
-                \draw[->]  (-0.5,0) -- (8,0) node [anchor=north] {$t$};
-                \draw[->] (0,-1) -- (0,3) node [anchor=west] {$\tilde{x}$};
+                \draw[-stealth]  (-0.5,0) -- (8,0) node [anchor=north] {$t$};
+                \draw[-stealth] (0,-1) -- (0,3) node [anchor=west] {$\tilde{x}$};
                 \draw [samples=200,domain=0:7] plot (\x,{cos((\x+1)^2 r)+0.5*cos(\x r)+0.5*rand});
             \end{tikzpicture}
                 \endpgfgraphicnamed
@@ -139,8 +139,8 @@ Nos dice como se distribuye la potencia en frecuencia.
 %        \matrix[row sep=5mm, column sep=10mm]{
 %            \node[etiqueta] (inicio) {$x(t)$}; & \node[block] (filtro) {$\hat{H}(f)$} node [above=3mm] {FILTRO LTI}; & \node[etiqueta] (salida) {$y(t)$};\\
 %        };
-%        \draw [->] (inicio) -- (filtro);
-%        \draw [->] (filtro) -- (salida);
+%        \draw [-stealth] (inicio) -- (filtro);
+%        \draw [-stealth] (filtro) -- (salida);
 %    \end{blockdiagram}
 %    \endpgfgraphicnamed
 %\end{figure}
@@ -198,10 +198,10 @@ Señal que cumple $S_n(f)\equiv \frac{\eta}{2}\,\forall\,f$. La potencia de sali
         & & \node [etiqueta] (ruido) {$n(t)$}; &\\
         \node [etiqueta] (inicio) {$x(t)$}; & \node [block] (canal) {CANAL}; & \node [operator] (sum) {$+$}; & \node [etiqueta] (salida) {$x_R(t)$};\\
         };
-        \draw [->] (inicio) -- (canal);
-        \draw [->] (canal) -- (sum);
-        \draw [->] (ruido) -- (sum);
-        \draw [->] (sum) -- (salida);
+        \draw [-stealth] (inicio) -- (canal);
+        \draw [-stealth] (canal) -- (sum);
+        \draw [-stealth] (ruido) -- (sum);
+        \draw [-stealth] (sum) -- (salida);
     \end{blockdiagram}
     \endpgfgraphicnamed\end{minipage}
 \end{figure}
@@ -227,8 +227,8 @@ pasabajos de ancho $B$.
         \matrix[row sep=5mm, column sep=10mm]{
             \node[etiqueta] (inicio) {$x_R(t)$ \quad }; & \node[block] (filtro) {PASABAJOS $B$}; & \node[etiqueta] (salida) {\quad $x_D(t)+n_D(t)$};\\
         };
-        \draw [->] (inicio) -- (filtro);
-        \draw [->] (filtro) -- (salida);
+        \draw [-stealth] (inicio) -- (filtro);
+        \draw [-stealth] (filtro) -- (salida);
     \end{blockdiagram}
     \endpgfgraphicnamed\end{minipage}
 \end{figure}

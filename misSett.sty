@@ -14,7 +14,7 @@
 \usepackage{graphicx}
 \usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
 \setlength{\parskip}{\baselineskip}
-\usepackage[spanish,english]{babel}
+\usepackage[spanish]{babel}
 \usepackage{float}
 \usepackage[    pdftex,unicode=true,
         pdfdisplaydoctitle=true,
@@ -34,10 +34,14 @@
 \usetikzlibrary{positioning}
 \usetikzlibrary{calc}
 \usetikzlibrary{shapes.geometric}
+\usetikzlibrary{babel}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \usepackage{circuitikz}
 \usepackage{rotating}
 \usepackage{lscape}
 \usepackage{pifont}
+\usepackage{siunitx}
 
 %-------------------------------------------------------------------------------------------------------
                                          %Para imágenes lindas
@@ -130,20 +134,20 @@
 %%%%COMANDOS PARA TIKZ
 
 \newcommand{\specleft}[1]{%
-\draw [domain=#1-0.95:#1-0.4-0.001, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
-\draw [domain=#1-0.4+0.001:#1, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});}
+\draw [domain=#1-0.95:#1-0.4-0.001, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
+\draw [domain=#1-0.4+0.001:#1, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});}
 
 \newcommand{\specright}[1]{%
-\draw [domain=#1:#1+0.4-0.001, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
-\draw [domain=#1+0.4+0.001:#1+0.95, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});}
+\draw [domain=#1:#1+0.4-0.001, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
+\draw [domain=#1+0.4+0.001:#1+0.95, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});}
 
 \newcommand{\specleftf}[1]{%
-\draw [domain=#1-0.95:#1-0.4-0.001, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
-\draw [domain=#1-0.4+0.001:#1, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))}) -- (#1,0);}
+\draw [domain=#1-0.95:#1-0.4-0.001, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
+\draw [domain=#1-0.4+0.001:#1, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))}) -- (#1,0);}
 
 \newcommand{\specrightf}[1]{%
-\draw [domain=#1:#1+0.4-0.001, samples=200] (#1,0) -- plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
-\draw [domain=#1+0.4+0.001:#1+0.95, samples=200] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});}
+\draw [domain=#1:#1+0.4-0.001, samples=50] (#1,0) -- plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
+\draw [domain=#1+0.4+0.001:#1+0.95, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});}
 
 
 \newcommand{\specfull}[1]{\specleft{#1}\specright{#1}}

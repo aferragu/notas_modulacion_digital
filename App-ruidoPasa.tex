@@ -99,10 +99,10 @@ bloques es:
         \node [etiqueta] (inicio) {$x_c(t)\quad $}; &  \node[block] (filtro) {$2u(f)$}; & \node [operator] (mult) {$\times$}; & \node[etiqueta] (salida) {$\quad x_{ce}(t)$};\\
         & & \node[etiqueta] (mod) {$\mepi$};&\\
         };
-        \draw [->] (inicio) -- (filtro);
-        \draw [->] (filtro) -- (mult);
-        \draw [->] (mult) -- (salida);
-        \draw [->] (mod) -- (mult);
+        \draw [-stealth] (inicio) -- (filtro);
+        \draw [-stealth] (filtro) -- (mult);
+        \draw [-stealth] (mult) -- (salida);
+        \draw [-stealth] (mod) -- (mult);
     \end{blockdiagram}
     \endpgfgraphicnamed\end{minipage}
 \end{figure}
@@ -119,13 +119,13 @@ $\hat{H}(f)=-j\sgn(f)$ el filtro de Hilbert:
         \node [etiqueta] (inicio) {$x_c(t)\quad $}; &  \node [punto] (p) {}; & & & \node[operator] (sum) {$+$};& \node [operator] (mult) {$\times$}; & \node[etiqueta] (salida) {$\quad x_{ce}(t)$};\\
         & & \node[block] (hil) {$\mathcal{H}$}; & \node[block] (j) {$j$}; & & \node[etiqueta] (mod) {$\mepi$};&\\
         };
-        \draw [->] (inicio) -- (p) -- (sum);
-        \draw [->] (p) |- (hil);
-        \draw [->] (hil) -- (j);
-        \draw [->] (j) -| (sum);
-        \draw [->] (sum) -- (mult);
-        \draw [->] (mult) -- (salida);
-        \draw [->] (mod) -- (mult);
+        \draw [-stealth] (inicio) -- (p) -- (sum);
+        \draw [-stealth] (p) |- (hil);
+        \draw [-stealth] (hil) -- (j);
+        \draw [-stealth] (j) -| (sum);
+        \draw [-stealth] (sum) -- (mult);
+        \draw [-stealth] (mult) -- (salida);
+        \draw [-stealth] (mod) -- (mult);
     \end{blockdiagram}
     \endpgfgraphicnamed\end{minipage}
 \end{figure}
