@@ -83,10 +83,10 @@ con aspectos analógicos a dos niveles:
         & \node[block] (mod) {MOD. DIGITAL}; &\\
         & & \node [block] (canal) {CANAL};\\
         };
-        \draw [->] (inicio) -- (conv);
-        \draw [->] (conv) -- (mod);
-        \draw [->] (otro) |- (mod);
-        \draw [->] (mod) |- node [anchor=north] {$\sum a_k p(t-kT_s)$} (canal);
+        \draw [-stealth] (inicio) -- (conv);
+        \draw [-stealth] (conv) -- (mod);
+        \draw [-stealth] (otro) |- (mod);
+        \draw [-stealth] (mod) |- node [anchor=north] {$\sum a_k p(t-kT_s)$} (canal);
     \end{blockdiagram}
     \endpgfgraphicnamed\end{minipage}
 \end{figure}

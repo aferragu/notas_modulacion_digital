@@ -9,8 +9,8 @@ de recepción:
         \matrix[row sep=5mm, column sep=10mm]{
              \node[punto] (inicio) {}; & \node[block] (filtro) {$[f_c-B,f_c+B]$}; & \node[etiqueta] (salida) {$\quad n(t)$};\\
         };
-        \draw [->] (inicio) -- (filtro);
-        \draw [->] (filtro) -- (salida);
+        \draw [-stealth] (inicio) -- (filtro);
+        \draw [-stealth] (filtro) -- (salida);
     \end{blockdiagram}
 
     \endpgfgraphicnamed %\end{minipage}
@@ -72,8 +72,8 @@ potencia de $n_i$, $n_q$, recurrimos al siguiente bosquejo:
     \centering\begin{minipage}{\textwidth}
     \bpgf{Imagenes/ruidoPasa/ruidoPasa-4}
         \begin{tikzpicture}
-        \draw [->] (0,-6.5) -- (0,1.5) node [anchor=west] {$S_n(f)$};
-        \draw [->] (-5,0) -- (5,0) node [anchor=north] {$f$};
+        \draw [-stealth] (0,-6.5) -- (0,1.5) node [anchor=west] {$S_n(f)$};
+        \draw [-stealth] (-5,0) -- (5,0) node [anchor=north] {$f$};
         \begin{scope}[shift={(3,0)}]
             \draw (-1,0) .. controls (-0.5,0.3) and (-0.3,0.5) .. (0,0.5);
             \draw (0,0.5) .. controls (0.3,0.5) and (0.45,0.25) .. (0.5,0);
@@ -87,7 +87,7 @@ potencia de $n_i$, $n_q$, recurrimos al siguiente bosquejo:
         \end{scope}
 
         \begin{scope}[shift={(0,-2)}]
-            \draw [->] (-5,0) -- (5,0) node [anchor=north] {$f$};
+            \draw [-stealth] (-5,0) -- (5,0) node [anchor=north] {$f$};
             \begin{scope}[xscale=-1]
             \draw (-1,0) .. controls (-0.5,0.3) and (-0.3,0.5) .. (0,0.5);
             \draw (0,0.5) .. controls (0.3,0.5) and (0.45,0.25) .. (0.5,0);
@@ -96,14 +96,14 @@ potencia de $n_i$, $n_q$, recurrimos al siguiente bosquejo:
         \end{scope}
 
         \begin{scope}[shift={(0,-4)}]
-            \draw [->] (-5,0) -- (5,0) node [anchor=north] {$f$};
+            \draw [-stealth] (-5,0) -- (5,0) node [anchor=north] {$f$};
             \draw (-1,0) .. controls (-0.5,0.3) and (-0.3,0.5) .. (0,0.5);
             \draw (0,0.5) .. controls (0.3,0.5) and (0.45,0.25) .. (0.5,0);
             \path (0,0.5) node [anchor=south west] {$\oldstylenums{2}: S_n(f+f_c)u(f+f_c)$};
         \end{scope}
 
         \begin{scope}[shift={(0,-6)}]
-            \draw [->] (-5,0) -- (5,0) node [anchor=north] {$f$};
+            \draw [-stealth] (-5,0) -- (5,0) node [anchor=north] {$f$};
             \draw (-1,0) .. controls (-0.5,0.3) .. (-0.5,0.3);
             \draw (-0.5,0.3) .. controls (-0.35,0.75) and (-0.15,1) .. (0,1);
             \begin{scope}[xscale=-1]

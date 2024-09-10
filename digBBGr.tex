@@ -18,15 +18,15 @@
             & \node[etiqueta] (salida) {\large $\{\hat{a}_k\}$};\\
             & & & & & & \node[block] (sinc) {\large SINCR}; & & \node [etiqueta] (v0) {$A_0$};\\
         };
-        \draw [->] (inicio) -- (canal);
-        \draw [->] (canal) -- (sum);
-        \draw [->] (ruido) -- (sum);
-        \draw [->] (sum) -- (filtro);
+        \draw [-stealth] (inicio) -- (canal);
+        \draw [-stealth] (canal) -- (sum);
+        \draw [-stealth] (ruido) -- (sum);
+        \draw [-stealth] (sum) -- (filtro);
         \draw (filtro) -- (p3) -- (p4) -- (p2);
-        \draw [->] (p3) |- (sinc);
-        \draw [->] (sinc) -| (p1);
-        \draw [->] (p5) |- (comp.150);
-        \draw [->] (v0) |- (comp.south west);
-        \draw [->] (comp) -- (salida);
+        \draw [-stealth] (p3) |- (sinc);
+        \draw [-stealth] (sinc) -| (p1);
+        \draw [-stealth] (p5) |- (comp.150);
+        \draw [-stealth] (v0) |- (comp.south west);
+        \draw [-stealth] (comp) -- (salida);
     \end{blockdiagram}
 \endpgfgraphicnamed

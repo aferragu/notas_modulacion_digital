@@ -14,17 +14,17 @@ cada tramo. Ejemplo de uso: cajas subterráneas en telefonía.
         & \node[etiqueta] (ruido1) {$n_1$}; & & \node[etiqueta] (ruido2) {$n_2$}; & & & \node[etiqueta] (ruidom) {$n_m$};\\
         \node[etiqueta] (inicio) {$x(t)$}; & \node[operator] (sum1) {$+$}; & \node[block] (amp1) {AMP}  node [above right=5mm] {$y_1(t)$} node [below=3mm] {\begin{minipage}{1.5cm}\centering ganancia\\ $\frac{1}{a}$\end{minipage}}; & \node[operator] (sum2) {$+$}; & \node[block] (amp2) {AMP}; & \node[etiqueta] (puntos) {$\ldots$}; & \node[operator] (summ) {$+$}; & \node[block] (ampm) {AMP}; & \node[etiqueta] (salida) {$y(t)$};\\
     };
-    \draw [->,ultra thick] (inicio) -- node [anchor=north] {\begin{minipage}{20mm}\centering TR.1\\ atenuación $a$ ($a\ll 1$)\end{minipage}} (sum1);
-    \draw [->] (sum1) -- (amp1);
-    \draw [->] (ruido1) -- (sum1);
-    \draw [->,ultra thick] (amp1) -- node [anchor=north] {TR. 2} (sum2);
-    \draw [->] (ruido2) -- (sum2);
-    \draw [->] (sum2) -- (amp2);
-    \draw [->,ultra thick] (amp2) -- (puntos);
-    \draw [->,ultra thick] (puntos) -- (summ);
-    \draw [->] (ruidom) -- (summ);
-    \draw [->] (summ) -- (ampm);
-    \draw [->] (ampm) -- (salida);
+    \draw [-stealth,ultra thick] (inicio) -- node [anchor=north] {\begin{minipage}{20mm}\centering TR.1\\ atenuación $a$ ($a\ll 1$)\end{minipage}} (sum1);
+    \draw [-stealth] (sum1) -- (amp1);
+    \draw [-stealth] (ruido1) -- (sum1);
+    \draw [-stealth,ultra thick] (amp1) -- node [anchor=north] {TR. 2} (sum2);
+    \draw [-stealth] (ruido2) -- (sum2);
+    \draw [-stealth] (sum2) -- (amp2);
+    \draw [-stealth,ultra thick] (amp2) -- (puntos);
+    \draw [-stealth,ultra thick] (puntos) -- (summ);
+    \draw [-stealth] (ruidom) -- (summ);
+    \draw [-stealth] (summ) -- (ampm);
+    \draw [-stealth] (ampm) -- (salida);
   \end{blockdiagram}
   \endpgfgraphicnamed\end{minipage}
  \end{center}

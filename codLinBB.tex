@@ -21,32 +21,32 @@ línea son:
             \draw (10,1) -- (10,-18.5);
             \path (0,0.5) node [anchor=east] {SÍMBOLO} -- (1,0.5) node {$1$} -- (3,0.5) node {$1$} -- (5,0.5) node {$0$} -- (7,0.5) node {$0$} -- (9,0.5) node {$1$} -- (11,0.5) node {$0$};
             \begin{scope}[shift={(0,-2)}]
-                \draw[->] (-0.5,0) -- (12.5,0) node [anchor=north] {$t$};
+                \draw[-stealth] (-0.5,0) -- (12.5,0) node [anchor=north] {$t$};
                 \path (0,0.5) node [anchor=east] {Unipolar, RZ};
                 \draw[very thick] (0,0) -- (0.5,0) -- (0.5,1) -- (1.5,1) -- (1.5,0) -- (2.5,0) -- (2.5,1) -- (3.5,1) -- (3.5,0) -- (8.5,0) -- (8.5,1) -- (9.5,1) -- (9.5,0) -- (12,0);
             \end{scope}
             \begin{scope}[shift={(0,-5)}]
-                \draw[->] (-0.5,0) -- (12.5,0) node [anchor=north] {$t$};
+                \draw[-stealth] (-0.5,0) -- (12.5,0) node [anchor=north] {$t$};
                 \path (0,0.5) node [anchor=east] {Unipolar, NRZ};
                 \draw [very thick] (0,0) -- (0,1) -- (4,1) -- (4,0) -- (8,0) -- (8,1) -- (10,1) -- (10,0) -- (12,0);
             \end{scope}
             \begin{scope}[shift={(0,-8)}]
-                \draw[->] (-0.5,0) -- (12.5,0) node [anchor=north] {$t$};
+                \draw[-stealth] (-0.5,0) -- (12.5,0) node [anchor=north] {$t$};
                 \path (0,0.5) node [anchor=east] {Polar, RZ};
                 \draw [very thick] (0,0) -- (0.5,0) -- (0.5,1) -- (1.5,1) -- (1.5,0) -- (2.5,0) -- (2.5,1) -- (3.5,1) -- (3.5,0) -- (4.5,0) -- (4.5,-1) -- (5.5,-1) -- (5.5,0) -- (6.5,0) -- (6.5,-1) -- (7.5,-1) -- (7.5,0)-- (8.5,0) -- (8.5,1) -- (9.5,1) -- (9.5,0) -- (10.5,0) -- (10.5,-1) -- (11.5,-1) -- (11.5,0) -- (12,0);
             \end{scope}
             \begin{scope}[shift={(0,-11)}]
-                \draw[->] (-0.5,0) -- (12.5,0) node [anchor=north] {$t$};
+                \draw[-stealth] (-0.5,0) -- (12.5,0) node [anchor=north] {$t$};
                 \path (0,0.5) node [anchor=east] {Polar, NRZ};
                 \draw [very thick] (0,0) -- (0,1) -- (4,1) -- (4,-1) -- (8,-1) -- (8,1) -- (10,1) -- (10,-1) -- (12,-1);
             \end{scope}
             \begin{scope}[shift={(0,-14)}]
-                \draw[->] (-0.5,0) -- (12.5,0) node [anchor=north] {$t$};
+                \draw[-stealth] (-0.5,0) -- (12.5,0) node [anchor=north] {$t$};
                 \path (0,0.5) node [anchor=east] {Bipolar, RZ};
                 \draw[very thick] (0,0) -- (0.5,0) -- (0.5,1) -- (1.5,1) -- (1.5,0) -- (2.5,0) -- (2.5,-1) -- (3.5,-1) -- (3.5,0) -- (8.5,0) -- (8.5,1) -- (9.5,1) -- (9.5,0) -- (12,0);
             \end{scope}
             \begin{scope}[shift={(0,-17)}]
-                \draw[->] (-0.5,0) -- (12.5,0) node [anchor=north] {$t$};
+                \draw[-stealth] (-0.5,0) -- (12.5,0) node [anchor=north] {$t$};
                 \path (0,0.5) node [anchor=east] {Manchester};
                 \draw[very thick] (0,1) -- (1,1) -- (1,-1) -- (2,-1) -- (2,1) -- (3,1) -- (3,-1) -- (5,-1) -- (5,1) -- (6,1) -- (6,-1) -- (7,-1) -- (7,1) -- (9,1) -- (9,-1) -- (11,-1) -- (11,1) -- (12,1);
             \end{scope}
@@ -126,12 +126,12 @@ Notar que en este caso $\hat{P}(nf_s)=0$ para todo $n\neq 0$, por lo tanto el re
     \begin{center}\begin{minipage}{\textwidth}
         \bpgf{Imagenes/codLinBB/codLinBB-3}
         \begin{tikzpicture}
-            \draw [->] (-6,0) -- (6,0) node [anchor=north] {$f$};
-            \draw [->] (0,-0.5) -- (0,4) node [anchor=east] {$S_x(f)$};
+            \draw [-stealth] (-6,0) -- (6,0) node [anchor=north] {$f$};
+            \draw [-stealth] (0,-0.5) -- (0,4) node [anchor=east] {$S_x(f)$};
             \draw [samples=200,domain=-5:5] plot (\x,{2*(sin(3*\x r)/(3*\x))^2});
             \path (0,2) node [anchor=west] {$\sigma^2 T_s$};
             \path (-pi/3,0) node [anchor=north] {$-f_s$} -- (pi/3,0) node [anchor=north] {$f_s$} -- (2*pi/3,0) node [anchor=north] {$2 f_s$};
-            \draw [very thick, ->] (0,0) -- (0,3.5) node [anchor=west] {$\mu^2$};
+            \draw [very thick, -stealth] (0,0) -- (0,3.5) node [anchor=west] {$\mu^2$};
         \end{tikzpicture}
         \endpgfgraphicnamed\end{minipage}
     \end{center}
@@ -170,7 +170,7 @@ Si particularizamos al caso de la onda binaria aleatoria, $a_k=\pm 1$, I.I.D., t
                                     \draw (0,-0.5) -- (0,1.5);
                                     \path (0,0) node [anchor=north east] {$0$} -- (1,0) node [anchor=north] {$T_s$};
                                     \draw [very thick] (0,0) -- (0.25,0) -- (0.25,1) -- (0.75,1) -- (0.75,0) -- (1,0);
-                                    \draw [<->] (0.25,-0.25) -- (0.75,-0.25);
+                                    \draw [stealth-stealth] (0.25,-0.25) -- (0.75,-0.25);
                                     \path (0.5,-0.25) node [anchor=north] {$\tau=\frac{T_s}{2}$};
                                 \end{tikzpicture}
                                 \endpgfgraphicnamed%\end{minipage}
@@ -181,16 +181,16 @@ Si particularizamos al caso de la onda binaria aleatoria, $a_k=\pm 1$, I.I.D., t
     \begin{center}\begin{minipage}{\textwidth}
         \bpgf{Imagenes/codLinBB/codLinBB-5}
         \begin{tikzpicture}
-            \draw [->] (-6,0) -- (6,0) node [anchor=north] {$f$};
-            \draw [->] (0,-0.5) -- (0,5) node [anchor=east] {$S_x(f)$};
+            \draw [-stealth] (-6,0) -- (6,0) node [anchor=north] {$f$};
+            \draw [-stealth] (0,-0.5) -- (0,5) node [anchor=east] {$S_x(f)$};
             \draw [samples=200,domain=-5:5] plot (\x,{4*(sin(3*\x/2 r)/(3*\x/2))^2});
             \path (0,4) node [anchor=west] {$\frac{\sigma^2 T_s}{4}$};
             \path (-pi,0) node [anchor=north] {$-3 f_s$} -- (-2*pi/3,0) node [anchor=north] {$-2 f_s$} -- (-pi/3,0) node [anchor=north] {$-f_s$} -- (pi/3,0) node [anchor=north] {$f_s$} -- (2*pi/3,0) node [anchor=north] {$2 f_s$} -- (pi,0) node [anchor=north] {$3 f_s$};
-            \draw [very thick, ->] (0,0) -- (0,2.5) node [anchor=west] {$\frac{\mu^2}{4}$};
-            \draw [very thick,->] (-pi,0) -- (-pi,0.25);
-            \draw [very thick,->] (-pi/3,0) -- (-pi/3,1);
-            \draw [very thick,->] (pi/3,0) -- (pi/3,1);
-            \draw [very thick,->] (pi,0) -- (pi,0.25);
+            \draw [very thick, -stealth] (0,0) -- (0,2.5) node [anchor=west] {$\frac{\mu^2}{4}$};
+            \draw [very thick,-stealth] (-pi,0) -- (-pi,0.25);
+            \draw [very thick,-stealth] (-pi/3,0) -- (-pi/3,1);
+            \draw [very thick,-stealth] (pi/3,0) -- (pi/3,1);
+            \draw [very thick,-stealth] (pi,0) -- (pi,0.25);
         \end{tikzpicture}
         \endpgfgraphicnamed\end{minipage}
     \end{center}
@@ -207,7 +207,7 @@ Sea $p(t)$  \begin{minipage}{5cm}
             \draw (0,-0.5) -- (0,1.5);
             \path (0,0) node [anchor=north east] {$0$} -- (1,0) node [anchor=north] {$T_s$};
             \draw [very thick] (0,0) -- (0.25,0) -- (0.25,1) -- (0.75,1) -- (0.75,0) -- (1,0);
-            \draw [<->] (0.25,-0.25) -- (0.75,-0.25);
+            \draw [stealth-stealth] (0.25,-0.25) -- (0.75,-0.25);
             \path (0.5,-0.25) node [anchor=north] {$\tau$};
         \end{tikzpicture}
         \endpgfgraphicnamed
@@ -216,8 +216,8 @@ Sea $p(t)$  \begin{minipage}{5cm}
 \begin{minipage}{0.45\textwidth}
     \bpgf{Imagenes/codLinBB/codLinBB-7}
         \begin{tikzpicture}
-            \draw [->] (-0.5,0) -- (6,0) node [anchor=north] {$f$};
-            \draw [->] (0,-0.5) -- (0,5) node [anchor=west] {$\sinc^2(\pi \tau f)$};
+            \draw [-stealth] (-0.5,0) -- (6,0) node [anchor=north] {$f$};
+            \draw [-stealth] (0,-0.5) -- (0,5) node [anchor=west] {$\sinc^2(\pi \tau f)$};
             \draw [samples=200,domain=0.001:5] plot (\x,{4*(sin(3*\x/2 r)/(3*\x/2))^2});
             \path (0,4) node [anchor=east] {$1$};
             \draw (pi/3,0) node [anchor=north] {$\frac{1}{2\tau}$} -- (pi/3,{4*(sin(pi/2 r)/(pi/2))^2});

@@ -13,8 +13,8 @@ PAM $\sum a_k p(t-kT_s)$, con pulsos rectangulares.
             \matrix[column sep=10mm]{
                 \node[punto] (inicio) {}; & \node[block] (pasa) {PASABAJOS}; & \node[punto] (salida) {};\\
             };
-            \draw [->] (inicio) -- (pasa);
-            \draw [->] (pasa) -- (salida);
+            \draw [-stealth] (inicio) -- (pasa);
+            \draw [-stealth] (pasa) -- (salida);
         \end{scope}
         \begin{scope}[shift={(11,0)}]
             \draw (-0.5,0) -- (0.25,0);
@@ -150,8 +150,8 @@ $p(t)= \sinc (\pi f_s t)$:
 \begin{center}\begin{minipage}{\textwidth}
     \bpgf{Imagenes/formPuls/formPuls-4}
     \begin{tikzpicture}
-        \draw[->] (-5,0) -- (5,0) node [anchor=north] {$t$};
-        \draw[->] (0,-1.5) -- (0,5) node [anchor=west] {$p(t)$};
+        \draw[-stealth] (-5,0) -- (5,0) node [anchor=north] {$t$};
+        \draw[-stealth] (0,-1.5) -- (0,5) node [anchor=west] {$p(t)$};
         \path (0,4.5) node [anchor=east] {$1$};
         \draw [samples=200,domain=-4.8:4.8] plot (\x,{4.5*sin(2*\x r)/(2*\x)});
         \path (-pi,0) node [anchor=north east] {$-2 T_s$} -- (-pi/2,0) node [anchor=south east] {$-T_s$} -- (pi/2,0) node [anchor=south west] {$T_s$} -- (pi,0) node [anchor=north west] {$2 T_s$};
@@ -160,8 +160,8 @@ $p(t)= \sinc (\pi f_s t)$:
 
     \bpgf{Imagenes/formPuls/formPuls-5}
     \begin{tikzpicture}
-        \draw[->] (-3,0) -- (3,0) node [anchor=north] {$f$};
-        \draw[->] (0,-0.5) -- (0,2) node [anchor=west] {$\hat{P}(f)$};
+        \draw[-stealth] (-3,0) -- (3,0) node [anchor=north] {$f$};
+        \draw[-stealth] (0,-0.5) -- (0,2) node [anchor=west] {$\hat{P}(f)$};
         \draw (-2,0) node [anchor=north] {$-\frac{f_s}{2}$} -- (-2,1) -- (0,1) node [anchor=south west] {$T_s$} -- (2,1) -- (2,0) node [anchor=north] {$B=\frac{f_s}{2}$};
     \end{tikzpicture}
     \endpgfgraphicnamed\end{minipage}
@@ -248,14 +248,14 @@ Se cumplirá $p(0)=1$, $p(kT_s) = 0 \forall\,k\neq 0$, entonces de una sucesión
     \bpgf{Imagenes/formPuls/formPuls-7}
     \begin{tikzpicture}
         \path (-2.5,1) node {$\hat{P}(f)$};
-        \draw [->] (-1.5,0) -- (1.5,0);
-        \draw [->] (0,-0.5) -- (0,1);
+        \draw [-stealth] (-1.5,0) -- (1.5,0);
+        \draw [-stealth] (0,-0.5) -- (0,1);
         \draw (-1,0) node [anchor=north] {$-\frac{f_s}{2}$} -- (-1,0.5) -- (1,0.5) node [anchor=south west] {$T_s$} -- (1,0) node [anchor=north] {$\frac{f_s}{2}$};
         \path (2.5,0.5) node {\Huge$\ast$};
         \begin{scope}[shift={(7,0)}]
             \path (-2.5,1) node {$\hat{M}(f)$};
-            \draw [->] (-1.5,0) -- (1.5,0);
-            \draw [->] (0,-0.5) -- (0,1);
+            \draw [-stealth] (-1.5,0) -- (1.5,0);
+            \draw [-stealth] (0,-0.5) -- (0,1);
             \draw [samples=200,domain=-0.5:0.5] plot (\x,{1/4*(1+cos(pi*2*\x r))});
         \end{scope}
     \end{tikzpicture}
@@ -270,18 +270,18 @@ f_s}{2}$, $0<\alpha<1$ para que espectro total no crezca mucho.
     \centering\begin{minipage}{\textwidth}
     \bpgf{Imagenes/formPuls/formPuls-8}
     \begin{tikzpicture}
-        \draw [->] (-7,0) -- (7,0);
-        \draw [->] (0,-6.5) -- (0,2);
+        \draw [-stealth] (-7,0) -- (7,0);
+        \draw [-stealth] (0,-6.5) -- (0,2);
         \draw (-4,0) node [anchor=north] {$-\frac{f_s}{2}$} -- (-4,1) -- (0,1) node [anchor=south west] {$T_s$} -- (4,1) -- (4,0) node [anchor=north] {$\frac{f_s}{2}$};
         \begin{scope}[shift={(0,-2)}]
-            \draw [->] (-7,0) -- (7,0) node [anchor=north] {$\sigma$};
+            \draw [-stealth] (-7,0) -- (7,0) node [anchor=north] {$\sigma$};
             \draw [samples=200,domain=-1:1] plot (\x,{4/pi*cos(pi*\x/2 r)});
             \path (-1,0) node [anchor=north] {$-\alpha\frac{f_s}{2}$} -- (1,0) node [anchor=north] {$\alpha\frac{f_s}{2}$};
             \path (1,1) node {$\hat{M}$};
             \path (-1,0.5) node [anchor=east] {área $1$};
         \end{scope}
             \begin{scope}[shift={(0,-4)}]
-            \draw [->] (-7,0) -- (7,0);
+            \draw [-stealth] (-7,0) -- (7,0);
             \begin{scope}[shift={(-5,0)}]
                 \draw [samples=200,domain=-1:1] plot (\x,{4/pi*cos(pi*\x/2 r)});
                 \path (1,1) node [anchor=west] {$\hat{M}(f-\sigma)$};
@@ -289,7 +289,7 @@ f_s}{2}$, $0<\alpha<1$ para que espectro total no crezca mucho.
             \end{scope}
         \end{scope}
         \begin{scope}[shift={(0,-6)}]
-            \draw [->] (-7,0) -- (7,0) node [anchor=north] {$\sigma$};
+            \draw [-stealth] (-7,0) -- (7,0) node [anchor=north] {$\sigma$};
             \draw [samples=200,domain=-5:-3] plot (\x,{1/2*(1+cos((\x-1)*pi/2 r))}) -- (3,1);
             \draw [samples=200,domain=3:5] plot (\x,{1/2*(1-cos((\x-1)*pi/2 r))});
             \path (-5,0) node [anchor=north] {$-\frac{f_s}{2}(1+\alpha)$} -- (5,0) node [anchor=north] {$\frac{f_s}{2}(1+\alpha)$};
@@ -346,16 +346,16 @@ concentrado en el tiempo.
         \centering\begin{minipage}{\textwidth}
         \bpgf{Imagenes/formPuls/formPuls-9}
         \begin{tikzpicture}
-            \draw [->] (0,-1) -- (0,3);
-            \draw [->] (-6,0) -- (6,0);
+            \draw [-stealth] (0,-1) -- (0,3);
+            \draw [-stealth] (-6,0) -- (6,0);
             \draw [samples=200,domain=-5:5] plot (\x, {2.5*sin(2*\x r)/(2*\x)});
             \draw [samples=200,domain=-5:5,red] plot (\x, {2.5*sin(2*\x r)/(2*\x)*cos(\x r)/(1-(2/pi*\x)^2)});
             \draw [samples=200,domain=-5:5,blue] plot (\x, {2.5*sin(2*\x r)/(2*\x)*cos(2*\x r)/(1-(4/pi*\x)^2)});
             \path (5,0.6) node {$\alpha=0$ (sinc)};
             \path (4.3,-.7) [red] node {$\alpha=0.5 $};
             \path [blue] (0.7,-0.5) node {$\alpha=1 $};
-            \draw [->] [red] (3.5,-.7) -- (2.5,-0.3);
-            \draw [->] [blue] (1.2,-0.4) -- (2,-0.1);
+            \draw [-stealth] [red] (3.5,-.7) -- (2.5,-0.3);
+            \draw [-stealth] [blue] (1.2,-0.4) -- (2,-0.1);
         \end{tikzpicture}
         \endpgfgraphicnamed\end{minipage}
     \end{figure}
@@ -383,8 +383,8 @@ Estas dos condiciones se escriben como:
     \resizebox{\textwidth}{!}{
     \bpgf{Imagenes/formPuls/formPuls-10}
     \begin{tikzpicture}
-        \draw [->] (-5,0) -- (5,0) node [anchor=north] {$f$};
-        \draw [->] (0,-0.5) -- (0,1.5) node [anchor=west] {$\hat{P}$};
+        \draw [-stealth] (-5,0) -- (5,0) node [anchor=north] {$f$};
+        \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$\hat{P}$};
         \draw (2,0) .. controls (1,0) and (1,1) .. (0,1);
         \draw (-2,0) .. controls (-1,0) and (-1,1) .. (0,1);
         \draw [dotted] (0,0) .. controls (1,0) and (1,1) .. (2,1) .. controls (3,1) and (3,0) .. (4,0);
@@ -405,8 +405,8 @@ Sólo $2$ copias se superponen en $[0,f_s)$.
     \resizebox{\textwidth}{!}{
     \bpgf{Imagenes/formPuls/formPuls-11}
     \begin{tikzpicture}[xscale=2]
-        \draw [->] (-0.5,0) -- (2,0);
-        \draw [->] (0,-0.5) -- (0,1.5);
+        \draw [-stealth] (-0.5,0) -- (2,0);
+        \draw [-stealth] (0,-0.5) -- (0,1.5);
         \draw (2,0) -- (2,1.5);
         \draw (2,0) .. controls (1,0) and (1,1) .. (0,1);
         \draw (0,0) .. controls (1,0) and (1,1) .. (2,1);
@@ -456,8 +456,8 @@ logra evitar, y se recibe una onda $x_R(t) = \sum a_k
     \centering\begin{minipage}{\textwidth}
     \bpgf{Imagenes/formPuls/formPuls-12}
     \begin{tikzpicture}
-        \draw[->] (-1.5,0) -- (3,0) node [anchor=north] {$t$};
-        \draw [->] (0,-0.5) -- (0,1.5) node [anchor=west] {$\tilde{p}(t)$};
+        \draw[-stealth] (-1.5,0) -- (3,0) node [anchor=north] {$t$};
+        \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$\tilde{p}(t)$};
         \draw [domain=-1:3,samples=200] plot (\x,{sin(pi*\x r)/(pi*\x)});
         \draw (0.7,{sin(pi*0.7 r)/(pi*0.7)}) -- (0.7,0) node [anchor=north] {$T_s$};
         \draw (-0.7,{sin(pi*(-0.7) r)/(-pi*0.7)}) -- (-0.7,0);

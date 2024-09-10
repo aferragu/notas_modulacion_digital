@@ -6,20 +6,20 @@
             & & & \node [operator] (sum1) {$+$}; & & \node [operator] (sum2) {$+$}; & \node [punto] (p5) {};& &\node [etiqueta]  {$\cdots$}; & & \node [punto] (p6) {};&\node [operator] (sum3) {$+$}; & \node [etiqueta] (salida) {$y(t)$};\\
         };
         \draw (inicio) -- (p1);
-        \draw [->] (p1) -- (T1);
+        \draw [-stealth] (p1) -- (T1);
         \draw (T1) -- (p2);
-        \draw [->] (p2) -- (T2);
-        \draw [->] (T2) -- (p3);
-        \draw [->] (p4) -- (T3);
-        \draw [->] (p1) -- (m1);
-        \draw [->] (p2) -- (m2);
-        \draw [->] (T3) -|  (m3);
-        \draw [->] (m1) |- (sum1);
-        \draw [->] (m2) -- (sum1);
-        \draw [->] (sum1) -- (sum2);
-        \draw [->] (sum2) -- (p5);
-        \draw [->] (p6) -- (sum3);
-        \draw [->] (m3) -- (sum3);
-        \draw [->] (sum3) -- (salida);
+        \draw [-stealth] (p2) -- (T2);
+        \draw [-stealth] (T2) -- (p3);
+        \draw [-stealth] (p4) -- (T3);
+        \draw [-stealth] (p1) -- (m1);
+        \draw [-stealth] (p2) -- (m2);
+        \draw [-stealth] (T3) -|  (m3);
+        \draw [-stealth] (m1) |- (sum1);
+        \draw [-stealth] (m2) -- (sum1);
+        \draw [-stealth] (sum1) -- (sum2);
+        \draw [-stealth] (sum2) -- (p5);
+        \draw [-stealth] (p6) -- (sum3);
+        \draw [-stealth] (m3) -- (sum3);
+        \draw [-stealth] (sum3) -- (salida);
     \end{blockdiagram}
     \endpgfgraphicnamed
