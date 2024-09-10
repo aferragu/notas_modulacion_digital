@@ -7,21 +7,12 @@ donde los pulsos son NRZ de ancho $T_s$ y $f_k=\pm f_\Delta$.
 Antes de estudiar el detector, veamos algunas propiedades de la
 onda FSK.
 
-\newlength\longUno
-\newlength\longDos
-\newlength\longitud
-\newcommand{\opciones}[2]{%
-\settowidth\longUno{#1}%
-\settowidth\longDos{#2}%
-\ifthenelse{\longUno>\longDos}{\setlength\longitud{1.1\longUno}}{\setlength\longitud{1.1\longDos}}%
-\ensuremath{\parbox{\longitud}{\centering \text{#1}\\ \text{#2}}}%
-}
 \subsection*{Continuidad de fase (entre un símbolo y otro)}
-\noindent Suponemos $f_c T_s$ entero, sin pérdida de generalidad.
-    En un período de símbolo \opciones{$f_k=f_\Delta$}{$f_k=-f_\Delta$}, el cambio de fase es \opciones{$\Delta\phi^+=2\pi f_\Delta T_s$}{$\Delta\phi^-=-2\pi f_\Delta
-    T_s$}.
 
-    Para que la onda sea continua, este cambio debe ser igual (a menos de $2\pi m$)
+Suponemos $f_c T_s$ entero, sin pérdida de generalidad.
+En un período de símbolo, $f_k=f_\Delta$ o $f_k=-f_\Delta$, por lo que el cambio de fase es $\Delta\phi^+=2\pi f_\Delta T_s$ o $\Delta\phi^-=-2\pi f_\Delta T_s$.
+
+Para que la onda sea continua, este cambio debe ser igual (a menos de $2\pi m$)
     \begin{gather*}
         \Rightarrow \Delta\phi^+ - \Delta\phi^- = 2m\pi.\\
         \Rightarrow 4 \pi f_\Delta T_s = 2 m \pi \Rightarrow \col{f_\Delta = m \frac{f_s}{2}}
