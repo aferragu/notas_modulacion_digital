@@ -40,7 +40,7 @@ Esta función, periódica de período 1, depende de la variable de frecuencia no
 
 
 \subsection*{Teorema}
-Sea $\{a_k\}$ un proceso estacionario de símbolos, con densidad espectral de potencia discreta $
+Sea $\{a_k\}$ un proceso estacionario de símbolos, con una densidad espectral de potencia discreta $
 S_a(\varphi)$. Sea  $\theta$ es una V.A. uniforme en
 $[0,T_s]$ independiente del proceso de símbolos. Entonces $y(t)$ definido por
 \[
@@ -56,11 +56,11 @@ es un proceso estacionario de tiempo continuo, con densidad espectral de potenci
 
 \begin{proof} Calculamos la autocorrelación del proceso $y(t)$. Para ello, para un $\theta$ fijo calculamos el valor esperado
 condicional $E\left[y(t) y(t+\tau)|\theta\right]$ (sobre el
-proceso $\{a_k\}$), y despues promediamos en $\theta$ uniforme.
+proceso $\{a_k\}$), y después promediamos en $\theta$ uniforme.
 \begin{align*}
     E\left[y(t)y(t+\tau)|\theta\right]  & = E\left[\sum_k a_k p(t+\theta-kT_s) \sum_m a_m p(t+\tau+\theta-mT_s)\right]\\
                         & = \sum_{k,m} E[a_k a_m] p(t+\theta - kT_s) p(t+\tau+\theta-mT_s)\\
-        \underset{\scriptsize(l=m-k)}{} & =  \sum_{k,l} R_a(l) p(t+\theta-kT_s) p(t+\tau+\theta-lT_s-kT_s)\\
+        \underset{\scriptstyle(l=m-k)}{} & =  \sum_{k,l} R_a(l) p(t+\theta-kT_s) p(t+\tau+\theta-lT_s-kT_s)\\
                         & = \sum_l R_a(l) \sum_k p(t+\theta-kT_s)
                         p(t+\tau-lT_s+\theta-kT_s).
 \end{align*}
@@ -69,7 +69,7 @@ Ahora promedio en $\theta$:
 \begin{align}\label{eq.rytau}
     E\left[y(t)y(t+\tau)\right]         & = \frac{1}{T_s}\int_0^{T_s} E\left[y(t)y(t+\tau)|\theta\right]\d\theta  \nonumber \\
                         & = f_s \sum_l R_a(l) \sum_k\int_0^{T_s} p(t+\theta-kT_s) p(t+\theta-kT_s + \tau-lT_s)\d\theta \nonumber\\
-\underset{\scriptsize(\eta=\theta-kT_s+t)}{}    & = f_s  \sum_l R_a(l) \sum_k \int_{t-kT_s}^{t-kT_s+T_s} p(\eta) p(\eta + \tau - lT_s)\d\eta\nonumber\\
+\underset{\scriptstyle(\eta=\theta-kT_s+t)}{}    & = f_s  \sum_l R_a(l) \sum_k \int_{t-kT_s}^{t-kT_s+T_s} p(\eta) p(\eta + \tau - lT_s)\d\eta\nonumber\\
                         & = f_s \sum_l R_a(l) \int_{-\infty}^{+\infty} p(\eta) p(\eta + \tau-lT_s)\d\eta\nonumber\\
                         & = f_s \sum_l R_a(l) r_p(\tau-lT_s).
 \end{align}

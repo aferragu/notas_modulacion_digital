@@ -9,7 +9,7 @@ $x_c(t)=\sum_k a_kp(t-kT_s)\cos(\omega_c t)$, donde $a_k=\{0,A\}$ (ASK) o $a_k=\
 generalizamos.
 
 Suponemos en lo que sigue que $f_c$ es múltiplo de $f_s$ (hay un número entero de ciclos del
-coseno en el intervalo de un símbolo). Tenenemos en ese caso
+coseno en el intervalo de un símbolo). Tenemos en ese caso
 \[
 x_c(t) = \sum_k a_kp(t-kT_s)\cos(\omega_c t) =
 \sum_k a_kp(t-kT_s)\cos(\omega_c (t-kT_s)) =
@@ -17,7 +17,7 @@ x_c(t) = \sum_k a_kp(t-kT_s)\cos(\omega_c t) =
 \]
 donde definimos el pulso de radio frecuencia $\tilde{p}(t) =
 p(t)\cos(\omega_c t)$.  La fórmula de la derecha corresponde a una onda PAM con pulso básico
-$\tilde{p}(t)$, por tanto el decector óptimo en presencia de ruido blanco consistiría del diagrama de
+$\tilde{p}(t)$, por tanto el detector óptimo en presencia de ruido blanco consistiría del diagrama de
 bloques
 
 \begin{figure}[htb]
@@ -46,7 +46,7 @@ $h_{opt}(t) = K\tilde{p}(\tau-t)=Kp(\tau-t)\cos\left(\omega_c(t-\tau)\right)$.
 
 \paragraph{Problema:} la señal $y(t)$ es pasabanda, del orden de $(f_c)$, o sea que oscila
 rápidamente. Para muestrearla haría falta una sincronización muy
-fina, con precisión del orden de $1/f_c \ll T_s$, muy dificil de
+fina, con precisión del orden de $1/f_c \ll T_s$, muy difícil de
 lograr.
 
 \begin{ejemplo} pulsos NRZ
@@ -66,9 +66,9 @@ lograr.
                 \draw [samples=200,domain=0:2] plot (\x,{1/2*\x*sin(3.25*pi*\x r)});
                 \draw [samples=200,domain=2:4] plot (\x,{1/2*(4-\x)*sin(3.25*pi*\x r)});
                 \draw (2,0.05) -- (2,-0.05);
-                \path (2,0) node[anchor=north] {$\footnotesize T_s$};
+                \path (2,0) node[anchor=north] {\footnotesize $T_s$};
                 \draw (4,0.05) -- (4,-0.05);
-                \path (4,0) node[anchor=north] {$\footnotesize 2T_s$};
+                \path (4,0) node[anchor=north] {\footnotesize $2T_s$};
                 \draw [dotted] (0,0) -- (2,1) -- (4,0) -- (2,-1) -- (0,0);
                 \draw [-stealth] (2,1.3) -- (2,1);
             \end{scope}
@@ -353,7 +353,7 @@ son
 \[P_e(a_k) = P_e(b_k) = Q\left(\frac{A}{\sigma}\right).\]
 La probabilidad de error de símbolo es
 \[
-P_e(\text{simb})= 1 - (1-P_e(a_k))(1-P_e(b_k)) \approx 2
+P_e(\text{símbolo})= 1 - (1-P_e(a_k))(1-P_e(b_k)) \approx 2
 Q\left(\frac{A}{\sigma}\right).\]
 
 \subsubsection*{Expresión con $\frac{\overline{E_p}}{\eta}$}
@@ -361,7 +361,7 @@ Q\left(\frac{A}{\sigma}\right).\]
 \begin{gather*}
     \overline{E_p}=\underbrace{E[a_k^2]}_{A^2} \underbrace{\left\|p(t)\cos(\omega_ct)\right\|^2}_{\frac{T_s}{2}} + \underbrace{E[b_k^2]}_{A^2} \underbrace{\left\|p(t)\sen(\omega_ct)\right\|^2}_{\frac{T_s}{2}} = A^2 T_s\\
     \Rightarrow \frac{A}{\sigma}=\sqrt{\frac{\overline{E_p}}{\eta}}
-    \Rightarrow  P_e(\text{simb})  = 2
+    \Rightarrow  P_e(\text{símbolo})  = 2
     Q\left(\sqrt{\frac{\overline{E_p}}{\eta}}\right).
 \end{gather*}
 
@@ -436,7 +436,7 @@ Incluyendo $M_a=\sqrt{M}$, y considerando también $P_e(b_k)$
 obtenemos
 
 \[
-P_e(\text{simb})=4\frac{\sqrt{M}-1}{\sqrt{M}}
+P_e(\text{símbolo})=4\frac{\sqrt{M}-1}{\sqrt{M}}
 Q\left(\frac{A}{\sigma}\right).\]
 
 \paragraph{Expresión con $\overline{E_p}$}
@@ -549,13 +549,13 @@ $\theta_k=0$.
 \begin{minipage}{0.5\textwidth}
 \begin{gather*}
     \tan(\theta)=\frac{n^q_k}{A+n^i_k},\\
-    P_e(\text{simb}) = P\left(|\theta|>\frac{\pi}{M}\right).
+    P_e(\text{símbolo}) = P\left(|\theta|>\frac{\pi}{M}\right).
 \end{gather*}
 \end{minipage}
 
 Esto es complejo de evaluar analíticamente, pero existe una
 aproximación para $M\geq 4$ y $A \gg \sigma$:
-\[P_e(\text{simb})\approx 2 Q\left(\sqrt{\frac{\overline{E_p}}{\frac{\eta}{2}}\sen^2\left(\tfrac{\pi}{M}\right)}\right).\]
+\[P_e(\text{símbolo})\approx 2 Q\left(\sqrt{\frac{\overline{E_p}}{\frac{\eta}{2}}\sen^2\left(\tfrac{\pi}{M}\right)}\right).\]
 
 
 \subsection*{Comparación MQAM-MPSK(M grande)}
@@ -565,8 +565,7 @@ aproximación para $M\geq 4$ y $A \gg \sigma$:
     \item[PSK] $P_e\approx 2 Q\left(\sqrt{\frac{2\pi^2\overline{E_p}}{M^2\eta}}\right)$.
  \end{description}
 El argumento de la función $Q(\cdot)$ cae más rápido con $M$ en
-PSK que en QAM
-\\$\Longrightarrow P_e$ es mayor (peor) en PSK que en QAM.  \\
+PSK que en QAM $\Longrightarrow P_e$ es mayor (peor) en PSK que en QAM.
 
  {\bf QAM superior a MPSK (M
 grande).}
@@ -613,10 +612,10 @@ que
 \[P_e(\text{bit})=\text{``BER''} = \col{\frac{P_e(\text{simb})}{\log_2(M)}}\]
 
 %\newpage
-\subsubsection*{Coficación de Gray}
+\subsubsection*{Codificación de Gray}
 
 Para MPSK, la constelación es esencialmente unidimensional (en un
-círculo), por lo tanto podemos generar codigos de Gray en forma
+círculo), por lo tanto podemos generar códigos de Gray en forma
 similar al caso de banda base. Ejemplo de 8-PSK:
 
 
@@ -644,7 +643,7 @@ similar al caso de banda base. Ejemplo de 8-PSK:
 
 
 Para lograr esta propiedad en QAM hace falta una codificación de
-Gray para una constelación bidimensional. La solución es coficar
+Gray para una constelación bidimensional. La solución es codificar
 por Gray  cada coordenada, que representa bits independientes.
 Ejemplo con 16-QAM:
 
@@ -662,25 +661,25 @@ Ejemplo con 16-QAM:
                 \path (\x,0) node  [anchor=north east] {$\p A$};
                 \foreach \y in {-3,-1,...,3}
                     \draw [fill] (\x,\y) circle (0.07);}
-            \path (-3,-3) node [anchor=west] {$\footnotesize 0000$};
-            \path (-1,-3) node [anchor=west] {$\footnotesize 0100$};
-            \path (1,-3) node [anchor=west] {$\footnotesize 1100$};
-            \path (3,-3) node [anchor=west] {$\footnotesize 1000$};
+            \path (-3,-3) node [anchor=west] {\footnotesize $0000$};
+            \path (-1,-3) node [anchor=west] {\footnotesize $0100$};
+            \path (1,-3) node [anchor=west] {\footnotesize $1100$};
+            \path (3,-3) node [anchor=west] {\footnotesize $1000$};
 
-            \path (-3,-1) node [anchor=west] {$\footnotesize 0001$};
-            \path (-1,-1) node [anchor=west] {$\footnotesize 0101$};
-            \path (1,-1) node [anchor=west] {$\footnotesize 1101$};
-            \path (3,-1) node [anchor=west] {$\footnotesize 1001$};
+            \path (-3,-1) node [anchor=west] {\footnotesize $0001$};
+            \path (-1,-1) node [anchor=west] {\footnotesize $0101$};
+            \path (1,-1) node [anchor=west] {\footnotesize $1101$};
+            \path (3,-1) node [anchor=west] {\footnotesize $1001$};
 
-            \path (-3,3) node [anchor=west] {$\footnotesize 0010$};
-            \path (-1,3) node [anchor=west] {$\footnotesize 0110$};
-            \path (1,3) node [anchor=west] {$\footnotesize 1110$};
-            \path (3,3) node [anchor=west] {$\footnotesize 1010$};
+            \path (-3,3) node [anchor=west] {\footnotesize $0010$};
+            \path (-1,3) node [anchor=west] {\footnotesize $0110$};
+            \path (1,3) node [anchor=west] {\footnotesize $1110$};
+            \path (3,3) node [anchor=west] {\footnotesize $1010$};
 
-            \path (-3,1) node [anchor=west] {$\footnotesize 0011$};
-            \path (-1,1) node [anchor=west] {$\footnotesize 0111$};
-            \path (1,1) node [anchor=west] {$\footnotesize 1111$};
-            \path (3,1) node [anchor=west] {$\footnotesize 1011$};
+            \path (-3,1) node [anchor=west] {\footnotesize $0011$};
+            \path (-1,1) node [anchor=west] {\footnotesize $0111$};
+            \path (1,1) node [anchor=west] {\footnotesize $1111$};
+            \path (3,1) node [anchor=west] {\footnotesize $1011$};
 
             \draw [dashed] (-2,-3.5) -- (-2,3.5);
             \draw [dashed] (-3.5,-2) -- (3.5,-2);
