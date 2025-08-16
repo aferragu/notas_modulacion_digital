@@ -1,8 +1,15 @@
 \section{Procesos aleatorios estacionarios}\label{sec.estoc}
 
+Sorteo una señal a través de $\alpha\in\Omega$, espacio de probabilidad.
+\begin{itemize}
+    \item Para cada sorteo $\alpha$ tengo una {\em trayectoria}
+    $X(t,\alpha)$.
+    \item Para cada $t$ tengo una variable aleatoria $X(t)$. En particular, tiene una distribución de probabilidad $F_{X(t)}(x)$ y puedo calcular
+    momentos $E\left[X(t)\right]$, $E\left[X^2(t)\right]$: promedios en el ``ensemble'', para $t$ fijo.
+\end{itemize}
+
 \begin{figure}[h]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/estoc/estoc-1}
+    \centering
     \begin{tikzpicture}
         \draw [-stealth] (-0.5,0) -- (10,0);
         \draw [-stealth] (0,-2) -- (0,2);
@@ -13,16 +20,7 @@
         \draw [samples=100,domain=0:9,color=blue] plot (\x, {0.15+sin(\x r)*(cos(\x r +1))+0.1*rand});
         \draw [-stealth,color=blue] (5,2) node [anchor=west,color=blue] {$x(t,\alpha_3)$} to [out=180,in=90] (4.2,0.6);
     \end{tikzpicture}
-    \endpgfgraphicnamed\end{minipage}
-    \end{figure}
-
-Sorteo una señal a través de $\alpha\in\Omega$, espacio de probabilidad.
-\begin{itemize}
-    \item Para cada sorteo $\alpha$ tengo una {\em trayectoria}
-    $X(t,\alpha)$.
-    \item Para cada $t$ tengo una variable aleatoria $X(t)$. En particular, tiene una distribución de probabilidad $F_{X(t)}(x)$ y puedo calcular
-    momentos $E\left[X(t)\right]$, $E\left[X^2(t)\right]$: promedios en el ``ensemble'', para $t$ fijo.
-\end{itemize}
+\end{figure}
 
 La familia de distribuciones \emph{conjuntas} de las variables
 aleatorias $X(t_1),\ldots,X(t_n)$ para cualesquiera tiempos
@@ -47,8 +45,6 @@ se cumple:
     \item $E\left[X(t)\right]=\mu$, constante en el tiempo.
     \item $E\left[X(t)X(t-\tau)\right]=R_X(\tau)$ (autocorrelación en sentido aleatorio) independiente de $t$.
 \end{enumerate}
-
-\newpage
 
 {\bf Ejemplo 1: Sinusoide de fase aleatoria.}
 
