@@ -1,7 +1,7 @@
 \section{Ruido y modelos determinísticos}
 
-Denominamos ``ruido"  en un sistema de comunicaciones a una señal
-que se superpone a las de interés, originada en diversas cuasas,
+Denominamos ``ruido''  en un sistema de comunicaciones a una señal
+que se superpone a las de interés, originada en diversas causas,
 por ejemplo:
 
     \begin{itemize}
@@ -17,14 +17,13 @@ Características:
     \end{itemize}
 
 \begin{figure}[htb]
-    \centering\begin{minipage}{0.8\textwidth}
+    \centering
     \bpgf{Imagenes/ruido/ruido-1}
     \begin{tikzpicture}
         \draw[-stealth]  (-0.5,0) -- (8,0) node [anchor=north] {$t$};
         \draw[-stealth] (0,-1) -- (0,3) node [anchor=west] {$x$};
         \draw [samples=50,domain=0:7] plot (\x,{cos(\x r)+(0.5*exp(\x*0.05)-exp(-\x*0.1))+0.3*rand});
     \end{tikzpicture}
-    \endpgfgraphicnamed\end{minipage}
 \end{figure}
 \FloatBarrier
 
@@ -59,16 +58,13 @@ y por tanto no disponer de una transformada de Fourier.
 En ese sentido, comparemos una señal de ruido como $x(t)$ de la
 figura anterior con otra, %$\tilde{x}(t)$
 
-    \begin{figure}[htb]
-    \centering\begin{minipage}{0.8\textwidth}
-                \bpgf{Imagenes/ruido/ruido-2}
+\begin{figure}[htb]
+    \centering
                 \begin{tikzpicture}
                 \draw[-stealth]  (-0.5,0) -- (8,0) node [anchor=north] {$t$};
                 \draw[-stealth] (0,-1) -- (0,3) node [anchor=west] {$\tilde{x}$};
                 \draw [samples=200,domain=0:7] plot (\x,{cos((\x+1)^2 r)+0.5*cos(\x r)+0.5*rand});
             \end{tikzpicture}
-                \endpgfgraphicnamed
-             \end{minipage}
 \end{figure}
 \FloatBarrier
 
@@ -167,7 +163,7 @@ Se cumple:
 \begin{align*}
 r_y & =r_x\ast h \ast \tilde{h}\ \  \text{ donde } \ \
 \tilde{h}(t)=h(-t) \\
-\Rightarrow S_y(f)&=S_x(f)|\hat{H}(f)|^2.\end{align*}
+& \Rightarrow S_y(f) =S_x(f)|\hat{H}(f)|^2.\end{align*}
 
 \subsubsection*{Correlación y densidad espectral cruzada de dos señales}
 \begin{align*}
@@ -191,8 +187,7 @@ Señal que cumple $S_n(f)\equiv \frac{\eta}{2}\,\forall\,f$. La potencia de sali
 \subsection*{Aplicación: ruido en la comunicación de banda base}
 
 \begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/ruido/ruido-4}
+    \centering
     \begin{blockdiagram}
         \matrix[row sep=5mm, column sep=10mm]{
         & & \node [etiqueta] (ruido) {$n(t)$}; &\\
@@ -203,7 +198,6 @@ Señal que cumple $S_n(f)\equiv \frac{\eta}{2}\,\forall\,f$. La potencia de sali
         \draw [-stealth] (ruido) -- (sum);
         \draw [-stealth] (sum) -- (salida);
     \end{blockdiagram}
-    \endpgfgraphicnamed\end{minipage}
 \end{figure}
 \FloatBarrier
 
@@ -221,8 +215,7 @@ pasabajos de ancho $B$.
 
 
 \begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/ruido/ruido-3}
+    \centering
     \begin{blockdiagram}
         \matrix[row sep=5mm, column sep=10mm]{
             \node[etiqueta] (inicio) {$x_R(t)$ \quad }; & \node[block] (filtro) {PASABAJOS $B$}; & \node[etiqueta] (salida) {\quad $x_D(t)+n_D(t)$};\\
@@ -230,7 +223,6 @@ pasabajos de ancho $B$.
         \draw [-stealth] (inicio) -- (filtro);
         \draw [-stealth] (filtro) -- (salida);
     \end{blockdiagram}
-    \endpgfgraphicnamed\end{minipage}
 \end{figure}
 
 
