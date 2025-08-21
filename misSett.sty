@@ -10,21 +10,23 @@
 \usepackage[utf8]{inputenc}
 %\usepackage{lmodern}
 \usepackage[adobe-utopia]{mathdesign}
+%\usepackage{roboto}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
-\usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
-\setlength{\parskip}{\baselineskip}
+\usepackage[top=2.5cm,bottom=2.5cm,left=2cm,right=2cm]{geometry}
+\setlength{\parskip}{0.7\baselineskip}
 \usepackage[spanish,es-noquoting]{babel}
 \usepackage{float}
+\usepackage[export]{adjustbox}
 \usepackage[    pdftex,unicode=true,
         pdfdisplaydoctitle=true,
         colorlinks,
-        linkcolor=black,]{hyperref}
+        linkcolor=black,urlcolor=blue]{hyperref}
 
 \graphicspath{Imagenes/}
 \usepackage[usenames,dvipsnames]{xcolor}
 
-%\usepackage[font={scriptsize,sf},format=plain,labelfont={bf},labelsep=period,skip=-0.5pt,justification=centering]{caption}
+\usepackage[font={footnotesize},format=plain,labelfont={bf},labelsep=period,justification=centering]{caption}
 %\usepackage[font+=scriptsize,skip=-0.5pt]{subcaption}
 
 \usepackage{indentfirst}
@@ -32,7 +34,9 @@
 \usepackage{tikz}
 \usetikzlibrary{decorations.pathreplacing}
 \usetikzlibrary{positioning}
+\usetikzlibrary{fit}
 \usetikzlibrary{calc}
+\usetikzlibrary{backgrounds}
 \usetikzlibrary{shapes.geometric}
 \usetikzlibrary{babel}
 \usepackage{pgfplots}
@@ -56,30 +60,30 @@
 \AtBeginDocument{\renewcommand{\partname}{Capítulo}}
 
 
-\renewcommand{\section}{\@startsection {section}{1}{0pt}%
-    {-3.5ex plus -1ex minus -.2ex}%
-    {2.3ex plus .2ex}%
-    {\FloatBarrier\normalfont\normalsize\bfseries\MakeUppercase}}
+% \renewcommand{\section}{\@startsection {section}{1}{0pt}%
+%     {-3.5ex plus -1ex minus -.2ex}%
+%     {2.3ex plus .2ex}%
+%     {\FloatBarrier\normalfont\normalsize\bfseries\MakeUppercase}}
 
-\renewcommand{\subsection}{\@startsection {subsection}{2}{0pt}%
-    {-3.25ex plus -1ex minus -.2ex}%
-    {1ex plus .2ex}%
-    {\FloatBarrier\indent\normalfont\normalsize\bfseries}}
+% \renewcommand{\subsection}{\@startsection {subsection}{2}{0pt}%
+%     {-3.25ex plus -1ex minus -.2ex}%
+%     {1ex plus .2ex}%
+%     {\FloatBarrier\indent\normalfont\normalsize\bfseries}}
 
-\renewcommand{\subsubsection}{\@startsection {subsubsection}{3}{0pt}%
-    {-3.25ex plus -1ex minus -.2ex}%
-    {1ex plus .2ex}%
-    {\indent\normalfont\normalsize\itshape}}
+% \renewcommand{\subsubsection}{\@startsection {subsubsection}{3}{0pt}%
+%     {-3.25ex plus -1ex minus -.2ex}%
+%     {1ex plus .2ex}%
+%     {\indent\normalfont\normalsize\itshape}}
 
 
 \AtBeginDocument{\renewcommand{\contentsname}{Índice}\setcounter{tocdepth}{2}}
 \AtBeginDocument{\renewcommand{\proofname}{Demostración}}
 
 
-\renewcommand{\theequation}{\thesection.\arabic{equation}}
-\@addtoreset{equation}{section}
-\renewcommand{\thefigure}{\scriptstyle\thesection.\arabic{figure}}
-\@addtoreset{figure}{section}
+% \renewcommand{\theequation}{\thesection.\arabic{equation}}
+% \@addtoreset{equation}{section}
+% \renewcommand{\thefigure}{\scriptstyle\thesection.\arabic{figure}}
+% \@addtoreset{figure}{section}
 
 
 
@@ -110,21 +114,22 @@
 \newcommand{\myref}[1]{sección~\ref{#1}~- \nameref{#1}, en la página~\pageref{#1}}
 
 
-\newtheorem{teorema}{Teorema}
+\newtheorem{teorema}{Teorema}[chapter]
 \newtheorem{corolario}[teorema]{Corolario}
 \newtheorem{lema}[teorema]{Lema}
 \newtheorem{proposicion}[teorema]{Proposición}
 \newtheorem{definicion}{Definición}
-\newtheorem{remark}{Nota}
-\newtheorem{problema}{Problema}
-\newtheorem{ejemplo}{Ejemplo}
 \newtheorem{condicion}{Condición}
-\@addtoreset{ejemplo}{part}
+
+%\theoremstyle{remark}
+\newtheorem{remark}{Nota}[chapter]
+\newtheorem{problema}{Problema}[chapter]
+\newtheorem{ejemplo}{Ejemplo}[chapter]
 
 \newtheorem*{corolarioSN}{Corolario}
 \newtheorem*{lemaSN}{Lema}
 \newtheorem*{proposicionSN}{Proposición}
-\newtheorem*{definicionSN}{Definición}
+\newtheorem*{definicion*}{Definición}
 \newtheorem*{remarkSN}{Nota}
 \newtheorem*{remarksSN}{Notas}
 \newtheorem*{condicionSN}{Condición}
