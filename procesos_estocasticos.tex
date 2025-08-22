@@ -1,1 +1,91 @@
-En esta sección
+En el estudio de la transmisión de señales (analógicas o digitales), es necesario diseñar el sistema para transmitir información que, a priori, no es conocida en detalle. Por ejemplo, la señal de voz de la radio AM/FM no se conoce hasta el momento de la transmisión. Lo mismo ocurre en la transmisión digital: típicamente podemos conocer \emph{estadísticamente} como se comportan los datos, pero no exactamente qué es lo que se va a transmitir. Debemos entonces poder diseñar y analizar los sistemas de transmisión para que respondan de manera adecuada a este conjunto posible de señales, de las cuales no conocemos exactamente más que sus propiedades estadísticas.
+
+Es por ello esencial introducir el concepto de \emph{proceso estocástico} o aleatorio, que permite modelar este comportamiento. Comenzaremos en tiempo discreto para luego pasar a tiempo continuo, ya que ambos serán necesarios en el estudio de la modulación digital. Remitimos al apéndice \ref{app:probabilidad} para un resumen de los conceptos previos requeridos de probabilidad y variables aleatorias.
+
+\section{Proceso estocástico de tiempo discreto}
+
+Comencemos por definir el objeto de trabajo:
+\begin{definicion}\label{def:proceso_td}
+    Un \emph{proceso estocástico de tiempo discreto} es una sucesión de variables aleatorias $\{a_k:k\in\mathbb{Z}\}$ definidas en un espacio de probabilidad y que toman valores en un conjunto de símbolos $\{s_1,\ldots,s_M\}$ (espacio discreto) o valores en $\mathbb{R}$ (espacio continuo).
+\end{definicion}
+
+Observemos que la definición anterior no implica que los símbolos o muestras $a_k$ son independientes entre sí, es decir, pueden tener \emph{correlación} entre ellas. La distribución de un proceso estocástico depende precisamente de cuál es la probabilidad de observar cualquier secuencia de símbolos. En general esto es difícil de calcular por lo que definiremos algunas magnitudes de interés.
+
+\begin{definicion}\label{def:media_var_td}
+    Se definen la \emph{media} y \emph{varianza} del proceso como:
+    \begin{equation*}
+        \mu_k := \E{a_k}, \quad \sigma^2_k := \E{(a_k-\mu_k)^2} = \E{a_k^2} - \mu_k^2.
+    \end{equation*}
+    Por último definimos la \emph{potencia} del proceso como:
+    \begin{equation*}
+        P_k := \E{a_k^2} = \mu_k^2 + \sigma_k^2.
+    \end{equation*}
+\end{definicion}
+Notar que en principio estas dependen de $k$, que es el índice de tiempo. Esto es, si la estadística del proceso cambia a lo largo del tiempo, también lo harán estas magnitudes.
+
+Para capturar la dependencia del proceso introducimos la siguiente:
+\begin{definicion}\label{def:autocorrelacion_noest}
+    Se define la \emph{autocorrelación} de un proceso $\{a_k\}$ como:
+    \begin{equation*}
+        R(k_1,k_2) = \E{a_{k_1}a_{k_2}}
+    \end{equation*}
+\end{definicion}
+Esta magnitud evalúa cuan ``alineados'' o ``similares'' son las muestras del proceso en los tiempos $k_1$ y $k_2$. En particular observemos que $R(k,k)=P_k$.
+
+Sin embargo, todas estas magnitudes dependen del tiempo específico en que miremos. Es aquí que conviene introducir la noción de \emph{proceso estacionario}, que son aquellos procesos estocásticos cuyas propiedades estadísticas son invariantes en el tiempo, es decir la distribución de las observaciones $a_k$ o de las parejas $(a_{k_1},a_{k_2})$ no depende de $k$. En particular:
+\begin{itemize}
+    \item $\E{a_k} = \mu$, $\textrm{Var}(a_k)=\sigma^2$ y $P=\E{a_k^2}$ deben ser constantes.
+    \item La autocorrelación satisface:
+       \begin{equation*}
+        R(k_1,k_2) = \E{a_{k_1}a_{k_2}} = \E{a_{0}a_{k_2-k_1}} = \E{a_{0}a_{\tau}} = R(0,\tau).
+       \end{equation*}
+       Es decir la autocorrelación solo depende de $\tau=k_2-k_1$, la distancia en el tiempo entre las observaciones o \emph{lag}.
+\end{itemize}
+
+A los efectos de trabajar con señales y modulación conviene entonces introducir la siguiente clase de procesos.
+\begin{definicion}[Proceso WSS de tiempo discreto]
+    Un proceso estocástico $\{a_k\}$ se dice \emph{estacionario en sentido amplio (WSS, wide-sense stationary)} si verifica:
+    \begin{enumerate}
+        \item $\E{a_k} = \mu$ constante.
+        \item $R(a_{k_1},a_{k_2}) = R_a(k_2-k_1)$, siendo $R_a(\tau)$ una función únicamente del lag.
+    \end{enumerate}
+\end{definicion}
+Un proceso WSS puede cambiar su distribución en el tiempo, pero su comportamiento de primer y segundo orden es invariante.
+
+\begin{ejemplo}[Variables aleatorias independientes]
+    Si las muestras $\{a_k\}$ son variables aleatorias independientes, de media $\mu$ y varianza $\sigma^2$ constantes, entonces se verifica la primera condición, y la autocorrelación además verifica:
+    \begin{equation*}
+        \E{a_k a_{k+\tau}} = \begin{cases}
+        \E{a_k^2} = \mu^2 + \sigma^2 & \text{si }\tau=0, \\
+        \E{a_k}\E{a_{k+\tau}} = \mu^2 & \text{si }\tau\neq 0.
+        \end{cases}
+    \end{equation*}
+    Por lo tanto el proceso es WSS con $R_a(\tau) = \mu^2 + \sigma^2 \delta(0)$, siendo $\delta$ la delta de Dirac en tiempo discreto.
+\end{ejemplo}
+
+Listamos a continuación algunas propiedades de la autocorrelación:
+\begin{enumerate}
+    \item $R_a(\tau) = \E{a_k a_{k+\tau}} = \E{a_{k-\tau} a_k} = R_a(-\tau)$.
+    \item $R_a(0) = \E{a_k^2} = P$.
+    \item $|R_a(\tau)| = |\E{a_k a_{k+\tau}}| \leqslant \sqrt{\E{a_k^2}\E{a_{k+\tau}^2}} =\sqrt{P^2} = P = R_a(0)$. 
+    
+    Es decir, en módulo la autocorrelación es máxima en $0$. La desigualdad anterior surge de la desigualdad de Cauchy-Schwarz para variables aleatorias.
+\end{enumerate}
+
+\section{Proceso estocástico de tiempo continuo}
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \draw [-stealth] (-0.5,0) -- (10,0) node[below right] {$t$};
+            \draw [-stealth] (0,-2) -- (0,2);
+            \draw [samples=200,domain=0:9] plot (\x,{0.15+sin(\x r)*(1+cos(\x r +1))+0.1*rand});
+            \draw [-stealth] (1,2) node [anchor=west] {$x(t,\omega_1)$} to [out=180,in = 90] (0.5,1.05);
+            \draw [samples=100,domain=0:9,color=red] plot (\x, {0.15-sin(\x r)*(0.5+cos(\x r +1))+0.1*rand});
+            \draw [-stealth,color=red] (3,2) node [anchor=west,color=red] {$x(t,\omega_2)$} to [out=180,in=90] (2.8,0.4);
+            \draw [samples=100,domain=0:9,color=blue] plot (\x, {0.15+sin(\x r)*(cos(\x r +1))+0.1*rand});
+            \draw [-stealth,color=blue] (5,2) node [anchor=west,color=blue] {$x(t,\omega_3)$} to [out=180,in=90] (4.2,0.6);
+        \end{tikzpicture}
+        \caption{Diferentes realizaciones de un proceso estocástico de tiempo continuo}\label{fig:realizaciones}
+    \end{center}
+\end{figure}
