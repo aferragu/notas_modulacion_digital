@@ -1,16 +1,16 @@
 \section{Repaso breve de probabilidad}\label{app:probabilidad}
 
 La teoría de probabilidades se basa en postular un espacio
-abstracto $\Omega$ en el que se ``sortea'' un elemento $\alpha$.
+abstracto $\Omega$ en el que se ``sortea'' un elemento $\omega$.
 Se asigna una probabilidad $P(A)\in [0,1]$ a ciertos subconjuntos
 $A\subset\Omega$, llamados ``sucesos".
 
 Si lo aleatorio es un número real, podríamos tomar $\Omega=\R$,
 pero en general se piensa en el sorteo como algo que está
-``detrás" y determina el valor $X(\alpha)$ a través de una función
+``detrás" y determina el valor $X(\omega)$ a través de una función
 $X:\Omega\rightarrow\R$, llamada {\em variable aleatoria} (V.A.)
 
-\begin{minipage}{0.3\textwidth}La función de distribución de una V.A. se define como $F_X(x)=P\left(\{X\leq x\}\right)$\end{minipage}\hfill
+\begin{minipage}{0.3\textwidth}La función de distribución de una V.A. se define como $F_X(x)=\p{X\leq x}$\end{minipage}\hfill
 \begin{minipage}{0.6\textwidth}
     \resizebox{\textwidth}{!}{
     \begin{tikzpicture}
@@ -78,33 +78,33 @@ aceptan en ella $\delta$'s de Dirac. Es decir, en este caso \[
 
 \subsection*{Valor esperado de una variable aleatoria}
 \[
-E[X] =\int_{-\infty}^\infty x f_X(x)\d x. \]
+\E{X} =\int_{-\infty}^\infty x f_X(x)\d x. \]
 
 Representa el promedio ponderado por la probabilidad. Notar que en
 el caso de las V.A. discretas, lo anterior equivale a
-$E[X]=\sum_i x_ip_i$.
+$\E{X}=\sum_i x_ip_i$.
 
 {\bf Momento de orden k}
-\[E[X^k]=\int_{-\infty}^\infty x^kf_X(x)\d x. \]
+\[\E{X^k}=\int_{-\infty}^\infty x^kf_X(x)\d x. \]
 
 {\bf Varianza:}  $\var[X]=E[X^2]-E[X]^2$.
 
 \begin{ejemplo}
     V.A. Gaussiana,
-    \[f_X(x)=\frac{1}{\sqrt{2\pi}\sigma}\e^{-\frac{(x-\mu)^2}{2\sigma^2}}; \quad  E[X]=\mu, \qquad
+    \[f_X(x)=\frac{1}{\sqrt{2\pi}\sigma}\e^{-\frac{(x-\mu)^2}{2\sigma^2}}; \quad  \E{X}=\mu, \qquad
     \var[X]=\sigma^2.\]
 \end{ejemplo}
 
 Distribución {\em conjunta} de $n$ variables aleatorias $X_1,
 X_2,\ldots, X_n$:
 
-\[F_{X_1,\ldots,X_n}(x_1,x_2,\ldots,x_n)=P\left(\{X_1\leq x_1,\ldots, X_n\leq x_n\}\right).\]
+\[F_{X_1,\ldots,X_n}(x_1,x_2,\ldots,x_n)=\p{X_1\leq x_1,\ldots, X_n\leq x_n}.\]
 
 \subsection*{Independencia}
 
 \begin{itemize}
-    \item 2 sucesos $A,B\subset\Omega$ son independientes si $P(A\cap
-    B)=P(A)P(B)$.
+    \item 2 sucesos $A,B\subset\Omega$ son independientes si $\p{A\cap
+    B}=\p{A}\p{B}$.
     \item 2 V.A. $X$, $Y$, son independientes si los sucesos $\{X\leq x\}, \{Y\leq y\}$
     son independientes, es decir
     \begin{align*}
@@ -114,15 +114,15 @@ X_2,\ldots, X_n$:
                                         \end{align*}
 \end{itemize}
 
-\paragraph{Propiedad: } Si $X,Y$ independientes $\Rightarrow \ \ E[XY]=E[X]E[Y]$.
+\paragraph{Propiedad: } Si $X,Y$ independientes $\Rightarrow \ \ \E{XY}=\E{X}\E{Y}$.
 
 Este valor esperado también es una forma de \emph{correlación}. Si
-$X(\alpha)$ e $Y(\alpha)$ se ``acompañan'', $E[XY]$ da grande.
+$X(\omega)$ e $Y(\omega)$ se ``acompañan'', $\E{XY}$ da grande.
 $\langle X,Y\rangle=E[XY]$ es un producto interno entre V.A. de
-$E[X^2]$ finito.
+$\E{X^2}$ finito.
 
 La \emph{covarianza} de 2 V.A. se define como
-$E\left[\left(X-E[X]\right)\left(Y-E[Y]\right)\right]=E[XY]-E[X]E[Y]$.
+$\E{\left(X-\E{X}\right)\left(Y-\E{Y}\right)}=\E{XY}-\E{X}E{Y}$.
 Si $X,Y$ independientes, entonces $\mathrm{Cov}(X,Y)=0$. Se dice
 que están no correlacionadas. El recíproco no vale en general, sí
 para V.A. Gaussianas.
