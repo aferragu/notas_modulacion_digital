@@ -90,7 +90,7 @@ Es evidente que, en estado estacionario, por ser el sistema simétrico, $\p{a_k=
     \begin{center}
         \begin{tikzpicture}
             \begin{axis}[ x=1cm, y=1.2cm, axis lines=middle,  
-                    xlabel=$\tau$,
+                    xlabel=$l$,
                     x label style={anchor=north west},
                     xmin=-5.5,xmax=5.5,ymin=-.2,ymax=2,
                     ytick=\empty,
@@ -260,7 +260,7 @@ Nuevamente, todas las magnitudes anteriores dependen en principio de los momento
     \end{enumerate}
 \end{definicion}
 
-Tenemos además los análogos de tiempo continuo de la funciuón de autocorrelación.\begin{enumerate}
+Tenemos además los análogos de tiempo continuo de la función de autocorrelación.\begin{enumerate}
     \item $R_x(\tau) = \E{x(t) x(t-\tau)} = \E{x(t+\tau)x(t)} = R_x(-\tau)$, es decir $R_x$ es una función par.
     \item $R_x(0) = \E{x(t)^2} = P$.
     \item $|R_x(\tau)| = |\E{x(t)x(t-\tau)}| \leqslant \sqrt{\E{x(t)^2}\E{x(t-\tau)}^2} =\sqrt{P^2} = P = R_a(0)$. 
@@ -274,5 +274,146 @@ Por último, un proceso es además ergódico si cada trayectoria $x(t)$ es repre
     \left\langle x^2 \right\rangle &= \lim_{T\to\infty} \frac{1}{2T}\int_{-T}^T x(t)^2 dt = \E{x(t)^2} = P, \\
     \left\langle x(t) x(t-\tau) \right\rangle &= \lim_{T\to\infty} \frac{1}{2T}\int_{-T}^T x(t)x(t-\tau)dt = E[x(t)x(t-\tau)] = R_x(\tau).
 \end{align*}
-Es decir, los valores medios de una señal dada suficientemente larga aproximan la esperanza, similar a lo que ocurre en la ley de grandes números. En particular se requiere estacionariedad (porque el límite no depende de $t$). En este curso asumiremos siempre que los procesos con que trabajamos son WSS y ergódicos. En particular, $\mu^2$ representa la potencia de continua de la señal, $\sigma^2$ la potencia de ``alterna'' y $P$ la potencia total.
+Es decir, los valores medios de una señal dada suficientemente larga aproximan la esperanza, similar a lo que ocurre en la ley de grandes números. Esto requiere estacionariedad (porque el límite no depende de $t$). En este curso asumiremos siempre que los procesos con que trabajamos son WSS y ergódicos. En particular, $\mu^2$ representa la potencia de continua de la señal, $\sigma^2$ la potencia de ``alterna'' y $P$ la potencia total.
 
+A continuación algunos ejemplos de procesos estacionarios de tiempo continuo.
+
+\begin{ejemplo}[Sinusoide de fase aleatoria]\label{ej:cos random phase}
+Consideremos el siguiente proceso aleatorio:
+\begin{equation*}
+    x(t) = A\cos(2\pi f_0 t + \theta)
+\end{equation*}
+con $\theta$ aleatorio y distribuido uniformemente en el intervalo $[0,2\pi]$. Este proceso modela el fenómeno de observar una señal sinusoidal de frecuencia fija $f_0$, pero sin referencia a su tiempo de origen, es decir, no conocemos la fase del oscilador que la genera. Calculemos:
+\begin{align*}
+    \E{x(t)} &= \E{A\cos(2\pi f_0 t + \theta)} = \int_0^{2\pi} A\cos(2\pi f_0 t + \theta) \frac{1}{2\pi} d\theta \\
+    &= \frac{A}{2\pi}\int_0^{2\pi} A\cos(2\pi f_0 t + \theta)  d\theta = 0.
+\end{align*}
+Notar que estamos integrando en $\theta$, por lo que la integral es en un período de la función $\cos$. Entonces $E[x(t)] = \mu = 0$ constante. Calculemos la autocorrelación:
+\begin{align*}
+    \E{x(s)x(t)} &= \E{A\cos(2\pi f_0 s + \theta)A\cos(2\pi f_0 t + \theta)} = A^2 \int_0^{2\pi} \cos(2\pi f_0 s + \theta) \cos(2\pi f_0 t + \theta) \frac{1}{2\pi} d\theta \\
+    &= \frac{A^2}{2}\int_0^{2\pi} \left[\cos(2\pi f_0 (t-s)) + \cos(2\pi f_0 (t+s) + 2\theta)\right] \frac{1}{2\pi} d\theta \\
+    &= \frac{A^2}{2} \left[\cos(2\pi f_0 (t-s)) \overbrace{\int_0^{2\pi} \frac{1}{2\pi}d\theta}^{=1} + \overbrace{\int_0^{2\pi} \cos(2\pi f_0 (t+s) + 2\theta) \frac{1}{2\pi} d\theta}^{=0}\right] \\
+    &= \frac{A^2}{2}\cos(2\pi f_0 (t-s)) = R_x(\tau).
+\end{align*}
+Por lo tanto el proceso es WSS, ya que la media es constante y la autocorrelación $R_x$ solo depende de la distancia entre muestras. La potencia del proceso $R_x(0) = A^2/2$, que corresponde al valor RMS de una sinusoide de amplitud $A$.
+\end{ejemplo}
+
+Algunas observaciones importantes sobre el ejemplo anterior: en primer lugar, la autocorrelación es periódica de período $T_0 = 1/f_0$, la frecuencia base. Esto es porque la señal se repite exactamente igual cada tiempo $T_0$ (de hecho, la autocorrelación vuelve a ser máxima en $f=kf_0$). En segundo lugar, notar que la autocorrelación no lleva información de fase. Por ejemplo, si el Ejemplo \ref{ej:cos random phase} cambiamos $\cos$ por $\sin$, la autocorrelación \emph{no cambia}.\footnote{Notar que $\sin(\tau)$ no puede ser una función de autocorrelación adecuada, ya que vale $0$ en $\tau=0$ y es impar.} 
+
+\begin{ejemplo}[Onda binaria aleatoria]\label{ej:onda binaria aleatoria}
+
+    En este ejemplo, consideramos una señal aleatoria de tipo onda cuadrada, pero cuyas amplitudes están controladas por símbolos binarios $a_k=\pm 1$ equiprobables. Este es nuestro primer ejemplo de modulación digital.
+    
+    Más concretamente, consideremos el proceso estocástico:
+    \begin{equation*}
+        x(t) = \sum_{k=-\infty}^\infty a_k p(t-kT_s + D),
+    \end{equation*}
+    siendo:
+    \begin{itemize}
+        \item $a_k$ una secuencia de símbolos independientes con $\p{a_k=1}=\p{a_k=-1}$.
+        \item $p(t)$ el pulso de alto $1$ y duración $T_s$, el tiempo de símbolo.
+        \item $D$ una v.a. independiente de las anteriores, y con distribución Uniforme en $[0,T_s]$.
+    \end{itemize}
+    Nuevamente aquí $D$ juega el rol de una ``fase aleatoria'', en el sentido de que no sabemos cuándo la señal comenzó a transmitir y la observamos en un momento aleatorio del tiempo, como se ve en la Figura \ref{fig:onda binaria aleatoria}. Sin este paso, el proceso no sería estacionario, ya que los momentos de cambio de símbolo $kT_s$ serían ``especiales''.
+
+    \begin{figure}
+        \begin{center}
+            \begin{tikzpicture}
+                \draw [->] (-0.5,0) -- (3,0);
+                \draw [->] (0,-1.5) -- (0,1.5);                               \node at (0,1) [anchor=south east] {$1$}; 
+                \draw[very thick, teal] (-.3,0) -- (0,0) -- (0,1) -- (1,1) -- (1,0) -- (2.5,0);
+                \node at (1,0) [below] {\footnotesize $T_s$}; 
+                \node at (2,1) [teal,] {$p(t)$}; 
+            \end{tikzpicture} \hspace{1cm}
+            \begin{tikzpicture}
+                \draw [->] (-0.5,0) -- (7,0);
+                \draw [->] (0,-1.5) -- (0,1.5);
+                \node at (0,1) [anchor=south east] {$1$}; 
+                \node at (0,-1) [anchor=north east] {$-1$};
+                \node at (-.3,0) [anchor=north east] {\footnotesize $-D$};
+                \draw[very thick, teal] (-.3,1) --node[midway,above] {\tiny $a_0$} (.7,1) -- (.7,-1) --node[midway,below] {\tiny $a_1$} (1.7,-1) --node[midway,below] {\tiny $a_2$} (2.7,-1)-- (2.7,1) --node[midway,above] {\tiny $a_3$} (3.7,1) -- (3.7,-1) --node[midway,below] {\tiny $a_4$} (4.7,-1) -- (4.7,1) --node[midway,above] {\tiny $a_5$} (5.7,1) --node[midway,above] {\tiny $a_6$} (6.7,1) -- (6.7,-1) -- (7,-1);
+                \draw [dotted,thin] (0,1) -- (7,1);
+                \draw [dotted,thin] (0,-1) -- (7,-1);
+                \foreach \x in {0,1,2,3,4,5,6,7} {
+                  \draw [dotted,thin] (\x-.3,1) -- (\x-.3,-1);
+                }
+
+                \draw[<->] (2.7,.5) --node[midway,below] {\footnotesize $T_s$} (3.7,.5);
+            \end{tikzpicture}
+        \end{center}
+        \caption{Pulso base y realización de una onda binaria aleatoria del Ejemplo \ref{ej:onda binaria aleatoria}.}\label{fig:onda binaria aleatoria}
+    \end{figure}
+
+    Calculemos media y autocorrelación de este proceso. Comenzamos por la media: para ello condicionamos a un valor de $D=z$ y luego integramos entre todos los posibles valores de esta variable uniforme, quedando:
+    \begin{equation*}
+        \E{x(t)} = \int_0^{T_s} \E{x(t)\mid D=z} \frac{1}{T_s} dz.
+    \end{equation*}
+    Ahora, dado $D=z$, observemos que:
+    \begin{equation*}
+        p(t-kT_s + z) = 1 \iff 0\leqslant t-kT_s +z < T_s \iff k\leqslant \frac{t + z}{T_s} < k+1.
+    \end{equation*}
+    Es decir, existe un único $k=k_0 = \left\lfloor \frac{t+z}{T_s}\right\rfloor$ tal que $p(t-k_0T_s + z) = 1$. Básicamente esto ocurre porque los pulsos no se solapan y por lo tanto en cada momento del tiempo $t$ observamos un único símbolo $a_k$. Entonces:
+    \begin{equation*}
+        \E{x(t)\mid D =  z} = P(a_{k_0} = 1) (1) + P(a_{k_0} = -1) (-1) = \frac{1}{2}-\frac{1}{2} = 0, 
+    \end{equation*}
+    de donde $\mu = \E{x(t)} = 0$ para todo $t$, es decir la señal tiene media constante y no tiene componente de continua.
+
+    Pasemos ahora a calcular la correlación $R(t_1,t_2) = \E{x(t_1)x(t_2)}$.    Distinguimos dos casos:
+    \begin{enumerate}
+        \item Si $|t_1-t_2|>T_s$, entonces los símbolos observados en $t_1$ y $t_2$ son independientes, ya que pertenecen a pulsos distintos. Es decir, existen $k_1\neq k_2$ como antes, tales que $p(t_1-k_1T_s+z) = 1$ y $p(t_2-k_2T_s+z) = 1$. En ese caso:
+        \begin{equation*}
+          \E{x(t_1)x(t_2)\mid D=z} = \E{a_{k_1}a_{k_2}} = \E{a_{k_1}}\E{a_{k_2}} = 0,  
+        \end{equation*}
+        es decir no hay correlación para $|t_2-t_1|\geqslant T_s$, a distancia más de un tiempo de símbolo.
+
+        \item Si en cambio $|t_2-t_1|<T_s$, entonces los símbolos pueden corresponder al mismo pulso, o a pulsos consecutivos, dependiendo de la fase. Supongamos primero que $t_2>t_1$ y que $x(t_1)=a_k$. La observación crucial es que el tiempo de cambio de símbolo $T_{k+1}$ tiene distribución uniforme en $[t_1,t_1+T_s]$, por lo que:
+        \begin{equation*}
+            \begin{cases}
+            x(t_1) = x(t_2) = a_k \quad  \text{Si } t_2-t_1 < T_{k+1}, \\
+            x(t_1) = a_k, x(t_2) = a_{k+1} \quad  \text{Si } t_2-t_1 \geqslant T_{k+1}.
+            \end{cases}
+        \end{equation*}
+        Por lo tanto:
+        \begin{align*}
+            \E{x(t_1)x(t_2)} &= \overbrace{\E{a_k^2}}^{=1} \p{T_{k+1}>t_2-t_1} + \overbrace{\E{a_ka_{k+1}}}^{=0}\p{T_{k+1}\leqslant t_2-t_1} \\
+            &= 1-\frac{(t_2-t_1)}{T_s}. 
+        \end{align*}
+    \end{enumerate}
+
+    Un razonamiento análogo para $t_2<t_1$ permite concluir que el proceso es WSS (la autocorrelación solo depende de $\tau=t_2-t_1$) y su función de autocorrelación es:
+    \begin{equation}\label{eq:autocorrelacion onda binaria centrada}
+        R_x(\tau) = 1-\frac{|\tau|}{T_s} \quad -T_s\leqslant \tau \leqslant T_s,
+    \end{equation}
+    y $0$ en otro caso.
+
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[ x=2cm, y=2cm, axis lines=middle,  
+                        xlabel=$\tau$,
+                        x label style={anchor=north west},
+                        xmin=-2,xmax=2,ymin=-.2,ymax=1.2,
+                        ytick={1},
+                        xtick = {-1,1},
+                        xticklabels = {$-T_s$,$T_s$},
+                        clip=false,
+                        ]
+            \addplot [domain=-1:1, teal, very thick, samples=11] {1-abs(x)}; 
+            \addplot [domain=-2:-1, teal, very thick, samples=2] {0}; 
+            \addplot [domain=1:2, teal, very thick, samples=2] {0}; 
+            \node[teal] at (axis cs: 1.2,.5) {$R_x(\tau)$};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+\end{ejemplo}
+
+
+
+
+
+\begin{definicion}[Proceso Gaussiano]
+    
+\end{definicion}
+
+\begin{definicion}[Ruido blanco Gaussiano (WGN)]
+    
+\end{definicion}
