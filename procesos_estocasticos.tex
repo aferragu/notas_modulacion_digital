@@ -143,7 +143,7 @@ Es decir, el área bajo la gráfica de $S_a$ (en un período) es igual a la pote
 \begin{ejemplo}
     Para el proceso independiente del Ejemplo \ref{ej:iid}, la densidad espectral de potencia queda:
     \begin{equation*}
-        S_a(\phi) = \sum_{l=-\infty}^\infty \left[\mu^2 + \sigma^2 \delta(k)\right]e^{-j2\pi\phi\tau} = \sigma^2 + \mu^2 \sum_{l=-\infty}^\infty e^{-j2\pi\phi\tau} = \sigma^2 + \mu^2 \sum_{l=-\infty}^\infty \delta(\phi-l),
+        S_a(\phi) = \sum_{l=-\infty}^\infty \left[\mu^2 + \sigma^2 \delta[k]\right]e^{-j2\pi l \phi} = \sigma^2 + \mu^2 \sum_{l=-\infty}^\infty e^{-j2\pi l \phi} = \sigma^2 + \mu^2 \sum_{l=-\infty}^\infty \delta(\phi-l),
     \end{equation*}
 donde en el último paso usamos la suma de Poisson.
     \begin{center}
@@ -406,9 +406,204 @@ Algunas observaciones importantes sobre el ejemplo anterior: en primer lugar, la
     \end{center}
 \end{ejemplo}
 
+Al igual que en tiempo discreto, es conveniente tener una representación en frecuencia de la distribución de potencia de un proceso $x(t)$. Procediendo de manera análoga al caso discreto, tenemos la siguiente.
+\begin{definicion}[Densidad espectral de potencia, tiempo continuo]\label{def:densidad espectral potencia tc}
+    Dado un proceso WSS de tiempo continuo con función de autocorrelación $R_x(\tau)$, definimos su \emph{densidad espectral de potencia} como:
+    \begin{equation}\label{eq:dep_tc}
+        S_x(f) = \int_{-\infty}^\infty R_x(\tau) e^{-2\pi f \tau} d\tau,
+    \end{equation}
+    es decir, la transformada de Fourier de la autocorrelación.
+\end{definicion}
 
+Algunas propiedades son:
+\begin{enumerate}
+    \item $S_x(f)$ es real y positiva.
+    \item Para señales reales, $S_x(f)=S_x(-f)$ (función par).
+    \item \begin{equation*}
+    P = R_x(0) = \int_{-\infty}^{\infty} S_x(f) df.
+    \end{equation*}
+\end{enumerate}
+Es decir, nuevamente el área bajo la gráfica de $S_x$ (ahora en todas las frecuencias) es igual a la potencia de la señal. Nuevamente, $S_x$ nos indica \emph{cómo se distribuye la potencia} en el dominio de la frecuencia.
 
+Usando la transformada inversa de Fourier, podemos recuperar la autocorrelación de la señal como:
+\begin{equation*}
+    R_x(\tau) = \int_{-\infty}^\infty S_x(f) e^{-2\pi f \tau} df.
+\end{equation*}
 
+Calculemos la densidad espectral de potencia de los ejemplos \ref{ej:cos random phase} y \ref{ej:onda binaria aleatoria}. Para el primero tenemos que:
+\begin{equation*}
+    R_x(\tau) = \frac{A^2}{2} \cos(2\pi f_0 \tau) \fourier \frac{A^2}{4}\left[\delta(f-f_0) + \delta(f+f_0)\right],
+\end{equation*}
+usando que la transformada del coseno son dos deltas de amplitud $1/2$. En este caso la densidad concentra únicamente toda su potencia en la frecuencia $f_0$.
+
+Para el segundo caso, la autocorrelación es un triángulo, que puede escribirse de la siguiente manera:
+\begin{equation*}
+    R_x(\tau) = \frac{1}{T_s} p_0(t/T_s) * p_0(t/T_s),
+\end{equation*}
+siendo $p_0(t)$ el pulso de altura $1$ y ancho $1$ centrado en $0$ (por lo tanto, $p_0(t/T_s)$ es un pulso de ancho $T_s$). Usando propiedades de la transformada de Fourier obtenemos:
+\begin{equation*}
+    p_0(t/T_s) \fourier T_s \sinc(\pi T_s f) \quad \Longrightarrow \quad R_x(\tau) \fourier T_s \sinc^2(\pi T_s f)
+\end{equation*}
+Las mismas se grafican en la Figura \ref{fig:ejemplo dep continua}. Notar que en el segundo caso, el $90\%$ de la energía está contenida en el primer lóbulo, es decir en el intervalo $[-f_s,f_s]$, siendo $f_s=1/T_s$ la frecuencia de símbolo.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[ x=1cm, y=2cm, axis lines=middle,  
+                    xlabel=$f$,
+                    x label style={anchor=north west},
+                    ylabel=$S_x(f)$,
+                    y label style={anchor=south west},
+                    ytick=\empty,
+                    xmin=-3,xmax=3,ymin=-.2,ymax=1.5,
+                    xtick = {-2,2},
+                    xticklabels = {$-f_0$,$f_0$},
+                    clip=false,
+                    ]
+                \addplot[ycomb,mark=triangle*, teal, very thick] coordinates {(-2,1) (2,1)};
+                \node[right,teal] at (axis cs:2,1) {$\frac{A^2}{4}$};
+            \end{axis}
+        \end{tikzpicture}\hspace{1cm}
+        \begin{tikzpicture}
+            \begin{axis}[ x=1cm, y=2cm, axis lines=middle,  
+                    xlabel=$f$,
+                    x label style={anchor=north west},
+                    ylabel=$S_x(f)$,
+                    y label style={anchor=south west},
+                    xmin=-3.5,xmax=3.5,ymin=-.2,ymax=1.5,
+                    ytick=1,
+                    yticklabels = {$T_s$},
+                    xtick = {-3,-2,-1,1,2,3},
+                    xticklabels = {$-3f_s$,$-2f_s$,$-f_s$,$f_s$,$2f_s$,$3f_s$},
+                    clip=false,
+                    ]
+                \addplot[teal, very thick, domain=-3:3, samples=100] {sin(deg(pi*x))^2/(pi*x)^2};
+            \end{axis}            
+        \end{tikzpicture}
+    \end{center}
+    \caption{Densidad espectral de potencia de los Ejemplos \ref{ej:cos random phase} y \ref{ej:onda binaria aleatoria}.}\label{fig:ejemplo dep continua}
+\end{figure}
+
+\section{Filtrado de procesos estacionarios}
+
+Una de las tareas en el procesamiento de señales es el \emph{filtrado}, es decir, transformar una señal $x(t)$ a través de un sistema lineal invariante en el tiempo (LTI). Analicemos qué ocurre ahora si la señal es un proceso estocástico $x(t)$.
+
+Sea un sistema LTI con respuesta al impulso $h(t)$, y supongamos que el mismo es estable, es decir $\int_{-\infty}^\infty h(s) ds <\infty$. Sea $\hat{H}(f)$ su respuesta en frecuencia, es decir $h(t) \fourier \hat{H}(f)$.
+
+Supongamos que dicho sistema es alimentado por un proceso WSS $x(t)$ de media $\mu$ y autocorrelación $R_x(\tau)$. ¿Qué ocurre con el proceso $y(t)$, salida del sistema?
+
+Recordemos que $y$ surge de convolucionar $x$ con la respuesta al impulso, $y(t) = \int_{-\infty}^\infty h(s)x(t-s)ds = \int_{-\infty}^\infty x(s)h(t-s)ds$. Calculemos:
+\begin{equation}\label{eq:media del filtrado}
+    \E{y(t)} = \E{\int_{-\infty}^\infty h(s)x(t-s)ds} = \int_{-\infty}^\infty h(s)\underbrace{\E{x(t-s)}}_{\mu_x}ds = \mu_x  \int_{-\infty}^\infty ds.
+\end{equation}
+Por lo tanto, la media de $y$ es constante en el tiempo e igual a $\mu_y$. La expresión anterior tiene una versión más simple en frecuencia. Recordando que $\int_{-\infty}^\infty h(s)ds = \hat{H}(0)$ tenemos:
+\begin{equation*}
+    \mu_y = \hat{H}(0) \mu_x,
+\end{equation*}
+es decir, la media se amplifica por la ganancia de continua del sistema.
+
+Pasemos ahora a la autocorrelación. Escribimos:
+\begin{align*}
+    R_y(t,t-\tau) &= \E{y(t)y(t-\tau)} = \E{\left(\int_{-\infty}^\infty h(u)x(t-u)du\right)\left(\int_{-\infty}^\infty x(v)h(t-\tau-v)dv\right)}\\
+    &=\E{\int_{-\infty}^\infty\int_{-\infty}^\infty h(u)h(t-\tau-v)x(t-u)x(v)dvdu} \\
+    &=\int_{-\infty}^\infty\int_{-\infty}^\infty h(u)h(t-\tau-v)\underbrace{\E{x(t-u)x(v)}}_{R_x(t-u-v)} dv \\
+    &=\int_{-\infty}^\infty\left[h(t-\tau-v) \int_{-\infty}^\infty h(u) R_x(t-u-v)du\right] dv \\
+    &=\int_{-\infty}^\infty h(t-\tau-v) (h * R_x)(t-v) dv \\
+    &=\int_{-\infty}^\infty h(-z) (h * R_x)(\tau-z) dz \\
+    &= (h(-t)*h(t)*R_x)(\tau).
+\end{align*}
+En particular solo depende de $\tau$ por lo que la salida es un proceso WSS. En frecuencia, la expresión anterior se vuelve más simple. Recordando que convolucionar en el tiempo es multiplicar en frecuencia, y que $h(-t)\fourier \hat{H}^*(f)$ donde $^*$ denota el conjugado complejo, tenemos que:
+\begin{equation}\label{eq:espectro filtrado}
+    S_y(f) = \hat{H}(f)\hat{H}^*(f) S_x(f) = |\hat{H}(f)|^2 S_x(f).
+\end{equation}
+
+\begin{ejemplo}
+    Supongamos que la onda binaria aleatoria del Ejemplo \ref{ej:onda binaria aleatoria} se pasa por un filtro pasabajos ideal, de ganancia $1$ y frecuencia de corte $f_s$. Utilizando la ecuación \eqref{eq:espectro filtrado} podemos calcular el espectro a la salida de la siguiente forma:
+    \begin{equation*}
+        S_y(f) = |\hat{H}(f)|^2 S_x(f) = T_s \sinc(\pi T_s f) \mathbf{1}_{[-f_s,f_s]}(f).
+    \end{equation*}
+    Es decir, se queda solo con el lóbulo central.
+
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[ x=1cm, y=1cm, axis lines=middle,  
+                    xlabel=$f$,
+                    x label style={anchor=north west},
+                    ylabel=$S_x(f)$,
+                    y label style={anchor=south west},
+                    xmin=-3.5,xmax=3.5,ymin=-.2,ymax=1.5,
+                    ytick=\empty,
+                    xtick = {-3,-2,-1,1,2,3},
+                    xticklabels = {$-3f_s$,$-2f_s$,$-f_s$,$f_s$,$2f_s$,$3f_s$},
+                    clip=false,
+                    ]
+                \addplot[teal, very thick, domain=-3:3, samples=100] {sin(deg(pi*x))^2/(pi*x)^2} node[midway, above left] {$T_s$};
+            \end{axis}
+        \end{tikzpicture}\hfill
+        \begin{tikzpicture}
+            \begin{axis}[ x=1cm, y=1cm, axis lines=middle,  
+                    xlabel=$f$,
+                    x label style={anchor=north west},
+                    ylabel=$H(f)$,
+                    y label style={anchor=south west},
+                    xmin=-1.5,xmax=1.5,ymin=-.2,ymax=1.5,
+                    ytick=\empty,
+                    xtick = {-1,1},
+                    xticklabels = {$-f_s$,$f_s$},
+                    clip=false,
+                    ]
+                \addplot[teal, very thick, domain=-1:1, samples=10] {1} node[midway,above left] {$1$};
+                \addplot[teal, very thick, domain=-1.5:-1, samples=10] {0};
+                \addplot[teal, very thick, domain=1:1.5, samples=10] {0};
+                \draw[dotted, teal, very thick] (axis cs:-1,0) -- (axis cs:-1,1);
+                \draw[dotted, teal, very thick] (axis cs:1,0) -- (axis cs:1,1);
+            \end{axis}
+        \end{tikzpicture}\hfill
+        \begin{tikzpicture}
+            \begin{axis}[ x=1cm, y=1cm, axis lines=middle,  
+                    xlabel=$f$,
+                    x label style={anchor=north west},
+                    ylabel=$S_y(f)$,
+                    y label style={anchor=south west},
+                    xmin=-1.5,xmax=1.5,ymin=-.2,ymax=1.5,
+                    ytick=\empty,
+                    xtick = {-1,1},
+                    xticklabels = {$-f_s$,$f_s$},
+                    clip=false,
+                    ]
+                \addplot[teal, very thick, domain=-1:1, samples=100] {sin(deg(pi*x))^2/(pi*x)^2} node[midway, above left] {$T_s$};;
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+\end{ejemplo}
+
+\section{Modulación de procesos estacionarios}
+
+Por último, otra operación que será necesaria será la de \emph{modular} un proceso estacionario, es decir, dado $x(t)$ proceso WSS, construir el proceso:
+\begin{equation*}
+    x_c(t) = x(t)\cos(2\pi f_c t + \theta),
+\end{equation*}
+siendo $f_c$ la frecuencia de modulación y $\theta$ nuevamente una fase aleatoria Uniforme$[0,2\pi]$ independiente, que indica que el proceso base y la portadora no están sincronizados.
+
+Se tiene que:
+\begin{equation*}
+    \E{x_c(t)} = \E{x(t) \cos(2\pi f_c t+\theta)} = \E{x(t)} \underbrace{\E{\cos(2\pi f_c t + \theta)}}_{=0} = 0,
+\end{equation*}
+donde hemos usado que el proceso modulador y el de entrada son independientes para separar la esperanza en un producto, y el resultado del Ejemplo \ref{ej:cos random phase} para la sinusoide de fase aleatoria. En cuanto a la autocorrelación se tiene que:
+\begin{align*}
+    R_{x_c}(t,t-\tau) &= \E{x_c(t)x_c(t-\tau)} = \E{\left(x(t) \cos(2\pi f_c t+\theta)\right) \left(x(t-\tau) \cos(2\pi f_c (t-\tau) +\theta)\right)} \\
+    &=\E{x(t)x(t-\tau)}\E{\cos(2\pi f_c t+\theta)\cos(2\pi f_c (t-\tau)+\theta)} \\
+    &=R_x(\tau)\cos(2\pi f_c \tau).
+\end{align*}
+Nuevamente usamos los resultados del Ejemplo \ref{ej:cos random phase} para la autocorrelación de la sinusoide de fase aleatoria y la independencia. Resulta entonces que el proceso modulado $x_c$ es WSS (media constante, autocorrelación que solo depende de $\tau$).
+
+Como multiplicar en el tiempo corresponde a convolucionar en frecuencia, se concluye que la densidad espectral de potencia del proceso $x_c$ se calcula como:
+\begin{equation*}
+    S_{x_c}(f) = S_x(f) *\left[\frac{\delta(f-f_c) + \delta(f+f_c)}{2}\right] = \frac{1}{2}\left[S_x(f-f_c) + S_x(f+f_c)\right].
+\end{equation*}
+Es decir, la densidad se traslada a las frecuencias de modulación.
+
+\section{Procesos gaussianos y Ruido blanco gaussiano}
 
 \begin{definicion}[Proceso Gaussiano]
     
