@@ -39,6 +39,7 @@
 \usetikzlibrary{backgrounds}
 \usetikzlibrary{shapes.geometric}
 \usetikzlibrary{babel}
+\tikzset{>=stealth}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \usepackage{circuitikz}
@@ -46,7 +47,8 @@
 %\usepackage{lscape}
 %\usepackage{pifont}
 \usepackage{siunitx}
-\tikzset{>=stealth}
+\DeclareSIUnit\bps{bps}
+
 %-------------------------------------------------------------------------------------------------------
                                          %Para imágenes lindas
 \floatstyle{boxed}
@@ -105,8 +107,9 @@
 \newcommand{\p}[1]{\mathrm{P}\left(#1\right)}
 \renewcommand{\phi}{\varphi}
 \renewcommand{\iff}{\Leftrightarrow}
-\newcommand{\fourier}{\,\displaystyle{\mathop{\longmapsto}^{\mathcal{F}}}\,}
-\newcommand{\fourierinv}{\,\displaystyle{\mathop{\longmapsto}^{\mathcal{F^{-1}}}}\,}
+\newcommand{\fourier}{\;\displaystyle{\mathop{\longmapsto}^{\mathcal{F}}}\;}
+\newcommand{\fourierinv}{\;\displaystyle{\mathop{\longmapsto}^{\mathcal{F^{-1}}}}\;}
+\newcommand{\vti}{\mathrm{vti}}
 
 
 %% cajas de color rojo, arreglado en 2011.
