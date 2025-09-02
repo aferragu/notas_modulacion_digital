@@ -2,7 +2,7 @@ En el estudio de la transmisión de señales (analógicas o digitales), es neces
 
 Es por ello esencial introducir el concepto de \emph{proceso estocástico} o aleatorio, que permite modelar este comportamiento. Comenzaremos en tiempo discreto para luego pasar a tiempo continuo, ya que ambos serán necesarios en el estudio de la modulación digital. Remitimos al apéndice \ref{app:probabilidad} para un resumen de los conceptos previos requeridos de probabilidad y variables aleatorias.
 
-\section{Procesos estocásticos de tiempo discreto}
+\section{Procesos estocásticos de tiempo discreto}\label{sec:procesos td}
 
 Comencemos por definir el objeto de trabajo:
 \begin{definicion}\label{def:proceso_td}
@@ -204,7 +204,7 @@ La anterior es una definición informal, pero la idea general es que si promedia
 \end{align*}
 Es decir, los valores medios de una señal dada suficientemente larga aproximan la esperanza, similar a lo que ocurre en la ley de grandes números. En particular se requiere estacionariedad (porque el límite no depende de $k$). En este curso asumiremos siempre que los procesos con que trabajamos son WSS y ergódicos.
 
-\section{Procesos estocásticos de tiempo continuo}
+\section{Procesos estocásticos de tiempo continuo}\label{sec:procesos tc}
 
 Generalizamos ahora las definiciones ya vistas al caso de tiempo continuo, lo que nos servirá por ejemplo para modelar señales analógicas que son moduladas por una señal digital, o también el ruido que afecta a un sistema.
 
@@ -484,7 +484,7 @@ Las mismas se grafican en la Figura \ref{fig:ejemplo dep continua}. Notar que en
     \caption{Densidad espectral de potencia de los Ejemplos \ref{ej:cos random phase} y \ref{ej:onda binaria aleatoria}.}\label{fig:ejemplo dep continua}
 \end{figure}
 
-\section{Filtrado de procesos estacionarios}
+\section{Filtrado de procesos estacionarios}\label{sec:filtrado wss}
 
 Una de las tareas en el procesamiento de señales es el \emph{filtrado}, es decir, transformar una señal $x(t)$ a través de un sistema lineal invariante en el tiempo (LTI). Analicemos qué ocurre ahora si la señal es un proceso estocástico $x(t)$.
 
@@ -577,7 +577,7 @@ En particular solo depende de $\tau$ por lo que la salida es un proceso WSS. En 
     \end{center}
 \end{ejemplo}
 
-\section{Modulación de procesos estacionarios}
+\section{Modulación de procesos estacionarios}\label{sec:modulacion wss}
 
 Por último, otra operación que será necesaria será la de \emph{modular} un proceso estacionario, es decir, dado $x(t)$ proceso WSS, construir el proceso:
 \begin{equation*}
@@ -592,18 +592,18 @@ Se tiene que:
 donde hemos usado que el proceso modulador y el de entrada son independientes para separar la esperanza en un producto, y el resultado del Ejemplo \ref{ej:cos random phase} para la sinusoide de fase aleatoria. En cuanto a la autocorrelación se tiene que:
 \begin{align*}
     R_{x_c}(t,t-\tau) &= \E{x_c(t)x_c(t-\tau)} = \E{\left(x(t) \cos(2\pi f_c t+\theta)\right) \left(x(t-\tau) \cos(2\pi f_c (t-\tau) +\theta)\right)} \\
-    &=\E{x(t)x(t-\tau)}\E{\cos(2\pi f_c t+\theta)\cos(2\pi f_c (t-\tau)+\theta)} \\
+    &=\E{x(t)x(t-\tau)}\E{\cos(2\pi f_c t+\theta) \frac{1}{2}\cos(2\pi f_c (t-\tau)+\theta)} \\
     &=R_x(\tau)\cos(2\pi f_c \tau).
 \end{align*}
 Nuevamente usamos los resultados del Ejemplo \ref{ej:cos random phase} para la autocorrelación de la sinusoide de fase aleatoria y la independencia. Resulta entonces que el proceso modulado $x_c$ es WSS (media constante, autocorrelación que solo depende de $\tau$).
 
 Como multiplicar en el tiempo corresponde a convolucionar en frecuencia, se concluye que la densidad espectral de potencia del proceso $x_c$ se calcula como:
 \begin{equation*}
-    S_{x_c}(f) = S_x(f) *\left[\frac{\delta(f-f_c) + \delta(f+f_c)}{2}\right] = \frac{1}{2}\left[S_x(f-f_c) + S_x(f+f_c)\right].
+    S_{x_c}(f) = S_x(f) *\left[\frac{\delta(f-f_c) + \delta(f+f_c)}{4}\right] = \frac{1}{4}\left[S_x(f-f_c) + S_x(f+f_c)\right].
 \end{equation*}
 Es decir, la densidad se traslada a las frecuencias de modulación.
 
-\section{Procesos gaussianos y Ruido blanco gaussiano}
+\section{Procesos gaussianos y Ruido blanco gaussiano}\label{sec:gaussian}
 
 En el estudio de procesos estocásticos, se distingue un grupo particular, los procesos Gaussianos.
 
@@ -682,7 +682,7 @@ En general, en alguna etapa del proceso de comunicación habrá precisamente eta
 
     Es decor, en cualquier momento del tiempo $x(t)$ tendrá distribución Normal de media $0$ y varianza $\sigma^2 = N = \eta_0 B$. En particular, podemos calcular la probabilidad de que este ruido exceda un umbral $\gamma$ como:
     \begin{equation}\label{eq:cola ruido pasabajos}
-        \p{n(t)>\gamma} = \p{\frac{n(t)}{\sqrt{\eta_0 B}} > \frac{\gamma}{\sqrt{\eta_0 B}}} = 1-Q\left(\frac{\gamma}{\sqrt{\eta_0 B}}\right),
+        \p{n(t)>\gamma} = \p{\frac{n(t)}{\sqrt{\eta_0 B}} > \frac{\gamma}{\sqrt{\eta_0 B}}} = Q\left(\frac{\gamma}{\sqrt{\eta_0 B}}\right),
     \end{equation}
     siendo $Q(z)$ la cola de la distribución Normal estándar, es decir:
     \begin{equation}\label{eq:def cola gaussiana}

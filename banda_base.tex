@@ -115,8 +115,6 @@ Los problemas que afectan a la transmisión por pulsos se muestran en la Figura 
         \node at (5,-.5) {\textbf{Efectos combinados}};
     \end{tikzpicture}
 
-
-
     \caption{Problemas que afectan la transmisión por un canal.}\label{fig:problemas canal}
     \end{center}
 \end{figure}
@@ -217,9 +215,9 @@ El resultado central es el espectro de la onda PAM aleatoria, dado por el siguie
     \begin{equation}\label{eq:onda pam aleatoria}
         x(t) = \sum_k a_k p(t-kT_s + \theta)
     \end{equation}
-    siendo $p(t)$ el pulso de transmisión y $\theta$ una variable aleatoria $\mathrm{Uniforme}[0,T_s]$ e independiente del proceso de símbolos (fase aleatoria). Entonces $x(t)$ es un proceso WSS de tiempo continuo con densidad espectral de potencia:
+    siendo $p(t)$ el pulso de transmisión, que asumimos de energía finita, $\int_{-\infty}^\infty p(t)^2 dt <\infty$. $\theta$ es una variable aleatoria $\mathrm{Uniforme}[0,T_s]$ e independiente del proceso de símbolos (fase aleatoria). Entonces $x(t)$ es un proceso WSS de tiempo continuo con densidad espectral de potencia:
     \begin{equation}\label{eq:dep onda pam}
-    S_x(f) = f_s \left|\hat{P}(f)\right|^2 S_a\left(\frac{f}{f_s}\right),
+    {\color{Red}\boxed{\normalcolor S_x(f) = f_s \left|\hat{P}(f)\right|^2 S_a\left(\frac{f}{f_s}\right),}}
     \end{equation}
     siendo $\hat{P}(f)$ la transformada de Fourier del pulso $p(t)$.
 \end{teorema}
@@ -243,85 +241,1737 @@ Antes de proceder a la prueba, veamos cómo se conecta con la onda binaria aleat
 \end{ejemplo}
 
 \begin{proof}[Prueba del Teorema \ref{teorema:dep onda pam}]
-Calculamos la autocorrelación del proceso $y(t)$. Para ello, para un $\theta$ fijo calculamos el valor esperado
-condicional $E\left[y(t) y(t+\tau)|\theta\right]$ (sobre el
-proceso $\{a_k\}$), y después promediamos en $\theta$ uniforme.
-\begin{align*}
-    E\left[x(t)x(t+\tau)|\theta\right]  & = \E{\left(\sum_k a_k p(t+\theta-kT_s)\right) \left(\sum_l a_m p(t+\tau+\theta-mT_s)\right)}\\
-                        & = \sum_{k,m} \E{a_k a_m} p(t+\theta - kT_s) p(t+\tau+\theta-mT_s)\\
-        \underset{\scriptstyle(l=m-k)}{} & =  \sum_{k,l} R_a[l] p(t+\theta-kT_s) p(t+\tau+\theta-lT_s-kT_s)\\
-                        & = \sum_l R_a[l] \sum_k p(t+\theta-kT_s)
-                        p(t+\tau-lT_s+\theta-kT_s).
+
+    Calculamos primero la media de $x(t)$ como en la onda binaria aleatoria:
+    \begin{align*}
+        \E{x(t)} &= \E{\sum_k a_k p(t-kT_s + \theta)} = \int_0^{T_s} \E{\left.\sum_k a_k p(t-kT_s + z)\right| \theta=z} \frac{1}{T_s}dz \\
+        &= \sum_{k} \underbrace{\E{a_k}}_{\mu} \int_0^{T_s} p(t-kT_s+z) \frac{1}{T_s} dz = \mu f_s \sum_k \int_{t-kT_s}^{t-kT_s+T_s}p(v) dv \\
+        &= \mu f_s \int_{-\infty}^\infty p(v)dv = \mu f_s \hat{P}(0).
+    \end{align*}
+    En particular la media es constante.
+    
+    Calculamos ahora la autocorrelación del proceso $x(t)$. Para ello, nuevamente tomamos $\theta=z$ fijo, calculamos el valor esperado condicional $E{x(t) x(t+\tau)\mid\theta = z}$ y después promediamos en $\theta$ uniforme.
+
+    \begin{align*}
+    \E{x(t)x(t+\tau)\mid \theta=z}  & = \E{\left(\sum_k a_k p(t+z-kT_s)\right) \left(\sum_l a_m p(t+\tau+z-mT_s)\right)}\\
+        & = \sum_{k,m} \E{a_k a_m} p(t+z - kT_s) p(t+\tau+z-mT_s)\\
+        \underset{\scriptstyle(l=m-k)}{} & =  \sum_{k,l} R_a[l] p(t+z-kT_s) p(t+\tau+z-lT_s-kT_s)\\
+        & = \sum_l R_a[l] \sum_k p(t+z-kT_s)p(t+\tau-lT_s+z-kT_s).
 \end{align*}
 
-Ahora promedio en $\theta$:
-\begin{align}\label{eq.rytau}
-    E\left[y(t)y(t+\tau)\right]         & = \frac{1}{T_s}\int_0^{T_s} E\left[y(t)y(t+\tau)|\theta\right]\d\theta  \nonumber \\
-                        & = f_s \sum_l R_a(l) \sum_k\int_0^{T_s} p(t+\theta-kT_s) p(t+\theta-kT_s + \tau-lT_s)\d\theta \nonumber\\
-\underset{\scriptstyle(\eta=\theta-kT_s+t)}{}    & = f_s  \sum_l R_a(l) \sum_k \int_{t-kT_s}^{t-kT_s+T_s} p(\eta) p(\eta + \tau - lT_s)\d\eta\nonumber\\
-                        & = f_s \sum_l R_a(l) \int_{-\infty}^{+\infty} p(\eta) p(\eta + \tau-lT_s)\d\eta\nonumber\\
-                        & = f_s \sum_l R_a(l) r_p(\tau-lT_s).
-\end{align}
-
-En el último paso introdujimos
-\[
-r_p(\tau) := \left\langle p(t),p(t+\tau)\right\rangle = \int_{-\infty}^{+\infty} p(t) p(t + \tau)\d t,
-\]
-autocorrelación del pulso como señal de {\em energía} finita. Notar que el resultado es independiente de $t$.
-
-Un argumento similar (más sencillo) prueba que $E[y(t)]$ es  independiente de $t$. Por lo tanto $y(t)$ es un proceso continuo
-estacionario.
-
-Recordamos del curso de Análisis de Se\~nal que la transformada de Fourier de $r_p(\tau)$ es la densidad espectral de energía
-$|\hat{P}(f)|^2$. Transformando por Fourier en (\ref{eq.rytau}) obtenemos
+Ahora promedio en la variable $\theta$:
 \begin{align*}
-    S_y(f)  & = f_s \sum_l R_a(l) \e^{-j2\pi(lT_s)f} \overbrace{\mathcal{F}\left[r_p(\tau)\right]}^{\left|\hat{P}(f)\right|^2}\\
-        & = f_s \left|\hat{P}(f)\right|^2\sum_l R_a(l) \e^{-j2\pi l
-        (\frac{f}{f_s})}.
+    \E{x(t)x(t+\tau)} & = \frac{1}{T_s}\int_0^{T_s} E\left[x(t)x(t+\tau)|\theta=z\right] dz  \\
+    & = f_s \sum_l R_a[l] \sum_k\int_0^{T_s} p(t+z-kT_s) p(t+z-kT_s + \tau-lT_s) dz \\
+    \underset{\scriptstyle(v=z-kT_s+t)}{} & = f_s  \sum_l R_a[l] \sum_k \int_{t-kT_s}^{t-kT_s+T_s} p(v) p(v + \tau - lT_s) dv \\
+    & = f_s \sum_l R_a[l] \int_{-\infty}^{+\infty} p(v) p(v + \tau-lT_s)dv \\
+    & = f_s \sum_l R_a[l] r_p(\tau-lT_s).
 \end{align*}
-Recurriendo a (\ref{eq.safi}) interpretamos la última suma como
-$S_a\left(\frac{f}{f_s}\right).$
 
+En el último paso introdujimos la autocorrelación del pulso como señal de energía finita:
+\begin{equation*}
+r_p(\tau) := \left\langle p(t),p(t+\tau)\right\rangle = \int_{-\infty}^{+\infty} p(t) p(t + \tau)dt.    
+\end{equation*}
+Nuevamente el resultado es independiente de $t$ y solo depende de $\tau$, por lo que $x(t)$ es WSS. La autocorrelación de $x$ queda entonces:
+\begin{equation}\label{eq:autocorr onda pam}
+    R_x (\tau) = f_s \sum_l R_a[l] r_p(\tau-lT_s).
+\end{equation}
+
+Resta hallar ahora la densidad espectral de potencia, $S_x(f)$ transformando por Fourier. Para ello, recordemos que la densidad espectral de energía de una señal de energía finita $r_p$ verifica:
+\begin{equation*}
+    r_p(\tau) = \int_{-\infty}^{+\infty} p(t) p(t + \tau)dt  = (p(t)*p(-t))(\tau) \fourier |\hat{P}(f)|^2.
+\end{equation*}
+Por lo tanto, aplicando propiedades de transformada de Fourier:
+\begin{equation*}
+    S_x(f) = f_s \sum_l R_a[l] \e^{-j2\pi(lT_s)f} \left|\hat{P}(f)\right|^2 = f_s \left|\hat{P}(f)\right|^2\sum_l R_a[l] \e^{-j2\pi l
+        \left(\frac{f}{f_s}\right)} = f_s \left|\hat{P}(f)\right|^2 S_a\left(\frac{f}{f_s}\right).
+\end{equation*}
 \end{proof}
 
+\subsection{Interpretación de la fórmula}
 
-\subsection*{Caso particular más usado}
+La fórmula \eqref{eq:dep onda pam} puede interpretarse de la siguiente forma, a la luz de lo analizado en la Sección \ref{sec:filtrado wss}. Consideremos la siguiente señal:
+\begin{equation*}
+    x_a(t) = \sum_k a_k \delta(t-kT_s+\theta),
+\end{equation*}
+es decir un tren de impulsos de alturas $a_k$ y fase aleatoria. Puede argumentarse que la autocorrelación de esta señal es:
+\begin{equation*}
+    R_{x_a}(\tau) = f_s \sum_l R_a[l] \delta(\tau-lT_s).
+\end{equation*}
+Por lo tanto su densidad espectral de potencia es:
+\begin{equation*}
+    S_{x_a}(f) = f_s \sum_l R_a[l] e^{-j2\pi l T_s f} = f_s S_a\left(\frac{f}{f_s}\right).
+\end{equation*}
+Observemos que la onda PAM puede escribirse como:
+\begin{equation*}
+    x(t) = \sum_k a_k p(t-kT_s + \theta) = x_a(t) * p(t).
+\end{equation*}
+Por lo tanto, $x(t)$ corresponde a filtrar la señal ``ideal'' $x_a$ de impulsos por un filtro de respuesta $p(t)$. Usando \eqref{eq:espectro filtrado} obtenemos:
+\begin{equation*}
+    S_x(f) = S_{x_a}(f) |\hat{P}(f)|^2 = f_s |\hat{P}(f)|^2 S_a\left(\frac{f}{f_s}\right).
+\end{equation*}
 
-En la Sección \ref{sec.densdig} consideramos un caso particular del proceso de símbolos: $\{a_k\}$ independientes, idénticamente distribuidos, con $E[a_k]=\mu$, $E[a_k^2]=\mu^2+\sigma^2$.
-Veamos ahora como particularizar la fórmula (\ref{eq.dig}) a ese caso.
+La Figura \ref{fig:generacion pulso} ilustra esta idea, que es muy útil tener en cuenta cuando trabajamos por ejemplo con señales muestreadas o en tiempo discreto (por ejemplo, en \href{https://www.gnuradio.org/}{GNURadio}).
 
-Utilizando la independencia, calculamos la autocorrelación del proceso de símbolos:
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \node at (-1,.8) {$x_a(t):$};
+            \draw[->] (-.5,0) -- (5,0) node[below right] {$t$};
+            \draw[thick,teal] plot [ycomb,mark=triangle*] coordinates {(0,1) (1,1.5) (2,.3) (3,.5) (4,1)};
+
+            \node[rectangle, draw, minimum size=1cm] (pulso) at (6,.8) {$p(t)$};
+            \draw[->] (5,.8) -- (pulso);
+            \draw[->] (pulso) -- (7,.8);
+
+            \draw[->] (7,0) -- (12.5,0) node[below right] {$t$};
+            \draw[thick,teal] plot coordinates {(7.5,0) (7.5,1) (8.5,1) (8.5,1.5) (9.5,1.5) (9.5,.3) (10.5,.3) (10.5,.5) (11.5,.5) (11.5,1) (12,1)};
+ 
+        \end{tikzpicture}
+    \end{center}
+    \caption{Generación de la onda PAM a partir de un tren de impulsos.}\label{fig:generacion pulso}
+\end{figure}
+
+\subsection{El caso de símbolos independientes}
+
+En la Sección \ref{sec:procesos tc} consideramos un caso particular del proceso de símbolos, aquellos en los que $\{a_k\}$ son independientes, idénticamente distribuidos, con $E[a_k]=\mu$, $E[a_k^2]=\mu^2+\sigma^2$ (Ejemplo \ref{ej:iid}). Como vimos en el Capítulo \ref{chapter:introduccion}, los símbolos independientes transmiten mayor cantidad de información, por lo que este caso particular es de suma importancia. Calculemos el espectro en este caso.
+
+Como se vio en el Ejemplo \ref{ej:iid}, la secuencia $a_k$ tiene autocorrelación:
 \begin{align*}
-R_a(l) &= E[a_k a_{k+l}]= \begin{cases}
+R_a[l] &= E[a_k a_{k+l}]= \begin{cases}
                                         \mu^2+\sigma^2 & l = 0\\
                                         \mu^2 & l\neq 0
                                        \end{cases} \\
-                                       &= \mu^2+\sigma^2\delta(l).
+                                       &= \mu^2+\sigma^2\delta[l].
 \end{align*}
+El espectro discreto es:
+\begin{equation*}
+  S_a(\varphi) = \sigma^2 + \mu^2 \sum_{l=-\infty}^{\infty}\delta(\varphi - l).
+\end{equation*}
+Por lo tanto, aplicando propiedades de cambio de escala:
+\begin{equation*}
+S_a\left(\frac{f}{f_s}\right) = \sigma^2+\mu^2\sum_{l=-\infty}^{\infty} \delta\left(\frac{f-lf_s}{f_s}\right) = \sigma^2+\mu^2 f_s \sum_{l=-\infty}^{\infty} \delta (f-lf_s).    
+\end{equation*}
 
-Su transformada de Fourier de tiempo discreto (función periódica de $\varphi\in\R$) es
-\[
-  S_a(\varphi) = \sigma^2 + \mu^2 \sum_{n=-\infty}^{+\infty}\delta(\varphi - n).
-\]
-
-\[\Rightarrow  S_a\left(\frac{f}{f_s}\right) = \sigma^2+\mu^2\sum_{n=-\infty}^{+\infty} \delta\left(\frac{f-nf_s}{f_s}\right) = \sigma^2+\mu^2 f_s \sum_{n=-\infty}^{+\infty} \delta (f-nf_s).\]
-
-Sustituyendo en (\ref{eq.dig}) llegamos a la fórmula utilizada en la Sección \ref{sec.densdig}.
-\begin{equation}
-    \label{eq:dig3}
-    {\color{Red}\boxed{\normalcolor S_x(f) = \sigma^2 f_s \left|\hat{P}(f)\right|^2 + \mu^2 f_s^2 \sum_{n=-\infty}^{+\infty} \left|\hat{P}(nf_s)\right|^2\delta(f-nf_s)}}\tag{\textasteriskcentered}
+Sustituyendo en \eqref{eq:dep onda pam} llegamos a la fórmula base para el análisis de la transmisión digital.
+\begin{equation}\label{eq:dep onda pam iid}
+    {\color{Red}\boxed{\normalcolor S_x(f) = \sigma^2 f_s \left|\hat{P}(f)\right|^2 + \mu^2 f_s^2 \sum_{l=-\infty}^{\infty} \left|\hat{P}(lf_s)\right|^2\delta(f-lf_s)}}
 \end{equation} 
 
-\section{Formación de pulsos y control del ancho de banda: problema de Nyquist}
+\textbf{Observación:} Esta es la fórmula que más utilizaremos a lo largo del curso.
 
+Analizamos lo que dice la fórmula anterior para el caso de pulsos NRZ.
+
+\begin{ejemplo}[Pulso NRZ, símbolos independientes]
+    Volvamos al pulso NRZ dado por:
+    \begin{equation*}
+    p_{[0,T_s]}(t)=\begin{cases}
+            1 & \text{si } 0 \leqslant t \leqslant T_s\\
+            0 & \text{en otro caso}
+          \end{cases} \quad \fourier \quad \left|\hat{P}(f)\right|^2=T_s^2\sinc^2(\pi T_s f).
+    \end{equation*}
+Supongamos que modulamos símbolos independientes $a_k$. En este caso $\hat{P}(lf_s)=0$ para todo $l\neq 0$, por lo tanto el resultado es:
+\begin{equation*}
+S_x(f) = \sigma^2 T_s \sinc^2 (\pi T_s f) + \mu^2\delta(f).    
+\end{equation*}
+
+    \begin{center}
+        \begin{tikzpicture}
+            \draw [->] (-5,0) -- (5,0) node [anchor=north] {$f$};
+            \draw [->] (0,-0.5) -- (0,3.5) node [anchor=east] {$S_x(f)$};
+            \draw [teal, very thick, samples=200,domain=-5:5] plot (\x,{2*(sin(3*\x r)/(3*\x))^2});
+            \node[anchor=south west] at (0,2) {$\sigma^2 T_s$};
+            \path (-pi/3,0) node [anchor=north] {$-f_s$} -- (pi/3,0) node [anchor=north] {$f_s$} -- (2*pi/3,0) node [anchor=north] {$2 f_s$};
+            \draw [very thick, teal, ->] (0,0) -- (0,3) node [anchor=west] {$\mu^2$};
+        \end{tikzpicture}
+    \end{center}
+En particular para la onda binaria aleatoria, $\mu=0$ y $\sigma^2=1$ por lo que reencontramos el resultado hallado anteriormente.
+\end{ejemplo}
+
+
+Discutamos que conclusiones podemos sacar de $S_x(f)$:
+\begin{enumerate}
+    \item Potencia total: $\langle x^2\rangle = \displaystyle\int_{-\infty}^{\infty} S_x(f)\d f $.
+    En el ejemplo de pulsos NRZ,
+    \begin{equation*}
+     \langle x^2\rangle = \mu^2 +\sigma^2 f_s \displaystyle\int_{-\infty}^{\infty}
+    \left|\hat{P}(f)\right|^2\d f = \mu^2 +\sigma^2 f_s \displaystyle\int_{-\infty}^{\infty} \left|p(t)\right|^2\d
+    t = \mu^2 + \sigma^2.
+    \end{equation*}
+    \item Porcentaje de potencia dentro de una banda: en este caso el $90\%$ está en $[-f_s,f_s]$. Más abajo se discuten otros casos.
+     \item Valor de continua: En el caso NRZ, si la señalización es:
+    \begin{itemize}
+        \item unipolar, $a_k\in \{0,A\}\Rightarrow \mu=\frac{A}{2}$, hay continua.
+        \item polar, $a_k\in \{-A,A\}\Rightarrow \mu = 0$, no hay continua.
+    \end{itemize}
+    \item Sincronismo: para poder sacar ``el reloj'' de la señal debería haber un $\delta$ en $f_s$ o algún múltiplo. Por lo tanto, la onda PAM con pulsos NRZ \emph{no provee sincronismo}.
+\end{enumerate}
+
+Veamos un ejemplo diferente, el pulso con retorno a cero.
+
+\begin{ejemplo}
+    Cambiemos el ejemplo anterior por un pulso RZ de la forma:
+    \begin{equation*}
+    p_{[0,T_s/2]}(t)=\begin{cases}
+            1 & \text{si } 0 \leqslant t \leqslant T_s/2\\
+            0 & \text{en otro caso}
+          \end{cases} \quad \fourier \quad \frac{T_s}{2}\sinc\left(\pi \frac{T_s}{2} f\right)
+    \end{equation*}
+
+    \begin{center}
+        \begin{tikzpicture}[xscale=1.5]
+            \draw (-0.5,0) -- (2.5,0);
+            \draw (0,-0.5) -- (0,1.5);
+            \path (0,0) node [anchor=north east] {$0$} -- (2,0) node [anchor=north] {$T_s$};
+            \draw [teal, very thick] (0,0) -- (0,1) -- (1,1) -- (1,0) -- (2,0);
+            \draw [<->] (0,-0.25) -- (1,-0.25);
+            \path (0.5,-0.25) node [anchor=north] {$\tau=\frac{T_s}{2}$};
+        \end{tikzpicture}
+    \end{center}
+
+    Por lo tanto:
+    \begin{equation*}
+        \left|\hat{P}(f)\right|^2=\frac{T_s^2}{4}\sinc^2\left(\pi \frac{T_s}{2} f\right).
+    \end{equation*}
+
+    Sustituyendo en la fórmula \eqref{eq:dep onda pam iid} obtenemos:
+    \begin{equation}\label{eq:dep pulso RZ iid}
+        S_x(f) = \frac{\sigma^2 T_s}{4} \sinc^2\left(\pi \frac{T_s}{2} f\right) + \sum_{l=-\infty} \sinc^2\left(\pi \frac{l}{2}\right) \delta(f-lf_s).
+    \end{equation}
+    Observemos que ahora no todas las deltas se anulan, como se grafica a continuación:
+
+    \begin{center}
+        \begin{tikzpicture}[xscale=0.8]
+            \draw [->] (-6,0) -- (6,0) node [anchor=north] {$f$};
+            \draw [->] (0,-0.5) -- (0,5) node [anchor=east] {$S_x(f)$};
+            \draw [teal, samples=200,domain=-5:5] plot (\x,{4*(sin(3*\x/2 r)/(3*\x/2))^2});
+            \path (0,4) node [teal, anchor=west] {$\frac{\sigma^2 T_s}{4}$};
+            \path (-pi,0) node [anchor=north] {$-3 f_s$} -- (-2*pi/3,0) node [anchor=north] {$-2 f_s$} -- (-pi/3,0) node [anchor=north] {$-f_s$} -- (pi/3,0) node [anchor=north] {$f_s$} -- (2*pi/3,0) node [anchor=north] {$2 f_s$} -- (pi,0) node [anchor=north] {$3 f_s$};
+            \draw [very thick, teal, ->] (0,0) -- (0,2.5) node [anchor=west] {$\frac{\mu^2}{4}$};
+            \draw [very thick,teal, ->] (-pi,0) -- (-pi,0.25);
+            \draw [very thick,teal, ->] (-pi/3,0) -- (-pi/3,1);
+            \draw [very thick,teal, ->] (pi/3,0) -- (pi/3,1);
+            \draw [very thick,teal, ->] (pi,0) -- (pi,0.25);
+        \end{tikzpicture}
+    \end{center}
+
+    Por lo tanto, en la señal resultante habrá frecuencias proporcionales a la frecuencia de símbolo que podemos detectar y utilizar para sincronizar el receptor! Esta es una de las ventajas de utilizar una onda RZ. Sin embargo, veamos que ahora el lóbulo central utiliza $2f_s$, el doble de ancho de banda.
+\end{ejemplo}
+
+El ejemplo anterior lleva a la siguiente pregunta: ¿Qué porcentaje de la energía de un pulso rectangular entra en las distintas bandas? Analicemos para el pulso de ancho $\tau$ genérico:
+
+Sea $p(t)$  \begin{minipage}{5cm}
+        \bpgf{Imagenes/codLinBB/codLinBB-6}
+        \begin{tikzpicture}[xscale=2]
+            \draw (-0.5,0) -- (1.5,0);
+            \draw (0,-0.5) -- (0,1.5);
+            \path (0,0) node [anchor=north east] {$0$} -- (1,0) node [anchor=north] {$T_s$};
+            \draw [very thick,teal] (0,0) -- (0.25,0) -- (0.25,1) -- (0.75,1) -- (0.75,0) -- (1,0);
+            \draw [stealth-stealth] (0.25,-0.25) -- (0.75,-0.25);
+            \path (0.5,-0.25) node [anchor=north] {$\tau$};
+        \end{tikzpicture}
+        \endpgfgraphicnamed
+        \end{minipage} con área $1$. $|\hat{P}(f)| = |\sinc (\pi \tau f)|$
+
+\begin{minipage}{0.45\textwidth}
+    \bpgf{Imagenes/codLinBB/codLinBB-7}
+        \begin{tikzpicture}
+            \draw [-stealth] (-0.5,0) -- (6,0) node [anchor=north] {$f$};
+            \draw [-stealth] (0,-0.5) -- (0,5) node [anchor=west] {$\sinc^2(\pi \tau f)$};
+            \draw [teal,samples=200,domain=0.02:5] plot (\x,{4*(sin(3*\x/2 r)/(3*\x/2))^2});
+            \path (0,4) node [anchor=east] {$1$};
+            \draw (pi/3,0) node [anchor=north] {$\frac{1}{2\tau}$} -- (pi/3,{4*(sin(pi/2 r)/(pi/2))^2});
+            \path (2*pi/3,0) node [anchor=north] {$\frac{1}{\tau}$} -- (4*pi/3,0) node [anchor=north] {$\frac{2}{\tau}$};
+        \end{tikzpicture}
+    \endpgfgraphicnamed
+\end{minipage}
+\begin{minipage}{0.2\textwidth}
+    \begin{tabular}{c|c}
+        $\tau f$ & \% pot\\
+        \hline
+        $\tfrac{1}{2}$ & $77$\\
+        $1$ & $90$\\
+        $2$ & $95$\\
+        $3$ & $96.6$\\
+        $\vdots$ & \\
+        $11$ & $99$
+    \end{tabular}
+\end{minipage}
+\begin{minipage}{0.25\textwidth}
+    Se usa muchas veces $B=\tfrac{1}{\tau}$ como ancho de banda práctico.
+\end{minipage}
+
+\subsection{Potencia de la señal digital}
+
+Calculemos ahora la potencia transmitida por una señal digital PAM. Integrando la expresión \eqref{eq:dep onda pam iid} en frecuencia, tenemos
+\begin{align*} \langle x^2 \rangle &= \sigma^2
+f_s\displaystyle\int_{-\infty}^{+\infty}\left|\hat{P}(f)\right|^2\d
+f + \langle z^2\rangle \\
+& = \sigma^2 \|p\|^2 f_s +\langle z^2\rangle.
+\end{align*}
+Aquí:  
+\begin{equation*}
+\|p\|^2 = \int_{-\infty}^{+\infty} p(t)^2 dt = \int_{-\infty}^{+\infty} |\hat{P}(f)|^2 df
+\end{equation*}
+es la energía del pulso $p(t)$, que podemos calcular en el tiempo o en frecuencia, por Parseval, según nos resulte más sencillo.
+
+También se acostumbra definir además la \emph{energía media} del pulso aleatorio $a_k p(t-kT_s)$,
+que esta dada por
+\begin{align*}
+    \overline{E_p} = E[a_k^2] \|p\|^2  = (\mu^2+ \sigma^2)\|p\|^2 .
+\end{align*}
+
+Hay algunos casos particulares en que la parte periódica cumple  $\langle
+z^2\rangle = \mu^2 \|p\|^2 f_s$. En este caso, tendremos:
+\begin{align*}
+    \langle x^2\rangle  & = \overline{E_p} f_s,
+\end{align*}
+fórmula con interpretación intuitiva: envío un pulso de energía media $\overline{E_p}$, cada $T_s$ segundos,
+la potencia media es $\overline{E_p}/T_s = \overline{E_p} f_s$. Sin embargo, para que esta interpretación sea válida es necesario que los pulsos
+sucesivos sean ortogonales entre sí, lo cual se cumple sólo en algunos casos, como detallamos a continuación.
+
+¿Cuándo podemos aplicar esta fórmula $\langle x^2\rangle  =
+{\overline{E_p}}{f_s}$? En los siguientes casos:
+\begin{itemize}
+    \item Siempre que $\mu=0$, o sea $x(t)$ es una señal polar. Aquí la parte periódica desaparece.
+    \item El pulso $p(t)$ tiene duración menor o igual a $T_s$.
+    \item Los pulsos son de Nyquist ideales (definidos más adelante).
+\end{itemize}
+
+% Para ver el segundo caso: si $p(t)$ tiene soporte en
+% $[0,T_s]\Rightarrow \mu p(t)$ es un período de $z(t)$
+% \[\Rightarrow \langle z^2\rangle  = \frac{1}{T_s} \int_0^{T_s} z^2(t)\d t = \frac{\mu^2}{T_s}\int_0^{T_s} p(t)^2\d t=
+%  \mu^2
+% \|p\|^2 f_s.\]
+% Alternativamente, notar que en este caso los pulsos $p(t-kT_s)$ y $p(t-lT_s)$ son ortogonales para $k\neq l$, ya que no se solapan. Esta ortogonalidad también se cumplirá en el tercer caso, como se verá después.
+
+
+\section{Formación de pulsos e interferencia intersimbólica}
+
+Supongamos que se envía por un canal de ancho $B<\infty$ una onda
+PAM $\sum a_k p(t-kT_s)$, con pulsos rectangulares.
+
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/formPuls/formPuls-1}
+    \begin{blockdiagram}[xscale=0.8]
+        \draw (-0.5,0) -- (0,0) node [anchor=north] {$0$}-- (0,1) -- (1,1) -- (1,0) node [anchor=north] {$T_s$} -- (2,0) -- (2,-1) -- (3,-1) -- (3,0) -- (3.5,0);
+        \path (2,1) node {$x(t)$};
+        \begin{scope}[shift={(7,0)}]
+            \matrix[column sep=10mm]{
+                \node[punto] (inicio) {}; & \node[block] (pasa) {PASABAJOS}; & \node[punto] (salida) {};\\
+            };
+            \draw [-stealth] (inicio) -- (pasa);
+            \draw [-stealth] (pasa) -- (salida);
+        \end{scope}
+        \begin{scope}[shift={(11,0)}]
+            \draw (-0.5,0) -- (0.25,0);
+            \draw (0.25,0) .. controls (0.4,0.15) and (0.9, 0.7) .. (1,0.5);
+            \draw (1,0.5) .. controls (1.1,0.25) and (1.6, -0.5) ..(1.5,-0.5);
+            \draw (1.5,-0.5) .. controls (1.6,-0.6) and (2,-1) .. (2.3,-0.5);
+            \draw (2.3,-0.5) .. controls (2.5,-0.25) and (3,0) .. (3.5,0);
+            \path (2,1) node {$y(t)$};
+        \end{scope}
+    \end{blockdiagram}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+\FloatBarrier
+
+El detector debe basarse en la señal distorsionada para determinar el símbolo transmitido en cada instante de muestreo.
+
+\paragraph{Problemas}
+\begin{itemize}
+    \item Los pulsos no llegan al máximo.
+    \item Interferencia Intersimbólica (ISI): los pulsos se propagan a símbolos adyacentes.
+\end{itemize}
+
+\paragraph{Cualitativamente} podemos visualizar esto mediante el {\em diagrama de ojo.}
+Supongamos por ejemplo pulsos polares, RZ, rectangulares
+($p_{[0,T_s]}(t)$ y $-p_{[0,T_s]}(t)$). Sincronizo un osciloscopio
+con $f_s$, observo la superposición de los pulsos.
+
+\begin{figure}[htb]
+    \centering
+    \bpgf{Imagenes/formPuls/formPuls-2}
+    \begin{tikzpicture}
+    \matrix[row sep=20mm, column sep=10mm]{
+        \draw (-0.5,0) -- (0.05*rand,0.005*rand) -- (0.05*rand,1+0.05*rand) -- (1+0.05*rand,1+0.05*rand) -- (1+0.05*rand,0.05*rand) -- (1.5,0);
+        \draw (-0.5,0) -- (0.05*rand,0.005*rand) -- (0.05*rand,1+0.05*rand) -- (1+0.05*rand,1+0.05*rand) -- (1+0.05*rand,0.05*rand) -- (1.5,0);
+        \draw (-0.5,0) -- (0.05*rand,0.005*rand) -- (0.05*rand,1+0.05*rand) -- (1+0.05*rand,1+0.05*rand) -- (1+0.05*rand,0.05*rand) -- (1.5,0);
+        \draw[yscale=-1] (-0.5,0) -- (0.05*rand,0.005*rand) -- (0.05*rand,1+0.05*rand) -- (1+0.05*rand,1+0.05*rand) -- (1+0.05*rand,0.05*rand) -- (1.5,0);
+        \draw[yscale=-1] (-0.5,0) -- (0.05*rand,0.005*rand) -- (0.05*rand,1+0.05*rand) -- (1+0.05*rand,1+0.05*rand) -- (1+0.05*rand,0.05*rand) -- (1.5,0);
+        \draw[yscale=-1] (-0.5,0) -- (0.05*rand,0.005*rand) -- (0.05*rand,1+0.05*rand) -- (1+0.05*rand,1+0.05*rand) -- (1+0.05*rand,0.05*rand) -- (1.5,0);
+        & \path (0,0) node {\begin{minipage}{3cm}
+        Ojo abierto, fácil \\detección\end{minipage}};
+        & &
+        \draw [domain=0:1, samples=50] plot ({\x+0.05},{0.5*sin(pi*\x r)});
+        \draw [domain=0:1, samples=50] plot ({\x+0.02},{0.5*sin(pi*\x r)-0.05});
+        \draw [domain=0:1, samples=50] plot ({\x-0.03},{0.5*sin(pi*\x r)+0.05});
+        \draw [domain=0:1, samples=50,yscale=-1] plot ({\x+0.05},{0.5*sin(pi*\x r)});
+        \draw [domain=0:1, samples=50,yscale=-1] plot ({\x+0.02},{0.5*sin(pi*\x r)-0.05});
+        \draw [domain=0:1, samples=50,yscale=-1] plot ({\x-0.03},{0.5*sin(pi*\x r)+0.05});
+        & \path (0,0) node {\begin{minipage}{2.5cm}
+        Ojo cerrado por ISI\end{minipage}};\\
+
+        \draw (-0.5,0) -- (0,0) -- (0+0.2*rand+0.1,1+0.2*rand) -- (0.2,1+0.2*rand) -- (0.4,1+0.2*rand) -- (0.6,1+0.2*rand) -- (0.8,1+0.2*rand) -- (1+0.2*rand-0.1,1+0.015*rand) -- (1,0) -- (1.5,0);
+        \draw (-0.5,0) -- (0,0) -- (0+0.2*rand+0.1,1+0.2*rand) -- (0.2,1+0.2*rand) -- (0.4,1+0.2*rand) -- (0.6,1+0.2*rand) -- (0.8,1+0.2*rand) -- (1+0.2*rand-0.1,1+0.015*rand) -- (1,0) -- (1.5,0);
+        \draw (-0.5,0) -- (0,0) -- (0+0.2*rand+0.1,1+0.2*rand) -- (0.2,1+0.2*rand) -- (0.4,1+0.2*rand) -- (0.6,1+0.2*rand) -- (0.8,1+0.2*rand) -- (1+0.2*rand-0.1,1+0.015*rand) -- (1,0) -- (1.5,0);
+        \draw[yscale=-1] (-0.5,0) -- (0,0) -- (0+0.2*rand+0.1,1+0.2*rand) -- (0.2,1+0.2*rand) -- (0.4,1+0.2*rand) -- (0.6,1+0.2*rand) -- (0.8,1+0.2*rand) -- (1+0.2*rand-0.1,1+0.015*rand) -- (1,0) -- (1.5,0);
+        \draw[yscale=-1] (-0.5,0) -- (0,0) -- (0+0.2*rand+0.1,1+0.2*rand) -- (0.2,1+0.2*rand) -- (0.4,1+0.2*rand) -- (0.6,1+0.2*rand) -- (0.8,1+0.2*rand) -- (1+0.2*rand-0.1,1+0.015*rand) -- (1,0) -- (1.5,0);
+        \draw[yscale=-1] (-0.5,0) -- (0,0) -- (0+0.2*rand+0.1,1+0.2*rand) -- (0.2,1+0.2*rand) -- (0.4,1+0.2*rand) -- (0.6,1+0.2*rand) -- (0.8,1+0.2*rand) -- (1+0.2*rand-0.1,1+0.015*rand) -- (1,0) -- (1.5,0);
+        & \path (0,0) node {\begin{minipage}{2.5cm}Contaminación con ruido\end{minipage}};
+        & &
+        \draw (-0.5,0) -- (0,0) -- (0,1) -- (1,1) -- (1,0) -- (1.5,0);
+        \draw (-0.5,0) -- (-0.1,0) -- (-0.1,1.1) -- (0.8,1.1) -- (0.8,0) -- (1.5,0);
+        \draw (-0.5,0) -- (0.2,0) -- (0.2,-0.9) -- (0.9,-0.9) -- (0.9,0) -- (1.5,0);
+        \draw (-0.5,0) -- (0,0) -- (0,-1) -- (0.8,-1) -- (0.8,0) -- (1.5,0);
+        & \path (0,0) node {\begin{minipage}{3cm}
+        Jitter: error \\de sincronismo.\end{minipage}};\\
+    };
+    \end{tikzpicture}
+    \endpgfgraphicnamed
+\end{figure}
+\FloatBarrier
+
+\subsection*{¿Cómo analizar el problema cuantitativamente?}
+
+Un primer enfoque sería estudiar el error $x(t)-y(t)$ en términos
+de su potencia media
+\[
+\langle(x-y)^2\rangle = \int_{|f|>B} S_x(f)\d f.
+\]
+Si este error es pequeño en relación a $\langle x^2 \rangle$, es
+probable que la detección funcione bien. Esto puede servir para
+estimar a qué velocidad $f_s$ transmitir.
+
+\begin{ejemplo} \mbox{}%$\phantom{1}$
+\begin{center}\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/formPuls/formPuls-3}
+    \begin{tikzpicture}
+        \draw (-5,0) -- (5,0);
+        \draw (0,-0.5) -- (0,5);
+        \draw [samples=200,domain=-4.8:4.8] plot (\x,{4.5*(sin(2*\x r)/(2*\x))^2});
+        \draw [samples=200,domain=-4.8:-pi,fill] plot (\x,{4.5*(sin(2*\x r)/(2*\x))^2});
+        \draw [samples=200,domain=pi:4.8,fill] plot (\x,{4.5*(sin(2*\x r)/(2*\x))^2});
+        \path (-pi,0) node [anchor=north] {$-2 f_s$} -- (-pi/2,0) node [anchor=north] {$-f_s$} -- (pi/2,0) node [anchor=north] {$f_s$} -- (pi,0) node [anchor=north] {$2 f_s$};
+        \path (2,4) node {NRZ polar};
+    \end{tikzpicture}
+    \endpgfgraphicnamed\end{minipage}
+\end{center}
+Si señalilzamos a $f_s = \frac{B}{2}$, obtenemos
+$\langle(x-y)^2\rangle = 5\%$ de $ \langle x^2\rangle$.
+\end{ejemplo}
+
+Sin embargo: para la detección digital, basada en muestrear la
+salida en ciertos momentos, nos interesa el valor del error $x-y$
+en los instantes de
+   muestreo.  $\langle(x-y)^2\rangle$ me da un promedio en el tiempo que no es tan relevante. En
+   particular, puedo aceptar una distorsión importante de los
+   pulsos (y por tanto, un error medio grande), en la medida que no
+   comprometa los instantes de detección. Estudiamos ese tema a continuación.
+
+\subsection*{Problema de Nyquist}
+
+Dado un canal de banda base, de ancho $B$, ¿cual es la máxima
+velocidad de señalización $f_s$  a la que se puede transmitir una
+onda PAM $\sum a_k p(t-kT_s)$,  permitiendo a la salida la
+recuperación de los $\{a_k\}$ libre de errores? ¿Qué pulsos $p(t)$
+alcanzan este máximo?
+
+%\begin{remarksSN}
+{\bf Notas:}
+\begin{itemize}
+        \item Aquí permitimos que los $\{a_k\}$ sean cualquier número real y deben recuperarse exactamente. En este sentido, se trata de una onda PAM analógica.
+        Después particularizaremos a $\{a_k\}$ en un conjunto de símbolos $\mathcal{A}$.
+        \item El problema es parecido (dual) al de muestreo, también estudiado por Nyquist. Allí buscábamos la mínima frecuencia de muestreo $f_m$ que permite reconstruir una señal $x(t)$ de banda $B$.
+    \end{itemize}
+%\end{remarksSN}
+
+\paragraph{Respuesta:}
+\begin{center}
+    \col{f_s= 2B}
+\end{center}
+
+Para alcanzar este valor, elegimos el pulso (de Nyquist ideal)
+$p(t)= \sinc (\pi f_s t)$:
+
+\begin{center}\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/formPuls/formPuls-4}
+    \begin{tikzpicture}
+        \draw[-stealth] (-5,0) -- (5,0) node [anchor=north] {$t$};
+        \draw[-stealth] (0,-1.5) -- (0,5) node [anchor=west] {$p(t)$};
+        \path (0,4.5) node [anchor=east] {$1$};
+        \draw [samples=200,domain=-4.8:4.8] plot (\x,{4.5*sin(2*\x r)/(2*\x)});
+        \path (-pi,0) node [anchor=north east] {$-2 T_s$} -- (-pi/2,0) node [anchor=south east] {$-T_s$} -- (pi/2,0) node [anchor=south west] {$T_s$} -- (pi,0) node [anchor=north west] {$2 T_s$};
+    \end{tikzpicture}
+    \endpgfgraphicnamed
+
+    \bpgf{Imagenes/formPuls/formPuls-5}
+    \begin{tikzpicture}
+        \draw[-stealth] (-3,0) -- (3,0) node [anchor=north] {$f$};
+        \draw[-stealth] (0,-0.5) -- (0,2) node [anchor=west] {$\hat{P}(f)$};
+        \draw (-2,0) node [anchor=north] {$-\frac{f_s}{2}$} -- (-2,1) -- (0,1) node [anchor=south west] {$T_s$} -- (2,1) -- (2,0) node [anchor=north] {$B=\frac{f_s}{2}$};
+    \end{tikzpicture}
+    \endpgfgraphicnamed\end{minipage}
+\end{center}
+El pulso tiene ancho de banda $B$, y por lo tanto la señal $x(t)$
+pasa sin distorsión por el canal. Se recibe entonces la onda PAM
+\[y(t)=x(t)=\sum_k a_k \sinc \left(\pi f_s (t-kT_s)\right).\]
+Como el $\sinc$ es cero en todos los múltiplos de $T_s$ salvo
+uno, se deduce que
+\[y(k_0 T_s) = \sum_k a_k \sinc\left(\pi f_s (k_0-k)T_s\right) = a_{k_0}.\]
+Entonces el muestreo de $y(t)$ recupera los símbolos.
+
+Falta ver que esa velocidad de señalización no se puede superar.
+Supongamos en cambio que tomo $f_s > 2B$. Consideremos el mensaje
+$\{a_k\} = \ldots \quad 1 \quad 0 \quad 1 \quad 0 \quad 1\quad 0
+\quad 1\quad \ldots$. \\
+Para ese mensaje $x(t)$ es periódica, de período $2T_s$,
+frecuencia fundamental $\frac{f_s}{2} > B$. Escribimos su serie de
+Fourier  $x(t) = \sum_n \hat{X}_n\e^{jnf_s\pi t}$. En un canal
+pasabajos ideal de ancho de banda $B$, se filtran todos los
+armónicos salvo la continua, por tanto se recibe $y(t) \equiv
+\hat{X}_0$.
+
+ Claramente, de la continua no puedo
+extraer el mensaje. En particular, la salida sería igual para el
+mensaje complementario (cambiar $1$ por $0$).
+
+\paragraph{Resumen} Dado un canal de ancho $B$, la
+máxima velocidad de señalización PAM que permite la detección sin
+interferencia intersimbólica es $f_s=2B$. El máximo se obtiene con
+pulsos de Nyquist ideales, $p(t)=\sinc (\pi f_s t)$.
+
+\subsubsection*{Limitaciones del pulso ideal $p(t)=\sinc (\pi f_s t)$}
+
+Un problema obvio es que el sinc es no causal, requiere empezar en
+$-\infty$. En la practica se debe truncar y retardar $p(t)$ para
+poder generar algo causal. Como el sinc cae a cero en forma
+relativamente lenta (como $\frac{1}{t}$) el truncado no es fácil
+de hacer.
+
+Otro problema: supongamos que hay un error de sincronización y
+muestreamos en $t=\varepsilon$ en lugar de $0$:
+
+\begin{align*}
+    x(\varepsilon)  & = \sum a_k \sinc (\pi f_s \varepsilon - k\pi)\\
+            & = \sum a_k \frac{\sen(\pi f_s \varepsilon) (-1)^k}{\pi f_s\varepsilon -k\pi}\\
+            & = \underbrace{a_0 \frac{\sen(\pi f_s \varepsilon)}{\pi f_s \varepsilon}}_{\approx a_0} + \underbrace{\sum_{k\neq 0} a_k (-1)^k \frac{\sen(\pi f_s \varepsilon)}{\pi f_s \varepsilon - k \pi}}_{\text{término de error}}
+\end{align*}
+
+Cómo los términos decaen en valor absoluto como $\frac{1}{k}$, y
+$\sum \frac{1}{k}=\infty$, se puede acumular bastante error de
+ISI, donde los símbolos $a_k$ con $k\neq 0$ afectan la detección
+de $a_0$.
+
+Interesaría entonces, elegir pulsos que mantuvieran en condiciones
+ideales la ISI nula, pero que caigan más rápido a $0$ con $t$, o
+sea que estén más concentrados en el tiempo. Naturalmente, esto
+implica más ancho de banda.
+
+Consideremos el pulso $p(t) = \sinc (\pi f_s t) m(t)$ donde
+$m(0)=1$ y $m(t)$ varía ``lento''.
+
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/formPuls/formPuls-6}
+    \begin{tikzpicture}
+        \draw [samples=200,domain=-5:5] plot (\x,{3*sin(5*\x r)/(5*\x)});
+        \path (2,3) node {$\sinc (\pi f_s t)$};
+        \begin{scope}[shift={(0,-3)}]
+            \draw [samples=201, domain=-5:5] plot (\x,{cos(5*0.1*\x r)/(1-(5/pi*0.2*\x)^2)});
+            \path (2,1.5) node {$m(t)$};
+        \end{scope}
+    \end{tikzpicture}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+\FloatBarrier
+
+Se cumplirá $p(0)=1$, $p(kT_s) = 0 \forall\,k\neq 0$, entonces de una sucesión $\sum a_k p(t-kT_s)$ se extraen los símbolos $a_k$ por muestreo.
+
+\paragraph{¿Qué ancho de banda tiene ese pulso? Estudiamos la convolución:} \back
+
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/formPuls/formPuls-7}
+    \begin{tikzpicture}
+        \path (-2.5,1) node {$\hat{P}(f)$};
+        \draw [-stealth] (-1.5,0) -- (1.5,0);
+        \draw [-stealth] (0,-0.5) -- (0,1);
+        \draw (-1,0) node [anchor=north] {$-\frac{f_s}{2}$} -- (-1,0.5) -- (1,0.5) node [anchor=south west] {$T_s$} -- (1,0) node [anchor=north] {$\frac{f_s}{2}$};
+        \path (2.5,0.5) node {\Huge$\ast$};
+        \begin{scope}[shift={(7,0)}]
+            \path (-2.5,1) node {$\hat{M}(f)$};
+            \draw [-stealth] (-1.5,0) -- (1.5,0);
+            \draw [-stealth] (0,-0.5) -- (0,1);
+            \draw [samples=200,domain=-0.5:0.5] plot (\x,{1/4*(1+cos(pi*2*\x r))});
+        \end{scope}
+    \end{tikzpicture}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+\FloatBarrier
+
+\noindent Elegimos $\hat{M}(f)$ de banda limitada $\dfrac{\alpha
+f_s}{2}$, $0<\alpha<1$ para que espectro total no crezca mucho.
+
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/formPuls/formPuls-8}
+    \begin{tikzpicture}
+        \draw [-stealth] (-7,0) -- (7,0);
+        \draw [-stealth] (0,-6.5) -- (0,2);
+        \draw (-4,0) node [anchor=north] {$-\frac{f_s}{2}$} -- (-4,1) -- (0,1) node [anchor=south west] {$T_s$} -- (4,1) -- (4,0) node [anchor=north] {$\frac{f_s}{2}$};
+        \begin{scope}[shift={(0,-2)}]
+            \draw [-stealth] (-7,0) -- (7,0) node [anchor=north] {$\sigma$};
+            \draw [samples=200,domain=-1:1] plot (\x,{4/pi*cos(pi*\x/2 r)});
+            \path (-1,0) node [anchor=north] {$-\alpha\frac{f_s}{2}$} -- (1,0) node [anchor=north] {$\alpha\frac{f_s}{2}$};
+            \path (1,1) node {$\hat{M}$};
+            \path (-1,0.5) node [anchor=east] {área $1$};
+        \end{scope}
+            \begin{scope}[shift={(0,-4)}]
+            \draw [-stealth] (-7,0) -- (7,0);
+            \begin{scope}[shift={(-5,0)}]
+                \draw [samples=200,domain=-1:1] plot (\x,{4/pi*cos(pi*\x/2 r)});
+                \path (1,1) node [anchor=west] {$\hat{M}(f-\sigma)$};
+                \path (0,0) node [anchor=north] {$f$};
+            \end{scope}
+        \end{scope}
+        \begin{scope}[shift={(0,-6)}]
+            \draw [-stealth] (-7,0) -- (7,0) node [anchor=north] {$\sigma$};
+            \draw [samples=200,domain=-5:-3] plot (\x,{1/2*(1+cos((\x-1)*pi/2 r))}) -- (3,1);
+            \draw [samples=200,domain=3:5] plot (\x,{1/2*(1-cos((\x-1)*pi/2 r))});
+            \path (-5,0) node [anchor=north] {$-\frac{f_s}{2}(1+\alpha)$} -- (5,0) node [anchor=north] {$\frac{f_s}{2}(1+\alpha)$};
+            \draw[very thin] (-3,1) -- (-3,0) node [anchor=north] {$-\frac{f_s}{2}(1-\alpha)$};
+            \draw[very thin] (3,1) -- (3,0) node [anchor=north] {$\frac{f_s}{2}(1-\alpha)$};
+            \path (0,1) node [anchor=east] {$T_s$};
+            \path (5,1) node {$\hat{P}(f)$};
+        \end{scope}
+        \draw [dotted] (4,0) -- (4,-6);
+        \draw [dotted] (-4,0) -- (-4,-6);
+    \end{tikzpicture}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+\FloatBarrier
+
+\begin{remarkSN} $\hat{P}(f)$ es de banda $\frac{f_s}{2}(1+\alpha)$. El parámetro $\alpha$ se llama ``exceso de ancho de banda''.
+    $\hat{P}(f)$ es constante (igual a $T_s$) en la banda $|f|\leq \frac{f_s}{2}(1-\alpha)$.  $\hat{P}(\pm \frac{f_s}{2}) = \frac{T_s}{2}$, y $\hat{P}(f)$ baja en forma simétrica alrededor de ese punto.
+    %su bajada alrededor del punto
+%    $(\frac{T_s}{2},)$
+%
+%     La bajada de  tiene simetría respecto a ese
+%    punto.
+\end{remarkSN}
+
+
+\begin{ejemplo}[Pulso de coseno alzado]
+\begin{align*}
+\hat{P}(f) & =
+\begin{cases}
+ T_s, & |f| \leq (1-\alpha) \frac{f_s}{2}  \\
+ T_s \Big[\frac{1}{2} + \frac{1}{2} \cos\Big(\pi
+\frac{|f|-(1-\alpha) \frac{f_s}{2} } {\alpha f_s} \Big)\Big], &
+(1-\alpha) \frac{f_s}{2}  < |f| <
+(1+\alpha) \frac{f_s}{2}  \\
+0,&  |f| \geq (1+\alpha) \frac{ f_s}{2}
+\end{cases}%\\
+%p(t) & = \frac{\cos(\pi\alpha f_st)}{1-(2\alpha f_s t)^2} \
+%\sinc(\pi f_s t)
+\end{align*}
+%  \[\frac{T_s}{2}\left\lbrace 1 \pm \cos\left[\left(f-\frac{f_s}{2}(1-\alpha)\right)\right]\right\rbrace\]
+    Esto corresponde a $\hat{M}(f)=\frac{\alpha f_s}{2 \pi}\cos\left(\frac{\pi f}{\alpha
+f_s}\right)\qquad \text{ con }f \in
+\left[-\alpha\frac{f_s}{2},\alpha\frac{f_s}{2}\right]$.
+
+    Ecuación en el tiempo:
+    \begin{align*}
+        m(t)    = \mathcal{F}^{-1}\left[\hat{M}(f)\right] = \frac{\cos(\pi \alpha f_s t)}{1-(2 f_s \alpha t)^2}
+    \end{align*}
+\[ \Rightarrow \col{p(t) = \frac{\cos(\pi \alpha f_s t)}{1-(2 f_s \alpha t)^2} \sinc (\pi f_s
+t)}\] En particular $p(t)$ cae como $\frac{1}{t^3}$, mucho más
+concentrado en el tiempo.
+    \FloatBarrier
+    \begin{figure}[htb]
+        \centering\begin{minipage}{\textwidth}
+        \bpgf{Imagenes/formPuls/formPuls-9}
+        \begin{tikzpicture}
+            \draw [-stealth] (0,-1) -- (0,3);
+            \draw [-stealth] (-6,0) -- (6,0);
+            \draw [samples=200,domain=-5:5] plot (\x, {2.5*sin(2*\x r)/(2*\x)});
+            \draw [samples=200,domain=-5:5,red] plot (\x, {2.5*sin(2*\x r)/(2*\x)*cos(\x r)/(1-(2/pi*\x)^2)});
+            \draw [samples=200,domain=-5:5,blue] plot (\x, {2.5*sin(2*\x r)/(2*\x)*cos(2*\x r)/(1-(4/pi*\x)^2)});
+            \path (5,0.6) node {$\alpha=0$ (sinc)};
+            \path (4.3,-.7) [red] node {$\alpha=0.5 $};
+            \path [blue] (0.7,-0.5) node {$\alpha=1 $};
+            \draw [-stealth] [red] (3.5,-.7) -- (2.5,-0.3);
+            \draw [-stealth] [blue] (1.2,-0.4) -- (2,-0.1);
+        \end{tikzpicture}
+        \endpgfgraphicnamed\end{minipage}
+    \end{figure}
+
+
+\end{ejemplo}
+\FloatBarrier
+
+\subsection*{Otra forma de caracterizar los pulsos de Nyquist}
+
+Imponemos que $p(t)$ cumpla $\begin{cases}
+                                p(kT_s) = 0,& k\neq 0\\
+                                p(0) = 1
+                             \end{cases}$, $\hat{P}(f)$ de banda a lo sumo $2\cdot \frac{f_S}{2} = f_s$.
+
+Estas dos condiciones se escriben como:
+\begin{align*}
+    p(t) \sum_{k=-\infty}^{+\infty} \delta(t-kT_s) &= \delta(t) \\
+    \Leftrightarrow\hat{P}(f)\ast \frac{1}{T_s} \sum_{n=-\infty}^{+\infty} \delta(f-n f_s) &\equiv  1 \\
+  \Leftrightarrow  \sum_{n=-\infty}^{+\infty} \hat{P}(f-n f_s) &\equiv
+  T_s.
+\end{align*}
+
+\begin{minipage}{0.5\textwidth}
+    \resizebox{\textwidth}{!}{
+    \bpgf{Imagenes/formPuls/formPuls-10}
+    \begin{tikzpicture}
+        \draw [-stealth] (-5,0) -- (5,0) node [anchor=north] {$f$};
+        \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$\hat{P}$};
+        \draw (2,0) .. controls (1,0) and (1,1) .. (0,1);
+        \draw (-2,0) .. controls (-1,0) and (-1,1) .. (0,1);
+        \draw [dotted] (0,0) .. controls (1,0) and (1,1) .. (2,1) .. controls (3,1) and (3,0) .. (4,0);
+        \draw [dotted] (0,0) .. controls (-1,0) and (-1,1) .. (-2,1) .. controls (-3,1) and (-3,0) .. (-4,0);
+        \path (-2,0) node [anchor=north] {$-f_s$};
+        \draw [dashed] (1,1.2) -- (1,0) node [anchor=north] {$\frac{f_s}{2}$};
+        \draw [dashed] (2,1.2) -- (2,0) node [anchor=north] {$f_s$};
+    \end{tikzpicture}
+    \endpgfgraphicnamed
+    }
+\end{minipage}
+Sólo $2$ copias se superponen en $[0,f_s)$.
+
+\begin{minipage}{0.3\textwidth}
+    Que la suma sea constante $\Rightarrow$ simetría respecto a $\frac{f_s}{2}$
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+    \resizebox{\textwidth}{!}{
+    \bpgf{Imagenes/formPuls/formPuls-11}
+    \begin{tikzpicture}[xscale=2]
+        \draw [-stealth] (-0.5,0) -- (2,0);
+        \draw [-stealth] (0,-0.5) -- (0,1.5);
+        \draw (2,0) -- (2,1.5);
+        \draw (2,0) .. controls (1,0) and (1,1) .. (0,1);
+        \draw (0,0) .. controls (1,0) and (1,1) .. (2,1);
+        \path (1,0) node [anchor=north] {$\frac{f_s}{2}$};
+    \end{tikzpicture}
+    \endpgfgraphicnamed
+    }
+\end{minipage}
+
+\subsection*{Volvemos al tema de la eficiencia espectral}
+
+\paragraph{Recordar}
+    \begin{itemize}
+        \item $f_s$: velocidad de señalización en Baudios
+        ($\rfrac{\text{símb}}{\text{seg}}$).
+        \item $vti = f_s \log_2 (M)$: velocidad de transmisión de información, bps.
+        \item Eficiencia espectral: $\dfrac{vti}{B}$.
+    \end{itemize}
+
+   \noindent De acuerdo a Nyquist, la máxima eficiencia espectral que permite detección libre de ISI es
+    \[\max_{f_s\leq 2B} \frac{f_s \log_2(M)}{B} = 2 \log_2 (M).\]
+
+    \noindent Si en cambio, uso pulsos de Nyquist con exceso de ancho de banda $\alpha$, tenemos
+    \[\frac{f_s}{2}(1+\alpha) = B \Rightarrow \text{ eficiencia espectral } \ \ \frac{2}{1+\alpha} \log_2 (M).\]
+
+{\bf Nota:} Con $M$ arbitrario, en principio no hay límites a la
+eficiencia espectral alcanzable. Sin embargo, para distinguir
+símbolos en presencia de ruido, hay que separarlos (como se verá).
+Agrandar $M$ implica entonces agrandar la amplitud de la señal y
+por tanto la \emph{potencia}. Agrandar $vti$ para $B$ fijo tiene
+un costo en potencia.
 
 \section{Detección sincrónica en presencia de ruido}
+
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/detDig/detDig-1}
+    \begin{blockdiagram}
+        \matrix[row sep=5 mm, column sep=10mm]{
+            & & & \node[punto] (p1) {}; & \node[etiqueta] (muestreo) {} node [anchor=south]{muestreo} ;\\
+            \node [punto] (inicio) {} node [anchor=east] {$\sum_k a_k p(t-kT_s) + n(t)$}; & \node [punto] (p2) {}; &\node [punto] (p3) {}; & &\node [punto] (p4) {} node [anchor=north] {$y$}; &\node [block] (comp) {COMP}; &\node [etiqueta] (salida) {$\hat{a}_k$}; \\
+            & & \node [block] (sinc) {SINCR}; & \node [punto] (p5) {};\\
+        };
+        \draw (inicio) -- (p2) -- (p3) -- (muestreo);
+        \draw [-stealth] (p2) |- (sinc);
+        \draw (sinc) -- (p5);
+        \draw [-stealth,dashed] (p5) -- (p1);
+        \draw [-stealth] (p4) -- (comp);
+        \draw [-stealth] (comp) -- (salida);
+    \end{blockdiagram}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+\FloatBarrier
+
+Recibo la onda digital de banda base contaminada de ruido. Suponemos por ahora:
+\begin{itemize}
+    \item Sincronización perfecta.
+    \item No hay ISI. O sea que los pulsos son de Nyquist o que tengo ancho de banda suficiente para que pasen pulsos rectangulares sin distorsión apreciable.
+    \item A la entrada del comparador, tenemos la muestra $y_k = a_k + n_k$, donde \\
+%\begin{itemize}
+%\item $a_k$ es el símbolo transmitido.%una muestra de ruido
+%\item $n_k$ es una muestra de ruido
+%\end{itemize}
+$\begin{cases}
+a_k \in \mathcal{A} & \text{ es el símbolo transmitido}\\
+n_k=n(kT_s) & \text{ es una muestra de ruido}
+\end{cases}$.
+\end{itemize}
+
+Suponemos que $n_k$ tiene $E[n_k]=0$, $E[n_k^2]=\sigma^2$, y
+densidad de probabilidad $f_N(n)$.
+
+\begin{minipage}{0.5\textwidth}
+    \bpgf{Imagenes/detDig/detDig-2}
+    \begin{tikzpicture}
+        \draw [-stealth] (-3,0) -- (3,0) node [anchor=north] {$n$};
+        \draw [-stealth] (0,-0.5) -- (0,2.5) node [anchor=west] {$f_N(n)$};
+        \draw [domain=-2.5:2.5,samples=200] plot (\x,{2*exp(-1*((\x)^2))});
+    \end{tikzpicture}
+    \endpgfgraphicnamed
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+\[\int_a^b f_N(n)\d n = Prob (a\leq n_k \leq b).\]
+\end{minipage}
+
+Por ahora no entramos en el tema de cómo el ruido $n(t)$ se generó
+en el canal analógico. Típicamente, será un ruido blanco que se
+filtra en recepción. Postergamos ese análisis.
+
+\subsection*{Probabilidad de error de detección, símbolos binarios}
+
+Consideramos primero el caso binario, donde $a_k$ toma dos valores
+posibles, $A_1 < A_2$. \\ Por ejemplo: $A_1=0, A_2 = A$ en el caso
+unipolar.
+
+La densidad de probabilidad de la V.A. $Y$ recibida, es la de $n$
+trasladada por el símbolo. Tenemos por tanto $2$ densidades
+\emph{condicionales} al símbolo enviado,
+\begin{gather*}
+    f_{Y|A_1} (y) = f_N(y-A_1);\\
+    f_{Y|A_2} (y) = f_N(y-A_2).
+\end{gather*}
+
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/detDig/detDig-3}
+    \begin{tikzpicture}
+        \draw [-stealth] (-3.5,0) -- (12,0) node [anchor=north] {$y$};
+        \draw [-stealth] (0,-0.5) -- (0,2.5);
+        \draw [domain=-3:7,samples=200] plot (\x,{2*exp(-1*((\x-2)^2)/6)});
+        \draw [dashed] (2,0) node [anchor=north] {$A_1$} -- (2,2) node [anchor=south west] {$f_{Y|A_1}$};
+        \draw [domain=4.5:7,samples=200,fill=blue!20,opacity=0.5] (4.5,0) --  plot (\x,{2*exp(-1*((\x-2)^2)/6)}) -- (7,0);
+        \begin{scope}[shift={(4,0)}]
+            \draw [domain=-3:7,samples=200] plot (\x,{2*exp(-1*((\x-2)^2)/6)});
+            \draw [dashed] (2,0) node [anchor=north] {$A_2$} -- (2,2) node [anchor=south west] {$f_{Y|A_2}$};
+            \draw [thick] (0.5,0) node [anchor=north] {$A_0$} -- (0.5,{2*exp(-1*(1.5^2)/6)});
+            \draw [domain=-3:0.5,samples=200,fill=red!20,opacity=0.5] (-3,0) --  plot (\x,{2*exp(-1*((\x-2)^2)/6)}) -- (0.5,0);
+        \end{scope}
+    \end{tikzpicture}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+\FloatBarrier
+
+Decidimos si se transmitió $A_1$ o $A_2$ comparando con un umbral
+$A_0$. Entonces hay un error de detección si:
+\begin{itemize}
+    \item $y>A_0$ y se transmitió $A_1$;
+    \item $y<A_0$ y  se transmitió $A_2$.
+\end{itemize}
+
+Calculo la probabilidad de cada evento, indicada en sombreado.
+\begin{align*}
+    P(\text{error}|A_1) &= \int_{A_0}^\infty f_N(y-A_1)\d y = \int_{A_0-A_1}^\infty f_N(n)\d n;\\
+    P(\text{error}|A_2) &= \int_{-\infty}^{A_0} f_N(y-A_2)\d y = \int_{-\infty}^{-(A_2-A_0)} f_N(n)\d n.\\
+\end{align*}
+
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/detDig/detDig-4}
+    \begin{tikzpicture}
+        \draw [-stealth] (-6,0) -- (6,0) node [anchor=north] {$n$};
+        \draw [-stealth] (0,-0.5) -- (0,2.5) node [anchor=west] {$f_N(n)$};
+        \draw [domain=-5:5,samples=200] plot (\x,{2*exp(-1*((\x)^2)/6)});
+        \draw [domain=-5:-2,samples=200,fill=red!20] plot (\x,{2*exp(-1*((\x)^2)/6)}) -- (-2,0) node [anchor=north] {$-(A_2-A_0)$};
+        \draw [domain=3:5,samples=200,fill=blue!20] (3,0) node [anchor=north] {$A_0-A_1$} -- plot (\x,{2*exp(-1*((\x)^2)/6)});
+        \path (-4,1) node {$P(E|A_2)$};
+        \path (3.75,1) node {$P(E|A_1)$};
+    \end{tikzpicture}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+\FloatBarrier
+
+Esas son probabilidades condicionales. La probabilidad total es:
+\[P_e = P(E|A_1) P (A_1) + P(E|A_2) P (A_2).\]
+
+\subsubsection*{Umbral óptimo}
+
+Si subimos el umbral $A_0$, $P(E|A_1)$ baja pero sube $P(E|A_2)$,
+y viceversa. Entonces hay un compromiso en la elección del umbral.
+La selección óptima es la que minimiza $P_e$; la hallamos por
+diferenciación.
+
+\[\frac{\partial P_e}{\partial A_0} = P(A_2) f_N(A_0 - A_2) - P(A_1) f_N (A_0 - A_1).\]
+
+Existe $A_0^*$ que anula la derivada, que cumple
+\[\frac{P(A_2)}{P(A_1)}=\frac{f_N(A_0^*-A_1)}{f_N(A_0^*-A_2)}.\]
+
+\subsubsection*{Caso usual: símbolos equiprobables, ruido simétrico}
+
+$P(A_1) = P(A_2) = \frac{1}{2}\Rightarrow f_N(A_0^*-A_1) =
+f_N(A_0^*-A_2)$.
+
+Supongamos $f_N(n)$ simétrica (par) y decreciente en $n>0$ (caso típico: Gaussiana).
+
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/detDig/detDig-5}
+    \begin{tikzpicture}
+        \draw [-stealth] (-6,0) -- (6,0) node [anchor=north] {$n$};
+        \draw [-stealth] (0,-0.5) -- (0,2.5) node [anchor=west] {$f_N(n)$};
+        \draw [domain=-5:5,samples=200] plot (\x,{2*exp(-1*((\x)^2)/6)});
+        \draw [domain=-5:-2,samples=200,fill=red!20] plot (\x,{2*exp(-1*((\x)^2)/6)}) -- (-2,0) node [anchor=north] {$A_0^*-A_2$};
+        \draw [domain=2:5,samples=200,fill=blue!20] (2,0) node [anchor=north] {$A_0^*-A_1$} -- plot (\x,{2*exp(-1*((\x)^2)/6)});
+        \path (-4,1) node {$P(E|A_2)$};
+        \path (3.75,1) node {$P(E|A_1)$};
+        \draw (2,{2*exp(-2/3)}) -- (-2,{2*exp(-2/3)});
+    \end{tikzpicture}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+
+Para que sean iguales las $f_N$, $A_2-A_0^* = A_0^*-A_1
+\Rightarrow A_0^*=\dfrac{A_1+A_2}{2}$. \\
+También $P(E|A_1) =
+P(E|A_2)$. En este caso:
+\[
+{\col{P_e= P(E|A_1) = P(E|A_2) = \int_{\frac{A_2-A_1}{2}}^\infty
+f_N(n)\d n}}
+\]
+Si en cambio, $P(A_2) > P(A_1)$ por ejemplo, entonces
+$f_N(A_0^*-A_1) > f_N(A_0^*-A_2) \Rightarrow A_0^*-A_1 <
+A_2-A_0^*$. El umbral óptimo está más cerca del símbolo menos
+probable.
+
+\subsection*{Probabilidad de error óptima, binario, ruido Gaussiano}
+El modelo más usado para la distribución de probabilidad del ruido
+es la normal o Gaussiana:
+\[f_N(n) = \frac{1}{\sqrt{2\pi}\sigma}\e^{-\frac{n^2}{2\sigma^2}}\qquad \text{ (media $0$, varianza $\sigma^2$)}.\]
+Denotamos por $Q(z)$ la probabilidad de que una normal standard
+($\sigma=1$) supere a $z$,
+\[Q(z):=\frac{1}{\sqrt{2\pi}} \int_z^\infty \e^{-\frac{n^2}{2}}\d n.\]
+\begin{itemize}
+    \item No tiene expresión analítica, pero está tabulada.
+    \item Para $z \gg 1$, vale la aproximación $Q(z)\approx
+    \frac{1}{\sqrt{2\pi}z}\e^{-\frac{z^2}{2}}$.
+\end{itemize}
+
+Si tengo un ruido $n$ normal $(0,\sigma^2)$, entonces $\frac{n}{\sigma}$ tiene varianza $1$. Por tanto,
+\[P(n>z) = P \left(\frac{n}{\sigma}>\frac{z}{\sigma}\right) = Q\left(\frac{z}{\sigma}\right).\]
+
+Entonces, para la detección con símbolos binarios equiprobables,
+ruido Gaussiano $(0,\sigma^2)$, llegamos a la siguiente fórmula
+para la probabilidad de error:
+\[P_e=\int_{\frac{A_2-A_1}{2}}^\infty f_N(n)\d n = P\left(n>\frac{A_2-A_1}{2}\right) = Q\left(\frac{A_2-A_1}{2\sigma}\right).\]
+
+\begin{ejemplo}[binario, equiprobable, ruido Gaussiano]$\phantom{1}$
+\begin{description}
+    \item[Unipolar] $A_1=0$, $A_2=A$, $A_0^* = \frac{A}{2}$,
+    $P_e=Q\left(\frac{A}{2\sigma}\right)$.
+    \item[Polar] $A_1=-A$, $A_2=A$, $A_0^* = 0$, $P_e =
+    Q\left(\frac{A}{\sigma}\right)$.
+ \end{description}
+Notar que en ambos casos, para reducir $P_e$, debo aumentar
+$\frac{A}{\sigma}$. De hecho, $P_e$ cae muy rápidamente:
+%\begin{remarkSN}$\phantom{1}$
+%    \begin{itemize}
+%        \item Para achicar  \\
+        \begin{center}
+            \begin{tabular}{c|c}
+                $\frac{A}{\sigma}$ & $Q\left(\frac{A}{\sigma}\right)=P_e(\text{polar})$\\
+                \hline
+                $2$ & $0.022$\\
+                $4$ & $3\cdot 10^{-5}$\\
+                $6$ & $10^{-8}$
+            \end{tabular}
+        \end{center}
+\end{ejemplo}
+%
+%        Cae muy
+%        \item
+%    \end{itemize}
+%\end{remarkSN}
+$\frac{A}{\sigma}$ opera como una relación señal - ruido. De
+hecho, $\sigma^2=E[n_k^2]=N$, potencia media de ruido. $A^2$ está
+relacionado con la potencia de la onda $x(t) = \sum a_k
+p(t-kT_s)$. La relación exacta depende de $p(t)$ y el código de
+línea, veamos ejemplos.
+
+
+\begin{ejemplo}
+    $p(t)= p_{[0,T_s]}(t)$ NRZ. En este caso, vimos que $\langle x^2 \rangle = E[a_k^2]\frac{\|p\|^2}{T_s} =
+    E[a_k^2]$. Casos particulares:
+    \begin{align*}
+    \text{Polar, NRZ: } \langle x^2 \rangle  &= A^2 \Rightarrow \left(\frac{S}{N}\right) = \frac{A^2}{\sigma^2}.\\
+    \text{Unipolar,NRZ: } \langle x^2 \rangle &=\frac{A^2}{2}\Rightarrow \left(\frac{S}{N}\right) =
+    \frac{A^2}{2\sigma^2}.
+\end{align*}
+    \begin{equation*}
+        \Rightarrow \left.\begin{aligned}
+                        P_e = Q\left(\sqrt{\frac{S}{N}}\right)\qquad &\text{polar}\\
+                        P_e = Q\left(\frac{1}{\sqrt{2}}\sqrt{\frac{S}{N}}\right)\qquad &\text{unipolar}
+                    \end{aligned} \right\rbrace
+                    \text{\begin{minipage}{5cm}
+                            polar es más eficiente: menor $P_e$ para igual
+                            $\frac{S}{N}$.
+                          \end{minipage}}
+    \end{equation*}
+\end{ejemplo}
+
+\subsection*{Caso M-ario ($M$ símbolos por pulso)}
+
+Elegimos una ``constelación'' de niveles para representar los $M$ símbolos. Por ejemplo, para $M$ par, elegimos una constelación polar $\{\pm A, \pm 3A,\pm 5A,\ldots\}$. El espaciamiento es $2A$. El nivel más grande es $(M-1)A$. Tomamos símbolos equiprobables y contaminamos con ruido Gaussiano, tenemos:
+
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/detDig/detDig-6}
+    {\begin{tikzpicture}
+        \draw [-stealth] (-6,0) -- (8,0) node [anchor=north] {$n$};
+        \draw [-stealth] (0,-0.5) -- (0,2.5);
+        \foreach \a in {-3,-1,1,3,5}
+            \draw [domain={\a-2}:{\a+2},samples=200] plot (\x,{2*exp(-1.5*((\x-\a)^2))});
+        \path (3.5,2) node [anchor=south] {$f_{Y|3A}$};
+        \draw [ultra thin] (2,0) node [anchor=north] {$2A$} -- (2,{2*exp(-1.5)});
+        \draw [ultra thin] (4,0) node [anchor=north] {$4A$} -- (4,{2*exp(-1.5)});
+        \draw [ultra thin] (3,0) node [anchor=north] {$3A$} -- (3,2);
+    \end{tikzpicture}}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+\FloatBarrier
+
+Es intuitivo que los umbrales de detección óptimos son los puntos medios $0,\pm 2A, \pm 4A,\ldots$
+
+Para cualquier símbolo menos los extremos
+\[P(E|\text{simb}) = P(|n|>A) = 2P(n>A) = 2Q\left(\frac{A}{\sigma}\right).\]
+Para los extremos
+\[P(E|\text{simb}) = Q\left(\frac{A}{\sigma}\right).\]
+
+\paragraph{TOTAL}
+
+\[P_e=\frac{(M-2) 2 Q\left(\frac{A}{\sigma}\right) + 2Q\left(\frac{A}{\sigma}\right)}{M} = \underbrace{2\left(\frac{M-1}{M}\right)Q\left(\frac{A}{\sigma}\right)}_{\text{prob. error de símbolo}}.\]
+
+Si queremos relacionar $P_e$ con $\left(\frac{S}{N}\right)$, otra
+vez jugaría la forma de los pulsos.
+
+\begin{ejemplo}
+    Pulsos NRZ, $a_k$ polar M-ario.
+    \[\langle x^2\rangle=E[a_k^2]=A^2\frac{2}{M}\left(1+3^2+5^2+\cdots+(M-1)^2\right) = \frac{2A^2}{M}\left(\frac{M^3-M}{6}\right) = \frac{A^2(M^2-1)}{3}\]
+
+  Se utilizó arriba una fórmula para la suma de los cuadrados de los números
+  impares, demostrable por inducción completa.
+
+\[\Rightarrow \left(\frac{S}{N}\right)=\frac{A^2}{\sigma^2}\left(\frac{M^2-1}{3}\right) \qquad
+\Rightarrow
+{\col{P_e=2\left(\frac{M-1}{M}\right)Q\left(\sqrt{\frac{3}{M^2-1}\left(\frac{S}{N}\right)}\right)}}\]
+
+    es menos eficiente que $M=2$, a cambio de más bps.
+\end{ejemplo}
+
+\subsubsection*{$P_e$ (símbolo) vs. $P_e$ (bit)}
+
+En M-ario, un símbolo codifica $\log_2(M)$ bits. Si cometo un error de símbolo, me afecta varios bits, dependiendo de la correspondencia bits/símbolo.
+
+\subsubsection*{Código de Gray} Símbolos vecinos difieren en $1$ sólo bit. Por ejemplo, para $M=8$
+
+\begin{tabular}{r|r}
+    $7A$ & $010$\\
+    $5A$ & $011$\\
+    $3A$ & $001$\\
+    $A$  & $000$\\
+    \hline
+    $-A$ & $100$\\
+    $-3A$ & $101$\\
+    $-5A$ & $111$\\
+    $-7A$ & $110$
+\end{tabular} Despreciando la probabilidad de un salto de más de un nivel, tenemos aquí
+\[P_e\text{(bit)} \approx \frac{P_e\text{(símb)}}{\log_2 M}.\]
+
+\paragraph{Resumen (detección digital)}$\phantom{1}$
+
+\FloatBarrier
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/detDig/detDig-7}
+    \begin{blockdiagram}
+        \matrix[row sep=5 mm, column sep=10mm]{
+            & & & \node[punto] (p1) {}; & \node[etiqueta] (muestreo) {} node [anchor=south]{muestreo} ;\\
+            \node [punto] (inicio) {} node [anchor=east] {$\sum_k a_k p(t-kT_s) + n(t)$}; & \node [punto] (p2) {}; &\node [punto] (p3) {}; & &\node [punto] (p4) {} node [anchor=north] {$y_k=a_k+n_k$}; &\node [block] (comp) {COMP}; &\node [etiqueta] (salida) {$\hat{a}_k$}; \\
+            & & \node [block] (sinc) {SINCR}; & \node [punto] (p5) {};\\
+        };
+        \draw (inicio) -- (p2) -- (p3) -- (muestreo);
+        \draw [-stealth] (p2) |- (sinc);
+        \draw (sinc) -- (p5);
+        \draw [-stealth,dashed] (p5) -- (p1);
+        \draw [-stealth] (p4) -- (comp);
+        \draw [-stealth] (comp) -- (salida);
+    \end{blockdiagram}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+\FloatBarrier
+
+\begin{itemize}
+    \item pulsos sin ISI
+    \item $\{a_k\} \in \mathcal{A}$ constelación de múltiplos de $A$. \\ Ejemplos: (i)
+    $\mathcal{A} = \{-A, A\}$; (ii) $\mathcal{A} = \{0,A\}$; (iii)
+    $\mathcal{A}= \{\pm A,\pm 3A,\ldots \}$. %
+%    \begin{enumerate}
+%        \item $\pm A$
+%        \item $$
+%        \item $\pm A,
+%    \end{enumerate}
+    \item Ruido $n(t)$, $E[n]=0$, $E[n^2]=\sigma^2$. Densidad $f_N(n)$. Por defecto, Gaussiano.
+\end{itemize}
+
+Decido mediante comparación de la muestra $y_k = a_k + n_k$, con
+umbrales apropiados. $P_e$ es la probabilidad de error del símbolo
+detectado.
+
+Obtuvimos expresiones de $P_e$ en función de $\frac{A}{\sigma}$, para cada tipo de señalización.
+ \begin{itemize}
+        \item Polar, binario:
+        $P_e=Q\left(\frac{A}{\sigma}\right)$.
+        \item Unipolar: $P_e=Q\left(\frac{A}{2\sigma}\right)$.
+        \item Polar, M-ario:
+        $P_e\text{(simb)}=2\left(\frac{M-1}{M}\right)Q\left(\frac{A}{\sigma}\right)$.
+    \end{itemize}
+
+Para algunas formas de pulsos específicas, relacionamos
+$\frac{A}{\sigma}$ con $\sqrt{\left(\frac{S}{N}\right)}$.
+
+\section{Probabilidad de error en base a parámetros del canal}
+
+\begin{figure}[htb]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \input{digBBGr.tex}
+    }
+\end{figure}
+
+Se transmite una onda PAM por un canal de ancho de banda limitado
+$B$, que además adiciona ruido. Al igual que en la comunicación
+analógica, colocamos un filtro de recepción $\hat{H}_R(f)$ para
+limitar el ruido en la detección. La salida de ese filtro va a la
+etapa de detección recién estudiada. Tenemos entonces tres ondas
+PAM:
+\begin{itemize}
+\item $x_T(t)= \sum_k a_k p_T(t-kT_s)$, la onda transmitida.
+$p_T(t)$ es la forma de pulso seleccionada.
+\item $x(t)=\sum a_k p(t-kT_s)$, la onda a la salida del canal,
+a la que se superpone el ruido blanco. La forma de pulso $p(t)$
+incorpora la distorsión del canal.
+\item $x_R(t) = \sum_k a_k
+p_R(t-kT_s)$, la onda a la salida del filtro de recepción, a la
+que se superpone el ruido $n(t)$. éste tiene media nula y
+varianza
+\[\sigma^2=E[n(t)^2]=\frac{\eta}{2}\displaystyle\int^{+\infty}_{\infty}
+|\hat{H}_R(f)|^2\d f.\]
+\end{itemize}
+Estudiamos el sistema completo distinguiendo según la forma de
+pulso transmitida.
+
+\begin{enumerate}
+    \renewcommand\theenumi{\Roman{enumi}}
+    \item \textbf{Comunicación con pulsos de Nyquist ideales}.
+    \label{item:1}
+    Es decir $p_T(t) = \sinc(\pi f_s t)$, con $f_s=2B$. éste es el caso más simple, donde la señal transmitida pasa sin distorsión por el
+    canal:
+ \[ p(t) = \sinc(\pi f_s t), \quad \hat{P}(f) = T_s
+    p_{[-\frac{f_s}{2},\frac{f_s}{2}]}(f).\]
+    En particular $x(t)$ está confinada a la banda $[-B,B]$. Para símbolos IID, de media $\mu$ y varianza
+    $\sigma_a^2$, su densidad espectral de potencia es
+    \begin{center}\begin{minipage}{\textwidth}
+        \bpgf{Imagenes/digBB/digBB-2}
+        \begin{tikzpicture}
+            \draw [-stealth] (-1.5,0) -- (1.5,0) node [anchor=north] {$f$};
+            \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=east] {$S_x(f)$};
+            \draw (-1,0) node [anchor=north] {$-B$} -- (-1,1) -- (1,1) node [anchor=west] {$\sigma_a^2 T_s$} -- (1,0) node [anchor=north] {$B$};
+            \draw [thick,-stealth] (0,0) -- (0,1.2) node [anchor=west] {$\mu^2$};
+        \end{tikzpicture}
+        \endpgfgraphicnamed\end{minipage}
+    \end{center}
+    La potencia media de señal a la salida del canal es
+     \[
+     \langle x ^2 \rangle = \int_{-\infty}^\infty S_x(f)\d f =
+     \mu^2 + \sigma_a^2 T_s 2B = \mu^2 + \sigma_a^2 = E[a_k^2].
+     \]
+     Notar que como $\|p\|^2 = \int_{-\infty}^\infty |\hat{P}(f)|^2 \d f = T_s$ se verifica en particular para este caso la fórmula
+     anunciada en la sección anterior,
+     \[\langle x^2 \rangle = E[a_k^2] \|p\|^2 f_s = \overline{E_p}
+     f_s.\]
+    $x(t)$ llega contaminada de ruido blanco. Resulta entonces
+    natural en este caso proceder  como en el caso analógico, y poner como
+    filtro de recepción simplemente un pasabajos ideal $[-B,B]$,
+    que rechaza al ruido fuera de banda. Notar que:
+    \begin{itemize}
+    \item La señal de recepción sigue intacta, $p_R(t) = p(t)$, es decir no hay ISI en la detección.
+    \item El ruido de recepción tiene $\sigma^2=\eta B = \frac{\eta f_s}{2}$.
+    \end{itemize}
+%
+
+    Calculamos ahora expresiones para la probabilidad de error de detección $P_e$ en términos de parámetros físicos del
+    canal, para las codificaciones de línea polar o unipolar.
+
+    \begin{description}
+        \item[Caso polar binario] $a_k=\pm A$, umbral óptimo
+        $A_0=0$, $\langle x^2 \rangle = A^2$.
+        \[ \Rightarrow \ \ P_e = Q\left(\frac{A}{\sigma}\right) = Q\left(\sqrt{\frac{\langle x^2 \rangle}{\sigma^2}}\right) = Q\left(\sqrt{\frac{S}{N}}\right).\]
+        que es la misma expresión que obtuvimos con pulsos NRZ.
+
+        Otra expresión (más fácil de generalizar): sea $\overline{E}_p$ la energía media del pulso $a_k
+        p(t)$,
+        en este caso $\overline{E}_p = E[a_k^2]\|p\|^2 = A^2 T_s$.
+                \[\left.\begin{gathered}
+                        A^2 = S = \overline{E}_p f_s\\
+                        \sigma^2 = N = \eta \frac{f_s}{2}
+                      \end{gathered}\right\}\Rightarrow \frac{S}{N} = \frac{2\overline{E}_p}{\eta}\Rightarrow \col{P_e = Q\left(\sqrt{\frac{2\overline{E}_p}{\eta}}\right)}\]
+        que depende solo de parámetros físicos del canal:
+        \begin{itemize}
+            \item Energía media del pulso.
+            \item Densidad espectral de ruido.
+            \item ¡No depende de $f_s$!
+        \end{itemize}
+        \vspace{1ex}
+
+        \item[Caso unipolar binario] $a_k = \{0,A\}$, umbral óptimo
+        $A_0=\frac{A}{2}$, $\langle x^2 \rangle = S = \frac{A^2}{2}$.
+       % Entonces $S_x(f) = \sigma^2 f_s |\hat{P}(f)|^2 + \mu^2 f_s^2 \hat{P}(f)^2 = \frac{A^2}{4} T_s p_{[-\frac{f_s}{2},\frac{f_s}{2}]}(f) + \frac{A^2}{4}\delta(f)$
+        \begin{align*}
+ %           S = \langle x^2 \rangle = \frac{A^2}{4} + \frac{A^2}{4} = \frac{A^2}{2}\\
+         \sigma^2 = N = \eta \frac{f_s}{2} \Longrightarrow   P_e = Q\left(\frac{A}{2\sigma}\right) =
+         Q\left(\frac{1}{\sqrt{2}}\sqrt{\frac{S}{N}}\right).
+        \end{align*}
+
+        También aqúi tenemos $\frac{S}{N} = \frac{2\overline{E}_p}{\eta}$
+%        \overline{E}_p = E[a_k^2] \int p(t)^2\d t = \frac{A^2}{2} T_s\Rightarrow S = \overline{E}_p T_s$, $N=\frac{\eta f_s}{2}$
+        \[\Rightarrow \col{P_e = Q\left(\sqrt{\frac{\overline{E}_p}{\eta}}\right)}\]
+        que es menos eficiente que el caso polar.
+    \end{description}
+
+    \item \textbf{Pulsos de Nyquist de exceso de ancho de banda $\alpha$.}
+    \label{item:2}
+    Para que estos pulsos pasen intactos por el canal, se require
+    la relación $f_s (1+\alpha) \leq 2B$, más restrictiva que la
+    anterior. Suponiendo que esto ocurre, podemos usar la misma
+    estrategia para elegir el filtro: dejar el pulso intacto,
+    eliminar el ruido fuera de banda. Por tanto,
+ \[
+\Rightarrow \sigma^2 = \frac{\eta f_s}{2}(1+\alpha).
+\]
+Aquí no buscamos expresiones en términos de $\frac{S}{N}$, en
+particular la fórmula sencilla para la potencia de la señal PAM
+no se aplica. Generalizamos las expresiones para la probabilidad
+de error en términos de $\frac{\overline{E}_p}{\eta}$. La energía
+media del pulso es
+    \[\overline{E}_p = E[a_k^2] \int p(t)^2\d t = E[a_k^2] T_s \left(\underbrace{\frac{1}{T_s}\int |\hat{P}(f)|^2\d f}_{\text{llamamos }\beta}\right)
+     = \beta E[a_k^2] T_s.\]
+    Se puede verificar (usando la desigualdad de Cauchy-Schwarz) que el parámetro $\beta$ cumple  $\frac{1}{1+\alpha} \leq \beta \leq
+    1$.
+
+    Para el caso polar binario, $\overline{E}_p = \beta A^2 T_s\Rightarrow A=\sqrt{\overline{E}_p \frac{f_s}{\beta}}$. $\sigma=\sqrt{\dfrac{\eta f_s}{2} (1+\alpha)}$.
+
+    \[\Rightarrow P_e = Q\left(\frac{A}{\sigma}\right) = Q\left(\sqrt{\frac{2\overline{E}_p}{\eta (1+\alpha)\beta}}\right).\]
+    Se agregó un factor $\beta(1+\alpha)\geq 1$ en el denominador,
+    respecto del caso de pulsos de Nyquist ideales. Esto deteriora
+    $P_e$. Lo mismo ocurre en el caso unipolar.
+
+    Intuitivamente: tuvimos que ensanchar el filtro para dejar pasar la señal y no introducir ISI, pero esta no tiene ``tanta fuerza'' en la parte alta de la banda.
+
+    \item \textbf{Caso de pulsos rectangulares RZ o NRZ}
+    \label{item:3}
+
+    Supongamos que el canal tiene $B$ grande y los pulsos $p(t)$ llegan esencialmente rectangulares, ¿qué hago con $H_R$? El dilema es:
+    \begin{itemize}
+        \item Filtro muy ancho, no deforma pulsos pero pasa mucho ruido a la etapa de
+        detección.
+        \item Filtro angosto, reduce el ruido pero deforma los pulsos, introduce ISI.
+    \end{itemize}
+    Para este tipo de pulsos la estrategia de ``dejarlos pasar intactos'', que tomamos de la comunicación analógica, no
+    es la apropiada.
+    En realidad, aquí no importa dejar la onda intacta sino lograr la máxima amplitud en el momento del
+    muestreo, en relación al ruido. La optimización del filtro de
+    detección para estos fines se verá a continuación.
+\end{enumerate}
 
 
 \section{Detección óptima: filtro acoplado}
 
+Replanteamos el problema del diseño del filtro de recepción $H_R$
+(denotado aquí por $H$) buscando la mínima probabilidad de error
+debida al ruido, ignorando por ahora la ISI. En vez de ``dejar
+pasar'' la señal, permitimos que el pulso se distorsione en el
+filtro; el objetivo es que en el momento de muestreo el pulso de
+salida tenga amplitud máxima en relación al ruido.
+
+Supongamos que a la entrada de $H$ llega un pulso $a_0 p(t)$,
+contaminado con ruido blanco $\frac{\eta}{2}$. Aquí $a_0$ puede
+ser unipolar ($\{0,A\}$) o polar ($\pm A$), y el pulso de energía
+finita tiene forma conocida pero arbitraria.
+
+A la salida del filtro de respuesta impulsiva $h(t)$  y respuesta
+en frecuencia $\hat{H}(f)$, tendremos $a_0 p(t) \ast h(t) + n(t)$
+donde $n(t)$ es un ruido de media $0$, varianza
+$\sigma^2=\frac{\eta}{2}\displaystyle{\int_{-\infty}^{+\infty}
+|\hat{H}(f)|^2\d f}$.
+
+
+
+Muestreo en $t=\tau$. La señal muestreada es $a_0(p\ast h)
+(\tau)$, que toma valores ($\{0,A'\}$) o ($\pm A'$), siendo
+$A'=A(p\ast h)(\tau)$. La probabilidad de error de detección $P_e$
+estará entonces determinada por la relación $\frac{A'}{\sigma}$,
+expresamos su cuadrado a continuación:
+%
+\[\left(\frac{A'}{\sigma}\right)^2 = \frac{2 A^2 |(p\ast
+h)(\tau)|^2}{\eta \int_{-\infty}^{+\infty} |\hat{H}(f)|^2\d f}.\]
+Buscamos maximizar lo anterior (para minimizar $P_e$) pero esto no
+es inmediato ya que el filtro $H$ aparece en el numerador y
+denominador. Para llegar a una expresión más clara escribimos
+numerador en términos de la transformada de Fourier $\hat{H}(f)$.
+
+\begin{gather*}
+    (p\ast h) \stackrel{\mathcal{F}}{\longrightarrow} \hat{P}(f) \hat{H}(f)\\
+    \Rightarrow (p\ast h)(\tau) = \int_{-\infty}^{+\infty} \hat{P}(f)
+\hat{H}(f) \e^{j2\pi f \tau}\d f.
+\end{gather*}
+
+\paragraph{Llegamos al siguiente problema de optimización:}
+
+\begin{equation}
+    \label{eq:op}
+    \max_{\hat{H}(f)} \frac{\left|\displaystyle\int_{-\infty}^{+\infty}
+\hat{P}(f) \hat{H}(f) \e^{j2\pi f \tau}\d
+f\right|^2}{\displaystyle\int_{-\infty}^{+\infty} |\hat{H}(f)|^2\d
+f}. \tag{*}
+\end{equation}
+
+Como la optimización tiene $\infty$ grados de libertad
+(optimización en todos los filtros) no es de solución obvia. Sin
+embargo se la puede resolver recurriendo a la desigualdad de
+Cauchy-Schwarz (válida para toda función de cuadrado integrable):
+%con igualdad $\Leftrightarrow \hat{V} = K \hat{W}$):
+\[\left|\left\langle\hat{V}(f),\hat{W}(f)\right\rangle\right|^2 \leq ||\hat{V}||^2
+||\hat{W}||^2, \quad \text{ con igualdad }\Leftrightarrow \hat{V}
+= K \hat{W}.\] O sea:
+\[\left|\int \hat{V}(f) \overline{\hat{W}(f)}\d f\right|^2\leq \int_{-\infty}^{+\infty}
+|\hat{V}(f)|^2\d f \int_{-\infty}^{+\infty} |\hat{W}(f)|^2\d f.\]
+Tomemos aquí $\hat{V}(f) = \hat{H}(f)$, $\overline{\hat{W}(f)} =
+\hat{P}(f)\e^{j2\pi f \tau}$. Usando la desigualdad tenemos
+%
+\[
+\frac{\left|\displaystyle\int_{-\infty}^{+\infty} \hat{P}(f)
+\hat{H}(f) \e^{j2\pi f \tau}\d
+f\right|^2}{\displaystyle\int_{-\infty}^{+\infty} |\hat{H}(f)|^2\d
+f} = \frac{\left|\left\langle
+\hat{V},\hat{W}\right\rangle\right|^2}{||\hat{V}||^2}\leq
+||\hat{W}||^2 = \int_{-\infty}^{+\infty} |\hat{P}(f)|^2\d f =
+||p||^2.\]
+O sea que el máximo en \eqref{eq:op} es acotado, y la
+igualdad se alcanza sólo si
+\[\hat{H}(f) = K\overline{\hat{P}(f)}\e^{-j2\pi f \tau} \Rightarrow h(t)=K
+p\left(-(t-\tau)\right)\Rightarrow \col{h(t) = K p(\tau-t)}.\]
+
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/filAc/filAc-1}
+    \begin{tikzpicture}
+        \draw[-stealth] (-0.5,0) -- (4,0) node [anchor=north] {$t$};
+        \draw[-stealth] (0,-0.5) -- (0,1.5);
+        \draw (0,0) -- (2,1) -- (3,0);
+        \path (5,1) node {$\Rightarrow$};
+        \begin{scope}[shift={(6,0)}]
+                \draw[-stealth] (-0.5,0) -- (4,0) node [anchor=north]
+{$t$};
+                \draw[-stealth] (0,-0.5) -- (0,1.5) node [anchor=west]
+{$h_{opt} = K p(\tau - t)$};
+                \draw (0.5,0) -- (1.5,1) -- (3.5,0) node
+[anchor=north] {$\tau$};
+        \end{scope}
+    \end{tikzpicture}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+\FloatBarrier
+
+Concluimos que la respuesta impulsiva del filtro óptimo tiene la
+forma del pulso incidente, invertido en el tiempo: se dice que el
+filtro óptimo está {\bf acoplado (o apareado)}  al pulso.
+
+Para interpretar el resultado en el dominio del tiempo, conviene
+escribir el pulso de salida $p_R =h\ast p$ para el filtro
+óptimo:
+\begin{align*}
+            p_R(t) = (h\ast p) (t)  & = \int_{-\infty}^{+\infty}
+h(t-\sigma) p (\sigma)\d \sigma\\
+                        & =
+%\frac{1}{||p||^2}
+K \int_{-\infty}^{+\infty} p(\tau - t + \sigma) p (\sigma)\d
+\sigma \\ & = K r_p(t - \tau).
+        \end{align*}
+Aquí $r_p(\cdot)$ es la autocorrelación del pulso como señal de
+cuadrado integrable. Como la autocorrelación es máxima en cero, el
+pulso de salida toma su amplitud máxima en el instante de muestreo
+$t=\tau$. En otras palabras: el detector basado en este filtro y
+muestreo en $t=\tau$ está {\em correlacionando} la señal de
+entrada $a_0 p(t) + n(t)$ con la forma de onda conocida del pulso.
+
+
+\begin{remarksSN}
+    $\phantom{1}$
+    \begin{enumerate}
+        \item La constante $K$ es arbitraria, escalar el filtro no
+        cambia el cociente de \eqref{eq:op}. Una elección cómoda es
+$K=\dfrac{1}{||p||^2}=\dfrac{1}{r_p(0)}$: de ese modo el pulso de
+salida $p_R(t)$ tiene valor máximo igual a 1, alcanzado en
+$t=\tau$. En ese caso la amplitud $A'$ de muestreo coincide con la
+amplitud $A$ de los símbolos de entrada.
+        \item $\tau$ sería idealmente arbitrario, excepto que en la
+práctica queremos $h(t)$ causal. Entonces tomo $\tau$ igual a la
+duración del pulso $p(t)$ (si $p(t)=\sinc$ hay que truncarlo).
+    \end{enumerate}
+\end{remarksSN}
+
+El máximo de nuestro problema de optimización es $\|p\|^2$. Por
+tanto tenemos
+\[
+\left(\dfrac{A'}{\sigma}\right)^2_{\text{max}} = 2
+\frac{A^2}{\eta} ||p||^2.\]
+% Los libros tienen una generalización para ruido coloreado, $S_n(f)$.
+
+A partir de esta fórmula podemos escribir la probabilidad de error
+en términos de la energía media del pulso recibido,
+$\overline{E}_p = E[a_k^2] ||p||^2$, en los distintos casos.
+
+\begin{description}
+    \item[Polar binario]
+    \[\overline{E}_p = A^2 ||p||^2 \Rightarrow
+\left(\frac{A'}{\sigma}\right)_\text{max} =
+\sqrt{\frac{2\overline{E}_p}{\eta}} \Rightarrow P_e^\text{opt} =
+Q\left(\sqrt{2\frac{\overline{E}_p}{\eta}}\right).\]
+    \item[Unipolar binario]
+    \[\overline{E}_p = \frac{A^2}{2}||p||^2 \Rightarrow
+\left(\frac{A'}{\sigma}\right)_\text{max} = 2
+\sqrt{\frac{\overline{E}_p}{\eta}} \Rightarrow P_e^\text{opt} =
+Q\left(\sqrt{\frac{\overline{E}_p}{\eta}}\right).\]
+ \end{description}
+
+Estas fórmulas son iguales a las que obtuvimos para la detección
+con pulsos de Nyquist, filtro pasabajos ideal. Esto no es
+casualidad: para $p(t) = \sinc(\pi f_s t)$, el filtro acoplado es
+un pasabajos ideal. O sea que en ese caso ya hicimos (sin saberlo)
+lo óptimo. Pero las fórmulas valen para cualquier forma de pulso
+con su detector apareado.
+
+\subsection*{Caso M-ario polar} Ya se vio anteriormente que aquí la
+probabilidad de error de símbolo es $P_e=2\frac{M-1}{M}
+Q\left(\frac{A}{\sigma}\right)$. O sea que también aquí debemos
+maximizar $\frac{A}{\sigma}$ y por tanto obtenemos el mismo filtro
+acoplado. Escribimos la expresión en términos de $\overline{E}_p$
+para este caso:
+\begin{gather*}
+ E[a_k]^2 = \frac{A^2 (M^2-1)}{3} \Rightarrow \overline{E}_p = A^2 \frac{(M^2-1)}{3}||p||^2
+\Rightarrow \left(\frac{A'}{\sigma}\right)^2_{max} = \frac{6 \bar{E}_p}{\eta (M^2-1)}\\
+\Rightarrow {\col{P_e^{opt} = 2\frac{M-1}{M}
+Q\left(\sqrt{\frac{6\bar{E}_p}{\eta(M^2-1)}}\right)}}
+\end{gather*}
+
+\subsection*{Detector acoplado para pulsos rectangulares}
+
+Tomemos por ejemplo los pulsos NRZ, $p(t) = p_{[0,T_s]}(t)$. El
+filtro acoplado tendrá la respuesta impulsiva (tomando
+$\tau=T_s$):
+\[
+\Rightarrow h(t) = \dfrac{1}{||p||^2} p(T_s-t) =
+\dfrac{1}{T_s}p(t).
+\]
+\begin{minipage}{0.6\textwidth}
+ A la salida del filtro se obtiene el pulso triangular
+ \[p_R(t)=h(t)\ast p(t). \]
+\end{minipage}
+\begin{minipage}{0.4\textwidth}
+ \begin{center}
+  \bpgf{Imagenes/filAc/filAc-2}
+    \begin{tikzpicture}
+      \draw [-stealth] (-0.5,0) -- (2.5,0) node [anchor=north] {$t$};
+      \draw [-stealth] (0,-0.5) -- (0,1.5);
+      \draw (0,0) -- (1,1) -- (2,0) node [anchor=north] {$2T_s$};
+      \draw [dotted] (1,1) -- (0,1) node [anchor=east] {$1$};
+      \draw [dotted] (1,1) -- (1,0) node [anchor=north] {$T_s$};
+    \end{tikzpicture}
+  \endpgfgraphicnamed
+ \end{center}
+\end{minipage}
+
+El filtro de recepción distorsionó fuertemente el pulso, pero esto
+se  hizo de modo de maximizar $\frac{A}{\sigma}$ en el instante de
+$t=T_s$ de muestreo.
+
+
+\subsection*{¿Qué paso con la ISI?}
+
+Al estudiar un solo pulso aislado, no contemplamos este tema.
+Veamos:
+\begin{itemize}
+ \item En el caso pulsos de Nyquist ideales el detector acoplado es un pasabajos ideal, entonces los pulsos pasan intactos,
+ sin ISI.
+ \item En el caso de pulsos rectangluares NRZ. Vemos que $p_R(k T_s) = 0$ excepto en un valor ($k=1$). Entonces tampoco hay
+ ISI.  Simplemente hay un retardo de $\tau = T_s$ al detectar.
+ \item  De hecho, cualquier pulso de duración $\leq T_s$ (por ej., RZ) genera una $p_R(t)$ de duración $\leq
+ 2T_s$, que debidamente muestreado no genera  ISI.
+\end{itemize}
+
+
+\subsection*{Para pulsos de Nyquist con exceso de ancho de banda
+$\alpha$}
+
+El detector acoplado tiene respuesta en frecuencia
+\begin{gather*}
+ \hat{H}(f) = K \overline{\hat{P}(f)} \e^{-j2\pi f\tau}\\
+ \Rightarrow \hat{P}_R = \hat{H}\hat{P} = K |\hat{P}(f)|^2 \e^{-j2\pi f \tau}
+\end{gather*}
+El último término es un retardo, afecta sólo el instante de
+muestreo. A efectos de estudiar la ISI podemos tomar $P_R(f) =
+K|\hat{P}(f)|^2$.
+\begin{figure}[htb]
+ \begin{center}\begin{minipage}{\textwidth}
+  \bpgf{Imagenes/filAc/filAc-3}
+  \begin{tikzpicture}
+    \draw [-stealth] (-0.5,0) -- (4,0);
+    \draw [-stealth] (0,-0.5) -- (0,2.5) node [anchor=east] {$\hat{P}(f)$};
+    \draw  (0,2) -- (1.5,2) -- plot  [domain=1.5:2.5,samples=200] (\x,{cos(pi*(\x-1.5) r)+1});
+    \draw [dotted] (1.5,2) -- (1.5,0) node [below left] {$\frac{f_s}{2}(1-\alpha)$};
+    \draw [dotted] (0,1) -- (2,1) -- (2,0) node [below] {$\frac{f_s}{2}$};
+    \path (2.5,0) node [below right] {$\frac{f_s}{2}(1+\alpha)$};
+    \begin{scope}[shift={(6,0)}]
+    \draw [-stealth] (-0.5,0) -- (4,0);
+    \draw [-stealth] (0,-0.5) -- (0,2.5) node [anchor=east] {$\hat{P}_R(f)$};
+    \draw  (0,2) -- (1.5,2) -- plot  [domain=1.5:2.5,samples=200] (\x,{(cos(pi*(\x-1.5) r)+1)^2/2});
+    \draw [dotted] (1.5,2) -- (1.5,0) node [below left] {$\frac{f_s}{2}(1-\alpha)$};
+    \draw [dotted] (0,0.5) -- (2,0.5) -- (2,0) node [below] {$\frac{f_s}{2}$};
+    \path (2.5,0) node [below right] {$\frac{f_s}{2}(1+\alpha)$};
+    \end{scope}
+   \end{tikzpicture}
+   \endpgfgraphicnamed\end{minipage}
+ \end{center}
+
+\end{figure}
+
+$|\hat{P}(f)|^2$ no tiene simetría, entonces no cumple la condición de ISI nula.
+
+O sea: poner el filtro óptimo desde el punto de vista del ruido,
+me complica la ISI.
+
+Alternativas:
+\begin{enumerate}
+ \item En vez del $H_{opt}$, poner un pasabajos $(1+\alpha)\frac{f_s}{2}$, como ya se estudió. La $P_e$ da un poco peor,
+ pero no introduzco ISI que sería más grave.
+ \item Sabiendo que va a haber un filtro apareado, diseño $\hat{P}(f)$ para que $|\hat{P}(f)|^2$ no tenga ISI.
+ Se usa a veces el pulso de {\bf raíz de coseno alzado.}
+\end{enumerate}
+
+\subsection*{Resumen: comunicación digital banda base}
+\begin{figure}[htb]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \input{digBBGr.tex}
+    }
+\end{figure}
+\FloatBarrier
+
+\begin{itemize}
+ \item Transmito sucesión de pulsos $\sum a_k p_T(t-kT_s)$ (PAM)
+ \item El canal introduce 2 distorsiones
+\begin{enumerate}
+  \renewcommand{\theenumi}{\roman{enumi}}
+  \item \label{itemRes:1}Forma del pulso, por filtrado. Puede causar ISI.
+
+  \item \label{itemRes:2}Ruido blanco.
+\end{enumerate}
+\end{itemize}
+
+Si nos concentramos en (\ref{itemRes:1}), elegimos un pulso de
+Nyquist y/o colocamos un \emph{ecualizador} en $\hat{H}_R(f)$.
+
+Si nos concentramos en (\ref{itemRes:2}), ponemos en
+$\hat{H}_R(f)$ el \emph{detector acoplado}.
+
+Hay dos casos extremos en que las dos funciones se realizan
+simultaneamente:
+
+\begin{itemize}
+ \item $p(t) = \sinc(\pi f_s t)$ (Nyquist ideal), $\hat{H}_R(f)$ pasabajos ideal. Se aplica a la situación:
+    \begin{itemize}
+     \item canal con $B$ muy restrictiva.
+     \item puedo implementar la complejidad de pulsos/filtro.
+    \end{itemize}
+ \item $p(t)$ rectángular NRZ o RZ. Detector acoplado: $h_R(t) = \frac{1}{T_s}p(t)$. Se aplica a la situación:
+\begin{itemize}
+ \item $B$ muy grande (respecto a $f_s$).
+  \item Implementación más simple. Sobre todo, el amplificador de transmisión puede ser no lineal.
+\end{itemize}
+\end{itemize}
+
+En otros casos, puede existir conflicto entre los objetivos de
+combatir las distorsiones (\ref{itemRes:1}) y (\ref{itemRes:2}).
+Por ejemplo se vio que esto ocurría al usar pulsos de Nyquist con
+exceso de ancho de banda. Aquí o se realiza un diseño conjunto de
+$p_T$, $\hat{H}_R$, o sino se acepta una detección subóptima
+respecto al ruido.
+
 
 \section{Ecualización de canal}
 
+En diversas situaciones la interferencia intersimbólica no se
+logra evitar, y se recibe una onda $x_R(t) = \sum a_k
+\tilde{p}(t-kT_s)$ donde el pulso $\tilde{p}(t)$ tiene ISI.
+
+\begin{figure}[htb]
+    \centering\begin{minipage}{\textwidth}
+    \bpgf{Imagenes/formPuls/formPuls-12}
+    \begin{tikzpicture}
+        \draw[-stealth] (-1.5,0) -- (3,0) node [anchor=north] {$t$};
+        \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$\tilde{p}(t)$};
+        \draw [domain=-1:3,samples=200] plot (\x,{sin(pi*\x r)/(pi*\x)});
+        \draw (0.7,{sin(pi*0.7 r)/(pi*0.7)}) -- (0.7,0) node [anchor=north] {$T_s$};
+        \draw (-0.7,{sin(pi*(-0.7) r)/(-pi*0.7)}) -- (-0.7,0);
+        \draw (1.4,{sin(pi*1.4 r)/(pi*1.4)}) -- (1.4,0);
+    \end{tikzpicture}
+    \endpgfgraphicnamed\end{minipage}
+\end{figure}
+
+Por ejemplo, se enviaron pulsos rectangulares por un canal muy
+angosto. Una posible solución  en el receptor es compensar con un
+\emph{filtro ecualizador} $\hat{H}_e$, que esencialmente invierte
+el canal en la banda de interés. Una forma popular de hacerlo es
+por un filtro transversal como se muestra en la Figura \ref{fig:filtro eq}.
+
+\begin{figure}
+    \centering
+    \resizebox{\textwidth}{!}{
+    \input{formPulsGr.tex}}
+    \caption{Filtro ecualizador}\label{fig:filtro eq}
+\end{figure}
+%\[
+%\hat{H}(f) = \left (\sum_{k=-N}^N c_k \e^{-j2\pi f k
+%%T_s}\right)\e^{-j2\pi f k N T_s}
+%\]
+\begin{align*} y(t+NT_s) = \sum_{n=-N}^N c_n {x}_R(t-nT_s) =\sum_{n=-N}^N
+c_n \sum_k a_k \tilde{p}(t-(k+n)T_s) =\sum_k a_k\hat{p}(t - kT_s),%
+%\\
+%\text{donde }\hat{p}(t) =\sum_{n=-N}^N c_n \tilde{p}(t-nT_s)
+%\Longrightarrow \mbox{ salida es una onda PAM con pulso
+%$\hat{p}(t)$, retardada $NT_s$.}
+\end{align*}%
+donde $\hat{p}(t) =\sum_{n=-N}^N c_n \tilde{p}(t-nT_s)
+\Longrightarrow y(t)$ es una onda PAM con pulso $\hat{p}(t)$,
+retardada $NT_s$.
+
+La idea es elegir los $\{c_n\}$ de modo de {\em forzar los ceros}
+$\hat{p}(kT_s) = 0$ para $k\pm 1, \pm 2,\ldots,\pm N$. Esto se
+denomina Zero Forcing Equalizer (ZFE), y  asegura que no hay ISI
+con los $N$ símbolos adyacentes.  Estas condiciones,
+conjuntamente con $\hat{p}(0)=1$, dan
+ $2N+1$ ecuaciones para determinar las $2N+1$ ganancias $c_n$.
+Como dato para ajustar el filtro debemos conocer
+$\tilde{p}(kT_s)$, lo cual puede obtenerse de un experimento.
+También hay versiones con ajuste adaptativo.
 
 \section{Repetidores regenerativos}
+
+Supongamos se transmite una onda digital de banda base por un
+cable largo. Al propagarse la onda se introduce atenuación, que
+debe compensarse por amplificación posterior. Una estrategia
+comúnmente usada es dividir el cable en tramos y amplificar en
+cada tramo. Ejemplo de uso: cajas subterráneas en telefonía.
+
+\begin{figure}
+ \begin{center}
+    \begin{blockdiagram}
+    \matrix[row sep=5mm, column sep=10mm]{
+        & \node[etiqueta] (ruido1) {$n_1$}; & & \node[etiqueta] (ruido2) {$n_2$}; & & & \node[etiqueta] (ruidom) {$n_m$};\\
+        \node[etiqueta] (inicio) {$x(t)$}; & \node[operator] (sum1) {$+$}; & \node[block] (amp1) {AMP}  node [above right=5mm] {$y_1(t)$} node [below=3mm] {\begin{minipage}{1.5cm}\centering ganancia\\ $\frac{1}{a}$\end{minipage}}; & \node[operator] (sum2) {$+$}; & \node[block] (amp2) {AMP}; & \node[etiqueta] (puntos) {$\ldots$}; & \node[operator] (summ) {$+$}; & \node[block] (ampm) {AMP}; & \node[etiqueta] (salida) {$y(t)$};\\
+    };
+    \draw [-stealth,ultra thick] (inicio) -- node [anchor=north] {\begin{minipage}{20mm}\centering TR.1\\ atenuación $a$ ($a\ll 1$)\end{minipage}} (sum1);
+    \draw [-stealth] (sum1) -- (amp1);
+    \draw [-stealth] (ruido1) -- (sum1);
+    \draw [-stealth,ultra thick] (amp1) -- node [anchor=north] {TR. 2} (sum2);
+    \draw [-stealth] (ruido2) -- (sum2);
+    \draw [-stealth] (sum2) -- (amp2);
+    \draw [-stealth,ultra thick] (amp2) -- (puntos);
+    \draw [-stealth,ultra thick] (puntos) -- (summ);
+    \draw [-stealth] (ruidom) -- (summ);
+    \draw [-stealth] (summ) -- (ampm);
+    \draw [-stealth] (ampm) -- (salida);
+  \end{blockdiagram}
+ \end{center}
+ \caption{Repetidor regenerativo}\label{fig:repetidor regenerativo}
+\end{figure}
+
+Suponemos que cada etapa tiene ruido aleatorio de varianza
+$E[n_i^2] = \sigma^2$.
+
+\[y_1 = \frac{1}{a}(a x + n_1) = x+ \frac{n_1}{a} \qquad \Longrightarrow \left(\frac{S}{N}\right)_1 =
+\frac{\langle x^2 \rangle}{\frac{\langle n_1^2\rangle}{a^2}} = a^2
+\frac{\langle x^2\rangle}{\sigma^2}.\]
+
+Para la segunda etapa:
+\[y_2 = \frac{1}{a}(a y_1 +n_2) = y_1 + \frac{n_2}{a} = x + \frac{n_1+n_2}{a}.\]
+
+Por el mismo razonamiento,
+\[y(t) = y_m(t) = x(t) + \frac{n_1+n_2+\cdots+n_m}{a}.\]
+
+\begin{align*}
+ \left(\frac{S}{N}\right)_m & = \frac{\langle x^2 \rangle}{\frac{1}{a^2} E\left[(n_1+n_2+\cdots+n_m)^2\right]} =
+  \frac{a^2 \langle x^2\rangle}{m \sigma^2}, \qquad \text{suponiendo ruidos independientes.}
+%\Rightarrow                   & =
+\end{align*}
+\[{\col{ \left(\frac{S}{N}\right)_m = \frac{1}{m}
+\left(\frac{S}{N}\right)_1}}\]
+
+ Vemos que la relación señal-ruido se degrada linealmente en $m$. Por lo tanto
+la $P_e$ se degrada fuertemente (por ejemplo,
+$P_e=Q\left(\sqrt{\frac{S}{N}}\right)$ para el caso polar, con
+pulsos ideales).
+
+\begin{ejemplo}[numérico] Señal polar, $\left(\frac{S}{N}\right)_1 = 100 \  (20\,dB)$, $m=20$
+repetidores.
+  \[ \Rightarrow \left(\frac{S}{N}\right)_m = 5 \Rightarrow P_e  = Q(\sqrt{5}) = 1.29\cdot 10^{-2}, \quad\text{muy alto.}\]
+ \end{ejemplo}
+
+\subsection*{Repetidor regenerativo}
+
+En vez de solo amplificar (señal y ruido), realiza una detección y
+regenera la señal PAM. Sea $p$ la probabilidad de error de una
+etapa, $p=Q\left(\sqrt{\left(\frac{S}{N}\right)_1}\right)$.
+
+Suponemos $p\ll 1$ y errores independientes en cada etapa.
+Calculamos la probabilidad de error de $m$ etapas. Notar que
+\[1 - P_e(m\text{ etapas})  = (1-P_e(1 \text{ etapa}))^m \]
+(es decir, para no tener errores en un símbolo exijo no tenerlos
+en ninguna de las $m$ detecciones independientes). Por tanto
+\[P_e(m\text{ etapas}) = 1 -(1-p)^m  \approx 1-(1-mp) = mp.\]
+En este caso, $P_e$ se deteriora linealmente con $m$.
+
+Volviendo al ejemplo, $p=Q(10) = 7.7\cdot 10^{-24}$ para una
+etapa, por tanto
+\[ P_e (20 \text{ etapas}) \approx 20 p = 1.5\cdot 10^{-22},\]
+muchísimo más bajo que en el caso no regenerativo.
+
+\paragraph{Moraleja}$\phantom{1}$
+\begin{itemize}
+ \item Es mejor regenerar.
+ \item Esta es una de las mayores ventajas de la comunicación digital por sobre la analógica.
+\end{itemize}
