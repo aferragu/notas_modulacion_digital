@@ -592,8 +592,8 @@ Se tiene que:
 donde hemos usado que el proceso modulador y el de entrada son independientes para separar la esperanza en un producto, y el resultado del Ejemplo \ref{ej:cos random phase} para la sinusoide de fase aleatoria. En cuanto a la autocorrelación se tiene que:
 \begin{align*}
     R_{x_c}(t,t-\tau) &= \E{x_c(t)x_c(t-\tau)} = \E{\left(x(t) \cos(2\pi f_c t+\theta)\right) \left(x(t-\tau) \cos(2\pi f_c (t-\tau) +\theta)\right)} \\
-    &=\E{x(t)x(t-\tau)}\E{\cos(2\pi f_c t+\theta) \frac{1}{2}\cos(2\pi f_c (t-\tau)+\theta)} \\
-    &=R_x(\tau)\cos(2\pi f_c \tau).
+    &=\E{x(t)x(t-\tau)}\E{\cos(2\pi f_c t+\theta) \cos(2\pi f_c (t-\tau)+\theta)} \\
+    &=\frac{1}{2} R_x(\tau)\cos(2\pi f_c \tau).
 \end{align*}
 Nuevamente usamos los resultados del Ejemplo \ref{ej:cos random phase} para la autocorrelación de la sinusoide de fase aleatoria y la independencia. Resulta entonces que el proceso modulado $x_c$ es WSS (media constante, autocorrelación que solo depende de $\tau$).
 
