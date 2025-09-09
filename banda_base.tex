@@ -909,17 +909,34 @@ En particular, si $\alpha>0$, $p(t)$ cae como $\frac{1}{t^3}$, mucho más concen
         \begin{tikzpicture}
             \draw [->] (0,-1) -- (0,3);
             \draw [->] (-6,0) -- (6,0);
-            \draw [samples=200,domain=-5:5] plot (\x, {2.5*sin(2*\x r)/(2*\x)});
-            \draw [samples=200,domain=-5:5,red] plot (\x, {2.5*sin(2*\x r)/(2*\x)*cos(\x r)/(1-(2/pi*\x)^2)});
-            \draw [samples=200,domain=-5:5,blue] plot (\x, {2.5*sin(2*\x r)/(2*\x)*cos(2*\x r)/(1-(4/pi*\x)^2)});
+            \draw [samples=200,domain=-5:5, very thick, teal, dotted] plot (\x, {2.5*sin(2*\x r)/(2*\x)});
+            \draw [samples=200,domain=-5:5,very thick, teal, dashed] plot (\x, {2.5*sin(2*\x r)/(2*\x)*cos(\x r)/(1-(2/pi*\x)^2)});
+            \draw [samples=200,domain=-5:5,very thick, teal] plot (\x, {2.5*sin(2*\x r)/(2*\x)*cos(2*\x r)/(1-(4/pi*\x)^2)});
             \path (5,0.6) node {$\alpha=0$ (sinc)};
-            \path (4.3,-.7) [red] node {$\alpha=0.5 $};
-            \path [blue] (0.7,-0.5) node {$\alpha=1 $};
-            \draw [->] [red] (3.5,-.7) -- (2.5,-0.3);
-            \draw [->] [blue] (1.2,-0.4) -- (2,-0.1);
+            \path (4.3,-.7) node {$\alpha=0.5$};
+            \path (0.7,-0.5) node {$\alpha=1$};
+            \draw [->] (3.5,-.7) -- (2.5,-0.3);
+            \draw [->] (1.2,-0.4) -- (2,-0.1);
         \end{tikzpicture}
         \caption{Pulso de coseno alzado para diferentes valores de $\alpha$.}\label{fig:coseno alzado}
     \end{center}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}[scale=1.5]
+            \draw [->] (-5,0) -- (5,0) node [anchor=north] {$f$};
+            \draw [->] (0,-0.5) -- (0,1.5);
+            \draw[teal, thick] (2,0) .. controls (1,0) and (1,1) .. (0,1) node[above left] {\footnotesize $\hat{P}(f)$};
+            \draw[teal,thick] (-2,0) .. controls (-1,0) and (-1,1) .. (0,1);
+            \draw[teal,thick,dotted] (0,0) .. controls (1,0) and (1,1) .. (2,1) node[above right] {\footnotesize $\hat{P}(f-f_s)$} .. controls (3,1) and (3,0) .. (4,0);
+            \draw[teal,thick,dotted] (0,0) .. controls (-1,0) and (-1,1) .. (-2,1) node[above left] {\footnotesize $\hat{P}(f+f_s)$} .. controls (-3,1) and (-3,0) .. (-4,0);
+            \path (-2,0) node [anchor=north] {$-f_s$};
+            \draw [dashed] (1,1.2) -- (1,0) node [anchor=north] {$\frac{f_s}{2}$};
+            \draw [dashed] (2,1.2) -- (2,0) node [anchor=north] {$f_s$};
+        \end{tikzpicture}
+    \end{center}
+    \caption{Condición de ISI nula de Nyquist en el dominio de la frecuencia: solo dos copias se superponen en $[0,f_s)$. Por lo tanto, la suma es constante solo si hay simetría vestigial respecto a $f_s/2$.}\label{fig:simetria vestigial}
 \end{figure}
 
 El razonamiento anterior puede también realizarse en frecuencia como forma de diseñar el pulso correcto. Esto lleva a una segunda forma de caracterizar los pulsos de Nyquist. Supongamos que imponemos que la forma del pulso cumpla:
@@ -936,50 +953,17 @@ El razonamiento anterior puede también realizarse en frecuencia como forma de d
 
 La primera condición puede escribirse como:
 \begin{equation*}
-    p(t) \sum_{k=-\infty}^{+\infty} \delta(t-kT_s) = \delta(t).
+    p(t) \left[\sum_{k=-\infty}^{+\infty} \delta(t-kT_s)\right] = \delta(t).
 \end{equation*}
 Transformando por Fourier:
 \begin{equation*}
- \hat{P}(f)\ast \frac{1}{T_s} \sum_{n=-\infty}^{+\infty} \delta(f-n f_s) \equiv  1
+ \hat{P}(f)\ast \left[\frac{1}{T_s} \sum_{n=-\infty}^{+\infty} \delta(f-n f_s)\right]\equiv  1
   \Leftrightarrow  \sum_{n=-\infty}^{+\infty} \hat{P}(f-n f_s) \equiv T_s.
 \end{equation*}
 
-Por lo tanto, para que no haya ISI, en frecuencia la suma de todas las copias desplazadas de $\hat{P}(f)$ deben dar constante. Como en cada intervalo $[kf_s,(k+1)f_s]$ solo se superponen a lo sumo dos copias (por la segunda condición), que la suma sea constante implica necesariamente que $\hat{P}$ debe tener simetría vestigial respecto a $f_s/2$.
+Por lo tanto, para que no haya ISI, en frecuencia la suma de todas las copias desplazadas de $\hat{P}(f)$ deben dar constante. Como en cada intervalo $[kf_s,(k+1)f_s]$ solo se superponen a lo sumo dos copias (por la segunda condición), que la suma sea constante implica necesariamente que $\hat{P}(f)$ debe tener simetría vestigial respecto a $f_s/2$, como se ilustra en la Figura \ref{fig:simetria vestigial}.
 
-\begin{minipage}{0.5\textwidth}
-    \resizebox{\textwidth}{!}{
-    \begin{tikzpicture}
-        \draw [-stealth] (-5,0) -- (5,0) node [anchor=north] {$f$};
-        \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$\hat{P}$};
-        \draw (2,0) .. controls (1,0) and (1,1) .. (0,1);
-        \draw (-2,0) .. controls (-1,0) and (-1,1) .. (0,1);
-        \draw [dotted] (0,0) .. controls (1,0) and (1,1) .. (2,1) .. controls (3,1) and (3,0) .. (4,0);
-        \draw [dotted] (0,0) .. controls (-1,0) and (-1,1) .. (-2,1) .. controls (-3,1) and (-3,0) .. (-4,0);
-        \path (-2,0) node [anchor=north] {$-f_s$};
-        \draw [dashed] (1,1.2) -- (1,0) node [anchor=north] {$\frac{f_s}{2}$};
-        \draw [dashed] (2,1.2) -- (2,0) node [anchor=north] {$f_s$};
-    \end{tikzpicture}
-    }
-\end{minipage}
-Sólo $2$ copias se superponen en $[0,f_s)$.
-
-\begin{minipage}{0.3\textwidth}
-    Simetría vestigial respecto a $\frac{f_s}{2}$
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-    \resizebox{\textwidth}{!}{
-    \begin{tikzpicture}[xscale=2]
-        \draw [-stealth] (-0.5,0) -- (2,0);
-        \draw [-stealth] (0,-0.5) -- (0,1.5);
-        \draw (2,0) -- (2,1.5);
-        \draw (2,0) .. controls (1,0) and (1,1) .. (0,1);
-        \draw (0,0) .. controls (1,0) and (1,1) .. (2,1);
-        \path (1,0) node [anchor=north] {$\frac{f_s}{2}$};
-    \end{tikzpicture}
-    }
-\end{minipage}
-
-En cuanto a la eficiencia espectral, hemos aumentado el ancho de banda, por lo cual la eficiencia baja. En particular:
+En cuanto a la eficiencia espectral, hemos aumentado el ancho de banda, por lo cual la eficiencia baja. En particular, para que el pulso pase sin distorsión, se requiere:
 \begin{equation*}
     \frac{f_s}{2}(1+\alpha) = B \Rightarrow \textrm{Eff} = \frac{\vti}{B} = \frac{2}{1+\alpha} \log_2 (M).
 \end{equation*}
