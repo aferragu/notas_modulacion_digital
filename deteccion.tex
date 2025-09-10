@@ -842,64 +842,6 @@ exceso de ancho de banda. Aquí o se realiza un diseño conjunto de
 $p_T$, $\hat{H}_R$, o sino se acepta una detección subóptima
 respecto al ruido.
 
-
-\section{Ecualización de canal}
-
-En diversas situaciones la interferencia intersimbólica no se
-logra evitar, y se recibe una onda $x_R(t) = \sum a_k
-\tilde{p}(t-kT_s)$ donde el pulso $\tilde{p}(t)$ tiene ISI.
-
-\begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/formPuls/formPuls-12}
-    \begin{tikzpicture}
-        \draw[-stealth] (-1.5,0) -- (3,0) node [anchor=north] {$t$};
-        \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$\tilde{p}(t)$};
-        \draw [domain=-1:3,samples=200] plot (\x,{sin(pi*\x r)/(pi*\x)});
-        \draw (0.7,{sin(pi*0.7 r)/(pi*0.7)}) -- (0.7,0) node [anchor=north] {$T_s$};
-        \draw (-0.7,{sin(pi*(-0.7) r)/(-pi*0.7)}) -- (-0.7,0);
-        \draw (1.4,{sin(pi*1.4 r)/(pi*1.4)}) -- (1.4,0);
-    \end{tikzpicture}
-    \endpgfgraphicnamed\end{minipage}
-\end{figure}
-
-Por ejemplo, se enviaron pulsos rectangulares por un canal muy
-angosto. Una posible solución  en el receptor es compensar con un
-\emph{filtro ecualizador} $\hat{H}_e$, que esencialmente invierte
-el canal en la banda de interés. Una forma popular de hacerlo es
-por un filtro transversal como se muestra en la Figura \ref{fig:filtro eq}.
-
-\begin{figure}
-    \centering
-    \resizebox{\textwidth}{!}{
-    \input{formPulsGr.tex}}
-    \caption{Filtro ecualizador}\label{fig:filtro eq}
-\end{figure}
-%\[
-%\hat{H}(f) = \left (\sum_{k=-N}^N c_k \e^{-j2\pi f k
-%%T_s}\right)\e^{-j2\pi f k N T_s}
-%\]
-\begin{align*} y(t+NT_s) = \sum_{n=-N}^N c_n {x}_R(t-nT_s) =\sum_{n=-N}^N
-c_n \sum_k a_k \tilde{p}(t-(k+n)T_s) =\sum_k a_k\hat{p}(t - kT_s),%
-%\\
-%\text{donde }\hat{p}(t) =\sum_{n=-N}^N c_n \tilde{p}(t-nT_s)
-%\Longrightarrow \mbox{ salida es una onda PAM con pulso
-%$\hat{p}(t)$, retardada $NT_s$.}
-\end{align*}%
-donde $\hat{p}(t) =\sum_{n=-N}^N c_n \tilde{p}(t-nT_s)
-\Longrightarrow y(t)$ es una onda PAM con pulso $\hat{p}(t)$,
-retardada $NT_s$.
-
-La idea es elegir los $\{c_n\}$ de modo de {\em forzar los ceros}
-$\hat{p}(kT_s) = 0$ para $k\pm 1, \pm 2,\ldots,\pm N$. Esto se
-denomina Zero Forcing Equalizer (ZFE), y  asegura que no hay ISI
-con los $N$ símbolos adyacentes.  Estas condiciones,
-conjuntamente con $\hat{p}(0)=1$, dan
- $2N+1$ ecuaciones para determinar las $2N+1$ ganancias $c_n$.
-Como dato para ajustar el filtro debemos conocer
-$\tilde{p}(kT_s)$, lo cual puede obtenerse de un experimento.
-También hay versiones con ajuste adaptativo.
-
 \section{Repetidores regenerativos}
 
 Supongamos se transmite una onda digital de banda base por un
