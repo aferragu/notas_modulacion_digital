@@ -1,370 +1,300 @@
-\section{Detección sincrónica en presencia de ruido}
+En este capítulo estudiamos el efecto del ruido en la detección digital. Supongamos que la onda modulada PAM que contiene los símbolos pasa esencialmente sin distorsión por el canal, pero la misma se recibe con ruido adicional $n(t)$:
+\begin{equation*}
+    y(t) = x(t) + n(t) = \sum_k a_k p(t-kT_s) + n(t)
+\end{equation*}
+Supongamos además que conocemos (mediante algún mecanismo de sincronización), el momento exacto donde muestrear la onda recibida. El paso final es entonces analizar la muestra recibida (contaminada de ruido) y decidir a qué símbolo pertenece en transmisión. Esto se diagrama en la Figura \ref{fig:deteccion ruido}.
 
-\begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/detDig/detDig-1}
+\begin{figure}
+    \begin{center}
     \begin{blockdiagram}
-        \matrix[row sep=5 mm, column sep=10mm]{
+        \matrix[row sep=5 mm, column sep=8mm]{
             & & & \node[punto] (p1) {}; & \node[etiqueta] (muestreo) {} node [anchor=south]{muestreo} ;\\
-            \node [punto] (inicio) {} node [anchor=east] {$\sum_k a_k p(t-kT_s) + n(t)$}; & \node [punto] (p2) {}; &\node [punto] (p3) {}; & &\node [punto] (p4) {} node [anchor=north] {$y$}; &\node [block] (comp) {COMP}; &\node [etiqueta] (salida) {$\hat{a}_k$}; \\
-            & & \node [block] (sinc) {SINCR}; & \node [punto] (p5) {};\\
+            \node [punto] (inicio) {} node [anchor=east] {$\sum_k a_k p(t-kT_s) + n(t)$}; & \node [punto] (p2) {}; &\node [punto] (p3) {}; & &\node [punto] (p4) {} node [anchor=north] {$y(kT_s) = a_k + n_k$}; &\node [block] (comp) {Detector}; &\node [etiqueta] (salida) {$\hat{a}_k$}; \\
+            & & \node [block] (sinc) {Sincronismo}; & \node [punto] (p5) {};\\
         };
         \draw (inicio) -- (p2) -- (p3) -- (muestreo);
-        \draw [-stealth] (p2) |- (sinc);
+        \draw [->] (p2) |- (sinc);
         \draw (sinc) -- (p5);
-        \draw [-stealth,dashed] (p5) -- (p1);
-        \draw [-stealth] (p4) -- (comp);
-        \draw [-stealth] (comp) -- (salida);
+        \draw [->,dashed] (p5) -- (p1);
+        \draw [->] (p4) -- (comp);
+        \draw [->] (comp) -- (salida);
     \end{blockdiagram}
-    \endpgfgraphicnamed\end{minipage}
+    \end{center}
+    \caption{Onda PAM afectada por ruido y sistema de detección.}\label{fig:deteccion ruido}
 \end{figure}
-\FloatBarrier
 
-Recibo la onda digital de banda base contaminada de ruido. Suponemos por ahora:
-\begin{itemize}
-    \item Sincronización perfecta.
-    \item No hay ISI. O sea que los pulsos son de Nyquist o que tengo ancho de banda suficiente para que pasen pulsos rectangulares sin distorsión apreciable.
-    \item A la entrada del comparador, tenemos la muestra $y_k = a_k + n_k$, donde \\
-%\begin{itemize}
-%\item $a_k$ es el símbolo transmitido.%una muestra de ruido
-%\item $n_k$ es una muestra de ruido
-%\end{itemize}
-$\begin{cases}
-a_k \in \mathcal{A} & \text{ es el símbolo transmitido}\\
-n_k=n(kT_s) & \text{ es una muestra de ruido}
-\end{cases}$.
-\end{itemize}
+A la entrada del comparador o detector tenemos una muestra $y(kT_s)$. Bajo las hipótesis anteriores, no hay ISI, es decir $x(kT_s) =a_k$ sin error, por lo que tenemos:
+\begin{equation*}
+    y_k = y(kT_s) = x(kT_s) + n(kT_s) = a_k + n_k
+\end{equation*}
+es decir el símbolo original perturbado por un ruido aleatorio $n_k:=n(kT_s)$ en el instante de muestreo.
 
-Suponemos que $n_k$ tiene $E[n_k]=0$, $E[n_k^2]=\sigma^2$, y
-densidad de probabilidad $f_N(n)$.
+Consideremos que este ruido aleatorio tiene una densidad $f_N(n)$, es decir, $\p{a\leqslant n_k \leqslant b} = \int_a^b f_N(n)dn$ tal que:
+\begin{align*}
+    &\E{n_k} = 0 &\text{ruido centrado}\\
+    &\E{n_k^2} = \sigma_N^2 < \infty &\text{potencia finita}\\
+\end{align*}
+Por ahora no discutiremos cómo el ruido $n(t)$ se generó en el canal analógico, pero típicamente será un ruido blanco filtrado en recepción, como veremos más adelante.
 
-\begin{minipage}{0.5\textwidth}
-    \bpgf{Imagenes/detDig/detDig-2}
+\begin{figure}
+    \begin{center}
     \begin{tikzpicture}
-        \draw [-stealth] (-3,0) -- (3,0) node [anchor=north] {$n$};
-        \draw [-stealth] (0,-0.5) -- (0,2.5) node [anchor=west] {$f_N(n)$};
-        \draw [domain=-2.5:2.5,samples=200] plot (\x,{2*exp(-1*((\x)^2))});
+        \draw [->] (-3,0) -- (3,0) node [anchor=north] {$n$};
+        \draw [->] (0,-0.5) -- (0,2.5) node [anchor=west] {$f_N(n)$};
+        \draw [teal, thick, domain=-2.5:2.5,samples=200] plot (\x,{2*exp(-1*((\x)^2))});
+        \node[align=left] at (8,1.5) {Densidad del ruido\\
+        \; -- $\E{n_k}=0$\\\; -- $\mathrm{Var}(n_k) = \E{n_k^2} = \sigma_N^2$};
     \end{tikzpicture}
-    \endpgfgraphicnamed
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-\[\int_a^b f_N(n)\d n = Prob (a\leq n_k \leq b).\]
-\end{minipage}
+    \end{center}
+    \caption{Ejemplo de densidad de ruido en recepción.}\label{fig:densidad ruido}
+\end{figure}
 
-Por ahora no entramos en el tema de cómo el ruido $n(t)$ se generó
-en el canal analógico. Típicamente, será un ruido blanco que se
-filtra en recepción. Postergamos ese análisis.
+\section{Probabilidad de error de detección para símbolos binarios}
 
-\subsection*{Probabilidad de error de detección, símbolos binarios}
-
-Consideramos primero el caso binario, donde $a_k$ toma dos valores
-posibles, $A_1 < A_2$. \\ Por ejemplo: $A_1=0, A_2 = A$ en el caso
-unipolar.
-
-La densidad de probabilidad de la V.A. $Y$ recibida, es la de $n$
-trasladada por el símbolo. Tenemos por tanto $2$ densidades
-\emph{condicionales} al símbolo enviado,
+Consideramos primero el caso binario, donde $a_k$ toma dos valores posibles: $A_1 < A_2$. Por ejemplo: $A_1=0, A_2 = A$ en el caso unipolar, y $A_1=-A$, $A_2=A$ en el caso polar. En este caso, la densidad de la variable aleatoria $y_k$ recibida es la densidad de $n_k$ trasladada por el símbolo. Tenemos por tanto $2$ densidades \emph{condicionales} al símbolo enviado,
 \begin{gather*}
     f_{Y|A_1} (y) = f_N(y-A_1);\\
     f_{Y|A_2} (y) = f_N(y-A_2).
 \end{gather*}
-
-\begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/detDig/detDig-3}
-    \begin{tikzpicture}
-        \draw [-stealth] (-3.5,0) -- (12,0) node [anchor=north] {$y$};
-        \draw [-stealth] (0,-0.5) -- (0,2.5);
-        \draw [domain=-3:7,samples=200] plot (\x,{2*exp(-1*((\x-2)^2)/6)});
-        \draw [dashed] (2,0) node [anchor=north] {$A_1$} -- (2,2) node [anchor=south west] {$f_{Y|A_1}$};
-        \draw [domain=4.5:7,samples=200,fill=blue!20,opacity=0.5] (4.5,0) --  plot (\x,{2*exp(-1*((\x-2)^2)/6)}) -- (7,0);
-        \begin{scope}[shift={(4,0)}]
-            \draw [domain=-3:7,samples=200] plot (\x,{2*exp(-1*((\x-2)^2)/6)});
-            \draw [dashed] (2,0) node [anchor=north] {$A_2$} -- (2,2) node [anchor=south west] {$f_{Y|A_2}$};
-            \draw [thick] (0.5,0) node [anchor=north] {$A_0$} -- (0.5,{2*exp(-1*(1.5^2)/6)});
-            \draw [domain=-3:0.5,samples=200,fill=red!20,opacity=0.5] (-3,0) --  plot (\x,{2*exp(-1*((\x-2)^2)/6)}) -- (0.5,0);
-        \end{scope}
-    \end{tikzpicture}
-    \endpgfgraphicnamed\end{minipage}
-\end{figure}
-\FloatBarrier
-
-Decidimos si se transmitió $A_1$ o $A_2$ comparando con un umbral
-$A_0$. Entonces hay un error de detección si:
+El detector decidirá si el símbolo transmitido fue $A_1$ o $A_2$ \emph{comparando con un umbral} $A_0$ a diseñar:
+\begin{gather*}
+    y_k < A_0 \Rightarrow \hat{a}_k=A_1, \\
+    y_k > A_0 \Rightarrow \hat{a}_k=A_2.
+\end{gather*}
+Habrá error en la detección ($a_k\neq\hat{a}_k$) si:
 \begin{itemize}
     \item $y>A_0$ y se transmitió $A_1$;
-    \item $y<A_0$ y  se transmitió $A_2$.
+    \item $y<A_0$ y se transmitió $A_2$.
 \end{itemize}
+La probabilidad \emph{condicional al símbolo transmitido} de cada uno de estos eventos se corresponde con las áreas sombreadas en la Figura \ref{fig:ruido deteccion binaria}.
 
-Calculo la probabilidad de cada evento, indicada en sombreado.
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \draw [->] (-3.5,0) -- (12,0) node [anchor=north] {$y$};
+            \draw [->] (0,-0.5) -- (0,2.5);
+            \draw [teal, thick, domain=-3:7,samples=200] plot (\x,{2*exp(-1*((\x-2)^2)/6)});
+            \draw [dashed] (2,0) node [anchor=north] {$A_1$} -- (2,2) node [anchor=south west] {$f_{Y|A_1}$};
+            \draw [domain=4.5:7,samples=200,fill=blue!20,opacity=0.5] (4.5,0) --  plot (\x,{2*exp(-1*((\x-2)^2)/6)}) -- (7,0);
+            \begin{scope}[shift={(4,0)}]
+                \draw [teal, thick, domain=-3:7,samples=200] plot (\x,{2*exp(-1*((\x-2)^2)/6)});
+                \draw [dashed] (2,0) node [anchor=north] {$A_2$} -- (2,2) node [anchor=south west] {$f_{Y|A_2}$};
+                \draw [thick] (0.5,0) node [anchor=north] {$A_0$} -- (0.5,{2*exp(-1*(1.5^2)/6)});
+                \draw [domain=-3:0.5,samples=200,fill=red!20,opacity=0.5] (-3,0) --  plot (\x,{2*exp(-1*((\x-2)^2)/6)}) -- (0.5,0);
+            \end{scope}
+        \end{tikzpicture}        
+    \end{center}
+    \caption{Errores en la detección binaria.}\label{fig:ruido deteccion binaria}
+\end{figure}
+
+La probabilidad de error de detección es entonces:
+\begin{equation*}
+P_e := \p{\text{error}} = \p{\text{error}\mid A_1} \p{a_k=A_1} + \p{\text{error}\mid A_2} \p{a_k=A_2}.
+\end{equation*}
+Calculemos la probabilidad condicionales de cada evento, indicada en sombreado en la Figura \ref{fig:ruido deteccion binaria}.
 \begin{align*}
-    P(\text{error}|A_1) &= \int_{A_0}^\infty f_N(y-A_1)\d y = \int_{A_0-A_1}^\infty f_N(n)\d n;\\
-    P(\text{error}|A_2) &= \int_{-\infty}^{A_0} f_N(y-A_2)\d y = \int_{-\infty}^{-(A_2-A_0)} f_N(n)\d n.\\
+    P(\text{error}|A_1) &= \int_{A_0}^\infty f_N(y-A_1)dy = \int_{A_0-A_1}^\infty f_N(n) dn;\\
+    P(\text{error}|A_2) &= \int_{-\infty}^{A_0} f_N(y-A_2)dy = \int_{-\infty}^{-(A_2-A_0)} f_N(n)dn.\\
 \end{align*}
-
-\begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/detDig/detDig-4}
+Esta descomposición de ilustra en la Figura \ref{fig:ruido deteccion binaria 2}
+\begin{figure}
+    \begin{center}
     \begin{tikzpicture}
-        \draw [-stealth] (-6,0) -- (6,0) node [anchor=north] {$n$};
-        \draw [-stealth] (0,-0.5) -- (0,2.5) node [anchor=west] {$f_N(n)$};
-        \draw [domain=-5:5,samples=200] plot (\x,{2*exp(-1*((\x)^2)/6)});
+        \draw [->] (-6,0) -- (6,0) node [anchor=north] {$n$};
+        \draw [->] (0,-0.5) -- (0,2.5) node [anchor=west] {$f_N(n)$};
+        \draw [teal, thick, domain=-5:5,samples=200] plot (\x,{2*exp(-1*((\x)^2)/6)});
         \draw [domain=-5:-2,samples=200,fill=red!20] plot (\x,{2*exp(-1*((\x)^2)/6)}) -- (-2,0) node [anchor=north] {$-(A_2-A_0)$};
         \draw [domain=3:5,samples=200,fill=blue!20] (3,0) node [anchor=north] {$A_0-A_1$} -- plot (\x,{2*exp(-1*((\x)^2)/6)});
-        \path (-4,1) node {$P(E|A_2)$};
-        \path (3.75,1) node {$P(E|A_1)$};
+        \path (-4,1) node {$\p{\text{error}\mid A_2}$};
+        \path (4,1) node {$\p{\text{error}\mid A_1}$};
     \end{tikzpicture}
-    \endpgfgraphicnamed\end{minipage}
-\end{figure}
-\FloatBarrier
-
-Esas son probabilidades condicionales. La probabilidad total es:
-\[P_e = P(E|A_1) P (A_1) + P(E|A_2) P (A_2).\]
-
-\subsubsection*{Umbral óptimo}
-
-Si subimos el umbral $A_0$, $P(E|A_1)$ baja pero sube $P(E|A_2)$,
-y viceversa. Entonces hay un compromiso en la elección del umbral.
-La selección óptima es la que minimiza $P_e$; la hallamos por
-diferenciación.
-
-\[\frac{\partial P_e}{\partial A_0} = P(A_2) f_N(A_0 - A_2) - P(A_1) f_N (A_0 - A_1).\]
-
-Existe $A_0^*$ que anula la derivada, que cumple
-\[\frac{P(A_2)}{P(A_1)}=\frac{f_N(A_0^*-A_1)}{f_N(A_0^*-A_2)}.\]
-
-\subsubsection*{Caso usual: símbolos equiprobables, ruido simétrico}
-
-$P(A_1) = P(A_2) = \frac{1}{2}\Rightarrow f_N(A_0^*-A_1) =
-f_N(A_0^*-A_2)$.
-
-Supongamos $f_N(n)$ simétrica (par) y decreciente en $n>0$ (caso típico: Gaussiana).
-
-\begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/detDig/detDig-5}
-    \begin{tikzpicture}
-        \draw [-stealth] (-6,0) -- (6,0) node [anchor=north] {$n$};
-        \draw [-stealth] (0,-0.5) -- (0,2.5) node [anchor=west] {$f_N(n)$};
-        \draw [domain=-5:5,samples=200] plot (\x,{2*exp(-1*((\x)^2)/6)});
-        \draw [domain=-5:-2,samples=200,fill=red!20] plot (\x,{2*exp(-1*((\x)^2)/6)}) -- (-2,0) node [anchor=north] {$A_0^*-A_2$};
-        \draw [domain=2:5,samples=200,fill=blue!20] (2,0) node [anchor=north] {$A_0^*-A_1$} -- plot (\x,{2*exp(-1*((\x)^2)/6)});
-        \path (-4,1) node {$P(E|A_2)$};
-        \path (3.75,1) node {$P(E|A_1)$};
-        \draw (2,{2*exp(-2/3)}) -- (-2,{2*exp(-2/3)});
-    \end{tikzpicture}
-    \endpgfgraphicnamed\end{minipage}
+    \end{center}
+    \caption{Probabilidades condicionales de error de detección en términos de la densidad del ruido.}\label{fig:ruido deteccion binaria 2}
 \end{figure}
 
-Para que sean iguales las $f_N$, $A_2-A_0^* = A_0^*-A_1
-\Rightarrow A_0^*=\dfrac{A_1+A_2}{2}$. \\
-También $P(E|A_1) =
-P(E|A_2)$. En este caso:
-\[
-{\col{P_e= P(E|A_1) = P(E|A_2) = \int_{\frac{A_2-A_1}{2}}^\infty
-f_N(n)\d n}}
-\]
-Si en cambio, $P(A_2) > P(A_1)$ por ejemplo, entonces
-$f_N(A_0^*-A_1) > f_N(A_0^*-A_2) \Rightarrow A_0^*-A_1 <
-A_2-A_0^*$. El umbral óptimo está más cerca del símbolo menos
-probable.
+Si subimos el umbral $A_0$, $\p{\text{error}\mid A_1}$ baja pero sube $P\p{\text{error}\mid A_2}$, y viceversa. Entonces hay un compromiso en la elección del umbral. La selección óptima es la que minimiza $P_e$; la hallamos por
+diferenciación:
+\begin{equation*}
+\frac{\partial P_e}{\partial A_0} = - \p{A_1} f_N (A_0 - A_1) + \p{A_2} f_N(A_0 - A_2) = 0
+\end{equation*}
+Existe $A_0^*$ que anula la derivada, y es tal que:
+\begin{equation*}
+\frac{\p{A_2}}{\p{A_1}}=\frac{f_N(A_0^*-A_1)}{f_N(A_0^*-A_2)}.    
+\end{equation*}
 
-\subsection*{Probabilidad de error óptima, binario, ruido Gaussiano}
-El modelo más usado para la distribución de probabilidad del ruido
-es la normal o Gaussiana:
-\[f_N(n) = \frac{1}{\sqrt{2\pi}\sigma}\e^{-\frac{n^2}{2\sigma^2}}\qquad \text{ (media $0$, varianza $\sigma^2$)}.\]
-Denotamos por $Q(z)$ la probabilidad de que una normal standard
-($\sigma=1$) supere a $z$,
-\[Q(z):=\frac{1}{\sqrt{2\pi}} \int_z^\infty \e^{-\frac{n^2}{2}}\d n.\]
+Supongamos además que:
 \begin{itemize}
-    \item No tiene expresión analítica, pero está tabulada.
-    \item Para $z \gg 1$, vale la aproximación $Q(z)\approx
-    \frac{1}{\sqrt{2\pi}z}\e^{-\frac{z^2}{2}}$.
+    \item Los símbolos son equiprobables.
+    \item El ruido es simétrico, con densidad $f_N(n)$ par y decreciente en $|n|$. El caso típico aquí es la distribución Gaussiana (que es la que se ilustra en la Figura \ref{fig:ruido deteccion binaria 2}).
 \end{itemize}
 
-Si tengo un ruido $n$ normal $(0,\sigma^2)$, entonces $\frac{n}{\sigma}$ tiene varianza $1$. Por tanto,
-\[P(n>z) = P \left(\frac{n}{\sigma}>\frac{z}{\sigma}\right) = Q\left(\frac{z}{\sigma}\right).\]
+Bajo estas hipótesis adicionales, la condición anterior implica que $f_N(A_0^*-A_1) = f_N(A_0^*-A_2)$. Para que se dé la igualdad, se requiere entonces:
+\begin{equation*}
+A_2-A_0^* = A_0^*-A_1 \Rightarrow A_0^*=\frac{A_1+A_2}{2},
+\end{equation*}
+de donde:
+\begin{equation}
+{\col{P_e= \p{\text{error}|A_1} = \p{\text{error}|A_2} = \int_{\frac{A_2-A_1}{2}}^\infty f_N(n)\d n}}
+\end{equation}
+Si en cambio, $P(A_2) > P(A_1)$ por ejemplo, entonces $f_N(A_0^*-A_1) > f_N(A_0^*-A_2) \Rightarrow A_0^*-A_1 < A_2-A_0^*$,  es decir, el umbral óptimo se desplaza hacia el símbolo menos probable.
 
-Entonces, para la detección con símbolos binarios equiprobables,
-ruido Gaussiano $(0,\sigma^2)$, llegamos a la siguiente fórmula
-para la probabilidad de error:
-\[P_e=\int_{\frac{A_2-A_1}{2}}^\infty f_N(n)\d n = P\left(n>\frac{A_2-A_1}{2}\right) = Q\left(\frac{A_2-A_1}{2\sigma}\right).\]
+Especialicemos la fórmula anterior al caso más usado: el ruido tiene distribución normal o Gaussiana, de media $0$ y varianza $\sigma_N^2$ como antes. En ese caso:
+\begin{equation*}
+f_N(n) = \frac{1}{\sqrt{2\pi}\sigma_N}\e^{-\frac{n^2}{2\sigma_N^2}}.
+\end{equation*}
+En este caso, si $n_k\sim \mathcal{N}(0,\sigma_N^2)$, entonces $n_k/\sigma_N \sim \mathcal{N}(0,1)$ estándar. Utilizando la definición \eqref{eq:def cola gaussiana} para la cola de la distribución normal estándar tenemos que:
+\begin{equation}\label{eq:error binario gaussiano}
+P_e=\int_{\frac{A_2-A_1}{2}}^\infty f_N(n)\d n = \p{n_k>\frac{A_2-A_1}{2}} = \p{\frac{n_k}{\sigma_N}>\frac{A_2-A_1}{2\sigma_N}} = Q\left(\frac{A_2-A_1}{2\sigma}\right).    
+\end{equation}
+La función $Q(z)$ como se mencionó está tabulada y disponible en los paquetes de software. Para $z\gg 1$ también vale la aproximación:
+\begin{equation*}
+    Q(z) \approx \frac{1}{\sqrt{2\pi}z}e^{-\frac{z^2}{2}}.
+\end{equation*}
 
-\begin{ejemplo}[binario, equiprobable, ruido Gaussiano]$\phantom{1}$
-\begin{description}
-    \item[Unipolar] $A_1=0$, $A_2=A$, $A_0^* = \frac{A}{2}$,
-    $P_e=Q\left(\frac{A}{2\sigma}\right)$.
-    \item[Polar] $A_1=-A$, $A_2=A$, $A_0^* = 0$, $P_e =
-    Q\left(\frac{A}{\sigma}\right)$.
- \end{description}
-Notar que en ambos casos, para reducir $P_e$, debo aumentar
-$\frac{A}{\sigma}$. De hecho, $P_e$ cae muy rápidamente:
-%\begin{remarkSN}$\phantom{1}$
-%    \begin{itemize}
-%        \item Para achicar  \\
-        \begin{center}
-            \begin{tabular}{c|c}
-                $\frac{A}{\sigma}$ & $Q\left(\frac{A}{\sigma}\right)=P_e(\text{polar})$\\
-                \hline
-                $2$ & $0.022$\\
-                $4$ & $3\cdot 10^{-5}$\\
-                $6$ & $10^{-8}$
-            \end{tabular}
-        \end{center}
+\begin{ejemplo}[Transmisión unipolar binaria y equiprobable con ruido Gaussiano]
+Este caso corresponde a elegir $A_1=A$ y $A_2=0$, por lo que $A_0^* = A/2$ y:
+\begin{equation*}
+    P_e = Q\left(\frac{A}{2\sigma_N}\right)
+\end{equation*}
 \end{ejemplo}
-%
-%        Cae muy
-%        \item
-%    \end{itemize}
-%\end{remarkSN}
-$\frac{A}{\sigma}$ opera como una relación señal - ruido. De
-hecho, $\sigma^2=E[n_k^2]=N$, potencia media de ruido. $A^2$ está
-relacionado con la potencia de la onda $x(t) = \sum a_k
-p(t-kT_s)$. La relación exacta depende de $p(t)$ y el código de
-línea, veamos ejemplos.
 
+\begin{ejemplo}[Transmisión polar binaria y equiprobable con ruido Gaussiano]
+Este caso corresponde a elegir $A_1=A$ y $A_2=-A$, por lo que $A_0^*=0$ y:
+\begin{equation*}
+    P_e = Q\left(\frac{A}{\sigma_N}\right)
+\end{equation*}
+\end{ejemplo}
 
-\begin{ejemplo}
-    $p(t)= p_{[0,T_s]}(t)$ NRZ. En este caso, vimos que $\langle x^2 \rangle = E[a_k^2]\frac{\|p\|^2}{T_s} =
-    E[a_k^2]$. Casos particulares:
-    \begin{align*}
-    \text{Polar, NRZ: } \langle x^2 \rangle  &= A^2 \Rightarrow \left(\frac{S}{N}\right) = \frac{A^2}{\sigma^2}.\\
-    \text{Unipolar,NRZ: } \langle x^2 \rangle &=\frac{A^2}{2}\Rightarrow \left(\frac{S}{N}\right) =
-    \frac{A^2}{2\sigma^2}.
-\end{align*}
+Notar que en ambos casos, para reducir $P_e$, debo aumentar $\frac{A}{\sigma}$. De hecho, $P_e$ cae muy rápidamente:
+\begin{center}
+    \begin{tabular}{c|c}
+        $\frac{A}{\sigma_N}$ & $Q\left(\frac{A}{\sigma_N}\right)$\\
+        \hline
+        $2$ & $0.022$\\
+        $4$ & $3\times 10^{-5}$\\
+        $6$ & $10^{-8}$
+    \end{tabular}
+\end{center}
+
+El cociente $\frac{A}{\sigma_N}$ está operando como una relación señal a ruido. De hecho, $\sigma_N^2=E[n_k^2]=N$ es la potencia media del ruido. La amplitud $A^2$ está relacionado siempre relacionada con la potencia media de la onda $x(t) = \sum a_k p(t-kT_s)$. La relación exacta depende también del pulso $p(t)$ y el código de línea utilizado. Veamos un ejemplo.
+
+\begin{ejemplo}[Pulsos rectangulares NRZ en ruido Gaussiano]
+    Supongamos que utilizamos pulsos NRZ, es decir $p(t)= p_{[0,T_s]}(t)$ NRZ. En este caso, vimos que se cumplía la fórmula simple \eqref{eq:potencia energia pulso simplificada} para la potencia transmitida:
     \begin{equation*}
-        \Rightarrow \left.\begin{aligned}
-                        P_e = Q\left(\sqrt{\frac{S}{N}}\right)\qquad &\text{polar}\\
-                        P_e = Q\left(\frac{1}{\sqrt{2}}\sqrt{\frac{S}{N}}\right)\qquad &\text{unipolar}
-                    \end{aligned} \right\rbrace
-                    \text{\begin{minipage}{5cm}
-                            polar es más eficiente: menor $P_e$ para igual
-                            $\frac{S}{N}$.
-                          \end{minipage}}
+    \langle x^2 \rangle = \bar{E}_p f_s = \E{a_k^2}\|p\|^2 f_s = \E{a_k^2} f_s T_s = \E{a_k^2}.
+    \end{equation*} 
+    Tenemos entonces los siguientes casos:
+    \begin{description}
+        \item[Polar, NRZ:] $\langle x^2 \rangle  = A^2 \Rightarrow \left(\frac{S}{N}\right) = \frac{A^2}{\sigma_N^2}$.
+        \item[Unipolar, NRZ:] $\langle x^2 \rangle =\frac{A^2}{2}\Rightarrow \left(\frac{S}{N}\right) = \frac{A^2}{2\sigma_N^2}$.
+    \end{description}
+    Se deduce entonces que:
+    \begin{align*}
+        P_e &= Q\left(\sqrt{\frac{S}{N}}\right) &\text{Onda polar NRZ}\\
+        P_e &= Q\left(\frac{1}{\sqrt{2}}\sqrt{\frac{S}{N}}\right) &\text{Onda unipolar NRZ}\\
+    \end{align*}
+    En particular, la onda polar es más eficiente, ya que tiene menor $P_e$ para igual relación señal a ruido.
+\end{ejemplo}
+
+\section{Error de detección en un alfabeto $M$-ario}
+
+En este caso, elegimos una ``constelación'' de niveles para representar los $M$ símbolos. Por ejemplo, para $M$ par, elegimos una constelación polar $\{\pm A, \pm 3A,\pm 5A,\ldots,\pm (M-1)A\}$, espaciados $2A$. Para este caso, solo analizaremos la situación en que todos los símbolos son equiprobables y el ruido es Gaussiano, que se presenta en la Figura \ref{fig:ruido m-ario}.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \draw [->] (-7.5,0) -- (7.5,0) node [below right] {$y$};
+            \draw [->] (0,-0.5) -- (0,2.5);
+            \foreach \a in {-5,-3,-1,1,3,5} {
+                \draw [teal, thick, domain={\a-2}:{\a+2},samples=200] plot (\x,{2*exp(-1.5*((\x-\a)^2))});
+            }
+            \path (3.5,2) node [anchor=south] {$f_{Y|3A}$};
+            
+            \node[below] at (-5,0) {\small $-5A$};
+            \node[below] at (-3,0) {\small $-3A$};
+            \node[below] at (-1,0) {\small $-A$};
+            \node[below] at (1,0) {\small $A$};
+            \node[below] at (3,0) {\small $3 A$};
+            \node[below] at (5,0) {\small $5 A$};
+
+            \foreach \a in {-4,-2,2,4} {
+                \draw [dotted,thick] (\a,0) -- (\a,2.5);
+            }
+        \end{tikzpicture}
+    \end{center}
+    \caption{Densidades condicionales y umbrales de detección en un alfabeto $M$-ario equiespaciado.}\label{fig:ruido m-ario}
+\end{figure}
+
+Resulta intuitivo de la Figura \ref{fig:ruido m-ario} que los umbrales de detección óptimos son los puntos intermedios entre los símbolos de la constelación, $0,\pm 2A, \pm 4A,\ldots$. En este caso, para todos los símbolos intermedios se tiene que:
+\begin{equation*}
+    \p{\text{error} \mid a_k=l} = \p{|n|>A} = 2\p{n>A} = 2Q\left(\frac{A}{\sigma_N}\right) \quad l=\pm A,\ldots, (M-3)A.
+\end{equation*}
+Para los símbolos extremos:
+\begin{equation*}
+    \p{\text{error} \mid a_k=\pm (M-1)A} = \p{n>A} = Q\left(\frac{A}{\sigma_N}\right)
+\end{equation*}
+
+Por lo tanto se tiene que:
+\begin{equation}\label{eq:error polar m-ario gaussiano}
+    P_{e,\text{símbolo}}:=\p{\text{error}} = (M-2) \frac{1}{M} 2Q\left(\frac{A}{\sigma_N}\right) + \frac{1}{M}2Q\left(\frac{A}{\sigma_N}\right) = 2\left(\frac{M-1}{M}\right)Q\left(\frac{A}{\sigma_N}\right)
+\end{equation}
+Notar que la probabilidad anterior es la probabilidad de \emph{error de símbolo}, es decir, de detectar un símbolo que no es el transmitido. Sin embargo, aquí no necesariamente coincide con la probabilidad de \emph{error de bit} ya que cada símbolo codifica varios bits.
+
+Nuevamente $A/\sigma_N$ juega el rol de una relación señal a ruido, como lo ilustra el siguiente Ejemplo.
+
+\begin{ejemplo}[Pulsos rectangulares NRZ, alfabeto $M$-ario y ruido Gaussiano]
+    Nuevamente utilizamos la fórmula simplificada \eqref{eq:potencia energia pulso simplificada} para obtener:
+    \begin{equation*}
+        S := \langle x^2 \rangle = \bar{E}_p f_s = \E{a_k^2} ||p||^2 f_s = \E{a_k^2}.
     \end{equation*}
+    Calculando:
+    \begin{equation*}
+    \E{a_k^2}=A^2\frac{2}{M}\left(1+3^2+5^2+\cdots+(M-1)^2\right) = \frac{2A^2}{M}\left(\frac{M^3-M}{6}\right) = \frac{A^2(M^2-1)}{3},
+    \end{equation*}
+    donde se utilizó arriba una fórmula para la suma de los cuadrados de los números impares. La relación señal a ruido resulta entonces en:
+    \begin{equation*}
+        \left(\frac{S}{N}\right)=\frac{A^2}{\sigma^2}\left(\frac{M^2-1}{3}\right),
+    \end{equation*}
+    y la probabilidad de error de decodificación de símbolo queda:
+    \begin{equation}\label{eq:prob error simbolo m-ario}
+        {\col{P_e=2\left(\frac{M-1}{M}\right)Q\left(\sqrt{\frac{3}{M^2-1}\left(\frac{S}{N}\right)}\right)}.}
+    \end{equation}
+
+    \textbf{Observación: }para la misma relación señal a ruido, aumentar el número de símbolos \emph{incrementa} la probabilidad de error, a cambio de transmitir a una mayor $\vti$.
 \end{ejemplo}
 
-\subsection*{Caso M-ario ($M$ símbolos por pulso)}
+Para finalizar esta sección, volvamos a la discusión entre \emph{error de símbolo} y \emph{error de bit}. En el caso binario no hay diferencia, pero en el caso $M-$ario hemos calculado la probabilidad de error de símbolo. Sin embargo, a la hora de comparar diferentes mecanismos de transmisión, es mejor expresar las tasas de error en términos de bits. Para ello definimos:
+\begin{definicion}
+    Se denomina \emph{Bit Error Rate (BER)} a la tasa de bits erróneos sobre la tasa de bits transmitidos por el canal.
+\end{definicion}
 
-Elegimos una ``constelación'' de niveles para representar los $M$ símbolos. Por ejemplo, para $M$ par, elegimos una constelación polar $\{\pm A, \pm 3A,\pm 5A,\ldots\}$. El espaciamiento es $2A$. El nivel más grande es $(M-1)A$. Tomamos símbolos equiprobables y contaminamos con ruido Gaussiano, tenemos:
+La tasa de bits transmitidos por el canal es precisamente la $\vti=f_s \log_2 M$, siendo el caso más común el que $M$ es potencia de $2$. La tasa de bits erróneos es igual a la frecuencia de símbolo $f_s$ por la probabilidad de error de símbolo $P_{e,\textrm{simbolo}}$ por la cantidad media de bits equivocados en cada símbolo.
 
-\begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/detDig/detDig-6}
-    {\begin{tikzpicture}
-        \draw [-stealth] (-6,0) -- (8,0) node [anchor=north] {$n$};
-        \draw [-stealth] (0,-0.5) -- (0,2.5);
-        \foreach \a in {-3,-1,1,3,5}
-            \draw [domain={\a-2}:{\a+2},samples=200] plot (\x,{2*exp(-1.5*((\x-\a)^2))});
-        \path (3.5,2) node [anchor=south] {$f_{Y|3A}$};
-        \draw [ultra thin] (2,0) node [anchor=north] {$2A$} -- (2,{2*exp(-1.5)});
-        \draw [ultra thin] (4,0) node [anchor=north] {$4A$} -- (4,{2*exp(-1.5)});
-        \draw [ultra thin] (3,0) node [anchor=north] {$3A$} -- (3,2);
-    \end{tikzpicture}}
-    \endpgfgraphicnamed\end{minipage}
-\end{figure}
-\FloatBarrier
+Como la función $Q(z)$ decae muy rápidamente, la probabilidad de error de símbolo está fuertemente concentrada solo en los símbolos adyacentes. Por lo tanto, podemos despreciar la probabilidad de error de símbolo a los no adyacentes. Además, para símbolos adyacentes podemos asignar los bits utilizando \href{https://en.wikipedia.org/wiki/Gray_code}{codificación de Gray}. Con este mecanismo, ilustrado en el Cuadro \ref{tabla:codigo gray} para el caso $M=8$, los símbolos adyacentes difieren en un único bit, por lo que la cantidad de bits erróneos al equivocar un símbolo es aproximadamente $1$, si despreciamos los errores a símbolos no adyacentes. Con este razonamiento llegamos a:
+\begin{equation*}
+\textrm{BER} \approx \frac{P_{e,\text{símbolo}}}{\log_2 M}.
+\end{equation*}
+siendo $P_{e,\text{símbolo}}$ la calculada en \eqref{eq:error polar m-ario gaussiano}.
 
-Es intuitivo que los umbrales de detección óptimos son los puntos medios $0,\pm 2A, \pm 4A,\ldots$
+\begin{table}
+    \begin{center}
+        \begin{tabular}{|c|c|}
+            \hline
+            \textbf{Nivel} & \textbf{Símbolo} \\ \hline
+            $7A$ & $010$\\
+            $5A$ & $011$\\
+            $3A$ & $001$\\
+            $A$  & $000$\\
+            $-A$ & $100$\\
+            $-3A$ & $101$\\
+            $-5A$ & $111$\\
+            $-7A$ & $110$ \\ \hline
+        \end{tabular}
+    \end{center}
+    \caption{Código de Gray para $M=8$ símbolos, es decir $3$ bits. Los códigos adyacentes difieren en un único bit.}\label{tabla:codigo gray}
+\end{table}
 
-Para cualquier símbolo menos los extremos
-\[P(E|\text{simb}) = P(|n|>A) = 2P(n>A) = 2Q\left(\frac{A}{\sigma}\right).\]
-Para los extremos
-\[P(E|\text{simb}) = Q\left(\frac{A}{\sigma}\right).\]
-
-\paragraph{TOTAL}
-
-\[P_e=\frac{(M-2) 2 Q\left(\frac{A}{\sigma}\right) + 2Q\left(\frac{A}{\sigma}\right)}{M} = \underbrace{2\left(\frac{M-1}{M}\right)Q\left(\frac{A}{\sigma}\right)}_{\text{prob. error de símbolo}}.\]
-
-Si queremos relacionar $P_e$ con $\left(\frac{S}{N}\right)$, otra
-vez jugaría la forma de los pulsos.
-
-\begin{ejemplo}
-    Pulsos NRZ, $a_k$ polar M-ario.
-    \[\langle x^2\rangle=E[a_k^2]=A^2\frac{2}{M}\left(1+3^2+5^2+\cdots+(M-1)^2\right) = \frac{2A^2}{M}\left(\frac{M^3-M}{6}\right) = \frac{A^2(M^2-1)}{3}\]
-
-  Se utilizó arriba una fórmula para la suma de los cuadrados de los números
-  impares, demostrable por inducción completa.
-
-\[\Rightarrow \left(\frac{S}{N}\right)=\frac{A^2}{\sigma^2}\left(\frac{M^2-1}{3}\right) \qquad
-\Rightarrow
-{\col{P_e=2\left(\frac{M-1}{M}\right)Q\left(\sqrt{\frac{3}{M^2-1}\left(\frac{S}{N}\right)}\right)}}\]
-
-    es menos eficiente que $M=2$, a cambio de más bps.
-\end{ejemplo}
-
-\subsubsection*{$P_e$ (símbolo) vs. $P_e$ (bit)}
-
-En M-ario, un símbolo codifica $\log_2(M)$ bits. Si cometo un error de símbolo, me afecta varios bits, dependiendo de la correspondencia bits/símbolo.
-
-\subsubsection*{Código de Gray} Símbolos vecinos difieren en $1$ sólo bit. Por ejemplo, para $M=8$
-
-\begin{tabular}{r|r}
-    $7A$ & $010$\\
-    $5A$ & $011$\\
-    $3A$ & $001$\\
-    $A$  & $000$\\
-    \hline
-    $-A$ & $100$\\
-    $-3A$ & $101$\\
-    $-5A$ & $111$\\
-    $-7A$ & $110$
-\end{tabular} Despreciando la probabilidad de un salto de más de un nivel, tenemos aquí
-\[P_e\text{(bit)} \approx \frac{P_e\text{(símb)}}{\log_2 M}.\]
-
-\paragraph{Resumen (detección digital)}$\phantom{1}$
-
-\FloatBarrier
-\begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/detDig/detDig-7}
-    \begin{blockdiagram}
-        \matrix[row sep=5 mm, column sep=10mm]{
-            & & & \node[punto] (p1) {}; & \node[etiqueta] (muestreo) {} node [anchor=south]{muestreo} ;\\
-            \node [punto] (inicio) {} node [anchor=east] {$\sum_k a_k p(t-kT_s) + n(t)$}; & \node [punto] (p2) {}; &\node [punto] (p3) {}; & &\node [punto] (p4) {} node [anchor=north] {$y_k=a_k+n_k$}; &\node [block] (comp) {COMP}; &\node [etiqueta] (salida) {$\hat{a}_k$}; \\
-            & & \node [block] (sinc) {SINCR}; & \node [punto] (p5) {};\\
-        };
-        \draw (inicio) -- (p2) -- (p3) -- (muestreo);
-        \draw [-stealth] (p2) |- (sinc);
-        \draw (sinc) -- (p5);
-        \draw [-stealth,dashed] (p5) -- (p1);
-        \draw [-stealth] (p4) -- (comp);
-        \draw [-stealth] (comp) -- (salida);
-    \end{blockdiagram}
-    \endpgfgraphicnamed\end{minipage}
-\end{figure}
-\FloatBarrier
-
-\begin{itemize}
-    \item pulsos sin ISI
-    \item $\{a_k\} \in \mathcal{A}$ constelación de múltiplos de $A$. \\ Ejemplos: (i)
-    $\mathcal{A} = \{-A, A\}$; (ii) $\mathcal{A} = \{0,A\}$; (iii)
-    $\mathcal{A}= \{\pm A,\pm 3A,\ldots \}$. %
-%    \begin{enumerate}
-%        \item $\pm A$
-%        \item $$
-%        \item $\pm A,
-%    \end{enumerate}
-    \item Ruido $n(t)$, $E[n]=0$, $E[n^2]=\sigma^2$. Densidad $f_N(n)$. Por defecto, Gaussiano.
-\end{itemize}
-
-Decido mediante comparación de la muestra $y_k = a_k + n_k$, con
-umbrales apropiados. $P_e$ es la probabilidad de error del símbolo
-detectado.
-
-Obtuvimos expresiones de $P_e$ en función de $\frac{A}{\sigma}$, para cada tipo de señalización.
- \begin{itemize}
-        \item Polar, binario:
-        $P_e=Q\left(\frac{A}{\sigma}\right)$.
-        \item Unipolar: $P_e=Q\left(\frac{A}{2\sigma}\right)$.
-        \item Polar, M-ario:
-        $P_e\text{(simb)}=2\left(\frac{M-1}{M}\right)Q\left(\frac{A}{\sigma}\right)$.
-    \end{itemize}
-
-Para algunas formas de pulsos específicas, relacionamos
-$\frac{A}{\sigma}$ con $\sqrt{\left(\frac{S}{N}\right)}$.
-
-\section{Probabilidad de error en base a parámetros del canal}
+\section{Detección digital en un canal con ruido blanco Gaussiano}
 
 \begin{figure}[htb]
     \centering
@@ -408,10 +338,10 @@ pulso transmitida.
     \begin{center}\begin{minipage}{\textwidth}
         \bpgf{Imagenes/digBB/digBB-2}
         \begin{tikzpicture}
-            \draw [-stealth] (-1.5,0) -- (1.5,0) node [anchor=north] {$f$};
-            \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=east] {$S_x(f)$};
+            \draw [->] (-1.5,0) -- (1.5,0) node [anchor=north] {$f$};
+            \draw [->] (0,-0.5) -- (0,1.5) node [anchor=east] {$S_x(f)$};
             \draw (-1,0) node [anchor=north] {$-B$} -- (-1,1) -- (1,1) node [anchor=west] {$\sigma_a^2 T_s$} -- (1,0) node [anchor=north] {$B$};
-            \draw [thick,-stealth] (0,0) -- (0,1.2) node [anchor=west] {$\mu^2$};
+            \draw [thick,->] (0,0) -- (0,1.2) node [anchor=west] {$\mu^2$};
         \end{tikzpicture}
         \endpgfgraphicnamed\end{minipage}
     \end{center}
@@ -600,14 +530,14 @@ p\left(-(t-\tau)\right)\Rightarrow \col{h(t) = K p(\tau-t)}.\]
     \centering\begin{minipage}{\textwidth}
     \bpgf{Imagenes/filAc/filAc-1}
     \begin{tikzpicture}
-        \draw[-stealth] (-0.5,0) -- (4,0) node [anchor=north] {$t$};
-        \draw[-stealth] (0,-0.5) -- (0,1.5);
+        \draw[->] (-0.5,0) -- (4,0) node [anchor=north] {$t$};
+        \draw[->] (0,-0.5) -- (0,1.5);
         \draw (0,0) -- (2,1) -- (3,0);
         \path (5,1) node {$\Rightarrow$};
         \begin{scope}[shift={(6,0)}]
-                \draw[-stealth] (-0.5,0) -- (4,0) node [anchor=north]
+                \draw[->] (-0.5,0) -- (4,0) node [anchor=north]
 {$t$};
-                \draw[-stealth] (0,-0.5) -- (0,1.5) node [anchor=west]
+                \draw[->] (0,-0.5) -- (0,1.5) node [anchor=west]
 {$h_{opt} = K p(\tau - t)$};
                 \draw (0.5,0) -- (1.5,1) -- (3.5,0) node
 [anchor=north] {$\tau$};
@@ -716,8 +646,8 @@ $\tau=T_s$):
  \begin{center}
   \bpgf{Imagenes/filAc/filAc-2}
     \begin{tikzpicture}
-      \draw [-stealth] (-0.5,0) -- (2.5,0) node [anchor=north] {$t$};
-      \draw [-stealth] (0,-0.5) -- (0,1.5);
+      \draw [->] (-0.5,0) -- (2.5,0) node [anchor=north] {$t$};
+      \draw [->] (0,-0.5) -- (0,1.5);
       \draw (0,0) -- (1,1) -- (2,0) node [anchor=north] {$2T_s$};
       \draw [dotted] (1,1) -- (0,1) node [anchor=east] {$1$};
       \draw [dotted] (1,1) -- (1,0) node [anchor=north] {$T_s$};
@@ -760,15 +690,15 @@ K|\hat{P}(f)|^2$.
  \begin{center}\begin{minipage}{\textwidth}
   \bpgf{Imagenes/filAc/filAc-3}
   \begin{tikzpicture}
-    \draw [-stealth] (-0.5,0) -- (4,0);
-    \draw [-stealth] (0,-0.5) -- (0,2.5) node [anchor=east] {$\hat{P}(f)$};
+    \draw [->] (-0.5,0) -- (4,0);
+    \draw [->] (0,-0.5) -- (0,2.5) node [anchor=east] {$\hat{P}(f)$};
     \draw  (0,2) -- (1.5,2) -- plot  [domain=1.5:2.5,samples=200] (\x,{cos(pi*(\x-1.5) r)+1});
     \draw [dotted] (1.5,2) -- (1.5,0) node [below left] {$\frac{f_s}{2}(1-\alpha)$};
     \draw [dotted] (0,1) -- (2,1) -- (2,0) node [below] {$\frac{f_s}{2}$};
     \path (2.5,0) node [below right] {$\frac{f_s}{2}(1+\alpha)$};
     \begin{scope}[shift={(6,0)}]
-    \draw [-stealth] (-0.5,0) -- (4,0);
-    \draw [-stealth] (0,-0.5) -- (0,2.5) node [anchor=east] {$\hat{P}_R(f)$};
+    \draw [->] (-0.5,0) -- (4,0);
+    \draw [->] (0,-0.5) -- (0,2.5) node [anchor=east] {$\hat{P}_R(f)$};
     \draw  (0,2) -- (1.5,2) -- plot  [domain=1.5:2.5,samples=200] (\x,{(cos(pi*(\x-1.5) r)+1)^2/2});
     \draw [dotted] (1.5,2) -- (1.5,0) node [below left] {$\frac{f_s}{2}(1-\alpha)$};
     \draw [dotted] (0,0.5) -- (2,0.5) -- (2,0) node [below] {$\frac{f_s}{2}$};
@@ -857,17 +787,17 @@ cada tramo. Ejemplo de uso: cajas subterráneas en telefonía.
         & \node[etiqueta] (ruido1) {$n_1$}; & & \node[etiqueta] (ruido2) {$n_2$}; & & & \node[etiqueta] (ruidom) {$n_m$};\\
         \node[etiqueta] (inicio) {$x(t)$}; & \node[operator] (sum1) {$+$}; & \node[block] (amp1) {AMP}  node [above right=5mm] {$y_1(t)$} node [below=3mm] {\begin{minipage}{1.5cm}\centering ganancia\\ $\frac{1}{a}$\end{minipage}}; & \node[operator] (sum2) {$+$}; & \node[block] (amp2) {AMP}; & \node[etiqueta] (puntos) {$\ldots$}; & \node[operator] (summ) {$+$}; & \node[block] (ampm) {AMP}; & \node[etiqueta] (salida) {$y(t)$};\\
     };
-    \draw [-stealth,ultra thick] (inicio) -- node [anchor=north] {\begin{minipage}{20mm}\centering TR.1\\ atenuación $a$ ($a\ll 1$)\end{minipage}} (sum1);
-    \draw [-stealth] (sum1) -- (amp1);
-    \draw [-stealth] (ruido1) -- (sum1);
-    \draw [-stealth,ultra thick] (amp1) -- node [anchor=north] {TR. 2} (sum2);
-    \draw [-stealth] (ruido2) -- (sum2);
-    \draw [-stealth] (sum2) -- (amp2);
-    \draw [-stealth,ultra thick] (amp2) -- (puntos);
-    \draw [-stealth,ultra thick] (puntos) -- (summ);
-    \draw [-stealth] (ruidom) -- (summ);
-    \draw [-stealth] (summ) -- (ampm);
-    \draw [-stealth] (ampm) -- (salida);
+    \draw [->,ultra thick] (inicio) -- node [anchor=north] {\begin{minipage}{20mm}\centering TR.1\\ atenuación $a$ ($a\ll 1$)\end{minipage}} (sum1);
+    \draw [->] (sum1) -- (amp1);
+    \draw [->] (ruido1) -- (sum1);
+    \draw [->,ultra thick] (amp1) -- node [anchor=north] {TR. 2} (sum2);
+    \draw [->] (ruido2) -- (sum2);
+    \draw [->] (sum2) -- (amp2);
+    \draw [->,ultra thick] (amp2) -- (puntos);
+    \draw [->,ultra thick] (puntos) -- (summ);
+    \draw [->] (ruidom) -- (summ);
+    \draw [->] (summ) -- (ampm);
+    \draw [->] (ampm) -- (salida);
   \end{blockdiagram}
  \end{center}
  \caption{Repetidor regenerativo}\label{fig:repetidor regenerativo}

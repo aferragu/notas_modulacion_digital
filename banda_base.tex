@@ -519,16 +519,16 @@ es la energía del pulso $p(t)$, que podemos calcular en el tiempo o en frecuenc
 También se acostumbra definir además la \emph{energía media} del pulso aleatorio $a_k p(t-kT_s)$,
 que esta dada por
 \begin{align*}
-    \overline{E_p} = E[a_k^2] \|p\|^2  = (\mu^2+ \sigma^2)\|p\|^2 .
+    \bar{E}_p = E[a_k^2] \|p\|^2  = (\mu^2+ \sigma^2)\|p\|^2 .
 \end{align*}
 
 Hay algunos casos particulares en que la parte periódica cumple  $\langle
 z^2\rangle = \mu^2 \|p\|^2 f_s$. En este caso, tendremos:
 \begin{equation}\label{eq:potencia energia pulso simplificada}
-    \langle x^2\rangle  = \overline{E_p} f_s,
+    \langle x^2\rangle  = \bar{E}_p f_s,
 \end{equation}
 fórmula con interpretación intuitiva: envío un pulso de energía media $\overline{E_p}$, cada $T_s$ segundos,
-la potencia media es $\overline{E_p}/T_s = \overline{E_p} f_s$. Sin embargo, para que esta interpretación sea válida es necesario que los pulsos
+la potencia media es $\bar{E}_p/T_s = \bar{E}_p f_s$. Sin embargo, para que esta interpretación sea válida es necesario que los pulsos
 sucesivos sean ortogonales entre sí, lo cual se cumple sólo en algunos casos, como detallamos a continuación:
 \begin{itemize}
     \item Siempre que $\mu=0$, (por ejemplo $x(t)$ es una señal polar centrada). Aquí la parte periódica desaparece.
@@ -814,12 +814,12 @@ Sabemos que $p_0(t) \fourier \hat{P}_0(f)$, el pasabajos ideal de ancho $f_s/2$.
 
 \begin{itemize}
     \item La convolución de $\hat{M}(f)$ con $\hat{P}(f)$ solo tiene componentes en frecuencia desde $-\frac{f_s}{2}(1+\alpha)$ hasta $\frac{f_s}{2}(1+\alpha)$. Es decir, es de ancho de banda acotado.
-    \item Para las frecuencias entre $-\frac{f_s}{2}(1-\alpha)$ $\frac{f_s}{2}(1-\alpha)$ se cumple que:
+    \item Para las frecuencias entre $-\frac{f_s}{2}(1-\alpha)$ y $\frac{f_s}{2}(1-\alpha)$ se cumple que:
         \begin{equation*}
             \hat{P}(f) = \int_{-\infty}^\infty \hat{P}_0(\sigma) \hat{M}(f-\sigma) d\sigma = T_s \int_{-\alpha\frac{f_s}{2}}^{\alpha \frac{f_s}{2}} \hat{M}(\sigma)d\sigma = T_s m(0) = T_s.
         \end{equation*}
     es decir, en el centro de la banda replica el efecto del pasabajos ideal.
-    \item En las frecuencias intermedias, es decir entre $\frac{f_s}{2}(1-\alpha)$ y $\frac{f_s}{2}(1+\alpha)$ (y sus correspondientes negativas), presenta \emph{simetría vestigial}. Es decir, evoluciona de forma impar desde $0$ hasta $T_s$ y de $T_s$ a $0$ alrededor del valor $f=f_s$. En particular, $\hat{P}(f_s/2) = T_s/2$.
+    \item En las frecuencias intermedias, es decir entre $\frac{f_s}{2}(1-\alpha)$ y $\frac{f_s}{2}(1+\alpha)$ (y sus correspondientes negativas), presenta \emph{simetría vestigial}. Es decir, evoluciona de forma impar desde $0$ hasta $T_s$ y de $T_s$ a $0$ alrededor del valor $f=\pm f_s/2$. En particular, $\hat{P}(\pm f_s/2) = T_s/2$.
 \end{itemize}
 
 \begin{figure}
