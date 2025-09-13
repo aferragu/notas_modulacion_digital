@@ -6,19 +6,20 @@ Supongamos además que conocemos (mediante algún mecanismo de sincronización),
 
 \begin{figure}
     \begin{center}
-    \begin{blockdiagram}
-        \matrix[row sep=5 mm, column sep=8mm]{
-            & & & \node[punto] (p1) {}; & \node[etiqueta] (muestreo) {} node [anchor=south]{muestreo} ;\\
-            \node [punto] (inicio) {} node [anchor=east] {$\sum_k a_k p(t-kT_s) + n(t)$}; & \node [punto] (p2) {}; &\node [punto] (p3) {}; & &\node [punto] (p4) {} node [anchor=north] {$y(kT_s) = a_k + n_k$}; &\node [block] (comp) {Detector}; &\node [etiqueta] (salida) {$\hat{a}_k$}; \\
-            & & \node [block] (sinc) {Sincronismo}; & \node [punto] (p5) {};\\
-        };
-        \draw (inicio) -- (p2) -- (p3) -- (muestreo);
-        \draw [->] (p2) |- (sinc);
-        \draw (sinc) -- (p5);
-        \draw [->,dashed] (p5) -- (p1);
-        \draw [->] (p4) -- (comp);
-        \draw [->] (comp) -- (salida);
-    \end{blockdiagram}
+        \begin{blockdiagram}
+            \node at (0,0) (input) {\small $x(t) = \sum_k a_k p(t-kT_s) + n(t)$};
+            \node[coordinate, right=2cm of input] (space) {};
+            \node[block, right=of space, align=center, inner sep=4pt] (sample) {\begin{circuitikz}\draw (0,0) to[switch] node[ocirc]{} (.8,0);\end{circuitikz}};
+            \draw[thick,->] (input) -- (sample);
+            \node[block, right =3cm of sample, align=center, label=above:{\small Detector}] (detector) {\begin{tikzpicture} \draw (0,0) -| ++(.3,.3) |- ++(.3,.3); \end{tikzpicture}};
+            \draw[thick,->] (sample) --node[midway]{\small $y(kT_s) = a_k+n_k$} (detector);
+            \node[right =of detector] (salida) {\small $\hat{a}_k$};
+            \draw[thick,->] (detector) -- (salida);
+            \node[block, below=of space, align=center] (sincr) {Sincronismo};
+            \node[coordinate, left=1cm of sincr] (input_sincr) {};
+            \draw[thick,->] (sincr) -| (sample);
+            \draw[thick,dashed,->] (input_sincr) -- (sincr);
+        \end{blockdiagram}
     \end{center}
     \caption{Onda PAM afectada por ruido y sistema de detección.}\label{fig:deteccion ruido}
 \end{figure}
@@ -29,10 +30,14 @@ A la entrada del comparador o detector tenemos una muestra $y(kT_s)$. Bajo las h
 \end{equation*}
 es decir el símbolo original perturbado por un ruido aleatorio $n_k:=n(kT_s)$ en el instante de muestreo.
 
-Consideremos que este ruido aleatorio tiene una densidad $f_N(n)$, es decir, $\p{a\leqslant n_k \leqslant b} = \int_a^b f_N(n)dn$ tal que:
+Consideremos que este ruido aleatorio tiene una densidad $f_N(n)$, es decir:
+\begin{equation*}
+\p{a\leqslant n_k \leqslant b} = \int_a^b f_N(n)dn,
+\end{equation*}
+tal que:
 \begin{align*}
     &\E{n_k} = 0 &\text{ruido centrado}\\
-    &\E{n_k^2} = \sigma_N^2 < \infty &\text{potencia finita}\\
+    &\E{n_k^2} = \sigma_N^2 < \infty &\text{potencia finita}.
 \end{align*}
 Por ahora no discutiremos cómo el ruido $n(t)$ se generó en el canal analógico, pero típicamente será un ruido blanco filtrado en recepción, como veremos más adelante.
 
@@ -296,39 +301,56 @@ siendo $P_{e,\text{símbolo}}$ la calculada en \eqref{eq:error polar m-ario gaus
 
 \section{Detección digital en un canal con ruido blanco Gaussiano}
 
-\begin{figure}[htb]
-    \centering
-    \resizebox{\textwidth}{!}{%
-    \input{digBBGr.tex}
-    }
+Apliquemos ahora lo visto anteriormente al caso práctico en que la señal digital PAM se envía por un canal de ancho de banda acotado, el cual introduce ruido blanco Gaussiano. Para limitar el ruido es necesario, al igual que en la comunicación analógica, colocar un filtro de recepción, antes de pasar a la etapa de detección estudiada anteriormente. El esquema general es el que de ilustra en la Figura \ref{fig:deteccion canal ruido}. Tenemos entonces tres ondas PAM:
+\begin{itemize}
+\item $x_T(t)= \sum_k a_k p_T(t-kT_s)$, la onda transmitida. $p_T(t)$ es la forma de pulso del transmisor.
+\item $x(t)=\sum a_k p(t-kT_s)$, la onda a la salida del canal, a la que se superpone el ruido blanco Gaussiano $w(t)$ de densidad espectral $\eta_0/2$. La forma de pulso $p(t)$ incorpora la distorsión del canal.
+\item $x_R(t) = \sum_k a_k p_R(t-kT_s)$, la onda a la salida del filtro de recepción, afectada del ruido filtrado $n(t)$.
+\end{itemize}
+
+\begin{figure}
+    \begin{center}
+        \begin{blockdiagram}
+            \node at (0,0) (input) {\small $x_T(t)$};
+            \node[block, right =of input, align=center] (canal) {\pasabajos{B}{.5}};
+            \draw[thick, ->] (input) -- (canal);
+            \node[circle, draw, thick, right=of canal] (add) {$+$}; 
+            \node[above=of add] (ruido) {\small $w(t)$};
+            \draw[thick, ->] (canal) -- (add);
+            \draw[thick, ->] (ruido) -- (add);
+            \begin{scope}[on background layer]
+                \node[draw, rectangle, dashed, fill=gray!15!white, fit=(canal) (ruido) (add), inner sep=5pt,label=above:Canal] {};
+            \end{scope}
+            \node[block, right =2.6cm of add, align=center, inner sep=8pt, label=above:{\small Filtro Rx}] (rx) {$\hat{H}_r$};
+            \draw[thick, ->] (add) -- node[midway,above]{{\small $x(t)+w(t)$}} (rx);
+            \node[below=of rx] (sincr_input) {};
+            \node[block, right =.5cm of sincr_input, align=center] (sincr) {Sincronismo};
+            \draw[thick, dashed, ->] (sincr_input) -- (sincr);
+            \node[block, right =2.2cm of rx, align=center, inner sep=4pt] (sample) {\begin{circuitikz}\draw (0,0) to[switch] node[ocirc]{} (.8,0);\end{circuitikz}};
+            \draw[thick, ->] (rx) -- node[midway,above]{\small $x_R(t)+n(t)$} (sample);
+            \draw[thick,->] (sincr) -| (sample);
+            \node[block, right =of sample, align=center, label=above:{\small Detector}] (detector) {\begin{tikzpicture} \draw (0,0) -| ++(.3,.3) |- ++(.3,.3); \end{tikzpicture}};
+            \node[right =of detector] (salida) {\small $\hat{a}_k$};
+            \node[above=1cm of sample] (top) {};
+            \draw[thick,->] (sample) --node[midway]{\small $y_k$} (detector);
+            \draw[thick,->] (detector) -- (salida);
+            \begin{scope}[on background layer]
+                \node[draw, rectangle, dashed, fill=gray!15!white, fit=(rx) (sincr_input) (sincr) (sample) (detector) (top), inner sep=10pt,label=above:Receptor digital] {};
+            \end{scope}            
+        \end{blockdiagram}
+    \end{center}
+    \caption{Transmisión digital sobre un canal ideal de ancho $B$ con ruido aditivo blanco y Gaussiano.}\label{fig:deteccion canal ruido}
 \end{figure}
 
-Se transmite una onda PAM por un canal de ancho de banda limitado
-$B$, que además adiciona ruido. Al igual que en la comunicación
-analógica, colocamos un filtro de recepción $\hat{H}_R(f)$ para
-limitar el ruido en la detección. La salida de ese filtro va a la
-etapa de detección recién estudiada. Tenemos entonces tres ondas
-PAM:
-\begin{itemize}
-\item $x_T(t)= \sum_k a_k p_T(t-kT_s)$, la onda transmitida.
-$p_T(t)$ es la forma de pulso seleccionada.
-\item $x(t)=\sum a_k p(t-kT_s)$, la onda a la salida del canal,
-a la que se superpone el ruido blanco. La forma de pulso $p(t)$
-incorpora la distorsión del canal.
-\item $x_R(t) = \sum_k a_k
-p_R(t-kT_s)$, la onda a la salida del filtro de recepción, a la
-que se superpone el ruido $n(t)$. éste tiene media nula y
+Comencemos analizando el ruido filtrado: utilizando \eqref{eq:espectro filtrado}, éste tiene media nula y
 varianza
-\[\sigma^2=E[n(t)^2]=\frac{\eta}{2}\displaystyle\int^{+\infty}_{\infty}
-|\hat{H}_R(f)|^2\d f.\]
-\end{itemize}
-Estudiamos el sistema completo distinguiendo según la forma de
-pulso transmitida.
+\begin{equation*}
+\sigma_N^2=\E{n(t)^2}=\frac{\eta_0}{2}\int_{-\infty}^{\infty}|\hat{H}_R(f)|^2 df.    
+\end{equation*}
 
-\begin{enumerate}
-    \renewcommand\theenumi{\Roman{enumi}}
-    \item \textbf{Comunicación con pulsos de Nyquist ideales}.
-    \label{item:1}
+Estudiamos ahora el sistema completo distinguiendo según la forma de pulso transmitida y el filtro de recepción elegido.
+
+\subsection{Comunicación con pulsos de Nyquist ideales}
     Es decir $p_T(t) = \sinc(\pi f_s t)$, con $f_s=2B$. éste es el caso más simple, donde la señal transmitida pasa sin distorsión por el
     canal:
  \[ p(t) = \sinc(\pi f_s t), \quad \hat{P}(f) = T_s
@@ -403,8 +425,7 @@ pulso transmitida.
         que es menos eficiente que el caso polar.
     \end{description}
 
-    \item \textbf{Pulsos de Nyquist de exceso de ancho de banda $\alpha$.}
-    \label{item:2}
+\subsection{Pulsos de Nyquist de exceso de ancho de banda $\alpha$.}
     Para que estos pulsos pasen intactos por el canal, se require
     la relación $f_s (1+\alpha) \leq 2B$, más restrictiva que la
     anterior. Suponiendo que esto ocurre, podemos usar la misma
@@ -432,8 +453,7 @@ media del pulso es
 
     Intuitivamente: tuvimos que ensanchar el filtro para dejar pasar la señal y no introducir ISI, pero esta no tiene ``tanta fuerza'' en la parte alta de la banda.
 
-    \item \textbf{Caso de pulsos rectangulares RZ o NRZ}
-    \label{item:3}
+\subsection{Caso de pulsos rectangulares RZ o NRZ}
 
     Supongamos que el canal tiene $B$ grande y los pulsos $p(t)$ llegan esencialmente rectangulares, ¿qué hago con $H_R$? El dilema es:
     \begin{itemize}
@@ -446,7 +466,6 @@ media del pulso es
     En realidad, aquí no importa dejar la onda intacta sino lograr la máxima amplitud en el momento del
     muestreo, en relación al ruido. La optimización del filtro de
     detección para estos fines se verá a continuación.
-\end{enumerate}
 
 
 \section{Detección óptima: filtro acoplado}
