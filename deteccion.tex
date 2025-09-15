@@ -344,131 +344,123 @@ Apliquemos ahora lo visto anteriormente al caso práctico en que la señal digit
 
 Comencemos analizando el ruido filtrado: utilizando \eqref{eq:espectro filtrado}, éste tiene media nula y
 varianza
-\begin{equation*}
+\begin{equation}\label{eq:varianza ruido filtrado}
 \sigma_N^2=\E{n(t)^2}=\frac{\eta_0}{2}\int_{-\infty}^{\infty}|\hat{H}_R(f)|^2 df.    
-\end{equation*}
+\end{equation}
 
-Estudiamos ahora el sistema completo distinguiendo según la forma de pulso transmitida y el filtro de recepción elegido.
+Estudiamos ahora varios ejemplos del sistema completo distinguiendo según la forma de pulso transmitida y el filtro de recepción elegido.
 
-\subsection{Comunicación con pulsos de Nyquist ideales}
-    Es decir $p_T(t) = \sinc(\pi f_s t)$, con $f_s=2B$. éste es el caso más simple, donde la señal transmitida pasa sin distorsión por el
-    canal:
- \[ p(t) = \sinc(\pi f_s t), \quad \hat{P}(f) = T_s
-    p_{[-\frac{f_s}{2},\frac{f_s}{2}]}(f).\]
-    En particular $x(t)$ está confinada a la banda $[-B,B]$. Para símbolos IID, de media $\mu$ y varianza
-    $\sigma_a^2$, su densidad espectral de potencia es
-    \begin{center}\begin{minipage}{\textwidth}
-        \bpgf{Imagenes/digBB/digBB-2}
-        \begin{tikzpicture}
-            \draw [->] (-1.5,0) -- (1.5,0) node [anchor=north] {$f$};
-            \draw [->] (0,-0.5) -- (0,1.5) node [anchor=east] {$S_x(f)$};
-            \draw (-1,0) node [anchor=north] {$-B$} -- (-1,1) -- (1,1) node [anchor=west] {$\sigma_a^2 T_s$} -- (1,0) node [anchor=north] {$B$};
-            \draw [thick,->] (0,0) -- (0,1.2) node [anchor=west] {$\mu^2$};
-        \end{tikzpicture}
-        \endpgfgraphicnamed\end{minipage}
+\begin{ejemplo}[Pulsos de Nyquist ideales]
+
+    Una primera aproximación sería utilizar como $p_T(t)$ pulsos ideales, con $f_s=2B$, por lo que:
+    \begin{equation*}
+        p_T(t) = \sinc(\pi f_s t) = \sinc(\pi 2B t) \fourier \hat{P}_T(f) = T_s p_{\left[-\frac{f_s}{2},\frac{f_s}{2}\right]}(f) = T_s p_{[-B,B]}(f).
+    \end{equation*}
+    En este caso, la señal $x(t)=x_T(t)$ pasa sin distorsión por el canal y solo se adiciona ruido. Tiene sentido entonces colocar como filtro de recepción otro pasabajos ideal $\hat{H}_R(f) = p_{[-B,B]}(f)$ por lo que, utilizando \eqref{eq:varianza ruido filtrado}, $\sigma_N^2 = \eta_0 B$.
+
+    Supongamos ahora que los símbolos $\{a_k\}$ son independientes con media $\mu$ y varianza $\sigma_a^2$, la densidad espectral de potencia de $x_T(t)=x(t)$ es:
+
+    \begin{center}
+    \begin{tikzpicture}
+            \begin{axis}[ x=1.5cm, y=1.5cm, axis lines=middle,  
+                every x tick label/.append style={font=\footnotesize},
+                every y tick label/.append style={anchor=south east},
+                xlabel=$f$,
+                x label style={anchor=north west},
+                ylabel=$S_x(f)$,
+                y label style={anchor=west},
+                xmin=-2,xmax=2,ymin=-.2,ymax=1.6,
+                ytick=\empty,
+                xtick = {-1,1},
+                xticklabels = {$-\frac{f_s}{2}$,$\frac{f_s}{2}$},
+                clip=false,
+                ]
+                \addplot[teal, very thick, domain=-1:1, samples=10] {.8} node[midway,above left, xshift=-1em] {$\sigma_a^2 T_s$};
+                \addplot[teal, very thick, domain=-1.8:-1, samples=10] {0};
+                \addplot[teal, very thick, domain=1:1.8, samples=10] {0};
+                \draw[dotted, teal, very thick] (axis cs:-1,0) -- (axis cs:-1,.8);
+                \draw[dotted, teal, very thick] (axis cs:1,0) -- (axis cs:1,.8);
+                \draw[->, teal, very thick] (axis cs:0,0) -- (axis cs:0,1.2) node[right] {$\mu^2$};
+            \end{axis}
+    \end{tikzpicture}
     \end{center}
-    La potencia media de señal a la salida del canal es
-     \[
-     \langle x ^2 \rangle = \int_{-\infty}^\infty S_x(f)\d f =
-     \mu^2 + \sigma_a^2 T_s 2B = \mu^2 + \sigma_a^2 = E[a_k^2].
-     \]
-     Notar que como $\|p\|^2 = \int_{-\infty}^\infty |\hat{P}(f)|^2 \d f = T_s$ se verifica en particular para este caso la fórmula
-     anunciada en la sección anterior,
-     \[\langle x^2 \rangle = E[a_k^2] \|p\|^2 f_s = \overline{E_p}
-     f_s.\]
-    $x(t)$ llega contaminada de ruido blanco. Resulta entonces
-    natural en este caso proceder  como en el caso analógico, y poner como
-    filtro de recepción simplemente un pasabajos ideal $[-B,B]$,
-    que rechaza al ruido fuera de banda. Notar que:
-    \begin{itemize}
-    \item La señal de recepción sigue intacta, $p_R(t) = p(t)$, es decir no hay ISI en la detección.
-    \item El ruido de recepción tiene $\sigma^2=\eta B = \frac{\eta f_s}{2}$.
-    \end{itemize}
-%
 
-    Calculamos ahora expresiones para la probabilidad de error de detección $P_e$ en términos de parámetros físicos del
-    canal, para las codificaciones de línea polar o unipolar.
+    Integrando $S_x$ se obtiene la potencia transmitida:
+    \begin{equation*}
+        S:=\langle x^2 \rangle = \int_{-\infty}^\infty S_x(f)df = \mu^2+\sigma_a^2 = \E{a_k^2}.
+    \end{equation*}
+    En particular, como $||p||^2 = T_s$ (calcularla en frecuencia), se verifica en este caso también que:
+    \begin{equation*}
+        S:=\langle x^2 \rangle = \E{a_k^2} ||p||^2 f_s = \bar{E}_p f_s.
+    \end{equation*}
 
+    Tenemos entonces una potencia transmitida $S=\bar{E}_p f_s = \E{a_k^2}$ y una potencia de ruido $N:=\sigma_N^2=\eta_0 B = \eta_0 f_s/2$. Calculamos la probabilidad de error:
     \begin{description}
-        \item[Caso polar binario] $a_k=\pm A$, umbral óptimo
-        $A_0=0$, $\langle x^2 \rangle = A^2$.
-        \[ \Rightarrow \ \ P_e = Q\left(\frac{A}{\sigma}\right) = Q\left(\sqrt{\frac{\langle x^2 \rangle}{\sigma^2}}\right) = Q\left(\sqrt{\frac{S}{N}}\right).\]
-        que es la misma expresión que obtuvimos con pulsos NRZ.
+        \item[Caso polar binario: ] $a_k = \pm A$, $A_0^*=0$, $S=A^2$ y utilizando \eqref{eq:error binario gaussiano}:
+        \begin{equation*}
+            P_e = Q\left(\frac{A}{\sigma_N}\right) = Q\left(\sqrt{\frac{S}{N}}\right).
+        \end{equation*}
+        Observar que coincide con la expresión para pulsos NRZ. Otra expresión posible es surge de observar que:
+        \begin{equation*}
+            S = \bar{E}_p f_s , \quad N=\eta_0 \frac{f_s}{2} \Longrightarrow P_e = Q\left(\sqrt{\frac{2\bar{E}_p}{\eta_0}}\right),
+        \end{equation*}
+        una expresión que solo depende de parámetros físicos del canal (energía de pulso, densidad del ruido). En particular \emph{no depende de la frecuencia de señalización}.
 
-        Otra expresión (más fácil de generalizar): sea $\overline{E}_p$ la energía media del pulso $a_k
-        p(t)$,
-        en este caso $\overline{E}_p = E[a_k^2]\|p\|^2 = A^2 T_s$.
-                \[\left.\begin{gathered}
-                        A^2 = S = \overline{E}_p f_s\\
-                        \sigma^2 = N = \eta \frac{f_s}{2}
-                      \end{gathered}\right\}\Rightarrow \frac{S}{N} = \frac{2\overline{E}_p}{\eta}\Rightarrow \col{P_e = Q\left(\sqrt{\frac{2\overline{E}_p}{\eta}}\right)}\]
-        que depende solo de parámetros físicos del canal:
-        \begin{itemize}
-            \item Energía media del pulso.
-            \item Densidad espectral de ruido.
-            \item ¡No depende de $f_s$!
-        \end{itemize}
-        \vspace{1ex}
-
-        \item[Caso unipolar binario] $a_k = \{0,A\}$, umbral óptimo
-        $A_0=\frac{A}{2}$, $\langle x^2 \rangle = S = \frac{A^2}{2}$.
-       % Entonces $S_x(f) = \sigma^2 f_s |\hat{P}(f)|^2 + \mu^2 f_s^2 \hat{P}(f)^2 = \frac{A^2}{4} T_s p_{[-\frac{f_s}{2},\frac{f_s}{2}]}(f) + \frac{A^2}{4}\delta(f)$
-        \begin{align*}
- %           S = \langle x^2 \rangle = \frac{A^2}{4} + \frac{A^2}{4} = \frac{A^2}{2}\\
-         \sigma^2 = N = \eta \frac{f_s}{2} \Longrightarrow   P_e = Q\left(\frac{A}{2\sigma}\right) =
-         Q\left(\frac{1}{\sqrt{2}}\sqrt{\frac{S}{N}}\right).
-        \end{align*}
-
-        También aqúi tenemos $\frac{S}{N} = \frac{2\overline{E}_p}{\eta}$
-%        \overline{E}_p = E[a_k^2] \int p(t)^2\d t = \frac{A^2}{2} T_s\Rightarrow S = \overline{E}_p T_s$, $N=\frac{\eta f_s}{2}$
-        \[\Rightarrow \col{P_e = Q\left(\sqrt{\frac{\overline{E}_p}{\eta}}\right)}\]
-        que es menos eficiente que el caso polar.
+        \item[Caso unipolar binario: ]  Se procede igual que en el caso anterior, tomando $a_k=\{0,A\}$ de donde $A_0^* =A/2$, $\mu=A/2$ y $\sigma_a^2 = A^2/4$. La potencia transmitida en este caso es $S=\bar{E}_p f_s = A^2/2$. Utilizando nuevamente \eqref{eq:error binario gaussiano}:
+        \begin{equation*}
+            P_e = Q\left(\frac{A}{2\sigma_N}\right) = Q\left(\frac{1}{\sqrt{2}}\sqrt{\frac{S}{N}}\right).
+        \end{equation*}
+        O bien en términos de la energía de pulso y la densidad del ruido:
+        \begin{equation*}
+            P_e = Q\left(\sqrt{\frac{\bar{E}_p}{\eta_0}}\right),
+        \end{equation*}
+        que deja claro que esta señalización es menos eficiente en potencia para el mismo BER.
     \end{description}
+\end{ejemplo}
 
-\subsection{Pulsos de Nyquist de exceso de ancho de banda $\alpha$.}
-    Para que estos pulsos pasen intactos por el canal, se require
-    la relación $f_s (1+\alpha) \leq 2B$, más restrictiva que la
-    anterior. Suponiendo que esto ocurre, podemos usar la misma
-    estrategia para elegir el filtro: dejar el pulso intacto,
-    eliminar el ruido fuera de banda. Por tanto,
- \[
-\Rightarrow \sigma^2 = \frac{\eta f_s}{2}(1+\alpha).
-\]
-Aquí no buscamos expresiones en términos de $\frac{S}{N}$, en
-particular la fórmula sencilla para la potencia de la señal PAM
-no se aplica. Generalizamos las expresiones para la probabilidad
-de error en términos de $\frac{\overline{E}_p}{\eta}$. La energía
-media del pulso es
-    \[\overline{E}_p = E[a_k^2] \int p(t)^2\d t = E[a_k^2] T_s \left(\underbrace{\frac{1}{T_s}\int |\hat{P}(f)|^2\d f}_{\text{llamamos }\beta}\right)
-     = \beta E[a_k^2] T_s.\]
-    Se puede verificar (usando la desigualdad de Cauchy-Schwarz) que el parámetro $\beta$ cumple  $\frac{1}{1+\alpha} \leq \beta \leq
-    1$.
 
-    Para el caso polar binario, $\overline{E}_p = \beta A^2 T_s\Rightarrow A=\sqrt{\overline{E}_p \frac{f_s}{\beta}}$. $\sigma=\sqrt{\dfrac{\eta f_s}{2} (1+\alpha)}$.
+\begin{ejemplo}[Pulsos de Nyquist no ideales]
+    
+    En este caso, el pulso tiene un exceso de ancho de banda $\alpha$ respecto a $f_s/2$. Se plantea entonces la disyuntiva: dejamos pasar el pulso intacto (controlando así la ISI) o elegimos un filtro más restrictivo. Analicemos por ahora el primer caso, es decir, tomemos $f_s$ tal que:
+    \begin{equation*}
+        \frac{f_2}{2}(1+\alpha) = B,
+    \end{equation*}
+    para que el pulso pase intacto, y utilicemos como antes un pasabajos ideal en recepción de ancho $B$. En particular ahora la potencia del ruido es mayor para la misma frecuencia de símbolo:
+    \begin{equation*}
+        N := \sigma_N^2 = \eta_0 B = \frac{\eta_0f_s}{2}(1+\alpha).
+    \end{equation*}
 
-    \[\Rightarrow P_e = Q\left(\frac{A}{\sigma}\right) = Q\left(\sqrt{\frac{2\overline{E}_p}{\eta (1+\alpha)\beta}}\right).\]
-    Se agregó un factor $\beta(1+\alpha)\geq 1$ en el denominador,
-    respecto del caso de pulsos de Nyquist ideales. Esto deteriora
-    $P_e$. Lo mismo ocurre en el caso unipolar.
+    En este caso, la fórmula simple de energía de pulso $S=\bar{E}_p f_s$ no es válida, por lo que es difícil calcular la potencia media transmitida $S$ para cualquier alfabeto. En cambio, trabajaremos directamente con la energía media del pulso transmitido, que se calcula como:
+    \begin{equation*}
+        \bar{E}_p := \E{a_k^2}||p||^2 = \E{a_k^2}T_s \underbrace{\left(f_s \int_{-\infty}^\infty |\hat{P}(f)|^2df\right)}_{\beta} = \beta \E{a_k^2} T_s,
+    \end{equation*}
+    siendo $\beta$ un parámetro que depende de la forma del pulso. En particular se tiene, utilizando la desigualdad de Cauchy-Schwarz:
+    \begin{equation*}
+        \underbrace{\left(\int_{-(1+\alpha)\frac{f_s}{2}}^{(1+\alpha)\frac{f_s}{2}} \hat{P}(f)df\right)^2}_{=p(0)^2=1} \leqslant \left(\int_{-(1+\alpha)\frac{f_s}{2}}^{(1+\alpha)\frac{f_s}{2}} |\hat{P}(f)|^2 df\right) \underbrace{\left(\int_{-(1+\alpha)\frac{f_s}{2}}^{(1+\alpha)\frac{f_s}{2}} 1 df\right)}_{=f_s(1+\alpha)}.
+    \end{equation*}
+    De aquí deducimos que $\beta(1+\alpha)\geqslant 1$. Es fácil ver que además $\beta\leqslant 1$, con igualdad en ambos casos para el pulso de Nyquist ideal, $\alpha=0$.
 
-    Intuitivamente: tuvimos que ensanchar el filtro para dejar pasar la señal y no introducir ISI, pero esta no tiene ``tanta fuerza'' en la parte alta de la banda.
+    Tomemos entonces como ejemplo el caso polar binario, $\bar{E}_p = \beta A^2 T_s$, de donde podemos escribir $A=\sqrt{\frac{\bar{E}_p f_s}{\beta}}$. Utilizando nuevamente el umbral $0$ y la fórmula \eqref{eq:error binario gaussiano} queda:
+    \begin{equation*}
+        P_e = Q\left(\frac{A}{\sigma_N}\right) = Q\left(\sqrt{\frac{2\bar{E}_p}{\eta_0 (1+\alpha)\beta}}\right).
+    \end{equation*}
+    Como el factor $\beta(1+\alpha)\geqslant 1$, se aumenta la probabilidad de error. La explicación intuitiva es que, para evitar la ISI, el pulso tiene simetría vestigial y por lo tanto menos potencia en la parte alta de la banda, lo que hace que el filtro de recepción ideal introduzca ruido en exceso. Se plantea entonces la pregunta de si no podemos hacer algo mejor, lo cual veremos en la Sección \ref{sec:filtro acoplado}. Algo análogo ocurre en el caso unipolar.
+\end{ejemplo}
 
-\subsection{Caso de pulsos rectangulares RZ o NRZ}
 
-    Supongamos que el canal tiene $B$ grande y los pulsos $p(t)$ llegan esencialmente rectangulares, ¿qué hago con $H_R$? El dilema es:
+\begin{ejemplo}[Pulsos rectangulares]
+    Supongamos ahora que el ancho de banda del canal no es un inconveniente, $B$ es suficientemente grande respecto a la frecuencia de símbolo $f_s$, por lo que podemos usar pulsos rectangulares. De todos formas, debemos agregar un filtro en recepción para reducir el ruido blanco Gaussiano. Se plantea entonces el siguiente dilema:
     \begin{itemize}
-        \item Filtro muy ancho, no deforma pulsos pero pasa mucho ruido a la etapa de
-        detección.
-        \item Filtro angosto, reduce el ruido pero deforma los pulsos, introduce ISI.
+        \item Si el ancho de banda de $\hat{H}_R$ es muy ancho, los pulsos no se deforman, la ISI es menor, pero la etapa de detección tiene más ruido.
+        \item Si el filtro $\hat{H}_R$ es angosto, se reduce el ruido pero los pulsos se deforman, introduciendo ISI no deseada.
     \end{itemize}
-    Para este tipo de pulsos la estrategia de ``dejarlos pasar intactos'', que tomamos de la comunicación analógica, no
-    es la apropiada.
-    En realidad, aquí no importa dejar la onda intacta sino lograr la máxima amplitud en el momento del
-    muestreo, en relación al ruido. La optimización del filtro de
-    detección para estos fines se verá a continuación.
+    
+    La observación crucial es la siguiente: el filtro de recepción no tiene por qué ser un pasabajos ideal, es parte del diseño del sistema.
+\end{ejemplo}
 
+A la luz de los últimos dos ejemplos, surge naturalmente la siguiente pregunta: ¿es posible diseñar un filtro que maximice la relación $A/\sigma_N$ en el instante de detección? Esto permite minimizar la probabilidad de error debida al ruido. Esto lleva al \emph{filtro acoplado} que analizamos a continuación.
 
-\section{Detección óptima: filtro acoplado}
+\section{Detección óptima en presencia de ruido: filtro acoplado}\label{sec:filtro acoplado}
 
 Replanteamos el problema del diseño del filtro de recepción $H_R$
 (denotado aquí por $H$) buscando la mínima probabilidad de error
