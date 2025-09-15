@@ -454,178 +454,127 @@ Estudiamos ahora varios ejemplos del sistema completo distinguiendo según la fo
         \item Si el ancho de banda de $\hat{H}_R$ es muy ancho, los pulsos no se deforman, la ISI es menor, pero la etapa de detección tiene más ruido.
         \item Si el filtro $\hat{H}_R$ es angosto, se reduce el ruido pero los pulsos se deforman, introduciendo ISI no deseada.
     \end{itemize}
+    Estos dos efectos se ilustran en la Figura \ref{fig:nrz ruido}. Aquí se utilizan pulsos NRZ con $f_s=4\unit{\kilo\hertz}$ y se varía el ancho de banda del filtro de recepción desde $.5f_s$ a $4f_s$. Como puede verse, el ojo se abre a medida que más lóbulos se dejan pasar por el filtro, mejorando la ISI, pero introduciendo cada vez más ruido.
+
+    \begin{figure}
+        \begin{center}
+        \includegraphics[width=\textwidth]{figuras/pulso_NRZ_ruido_filtrado.png}
+        \end{center}
+        \caption{Espectro y diagramas de ojo de pulsos NRZ polares afectados de ruido con diferentes filtros de recepción A medida que aumenta el ancho de banda, disminuye la ISI pero aumenta el ruido.}\label{fig:nrz ruido}
+    \end{figure}
     
-    La observación crucial es la siguiente: el filtro de recepción no tiene por qué ser un pasabajos ideal, es parte del diseño del sistema.
 \end{ejemplo}
 
-A la luz de los últimos dos ejemplos, surge naturalmente la siguiente pregunta: ¿es posible diseñar un filtro que maximice la relación $A/\sigma_N$ en el instante de detección? Esto permite minimizar la probabilidad de error debida al ruido. Esto lleva al \emph{filtro acoplado} que analizamos a continuación.
+La observación crucial es la siguiente: el filtro de recepción no tiene por qué ser un pasabajos ideal, es parte del diseño del sistema. A la luz entonces de los últimos dos ejemplos, surge naturalmente la siguiente pregunta: ¿es posible diseñar un filtro que maximice la relación $A/\sigma_N$ en el instante de detección? Esto permite minimizar la probabilidad de error debida al ruido. Esto lleva al \emph{filtro acoplado} que analizamos a continuación.
 
 \section{Detección óptima en presencia de ruido: filtro acoplado}\label{sec:filtro acoplado}
 
-Replanteamos el problema del diseño del filtro de recepción $H_R$
-(denotado aquí por $H$) buscando la mínima probabilidad de error
-debida al ruido, ignorando por ahora la ISI. En vez de ``dejar
-pasar'' la señal, permitimos que el pulso se distorsione en el
-filtro; el objetivo es que en el momento de muestreo el pulso de
-salida tenga amplitud máxima en relación al ruido.
+Replanteamos el problema del diseño del filtro de recepción $H_R$ (denotado aquí por $H$ por simplicidad) buscando la mínima probabilidad de error debida al ruido, ignorando por ahora la ISI. En vez de ``dejar pasar'' la señal, permitimos que el pulso se distorsione en el filtro de recepción, pero con el objetivo de que \emph{en el momento de muestreo el pulso de salida tenga amplitud máxima en relación al ruido}.
 
-Supongamos que a la entrada de $H$ llega un pulso $a_0 p(t)$,
-contaminado con ruido blanco $\frac{\eta}{2}$. Aquí $a_0$ puede
-ser unipolar ($\{0,A\}$) o polar ($\pm A$), y el pulso de energía
-finita tiene forma conocida pero arbitraria.
+Para analizar esto, inevitablemente debemos analizar cómo afecta el filtro al pulso transmitido: concentrémonos en un único símbolo en $t=0$, donde se transmite $a_0 p(t)$ siendo $p(t)$ un pulso arbitrario, pero conocido y de energía finita. Dicho pulso se contamina con ruido blanco Gaussiano de densidad espectral $\eta_0/2$. Por ahora $a_0$ es cualquier símbolo (polar, unipolar, $M$-ario, etc.).
 
-A la salida del filtro de respuesta impulsiva $h(t)$  y respuesta
-en frecuencia $\hat{H}(f)$, tendremos $a_0 p(t) \ast h(t) + n(t)$
-donde $n(t)$ es un ruido de media $0$, varianza
-$\sigma^2=\frac{\eta}{2}\displaystyle{\int_{-\infty}^{+\infty}
-|\hat{H}(f)|^2\d f}$.
-
-
-
-Muestreo en $t=\tau$. La señal muestreada es $a_0(p\ast h)
-(\tau)$, que toma valores ($\{0,A'\}$) o ($\pm A'$), siendo
-$A'=A(p\ast h)(\tau)$. La probabilidad de error de detección $P_e$
-estará entonces determinada por la relación $\frac{A'}{\sigma}$,
-expresamos su cuadrado a continuación:
-%
-\[\left(\frac{A'}{\sigma}\right)^2 = \frac{2 A^2 |(p\ast
-h)(\tau)|^2}{\eta \int_{-\infty}^{+\infty} |\hat{H}(f)|^2\d f}.\]
-Buscamos maximizar lo anterior (para minimizar $P_e$) pero esto no
-es inmediato ya que el filtro $H$ aparece en el numerador y
-denominador. Para llegar a una expresión más clara escribimos
-numerador en términos de la transformada de Fourier $\hat{H}(f)$.
-
-\begin{gather*}
-    (p\ast h) \stackrel{\mathcal{F}}{\longrightarrow} \hat{P}(f) \hat{H}(f)\\
-    \Rightarrow (p\ast h)(\tau) = \int_{-\infty}^{+\infty} \hat{P}(f)
-\hat{H}(f) \e^{j2\pi f \tau}\d f.
-\end{gather*}
-
-\paragraph{Llegamos al siguiente problema de optimización:}
-
-\begin{equation}
-    \label{eq:op}
-    \max_{\hat{H}(f)} \frac{\left|\displaystyle\int_{-\infty}^{+\infty}
-\hat{P}(f) \hat{H}(f) \e^{j2\pi f \tau}\d
-f\right|^2}{\displaystyle\int_{-\infty}^{+\infty} |\hat{H}(f)|^2\d
-f}. \tag{*}
+Sea entonces $\hat{H}(f)$ la respuesta en frecuencia del filtro de recepción a diseñar, y $h(t)$ su respuesta impulsiva. La señal observada a la salida de $\hat{H}$ será entonces:
+\begin{equation*}
+    y(t) = x_R(t) + n(t) = a_0 (p*h)(t) + n(t)
+\end{equation*}
+donde $n(t)$ es un ruido de media $0$ y varianza dada por \eqref{eq:varianza ruido filtrado}:
+\begin{equation*}
+    \sigma_N^2 = \frac{\eta_0}{2}\int_{-\infty}^\infty |\hat{H}(f)|^2df
+\end{equation*}
+La señal $y(t)$ se muestrea en un cierto tiempo $\tau$ a definir, obteniendo:
+\begin{equation*}
+    y_k = A' + n(\tau) = a_0 (p*h) (\tau) + n(\tau),
+\end{equation*}
+donde el valor $A'$ depende tanto de $a_0$ (ej: $\pm A$) como de la deformación del pulso. Como vimos, la probabilidad de error en detección es mínima cuanto mayor sea el cociente $A'/\sigma_N$, que por lo anterior verifica:
+\begin{equation}\label{eq:filtro acoplado 1}
+    \left(\frac{A'}{\sigma_N}\right)^2 = \frac{2 a_0^2}{\eta_0}\frac{|(p*h)(\tau)|^2}{\int_{-\infty}^{+\infty} |\hat{H}(f)|^2 df}.
 \end{equation}
 
-Como la optimización tiene $\infty$ grados de libertad
-(optimización en todos los filtros) no es de solución obvia. Sin
-embargo se la puede resolver recurriendo a la desigualdad de
-Cauchy-Schwarz (válida para toda función de cuadrado integrable):
-%con igualdad $\Leftrightarrow \hat{V} = K \hat{W}$):
-\[\left|\left\langle\hat{V}(f),\hat{W}(f)\right\rangle\right|^2 \leq ||\hat{V}||^2
-||\hat{W}||^2, \quad \text{ con igualdad }\Leftrightarrow \hat{V}
-= K \hat{W}.\] O sea:
-\[\left|\int \hat{V}(f) \overline{\hat{W}(f)}\d f\right|^2\leq \int_{-\infty}^{+\infty}
-|\hat{V}(f)|^2\d f \int_{-\infty}^{+\infty} |\hat{W}(f)|^2\d f.\]
-Tomemos aquí $\hat{V}(f) = \hat{H}(f)$, $\overline{\hat{W}(f)} =
-\hat{P}(f)\e^{j2\pi f \tau}$. Usando la desigualdad tenemos
-%
-\[
-\frac{\left|\displaystyle\int_{-\infty}^{+\infty} \hat{P}(f)
-\hat{H}(f) \e^{j2\pi f \tau}\d
-f\right|^2}{\displaystyle\int_{-\infty}^{+\infty} |\hat{H}(f)|^2\d
-f} = \frac{\left|\left\langle
-\hat{V},\hat{W}\right\rangle\right|^2}{||\hat{V}||^2}\leq
-||\hat{W}||^2 = \int_{-\infty}^{+\infty} |\hat{P}(f)|^2\d f =
-||p||^2.\]
-O sea que el máximo en \eqref{eq:op} es acotado, y la
-igualdad se alcanza sólo si
-\[\hat{H}(f) = K\overline{\hat{P}(f)}\e^{-j2\pi f \tau} \Rightarrow h(t)=K
-p\left(-(t-\tau)\right)\Rightarrow \col{h(t) = K p(\tau-t)}.\]
+Buscamos entonces $h \fourier \hat{H}$ para maximizar lo anterior, de modo de minimizar la probabilidad de error. Sin embargo, esto no es inmediato ya que el filtro $H$ aparece en el numerador (en forma de su respuesta impulsiva) y denominador (a través de su respuesta en frecuencia). Para simplificar en algo la expresión anterior conviene pasar primero a frecuencia
+\begin{equation*}
+    (p * h) \fourier \hat{P}(f) \hat{H}(f) \quad \Longrightarrow \quad (p * h)(\tau) = \int_{-\infty}^{+\infty} \hat{P}(f)
+\hat{H}(f) \e^{j2\pi f \tau}d f,
+\end{equation*}
+donde en la segunda parte usamos la transformada inversa de Fourier.
+
+El objetivo del problema puede escribirse entonces, sustituyendo en la ecuación \eqref{eq:filtro acoplado 1}, cómo:
+\begin{equation}\label{eq:filtro acoplado 2}
+    \max_{\hat{H}(f)} \frac{\left|\int_{-\infty}^{+\infty}
+\hat{P}(f) \hat{H}(f) \e^{j2\pi f \tau}df\right|^2}{\int_{-\infty}^{+\infty} |\hat{H}(f)|^2 df}.
+\end{equation}
+
+La optimización anterior en principio es \emph{en todos los posibles filtros}, por lo cual su solución no es trivial. Sin embargo, podemos apelar nuevamente a la desigualdad de Cauchy-Schwarz (compleja):
+\begin{equation*}
+\left|\int \hat{V}(f) \overline{\hat{W}(f)}df\right|^2\leqslant \int_{-\infty}^{+\infty} |\hat{V}(f)|^2 df \int_{-\infty}^{+\infty} |\hat{W}(f)|^2 df,
+\end{equation*}
+con igualdad $\Leftrightarrow \hat{V} = K \hat{W}$.
+
+Tomemos entonces $\hat{V}(f) = \hat{H}(f)$ y $\overline{\hat{W}(f)} = \hat{P}(f)\e^{j2\pi f \tau}$. Usando la desigualdad tenemos:
+\begin{equation*}
+\left|\int_{-\infty}^{+\infty} \hat{P}(f) \hat{H}(f) \e^{j2\pi f \tau} df\right|^2\leqslant \int_{-\infty}^{+\infty} |\hat{H}(f)|^2 df \int_{-\infty}^{+\infty} |\hat{P}(f)|^2 df,
+\end{equation*}
+de donde:
+\begin{equation*}
+    \frac{\left|\int_{-\infty}^{+\infty} \hat{P}(f) \hat{H}(f) \e^{j2\pi f \tau}  df\right|^2}{\int_{-\infty}^{+\infty} |\hat{H}(f)|^2 df} \leqslant \int_{-\infty}^{+\infty} |\hat{P}(f)|^2 df = ||p||^2.
+\end{equation*}
+
+Por lo tanto, el máximo en \eqref{eq:filtro acoplado 2} es acotado, y la igualdad se alcanza si y sólo si:
+\begin{equation*}
+\hat{H}(f) = K\overline{\hat{P}(f)}\e^{-j2\pi f \tau} \Rightarrow h(t)=K
+p\left(-(t-\tau)\right)\Rightarrow \col{h(t) = K p(\tau-t)}.    
+\end{equation*}
 
 \begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/filAc/filAc-1}
+    \begin{center}
     \begin{tikzpicture}
         \draw[->] (-0.5,0) -- (4,0) node [anchor=north] {$t$};
         \draw[->] (0,-0.5) -- (0,1.5);
-        \draw (0,0) -- (2,1) -- (3,0);
-        \path (5,1) node {$\Rightarrow$};
+        \draw[teal,thick] (0,0) -- (2,1) node[right,xshift=1em] {$p(t)$} -- (3,0);
+        
         \begin{scope}[shift={(6,0)}]
-                \draw[->] (-0.5,0) -- (4,0) node [anchor=north]
-{$t$};
-                \draw[->] (0,-0.5) -- (0,1.5) node [anchor=west]
-{$h_{opt} = K p(\tau - t)$};
-                \draw (0.5,0) -- (1.5,1) -- (3.5,0) node
-[anchor=north] {$\tau$};
+                \draw[->] (-0.5,0) -- (4,0) node [anchor=north] {$t$};
+                \draw[->] (0,-0.5) -- (0,1.5);
+                \draw[teal,thick] (0.5,0) -- (1.5,1) -- node[above right]{$h_{opt} = K p(\tau - t)$} (3.5,0) node [anchor=north, black] {$\tau$};
         \end{scope}
     \end{tikzpicture}
-    \endpgfgraphicnamed\end{minipage}
+    \end{center}
+    \caption{Filtro acoplado para un pulso genérico $p(t)$.}\label{fig:filtro acoplado}
 \end{figure}
-\FloatBarrier
 
-Concluimos que la respuesta impulsiva del filtro óptimo tiene la
-forma del pulso incidente, invertido en el tiempo: se dice que el
-filtro óptimo está {\bf acoplado (o apareado)}  al pulso.
+Concluimos que la respuesta impulsiva del filtro óptimo tiene la exactamente la forma del pulso incidente, invertido en el tiempo: se dice que el filtro óptimo está \emph{acoplado (o apareado, matched)}  al pulso.
 
-Para interpretar el resultado en el dominio del tiempo, conviene
-escribir el pulso de salida $p_R =h\ast p$ para el filtro
-óptimo:
+Para interpretar el resultado en el dominio del tiempo, conviene escribir el pulso de salida $p_R =h* p$ para el filtro óptimo:
 \begin{align*}
-            p_R(t) = (h\ast p) (t)  & = \int_{-\infty}^{+\infty}
-h(t-\sigma) p (\sigma)\d \sigma\\
-                        & =
-%\frac{1}{||p||^2}
-K \int_{-\infty}^{+\infty} p(\tau - t + \sigma) p (\sigma)\d
-\sigma \\ & = K r_p(t - \tau).
-        \end{align*}
-Aquí $r_p(\cdot)$ es la autocorrelación del pulso como señal de
-cuadrado integrable. Como la autocorrelación es máxima en cero, el
-pulso de salida toma su amplitud máxima en el instante de muestreo
-$t=\tau$. En otras palabras: el detector basado en este filtro y
-muestreo en $t=\tau$ está {\em correlacionando} la señal de
-entrada $a_0 p(t) + n(t)$ con la forma de onda conocida del pulso.
+            p_R(t) = (h\ast p) (t)  & = \int_{-\infty}^{+\infty} h(t-\sigma) p (\sigma)\d \sigma\\
+            & = K \int_{-\infty}^{+\infty} p(\tau - t + \sigma) p (\sigma)d \sigma \\ & = K r_p(t - \tau).
+\end{align*}
+Aquí $r_p(\cdot)$ es la autocorrelación del pulso como señal de cuadrado integrable. Como la autocorrelación es máxima en cero, el pulso de salida toma su amplitud máxima en el instante de muestreo $t=\tau$. En otras palabras: el detector basado en este filtro y muestreo en $t=\tau$ está \emph{correlacionando} la señal de entrada $a_0 p(t) + n(t)$ con la forma de onda conocida del pulso. El momento de máxima correlación se alcanza en el instante de muestreo y es lo que maximiza la amplitud observada respecto al ruido.
 
+Algunas observaciones:
+\begin{enumerate}
+    \item La constante $K$ es arbitraria, escalar el filtro no cambia el cociente de \eqref{eq:filtro acoplado 2}, ya que amplifica tanto la señal como el ruido. Una elección cómoda es $K=\frac{1}{||p||^2}=\frac{1}{r_p(0)}$: de ese modo el pulso de salida $p_R(t)$ tiene valor máximo igual a $1$, alcanzado en $t=\tau$. En ese caso la amplitud $A'$ de muestreo coincide con la amplitud $a_0$ del símbolo de entrada.
+    \item El retardo $\tau$ sería idealmente arbitrario, pero se trata de elegir lo menor posible. La limitante es que, en la práctica queremos $h(t)$ causal, cuando en general $p(-t)$ no lo es. Si el pulso es de duración acotada, se toma $\tau$ igual a la duración del pulso $p(t)$. Si es de duración no acotada (ej: pulso de Nyquist $p(t)=\sinc(\pi f_s t)$), hay que truncarlo.
+\end{enumerate}
 
-\begin{remarksSN}
-    $\phantom{1}$
-    \begin{enumerate}
-        \item La constante $K$ es arbitraria, escalar el filtro no
-        cambia el cociente de \eqref{eq:op}. Una elección cómoda es
-$K=\dfrac{1}{||p||^2}=\dfrac{1}{r_p(0)}$: de ese modo el pulso de
-salida $p_R(t)$ tiene valor máximo igual a 1, alcanzado en
-$t=\tau$. En ese caso la amplitud $A'$ de muestreo coincide con la
-amplitud $A$ de los símbolos de entrada.
-        \item $\tau$ sería idealmente arbitrario, excepto que en la
-práctica queremos $h(t)$ causal. Entonces tomo $\tau$ igual a la
-duración del pulso $p(t)$ (si $p(t)=\sinc$ hay que truncarlo).
-    \end{enumerate}
-\end{remarksSN}
+Volviendo a la ecuación \eqref{eq:filtro acoplado 1}, el máximo de nuestro problema de optimización es $\|p\|^2$. Por lo tanto tenemos:
+\begin{equation}\label{eq:snr filtro acoplado}
+\col{\left(\frac{A'}{\sigma_N}\right)^2_{\text{max}} = 2 \frac{a_0^2}{\eta_0} ||p||^2.}
+\end{equation}
 
-El máximo de nuestro problema de optimización es $\|p\|^2$. Por
-tanto tenemos
-\[
-\left(\dfrac{A'}{\sigma}\right)^2_{\text{max}} = 2
-\frac{A^2}{\eta} ||p||^2.\]
-% Los libros tienen una generalización para ruido coloreado, $S_n(f)$.
-
-A partir de esta fórmula podemos escribir la probabilidad de error
-en términos de la energía media del pulso recibido,
-$\overline{E}_p = E[a_k^2] ||p||^2$, en los distintos casos.
-
+A partir de esta fórmula podemos escribir la probabilidad de error en términos de la energía media del pulso recibido, $\bar{E}_p = E[a_k^2] ||p||^2$, en los distintos casos:
 \begin{description}
     \item[Polar binario]
-    \[\overline{E}_p = A^2 ||p||^2 \Rightarrow
-\left(\frac{A'}{\sigma}\right)_\text{max} =
-\sqrt{\frac{2\overline{E}_p}{\eta}} \Rightarrow P_e^\text{opt} =
-Q\left(\sqrt{2\frac{\overline{E}_p}{\eta}}\right).\]
+    \begin{equation*}
+       \bar{E}_p = A^2 ||p||^2 \Rightarrow \left(\frac{A'}{\sigma_N}\right)_\text{max} = \sqrt{\frac{2\bar{E}_p}{\eta_0}} \Rightarrow P_e^\text{opt} = Q\left(\sqrt{\frac{2\bar{E}_p}{\eta_0}}\right).
+    \end{equation*}
     \item[Unipolar binario]
-    \[\overline{E}_p = \frac{A^2}{2}||p||^2 \Rightarrow
-\left(\frac{A'}{\sigma}\right)_\text{max} = 2
-\sqrt{\frac{\overline{E}_p}{\eta}} \Rightarrow P_e^\text{opt} =
-Q\left(\sqrt{\frac{\overline{E}_p}{\eta}}\right).\]
- \end{description}
+    \begin{equation*}
+       \bar{E}_p = \frac{A^2}{2} ||p||^2 \Rightarrow \left(\frac{A'}{\sigma_N}\right)_\text{max} = 2\sqrt{\frac{\bar{E}_p}{\eta_0}} \Rightarrow P_e^\text{opt} = Q\left(\sqrt{\frac{\bar{E}_p}{\eta_0}}\right),
+    \end{equation*}
+    donde en este caso se usó que el umbral óptimo es $\frac{A}{2\sigma_N}$.
+\end{description}
 
-Estas fórmulas son iguales a las que obtuvimos para la detección
-con pulsos de Nyquist, filtro pasabajos ideal. Esto no es
-casualidad: para $p(t) = \sinc(\pi f_s t)$, el filtro acoplado es
-un pasabajos ideal. O sea que en ese caso ya hicimos (sin saberlo)
-lo óptimo. Pero las fórmulas valen para cualquier forma de pulso
-con su detector apareado.
+Estas fórmulas son iguales a las que obtuvimos para la detección cuando se utilizan pulsos de Nyquist ideales. Esto no es casualidad, precisamente el filtro acoplado al pulso de Nyquist es el filtro pasabajos ideal. Es decir que en ese caso, filtrar el ruido fuera de banda es lo óptimo. Pero las fórmulas anteriores valen para cualquier forma de pulso con su detector apareado.
 
 \subsection*{Caso M-ario polar} Ya se vio anteriormente que aquí la
 probabilidad de error de símbolo es $P_e=2\frac{M-1}{M}
@@ -734,54 +683,54 @@ Alternativas:
  Se usa a veces el pulso de {\bf raíz de coseno alzado.}
 \end{enumerate}
 
-\subsection*{Resumen: comunicación digital banda base}
-\begin{figure}[htb]
-    \centering
-    \resizebox{\textwidth}{!}{%
-    \input{digBBGr.tex}
-    }
-\end{figure}
-\FloatBarrier
+% \subsection*{Resumen: comunicación digital banda base}
+% \begin{figure}[htb]
+%     \centering
+%     \resizebox{\textwidth}{!}{%
+%     \input{digBBGr.tex}
+%     }
+% \end{figure}
+% \FloatBarrier
 
-\begin{itemize}
- \item Transmito sucesión de pulsos $\sum a_k p_T(t-kT_s)$ (PAM)
- \item El canal introduce 2 distorsiones
-\begin{enumerate}
-  \renewcommand{\theenumi}{\roman{enumi}}
-  \item \label{itemRes:1}Forma del pulso, por filtrado. Puede causar ISI.
+% \begin{itemize}
+%  \item Transmito sucesión de pulsos $\sum a_k p_T(t-kT_s)$ (PAM)
+%  \item El canal introduce 2 distorsiones
+% \begin{enumerate}
+%   \renewcommand{\theenumi}{\roman{enumi}}
+%   \item \label{itemRes:1}Forma del pulso, por filtrado. Puede causar ISI.
 
-  \item \label{itemRes:2}Ruido blanco.
-\end{enumerate}
-\end{itemize}
+%   \item \label{itemRes:2}Ruido blanco.
+% \end{enumerate}
+% \end{itemize}
 
-Si nos concentramos en (\ref{itemRes:1}), elegimos un pulso de
-Nyquist y/o colocamos un \emph{ecualizador} en $\hat{H}_R(f)$.
+% Si nos concentramos en (\ref{itemRes:1}), elegimos un pulso de
+% Nyquist y/o colocamos un \emph{ecualizador} en $\hat{H}_R(f)$.
 
-Si nos concentramos en (\ref{itemRes:2}), ponemos en
-$\hat{H}_R(f)$ el \emph{detector acoplado}.
+% Si nos concentramos en (\ref{itemRes:2}), ponemos en
+% $\hat{H}_R(f)$ el \emph{detector acoplado}.
 
-Hay dos casos extremos en que las dos funciones se realizan
-simultaneamente:
+% Hay dos casos extremos en que las dos funciones se realizan
+% simultaneamente:
 
-\begin{itemize}
- \item $p(t) = \sinc(\pi f_s t)$ (Nyquist ideal), $\hat{H}_R(f)$ pasabajos ideal. Se aplica a la situación:
-    \begin{itemize}
-     \item canal con $B$ muy restrictiva.
-     \item puedo implementar la complejidad de pulsos/filtro.
-    \end{itemize}
- \item $p(t)$ rectángular NRZ o RZ. Detector acoplado: $h_R(t) = \frac{1}{T_s}p(t)$. Se aplica a la situación:
-\begin{itemize}
- \item $B$ muy grande (respecto a $f_s$).
-  \item Implementación más simple. Sobre todo, el amplificador de transmisión puede ser no lineal.
-\end{itemize}
-\end{itemize}
+% \begin{itemize}
+%  \item $p(t) = \sinc(\pi f_s t)$ (Nyquist ideal), $\hat{H}_R(f)$ pasabajos ideal. Se aplica a la situación:
+%     \begin{itemize}
+%      \item canal con $B$ muy restrictiva.
+%      \item puedo implementar la complejidad de pulsos/filtro.
+%     \end{itemize}
+%  \item $p(t)$ rectángular NRZ o RZ. Detector acoplado: $h_R(t) = \frac{1}{T_s}p(t)$. Se aplica a la situación:
+% \begin{itemize}
+%  \item $B$ muy grande (respecto a $f_s$).
+%   \item Implementación más simple. Sobre todo, el amplificador de transmisión puede ser no lineal.
+% \end{itemize}
+% \end{itemize}
 
-En otros casos, puede existir conflicto entre los objetivos de
-combatir las distorsiones (\ref{itemRes:1}) y (\ref{itemRes:2}).
-Por ejemplo se vio que esto ocurría al usar pulsos de Nyquist con
-exceso de ancho de banda. Aquí o se realiza un diseño conjunto de
-$p_T$, $\hat{H}_R$, o sino se acepta una detección subóptima
-respecto al ruido.
+% En otros casos, puede existir conflicto entre los objetivos de
+% combatir las distorsiones (\ref{itemRes:1}) y (\ref{itemRes:2}).
+% Por ejemplo se vio que esto ocurría al usar pulsos de Nyquist con
+% exceso de ancho de banda. Aquí o se realiza un diseño conjunto de
+% $p_T$, $\hat{H}_R$, o sino se acepta una detección subóptima
+% respecto al ruido.
 
 \section{Repetidores regenerativos}
 
