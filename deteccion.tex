@@ -576,245 +576,202 @@ A partir de esta fórmula podemos escribir la probabilidad de error en términos
 
 Estas fórmulas son iguales a las que obtuvimos para la detección cuando se utilizan pulsos de Nyquist ideales. Esto no es casualidad, precisamente el filtro acoplado al pulso de Nyquist es el filtro pasabajos ideal. Es decir que en ese caso, filtrar el ruido fuera de banda es lo óptimo. Pero las fórmulas anteriores valen para cualquier forma de pulso con su detector apareado.
 
-\subsection*{Caso M-ario polar} Ya se vio anteriormente que aquí la
-probabilidad de error de símbolo es $P_e=2\frac{M-1}{M}
-Q\left(\frac{A}{\sigma}\right)$. O sea que también aquí debemos
-maximizar $\frac{A}{\sigma}$ y por tanto obtenemos el mismo filtro
-acoplado. Escribimos la expresión en términos de $\overline{E}_p$
-para este caso:
+\begin{description}
+\item[Caso M-ario polar:] Como ya vimos, $P_e=2\frac{M-1}{M} Q\left(\frac{A}{\sigma_N}\right)$. O sea que también aquí debemos maximizar $\frac{A}{\sigma_N}$ en recepción por lo que debemos usar el mismo filtro acoplado. Escribimos la expresión en términos de $\bar{E}_p$ para este caso:
 \begin{gather*}
- E[a_k]^2 = \frac{A^2 (M^2-1)}{3} \Rightarrow \overline{E}_p = A^2 \frac{(M^2-1)}{3}||p||^2
-\Rightarrow \left(\frac{A'}{\sigma}\right)^2_{max} = \frac{6 \bar{E}_p}{\eta (M^2-1)}\\
-\Rightarrow {\col{P_e^{opt} = 2\frac{M-1}{M}
-Q\left(\sqrt{\frac{6\bar{E}_p}{\eta(M^2-1)}}\right)}}
+ \E{a_k}^2 = \frac{A^2 (M^2-1)}{3} \Rightarrow \bar{E}_p = A^2 \frac{(M^2-1)}{3}||p||^2 \Rightarrow \left(\frac{A'}{\sigma_N}\right)^2_{\max} = \frac{6 \bar{E}_p}{\eta_0 (M^2-1)}\\
+\Rightarrow {P_e^{\textrm{opt}} = 2\frac{M-1}{M}
+Q\left(\sqrt{\frac{6\bar{E}_p}{\eta_0(M^2-1)}}\right)}
 \end{gather*}
+\end{description}
 
-\subsection*{Detector acoplado para pulsos rectangulares}
+Analicemos ahora dos casos de particular importancia: los pulsos rectangulares y los pulsos de Nyquist no ideales.
+
+\begin{ejemplo}[Detector acoplado para pulsos rectangulares]
 
 Tomemos por ejemplo los pulsos NRZ, $p(t) = p_{[0,T_s]}(t)$. El
 filtro acoplado tendrá la respuesta impulsiva (tomando
 $\tau=T_s$):
-\[
-\Rightarrow h(t) = \dfrac{1}{||p||^2} p(T_s-t) =
-\dfrac{1}{T_s}p(t).
-\]
-\begin{minipage}{0.6\textwidth}
- A la salida del filtro se obtiene el pulso triangular
- \[p_R(t)=h(t)\ast p(t). \]
-\end{minipage}
-\begin{minipage}{0.4\textwidth}
+\begin{equation*}
+h(t) = \frac{1}{||p||^2} p(T_s-t) = \frac{1}{T_s}p(t).
+\end{equation*}
+
+Por lo tanto, para un pulso $p(t)$, a la salida del filtro de recepción tenemos un pulso triangular $p_R(t)=(h*p)(t)$:
  \begin{center}
-  \bpgf{Imagenes/filAc/filAc-2}
     \begin{tikzpicture}
       \draw [->] (-0.5,0) -- (2.5,0) node [anchor=north] {$t$};
       \draw [->] (0,-0.5) -- (0,1.5);
-      \draw (0,0) -- (1,1) -- (2,0) node [anchor=north] {$2T_s$};
+      \draw[teal,thick] (0,0) -- (1,1) -- (2,0) node [anchor=north] {$2T_s$};
       \draw [dotted] (1,1) -- (0,1) node [anchor=east] {$1$};
       \draw [dotted] (1,1) -- (1,0) node [anchor=north] {$T_s$};
     \end{tikzpicture}
-  \endpgfgraphicnamed
  \end{center}
-\end{minipage}
 
-El filtro de recepción distorsionó fuertemente el pulso, pero esto
-se  hizo de modo de maximizar $\frac{A}{\sigma}$ en el instante de
-$t=T_s$ de muestreo.
+En este caso el filtro de recepción distorsionó fuertemente el pulso, pero esto se  hizo de modo de maximizar $\frac{A}{\sigma_N}$ en el instante de $\tau=T_s$ de muestreo.
 
+¿Qué ocurre con la ISI en este caso? Como el análisis del filtro acoplado se realizó para pulsos aislados, no contemplamos este tema hasta ahora. Sin embargo, de la figura es claro que $p_R(2T_s)=0$, es decir, el efecto del filtro acoplado se apaga exactamente antes de comenzar el siguiente pulso, por lo que no introduce ISI.
+\end{ejemplo}
 
-\subsection*{¿Qué paso con la ISI?}
+De hecho, la observación anterior es general: si el pulso transmitido $p(t)$ tiene duración \emph{menor o igual} al tiempo de símbolo, entonces $p*h$ vale $0$ para todos los demás tiempos de símbolo. Esto quiere decir que para \emph{pulsos de duración finita} y menor a $T_s$ (ej: NRZ, RZ, Manchester), el filtro acoplado no introduce ISI. De todos modos esto asume que los pulsos pasaron intactos por el canal, lo cual en la práctica es imposible (requiere ancho de banda infinito) por lo que siempre habrá algo de ISI en este caso.
 
-Al estudiar un solo pulso aislado, no contemplamos este tema.
-Veamos:
-\begin{itemize}
- \item En el caso pulsos de Nyquist ideales el detector acoplado es un pasabajos ideal, entonces los pulsos pasan intactos,
- sin ISI.
- \item En el caso de pulsos rectangluares NRZ. Vemos que $p_R(k T_s) = 0$ excepto en un valor ($k=1$). Entonces tampoco hay
- ISI.  Simplemente hay un retardo de $\tau = T_s$ al detectar.
- \item  De hecho, cualquier pulso de duración $\leq T_s$ (por ej., RZ) genera una $p_R(t)$ de duración $\leq
- 2T_s$, que debidamente muestreado no genera  ISI.
-\end{itemize}
-
-
-\subsection*{Para pulsos de Nyquist con exceso de ancho de banda
-$\alpha$}
+\begin{ejemplo}[Pulsos de Nyquist con exceso de ancho de banda $\alpha$]
 
 El detector acoplado tiene respuesta en frecuencia
 \begin{gather*}
- \hat{H}(f) = K \overline{\hat{P}(f)} \e^{-j2\pi f\tau}\\
- \Rightarrow \hat{P}_R = \hat{H}\hat{P} = K |\hat{P}(f)|^2 \e^{-j2\pi f \tau}
+ \hat{H}(f) = K \overline{\hat{P}(f)} \e^{-j2\pi f\tau} \Rightarrow \hat{P}_R = \hat{H}\hat{P} = K |\hat{P}(f)|^2 \e^{-j2\pi f \tau}.
 \end{gather*}
-El último término es un retardo, afecta sólo el instante de
-muestreo. A efectos de estudiar la ISI podemos tomar $P_R(f) =
-K|\hat{P}(f)|^2$.
-\begin{figure}[htb]
- \begin{center}\begin{minipage}{\textwidth}
-  \bpgf{Imagenes/filAc/filAc-3}
+El último término es un retardo que afecta sólo el instante de muestreo. A efectos de estudiar la ISI podemos tomar $|P_R(f)| = K|\hat{P}(f)|^2$.
+
+ \begin{center}
   \begin{tikzpicture}
     \draw [->] (-0.5,0) -- (4,0);
     \draw [->] (0,-0.5) -- (0,2.5) node [anchor=east] {$\hat{P}(f)$};
-    \draw  (0,2) -- (1.5,2) -- plot  [domain=1.5:2.5,samples=200] (\x,{cos(pi*(\x-1.5) r)+1});
+    \draw[teal,thick]  (0,2) -- (1.5,2) -- plot  [domain=1.5:2.5,samples=200] (\x,{cos(pi*(\x-1.5) r)+1});
     \draw [dotted] (1.5,2) -- (1.5,0) node [below left] {$\frac{f_s}{2}(1-\alpha)$};
     \draw [dotted] (0,1) -- (2,1) -- (2,0) node [below] {$\frac{f_s}{2}$};
     \path (2.5,0) node [below right] {$\frac{f_s}{2}(1+\alpha)$};
     \begin{scope}[shift={(6,0)}]
     \draw [->] (-0.5,0) -- (4,0);
     \draw [->] (0,-0.5) -- (0,2.5) node [anchor=east] {$\hat{P}_R(f)$};
-    \draw  (0,2) -- (1.5,2) -- plot  [domain=1.5:2.5,samples=200] (\x,{(cos(pi*(\x-1.5) r)+1)^2/2});
+    \draw[teal,thick]  (0,2) -- (1.5,2) -- plot  [domain=1.5:2.5,samples=200] (\x,{(cos(pi*(\x-1.5) r)+1)^2/2});
     \draw [dotted] (1.5,2) -- (1.5,0) node [below left] {$\frac{f_s}{2}(1-\alpha)$};
     \draw [dotted] (0,0.5) -- (2,0.5) -- (2,0) node [below] {$\frac{f_s}{2}$};
     \path (2.5,0) node [below right] {$\frac{f_s}{2}(1+\alpha)$};
     \end{scope}
    \end{tikzpicture}
-   \endpgfgraphicnamed\end{minipage}
  \end{center}
 
-\end{figure}
+Al elevar al cuadrado, $|\hat{P}(f)|^2$ ya no tiene simetría vestigial, por lo tanto el resultado neto de usar pulsos de Nyquist en transmisión y luego su filtro acoplado en recepción maximiza la relación al ruido en el instante de muestreo, pero introduce ISI.
 
-$|\hat{P}(f)|^2$ no tiene simetría, entonces no cumple la condición de ISI nula.
+¿Cuál es la alternativa viable? Una posibilidad es la que ya estudió antes: en vez de usar el filtro acoplado óptimo, utilizar un pasabajos de frecuencia de corte $(1+\alpha)\frac{f_s}{2}$. Sacrificamos algo de error en $P_e$ a cambio de no introducir ISI que puede ser más grave.
 
-O sea: poner el filtro óptimo desde el punto de vista del ruido,
-me complica la ISI.
+La segunda alternativa, muy utilizada en la práctica, es utilizar en transmisión un pulso tal que $\hat{P}(f)$ no tenga simetría vestigial, pero luego de pasar por el filtro apareado, el efecto neto $|\hat{P}(f)|^2$ sí la tenga. El pulso más común en este caso es el \emph{pulso de raíz de coseno alzado} (RRC: root-raised-cosine filter), que corresponde a tomar $\hat{P}(f)$ tal que $|\hat{P}(f)|^2$ sea un filtro de coseno alzado. Este filtro introduce ISI durante el pasaje por el canal, pero controla el ancho de banda. En recepción, el filtro acoplado elimina la ISI y maximiza la relación señal a ruido \emph{simultáneamente}. 
+\end{ejemplo}
 
-Alternativas:
-\begin{enumerate}
- \item En vez del $H_{opt}$, poner un pasabajos $(1+\alpha)\frac{f_s}{2}$, como ya se estudió. La $P_e$ da un poco peor,
- pero no introduzco ISI que sería más grave.
- \item Sabiendo que va a haber un filtro apareado, diseño $\hat{P}(f)$ para que $|\hat{P}(f)|^2$ no tenga ISI.
- Se usa a veces el pulso de {\bf raíz de coseno alzado.}
-\end{enumerate}
-
-% \subsection*{Resumen: comunicación digital banda base}
-% \begin{figure}[htb]
-%     \centering
-%     \resizebox{\textwidth}{!}{%
-%     \input{digBBGr.tex}
-%     }
-% \end{figure}
-% \FloatBarrier
-
-% \begin{itemize}
-%  \item Transmito sucesión de pulsos $\sum a_k p_T(t-kT_s)$ (PAM)
-%  \item El canal introduce 2 distorsiones
-% \begin{enumerate}
-%   \renewcommand{\theenumi}{\roman{enumi}}
-%   \item \label{itemRes:1}Forma del pulso, por filtrado. Puede causar ISI.
-
-%   \item \label{itemRes:2}Ruido blanco.
-% \end{enumerate}
-% \end{itemize}
-
-% Si nos concentramos en (\ref{itemRes:1}), elegimos un pulso de
-% Nyquist y/o colocamos un \emph{ecualizador} en $\hat{H}_R(f)$.
-
-% Si nos concentramos en (\ref{itemRes:2}), ponemos en
-% $\hat{H}_R(f)$ el \emph{detector acoplado}.
-
-% Hay dos casos extremos en que las dos funciones se realizan
-% simultaneamente:
-
-% \begin{itemize}
-%  \item $p(t) = \sinc(\pi f_s t)$ (Nyquist ideal), $\hat{H}_R(f)$ pasabajos ideal. Se aplica a la situación:
-%     \begin{itemize}
-%      \item canal con $B$ muy restrictiva.
-%      \item puedo implementar la complejidad de pulsos/filtro.
-%     \end{itemize}
-%  \item $p(t)$ rectángular NRZ o RZ. Detector acoplado: $h_R(t) = \frac{1}{T_s}p(t)$. Se aplica a la situación:
-% \begin{itemize}
-%  \item $B$ muy grande (respecto a $f_s$).
-%   \item Implementación más simple. Sobre todo, el amplificador de transmisión puede ser no lineal.
-% \end{itemize}
-% \end{itemize}
-
-% En otros casos, puede existir conflicto entre los objetivos de
-% combatir las distorsiones (\ref{itemRes:1}) y (\ref{itemRes:2}).
-% Por ejemplo se vio que esto ocurría al usar pulsos de Nyquist con
-% exceso de ancho de banda. Aquí o se realiza un diseño conjunto de
-% $p_T$, $\hat{H}_R$, o sino se acepta una detección subóptima
-% respecto al ruido.
+A modo de resumen de esta sección presentamos las conclusiones principales:
+\begin{itemize}
+    \item Para un sistema de transmisión digital en banda base, con ancho de banda acotado $B$ y en presencia de ruido, la máxima frecuencia de señalización posible es $f_s=2B$, y se alcanza utilizando pulsos de Nyquist ideales. Su receptor acoplado es el propio pulso de Nyquist, con lo cual no introduce ISI y maximiza la relación señal a ruido en detección. Ésta es la situación ideal.
+    
+    \item Lo anterior es difícil de implementar debido a la caída lenta de $p(t)=\sinc(\pi f_s t)$. Esto lleva a truncar el filtro con el consiguiente error de implementación y alto retardo, introducción de ISI y la posibilidad de que la ISI sea grande por acumulación de errores.
+    
+    \item Si el ancho de banda no es una limitante (por ejemplo, la capa física es buena o no hay riesgos de interferencia, como en comunicaciones locales USB, UART, etc.), se utilizan pulsos rectangulares con su filtro acoplado. Esto minimiza la probabilidad de error en detección y no introduce ISI, en la medida de que los pulsos pasen esencialmente intactos por el canal.
+    
+    \item Si el ancho de banda debe ser respetado (por ejemplo, por condiciones regulatorias), conviene utilizar pulsos de Nyquist con exceso de ancho de banda $\alpha$ a diseñar. En este caso lo mejor es utilizar una combinación de pulsos tipo RRC en transmisión y detección, ya que esto introduce una cantidad controlada de ISI que es removida por el receptor (el efecto neto es el de un pulso de coseno alzado), mientras que minimizamos la probabilidad de error en este caso.
+\end{itemize}
 
 \section{Repetidores regenerativos}
 
-Supongamos se transmite una onda digital de banda base por un
-cable largo. Al propagarse la onda se introduce atenuación, que
-debe compensarse por amplificación posterior. Una estrategia
-comúnmente usada es dividir el cable en tramos y amplificar en
-cada tramo. Ejemplo de uso: cajas subterráneas en telefonía.
+Para finalizar nuestra discusión sobre la transmisión digital en banda base, consideremos ahora una de las principales ventajas de la transmisión digital, la \emph{repetición regenerativa}. Para ello, supongamos que se transmite una onda digital de banda base por un cable largo. Al propagarse la onda se introduce atenuación, que debe compensarse por amplificación posterior. Una estrategia comúnmente usada es dividir el cable en tramos y amplificar en cada tramo, algo que sucede por ejemplo en cajas subterráneas en telefonía.
+
+Supongamos entonces que tenemos $m$ etapas, como se ilustra en la Figura \ref{fig:repetidor regenerativo}: en cada etapa el canal introduce una atenuación $L \ll 1$, y ruido aleatorio de cierta potencia $\E{n_i^2}=\sigma_N^2$. Una estrategia simple es volver a amplificar la señal para restaurar su potencia, introduciendo un amplificador de ganancia $1/L$. El problema de esta estrategia es que a su vez amplifica el ruido de etapa por $1/L \gg 1$.
+
+Analizando por etapas se tiene:
+\begin{equation*}
+  y_1 = \frac{1}{L}{Lx + n_1} = x + \frac{n_1}{L}  \quad \Rightarrow \left(\frac{S}{N}\right)_1 = \frac{\langle x^2 \rangle}{\frac{\langle n_1^2\rangle}{L^2}} = L^2 \frac{\langle x^2\rangle}{\sigma_N^2}
+\end{equation*}
+Para la segunda etapa:
+\begin{equation*}
+  y_2 = \frac{1}{L}{Ly_1 + n_2} = y_1 + \frac{n_2}{L} = x+ \frac{n_1+n_2}{L}.
+\end{equation*}
+Continuando el razonamiento, luego de $m$ etapas la onda recibida satisface:
+\begin{equation*}
+  y(t) = y_m(t) = x(t) + \frac{n_1+\ldots+n_m}{L}.
+\end{equation*}
+Si suponemos que los ruidos $n_k$ de etapa son independientes, entonces $S=\langle x^2 \rangle$ y la potencia del ruido satisface:
+\begin{equation*}
+N = \frac{1}{L^2} \E{\left(n_1+\ldots + n_m\right)^2} = \frac{m\sigma_N^2}{L^2}.    
+\end{equation*}
+Por lo tanto:
+\begin{equation*}
+ \left(\frac{S}{N}\right)_m = \frac{L^2 \langle x^2\rangle}{m \sigma_N^2}  = \frac{1}{m}\left(\frac{S}{N}\right)_1
+\end{equation*}
+
+Concluimos entonces que la relación señal a ruido se degrada \emph{linealmente} en $m$. Si bien esto es mejor que no repetir (en general la atenuación cae más rápido que lineal), de todos modos la $P_e$ se degrada fuertemente, como muestra el siguiente ejemplo.
+
+\begin{ejemplo}[Repetición no regenerativa]
+    Consideremos una señal polar en la situación ideal que utilizamos filtros acoplados. En ese caso $P_e=Q(\sqrt{S/N})$. Supongamos que, en una única etapa se logra una relación $S/N$ de $20 \unit{\deci\bel}$, es decir $S/N = 100$. En ese caso, al cabo de $m=20$ repetidores tenemos:
+    \begin{equation*}
+        \left(\frac{S}{N}\right)_m = \frac{1}{20} \left(\frac{S}{N}\right)_1 = 5 \Rightarrow P_{e,m} = Q\left(\sqrt{5}\right) \approx 1.20\times 10^{-2},
+    \end{equation*}
+    una tasa de error altísima. Por comparación, la $P_e$ de una única etapa es $P_{e,1} = Q(10) = 7.6\times 10^{-24}$.
+ \end{ejemplo}
+
+Aquí es donde la transmisión digital muestra su potencial: en lugar de simplemente amplificar la señal, podemos \emph{regenerarla} colocando un detector de símbolos en la recepción de cada etapa (con su correspondiente filtro de recepción, por ejemplo un filtro acoplado). Luego se regenera una nueva señal PAM $y_i(t) = \sum_k \hat{a}_k p(t-kT_s)$ en cada etapa usando los símbolos decodificados $\hat{a}_k$, que con alta probabilidad serán iguales a los $a_k$ originales. 
+
+Estudiemos este caso, que se ilustra en la Figura \ref{fig:repetidor regenerativo}. Sea $p$ la probabilidad de error de una etapa, $p:=P_{e,1} = Q\left(\sqrt{\left(\frac{S}{N}\right)_1}\right)$ (para el caso polar).
+
+Si la etapa está bien diseñada, podemos suponer que $p\ll 1$ y que los errores de símbolo son independientes en cada una de las etapas de regeneración. Calculamos entonces la probabilidad de error luego de $m$ etapas. Observemos que:
+\begin{equation*}
+1 - P_{e,m}  = (1-P_{e,1})^m = (1-p)^m \mathop{\approx}_{p \ll 1} 1-mp,
+\end{equation*}
+es decir, para no tener errores en un símbolo exijo no tenerlos en ninguna de las $m$ detecciones independientes. Como $p\ll 1$ vale la segunda aproximación. Por lo tanto en este caso:
+\begin{equation*}
+P_{e,m} \approx m P_{e,1}.
+\end{equation*}
+Con este método, es $P_{e,m}$ la que se deteriora linealmente con $m$ y no la relación señal a ruido.
+
+\begin{ejemplo}[Repetidor regenerativo]
+Retomando el ejemplo anterior, $(S/N)_1=100$ ($20 \unit{\deci\bel}$) por lo que $p=Q(10) = 7.6 \times 10^{-24}$ como ya vimos para una etapa. Luego de $m=20$ repetidores tendremos entonces:
+\begin{equation*}
+    P_{e,m} \approx m P_{e,1} = 20 p \approx 1.5 \times 10^{-22},
+\end{equation*}
+una tasa de error muchísimo más baja que en el caso en que no regeneramos.
+\end{ejemplo}
+
+Precisamente esta es una de las mayores ventajas de la comunicación digital por sobre la analógica: podemos lograr tasas de error increíblemente bajas en un sistema bien diseñado. Incluso para una señal analógica, en la transmisión a grandes distancias es conveniente muestrearla y pasarla a digital, transmitirla de este modo y luego reconstruirla a partir de muestras, ya que el ruido introducido por la cuantificación (más los escasos errores de transmisión) es mucho más bajo que lo que introducirían repetidores no regenerativos en el camino.
 
 \begin{figure}
  \begin{center}
     \begin{blockdiagram}
-    \matrix[row sep=5mm, column sep=10mm]{
-        & \node[etiqueta] (ruido1) {$n_1$}; & & \node[etiqueta] (ruido2) {$n_2$}; & & & \node[etiqueta] (ruidom) {$n_m$};\\
-        \node[etiqueta] (inicio) {$x(t)$}; & \node[operator] (sum1) {$+$}; & \node[block] (amp1) {AMP}  node [above right=5mm] {$y_1(t)$} node [below=3mm] {\begin{minipage}{1.5cm}\centering ganancia\\ $\frac{1}{a}$\end{minipage}}; & \node[operator] (sum2) {$+$}; & \node[block] (amp2) {AMP}; & \node[etiqueta] (puntos) {$\ldots$}; & \node[operator] (summ) {$+$}; & \node[block] (ampm) {AMP}; & \node[etiqueta] (salida) {$y(t)$};\\
-    };
-    \draw [->,ultra thick] (inicio) -- node [anchor=north] {\begin{minipage}{20mm}\centering TR.1\\ atenuación $a$ ($a\ll 1$)\end{minipage}} (sum1);
-    \draw [->] (sum1) -- (amp1);
-    \draw [->] (ruido1) -- (sum1);
-    \draw [->,ultra thick] (amp1) -- node [anchor=north] {TR. 2} (sum2);
-    \draw [->] (ruido2) -- (sum2);
-    \draw [->] (sum2) -- (amp2);
-    \draw [->,ultra thick] (amp2) -- (puntos);
-    \draw [->,ultra thick] (puntos) -- (summ);
-    \draw [->] (ruidom) -- (summ);
-    \draw [->] (summ) -- (ampm);
-    \draw [->] (ampm) -- (salida);
-  \end{blockdiagram}
+        \node at (0,0) (input) {$y_{i-1}(t)$};
+        \node[right=of input, label=above:{\footnotesize Atenuación $L$}] (att1) {\begin{circuitikz} \node[tlineshape] at (0,0) {};\end{circuitikz}};
+        \node[circle, draw, right=of att1] (sum1) {$+$};
+        \node[above=of sum1] (n1) {$n_i(t)$};
+        \node[isosceles triangle, isosceles triangle apex angle=60, draw, right=of sum1, label={[above, xshift=.3cm]Amp.}] (amp1) {$1/L$};
+        \draw[->] (input) -- (att1);
+        \draw[->] (att1) -- (sum1);
+        \draw[->] (n1) -- (sum1);
+        \draw[->] (sum1) -- (amp1);
+        \node[right=of amp1] (y1) {$y_i(t)$};
+        \draw[->] (amp1) -- (y1);
+        \begin{scope}[on background layer]
+            \node[draw, rectangle, dashed, fill=gray!15!white, fit=(att1) (n1) (sum1), inner sep=12pt,label=above:Etapa $i$] {};
+        \end{scope}
+    \end{blockdiagram}
+
+    \bigskip
+
+    \begin{blockdiagram}
+        \node at (0,0) (input) {$y_{i-1}(t)$};
+        \node[right=of input, label=above:{\footnotesize Atenuación $L$}] (att1) {\begin{circuitikz} \node[tlineshape] at (0,0) {};\end{circuitikz}};
+        \node[circle, draw, right=of att1] (sum1) {$+$};
+        \node[above=of sum1] (n1) {$n_i(t)$};
+        \draw[->] (input) -- (att1);
+        \draw[->] (att1) -- (sum1);
+        \draw[->] (n1) -- (sum1);
+        \begin{scope}[on background layer]
+            \node[draw, rectangle, dashed, fill=gray!15!white, fit=(att1) (n1) (sum1), inner sep=12pt,label=above:Etapa $i$] {};
+        \end{scope}
+
+        \node[block, right =1.5cm of sum1, align=center, inner sep=6pt, label=above:{\footnotesize Filtro Rx}] (rx) {$\hat{H}_r$};
+        \draw[thick, ->] (sum1) -- (rx);
+        \node[below=of rx] (sincr_input) {};
+        \node[block, right =.5cm of sincr_input, align=center] (sincr) {Sincr.};
+        \draw[thick, dashed, ->] (sincr_input) -- (sincr);
+        \node[block, right = of rx, align=center, inner sep=4pt] (sample) {\begin{circuitikz}\draw (0,0) to[switch] node[ocirc]{} (.8,0);\end{circuitikz}};
+        \draw[thick, ->] (rx) -- (sample);
+        \draw[thick,->] (sincr) -| (sample);
+        \node[block, right =of sample, align=center, label=above:{\small Detector}] (detector) {\begin{tikzpicture} \draw (0,0) -| ++(.3,.3) |- ++(.3,.3); \end{tikzpicture}};
+        \node[block,align=center,right =of detector] (mod) {Modulador\\ Digital};
+        \node[above=1cm of sample] (top) {};
+        \draw[thick,->] (sample) -- (detector);
+        \draw[thick,->] (detector) --node{\small $\hat{a}_k$} (mod);
+        \node [right=of mod] (salida) {$y_i(t)$};
+        \draw[thick,->] (mod) -- (salida);
+        \begin{scope}[on background layer]
+            \node[draw, rectangle, dashed, fill=gray!15!white, fit=(rx) (sincr_input) (sincr) (sample) (detector) (top) (mod), inner sep=5pt,label=above:Regenerador] {};
+        \end{scope}            
+    \end{blockdiagram}
  \end{center}
- \caption{Repetidor regenerativo}\label{fig:repetidor regenerativo}
+ \caption{Repetidor no regenerativo (arriba) y repetidor regenerativo (abajo)}\label{fig:repetidor regenerativo}
 \end{figure}
-
-Suponemos que cada etapa tiene ruido aleatorio de varianza
-$E[n_i^2] = \sigma^2$.
-
-\[y_1 = \frac{1}{a}(a x + n_1) = x+ \frac{n_1}{a} \qquad \Longrightarrow \left(\frac{S}{N}\right)_1 =
-\frac{\langle x^2 \rangle}{\frac{\langle n_1^2\rangle}{a^2}} = a^2
-\frac{\langle x^2\rangle}{\sigma^2}.\]
-
-Para la segunda etapa:
-\[y_2 = \frac{1}{a}(a y_1 +n_2) = y_1 + \frac{n_2}{a} = x + \frac{n_1+n_2}{a}.\]
-
-Por el mismo razonamiento,
-\[y(t) = y_m(t) = x(t) + \frac{n_1+n_2+\cdots+n_m}{a}.\]
-
-\begin{align*}
- \left(\frac{S}{N}\right)_m & = \frac{\langle x^2 \rangle}{\frac{1}{a^2} E\left[(n_1+n_2+\cdots+n_m)^2\right]} =
-  \frac{a^2 \langle x^2\rangle}{m \sigma^2}, \qquad \text{suponiendo ruidos independientes.}
-%\Rightarrow                   & =
-\end{align*}
-\[{\col{ \left(\frac{S}{N}\right)_m = \frac{1}{m}
-\left(\frac{S}{N}\right)_1}}\]
-
- Vemos que la relación señal-ruido se degrada linealmente en $m$. Por lo tanto
-la $P_e$ se degrada fuertemente (por ejemplo,
-$P_e=Q\left(\sqrt{\frac{S}{N}}\right)$ para el caso polar, con
-pulsos ideales).
-
-\begin{ejemplo}[numérico] Señal polar, $\left(\frac{S}{N}\right)_1 = 100 \  (20\,dB)$, $m=20$
-repetidores.
-  \[ \Rightarrow \left(\frac{S}{N}\right)_m = 5 \Rightarrow P_e  = Q(\sqrt{5}) = 1.29\cdot 10^{-2}, \quad\text{muy alto.}\]
- \end{ejemplo}
-
-\subsection*{Repetidor regenerativo}
-
-En vez de solo amplificar (señal y ruido), realiza una detección y
-regenera la señal PAM. Sea $p$ la probabilidad de error de una
-etapa, $p=Q\left(\sqrt{\left(\frac{S}{N}\right)_1}\right)$.
-
-Suponemos $p\ll 1$ y errores independientes en cada etapa.
-Calculamos la probabilidad de error de $m$ etapas. Notar que
-\[1 - P_e(m\text{ etapas})  = (1-P_e(1 \text{ etapa}))^m \]
-(es decir, para no tener errores en un símbolo exijo no tenerlos
-en ninguna de las $m$ detecciones independientes). Por tanto
-\[P_e(m\text{ etapas}) = 1 -(1-p)^m  \approx 1-(1-mp) = mp.\]
-En este caso, $P_e$ se deteriora linealmente con $m$.
-
-Volviendo al ejemplo, $p=Q(10) = 7.7\cdot 10^{-24}$ para una
-etapa, por tanto
-\[ P_e (20 \text{ etapas}) \approx 20 p = 1.5\cdot 10^{-22},\]
-muchísimo más bajo que en el caso no regenerativo.
-
-\paragraph{Moraleja}$\phantom{1}$
-\begin{itemize}
- \item Es mejor regenerar.
- \item Esta es una de las mayores ventajas de la comunicación digital por sobre la analógica.
-\end{itemize}
