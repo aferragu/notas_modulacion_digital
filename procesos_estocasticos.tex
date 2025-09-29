@@ -598,9 +598,9 @@ donde hemos usado que el proceso modulador y el de entrada son independientes pa
 Nuevamente usamos los resultados del Ejemplo \ref{ej:cos random phase} para la autocorrelación de la sinusoide de fase aleatoria y la independencia. Resulta entonces que el proceso modulado $x_c$ es WSS (media constante, autocorrelación que solo depende de $\tau$).
 
 Como multiplicar en el tiempo corresponde a convolucionar en frecuencia, se concluye que la densidad espectral de potencia del proceso $x_c$ se calcula como:
-\begin{equation*}
+\begin{equation}\label{eq:dep modulacion}
     S_{x_c}(f) = S_x(f) *\left[\frac{\delta(f-f_c) + \delta(f+f_c)}{4}\right] = \frac{1}{4}\left[S_x(f-f_c) + S_x(f+f_c)\right].
-\end{equation*}
+\end{equation}
 Es decir, la densidad se traslada a las frecuencias de modulación.
 
 \section{Procesos gaussianos y Ruido blanco gaussiano}\label{sec:gaussian}
