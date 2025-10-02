@@ -313,185 +313,120 @@ con $p(t)$ un pulso real, $T_s$ el tiempo de símbolo y $c_k = a_k+jb_k$ un sím
     
 \end{ejemplo}
 
+Analicemos ahora el espectro de la señal $x_c(t)$ dada por la ecuación \eqref{eq:transformada pasabanda}, cuando la señal es generada por una onda PAM aleatoria compleja de banda base dada por la ecuación \eqref{eq:onda pam compleja}. Se tiene el siguiente resultado:
 
-% \subsection*{Ejemplos de constelaciones}
-%        \FloatBarrier
-% \begin{figure}[htb]\centering\begin{minipage}{\textwidth}
-%         \bpgf{Imagenes/MDPasa/MDPasa-4}
-%         \begin{tikzpicture}
-%             \begin{scope}[shift={(-3,0)}]
-%                 \draw (-2,0) -- (2,0);
-%                 \draw (0,-2) -- (0,2);
-%                 \draw [fill] (0,0) node [anchor=north east] {$0$} circle (0.08);
-%                 \draw [fill] (1,0) node [anchor=north] {$A$} circle (0.08);
-%                 \path (1,1) node {ASK};
-%                 \begin{scope}[shift={(0,-5)}]
-%                     \draw (-2,0) -- (2,0);
-%                     \draw (0,-2) -- (0,2);
-%                     \draw [fill] (0,1) circle (0.08);
-%                     \draw [fill] (0,-1) circle (0.08);
-%                     \draw [fill]  (1,0) circle (0.08);
-%                     \draw [fill] (-1,0) circle (0.08);
-%                     \path (1,1) node {4-PSK};
-%                 \end{scope}
-%                 \begin{scope}[shift={(0,-10)}]
-%                     \draw (-2,0) -- (2,0);
-%                     \draw (0,-2) -- (0,2);
-%                     \draw [fill] (1,1) node [anchor=west] {$A+jA$} circle (0.08);
-%                     \draw [fill] (1,-1) circle (0.08);
-%                     \draw [fill]  (-1,1) circle (0.08);
-%                     \draw [fill] (-1,-1) circle (0.08);
-%                     \path (-2,2) node {4QAM};
-%                 \end{scope}
-%             \end{scope}
-%             \begin{scope}[shift={(3,0)}]
-%                 \draw (-2,0) -- (2,0);
-%                 \draw (0,-2) -- (0,2);
-%                 \draw [fill] (-1,0) node [anchor=north] {$-A$} circle (0.08);
-%                 \draw [fill] (1,0) node [anchor=north] {$A$} circle (0.08);
-%                 \path (1,1) node {BPSK};
-%                 \begin{scope}[shift={(0,-5)}]
-%                     \draw (-2,0) -- (2,0);
-%                     \draw (0,-2) -- (0,2);
-%                     \foreach \x in {0,45,...,315}
-%                         \draw [fill] (\x:1) circle (0.08);
-%                     \draw (0,0) circle (1);
-%                     \path (2,1) node {8-PSK};
-%                 \end{scope}
-%                 \begin{scope}[shift={(0,-10)}]
-%                     \draw (-2,0) -- (2,0);
-%                     \draw (0,-2) -- (0,2);
-%                     \foreach \x in {-1.5,-0.5,...,1.5}
-%                         \foreach \y in {-1.5,-0.5,...,1.5}
-%                             \draw [fill] (\x,\y) circle (0.08);
-%                     \path (-2,2) node {16QAM};
-%                 \end{scope}
-%             \end{scope}
-%         \end{tikzpicture}
-%         \endpgfgraphicnamed \end{minipage}
-% \end{figure}
-% %\FloatBarrier
+\begin{teorema}\label{thm:espectro pasabanda}
+    El espectro de la onda pasabanda aleatoria $x_c(t)$ está dado por:
+    \begin{equation*}
+        S_{x_c}(f) = \frac{1}{4}\left[S_{x_{ce}}(f-f_c) + S_{x_{ce}}(f+f_c)\right],
+    \end{equation*}
+    que es una generalización del resultado \eqref{eq:dep modulacion}. Aquí el espectro $S_{x_{ce}}$ es el espectro de banda base de la envolvente compleja. Cuando la señal de banda base es una onda PAM compleja como en \eqref{eq:onda pam compleja}, con símbolos \emph{centrados} ($\mu=\E{c_k}=0$), se tiene que:
+    \begin{equation*}
+        S_{x_{ce}} = \sigma_c^2 f_s |\hat{P}(f)|^2,
+    \end{equation*}
+    siendo $\sigma_c^2 = E[|c_k|^2] = E[a_k^2 + b_k^2]$ la varianza del \emph{módulo} de los símbolos, y $\hat{P}(f)$ la transformada del pulso de banda base utilizado.
+\end{teorema}
 
+Observemos que en particular, el ancho de banda utilizado por la señal alrededor de $f_c$ está controlado por la forma de los pulsos $p(t)$ utilizados, mientras que la potencia total es controlada por los niveles o amplitudes de los símbolos complejos $E[|c_k|^2]$.
 
-\subsection*{Densidad espectral de potencia, onda pasabanda $M$-aria}
+A partir de este resultado consideraremos dos tipos de modulación $M-$aria: la modulación en fase (PSK) y la modulación QAM.
 
-En el caso general $M$-ario, se puede obtener también la densidad espectral de potencia  a partir de
-la de su envolvente compleja, generalizando la fórmula (\ref{eq:dep modulacion}).
-\[
-    \col{S_{x_c}(f) = \frac{1}{4}S_{x_{ce}}(f-f_c) +
-    \frac{1}{4}S_{x_{ce}}(f+f_c)}
-\]
-La pregunta es entonces como calcular la densidad espectral de potencia para la onda \emph{compleja} de
-banda base
-\[x_{ce}(t) = \sum \underbrace{(a_k+j b_k)}_{c_k} p(t-kT_s),\]
-donde suponemos que los símbolos $\{c_k\}$ son variables aleatorias complejas, independientes e
-idénticamente distribuidas. Suponemos, sin perder generalidad, que $E[c_k]=0$, es decir que la
-constelación es balanceada alrededor del cero, con puntos equiprobables.
+\subsection{Modulación PSK $M-$aria}
 
-La respuesta es que se puede utilizar la misma fórmula de antes (con $\mu=0$):
-\[
-    S_{x_{ce}} = \sigma_c^2 f_s |\hat{P}(f)|^2,
-        \]
-donde ahora $\sigma_c^2 = E[|c_k|^2] = E[a_k^2 + b_k^2]$, varianza del módulo de los símbolos.
-Con este método consideramos los dos casos principales.
+En este caso, se mantiene una amplitud \emph{constante} igual a $A$ que controla la potencia de la señal, y el símbolo va codificado completamente en la fase de la portadora modulada. Esto corresponde a utilizar la constelación:
+\begin{equation}\label{eq:constelacion psk}
+c_k \in A e^{j2\pi \frac{m}{M}} \quad m=0,1,\ldots,M-1.    
+\end{equation}
 
-\subsubsection*{Modulación MPSK}
+El caso $M=2$ corresponde exactamente a BPSK $(c_k\in \{-A,A\})$. El caso $M=4$ se denomina Quadrature Phase-Shift Keying (QPSK) y corresponde a enviar simultáneamente dos ondas BPSK, moduladas en cuadratura una de otra. La Figura \ref{fig:mpsk} muestra constelaciones de más símbolos.
 
-
-En este caso la constelación se define en coordenadas polares:
-\[
-c_k \in A e^{j(\theta_0 + \frac{2\pi}{M}{m})} \quad m=0,1,\ldots,M-1.\]
-
-%\begin{minipage}
-\FloatBarrier
-\begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/MDPasa/MDPasa-8}
+\begin{figure}
+    \begin{center}
     \begin{tikzpicture}
-        \begin{scope}[shift={(5,0)}]
-            \draw (-1.5,0) -- (1.5,0);
-            \draw (0,-1.5) -- (0,1.5);
-            \draw [fill] (1,0) circle (0.07);
-            \draw [fill] (-1,0) circle (0.07);
-            \draw [fill] (0,1) circle (0.07);
-            \draw [fill] (0,-1) circle (0.07);
-            \path (0.5,1) node [anchor=west] {\small $\theta_0=0, M=4$};
-        \end{scope}
-        \begin{scope}[shift={(5,-4)}]
-            \draw (-1.5,0) -- (1.5,0);
-            \draw (0,-1.5) -- (0,1.5);
-            \draw [fill] (1,1) circle (0.07);
-            \draw [fill] (-1,1) circle (0.07);
-            \draw [fill] (1,-1) circle (0.07);
-            \draw [fill] (-1,-1) circle (0.07);
-            \path (1.5,1) node [anchor=west] {\small $\theta_0=\frac{\pi}{4}, M=4$};
-            \path (1.5,0.5) node [anchor=west] {\footnotesize (equivale a 4 QAM)};
-        \end{scope}
-            \begin{scope}[shift={(5,-8)}]
-            \draw (-1.5,0) -- (1.5,0);
-            \draw (0,-1.5) -- (0,1.5);
-            \foreach \x in {0,45,...,315}
-                \draw [fill] (\x:1) circle (0.07);
-            \draw (0,0) -- node [above=0.1mm] {\footnotesize $A$} (45:1);
-            \path (1,1) node [anchor=west] {\small $\theta_0=0, M=8$};
-        \end{scope}
-    \end{tikzpicture}
-    \endpgfgraphicnamed\end{minipage}
-    \end{figure}
-%\FloatBarrier
-%\end{minipage}
-
-\noindent Suponiendo que los puntos son equiprobables, tenemos $\mu=0$ y $\sigma_c^2 = E[|c_k|^2] = A^2$.
-Por tanto
-\[\begin{gathered}
-            S_{x_{ce}}(f) = A^2 f_s |\hat{P}(f)|^2
-            \Rightarrow S_{x_c}(f) = \frac{A^2 f_s}{4}\left(|\hat{P}(f-f_c)|^2+|\hat{P}(f+f_c)|^2\right),
-        \end{gathered}\]% \right\rbrace\,\text{igual que BPSK.}
-que es el mismo resultado que en BPSK, independiente del número de puntos $M$ de la constelación.
-
-\newpage
-
-\subsubsection*{Modulación QAM}
-
-Aquí la constelación se describe en coordenadas cartesianas, $c_k = a_k+j b_k$, donde
-cada coordenada toma $M_a$, $M_b$ valores polares, $M=M_a M_b$.
-
-\begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/MDPasa/MDPasa-9}
+        \draw[->] (-1.5,0) -- (1.5,0);
+        \draw[->] (0,-1.5) -- (0,1.5);
+        \draw[teal,fill] (-1,0) circle (0.1) node[below left] {$-A$};
+        \draw[teal,fill] (1,0) circle (0.1) node[below right] {$A$};
+        \node[above] at (0,2) {PSK $M=2$ (BPSK)};
+    \end{tikzpicture}\hspace{1cm}
     \begin{tikzpicture}
-        \draw [-stealth] (-4,0) -- (4,0);
-        \draw [-stealth] (0,-4) -- (0,4);
-        \foreach \x in {-3,-1,...,3}
-            {\draw [dotted] (\x,-3) -- (\x,3);
-            \draw [dotted] (-3,\x) -- (3,\x);
-            \foreach \y in {-3,-1,...,3}
-                \draw [fill] (\x,\y) circle (0.07);}
-        \path (1,0) node [anchor=north west] {$A$} -- (3,0) node [anchor=north west] {$3A$};
+        \draw[->] (-1.5,0) -- (1.5,0);
+        \draw[->] (0,-1.5) -- (0,1.5);
+        \draw[teal,fill] (-1,0) circle (0.1) node[below left] {$-A$};
+        \draw[teal,fill] (1,0) circle (0.1) node[below right] {$A$};
+        \draw[teal,fill] (0,1) circle (0.1) node[below left] {$A$};
+        \draw[teal,fill] (0,-1) circle (0.1) node[below left] {$-A$};
+        \node[above] at (0,2) {PSK $M=4$ (QPSK)};
+    \end{tikzpicture}\hspace{1cm}
+    \begin{tikzpicture}
+        \draw[->] (-1.5,0) -- (1.5,0);
+        \draw[->] (0,-1.5) -- (0,1.5);
+        \foreach \theta in {0,...,7} {
+            \draw[teal,fill] ({cos(2*pi*\theta/8 r)}, {sin(2*pi*\theta/8 r)}) circle (0.1);
+        }
+        \node[teal,below right] at (1,0) {$A$};
+        \node[teal,below left] at (-1,0) {$-A$};
+        \node[above] at (0,2) {PSK $M=8$};
     \end{tikzpicture}
-    \endpgfgraphicnamed\end{minipage}
+    \end{center}
+    \caption{Constelaciones $M$-PSK para diferentes valores de $M$.}\label{fig:mpsk}
 \end{figure}
-\FloatBarrier
 
+Suponiendo que los símbolos son equiprobables, tenemos que $\mu=\E{c_k} = 0$ ya que la constelación está centrada, y en este caso $|c_k|^2=A$ constante, por lo que $\sigma_c^2 = E[|c_k|^2] = A^2$. Por lo tanto:
+\begin{equation*}
+    S_{x_{ce}}(f) = A^2 f_s |\hat{P}(f)|^2 \Longrightarrow S_{x_c}(f) = \frac{A^2 f_s}{4}\left(|\hat{P}(f-f_c)|^2+|\hat{P}(f+f_c)|^2\right).
+\end{equation*}
+En particular, el espectro que $M-$PSK no depende de $M$, el número de puntos de la constelación y solamente está controlado por la forma del pulso $p(t)$. Es decir, aumentar el tamaño de la constelación no incrementa el ancho de banda utilizado, aunque sí modifica la probabilidad de error en detección, como veremos.
 
-Tenemos entonces que $\sigma_c^2 = \sigma_a^2+\sigma_b^2$, y cada uno de estos términos se calcula como
-\[
+\subsection{Quadrature Amplitude Modulation (QAM)}
+
+La modulación QAM consiste en elegir una constelación de coordenadas cartesianas, $c_k = a_k+j b_k$, donde cada coordenada se construye utilizando un alfabeto polar, de tamaños $M_a$ y $M_b$, pudiendo identificar $M$ símbolos con $M=M_a M_b$. Típicamente se toma $M=2^l$ con $l\geqslant 2$. El caso $l=1$ correspondería a utilizar BPSK, y el caso $l=2$ es similar a QPSK pero con la constelación rotada $45^{\circ}$, como se ilustra en la Figura \ref{fig:qam}.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \node[above] at (0,2) {$4$-QAM (análogo a QPSK)};
+            \draw [-stealth] (-2,0) -- (2,0);
+            \draw [-stealth] (0,-2) -- (0,2);
+            \foreach \x in {-1,1}
+                {\draw [dotted] (\x,-1) -- (\x,1);
+                \draw [dotted] (-1,\x) -- (1,\x);
+                \foreach \y in {-1,1}
+                    \draw [teal,fill] (\x,\y) circle (0.1);}
+            \node[teal,anchor=north east] at (-1,0) {$-A$};
+            \node[teal,anchor=north west] at (1,0) {$A$};
+        \begin{scope}[shift={(8,0)}]
+            \node[above] at (0,4) {$16$-QAM};
+            \draw [-stealth] (-4,0) -- (4,0);
+            \draw [-stealth] (0,-4) -- (0,4);
+            \foreach \x in {-3,-1,...,3}
+                {\draw [dotted] (\x,-3) -- (\x,3);
+                \draw [dotted] (-3,\x) -- (3,\x);
+                \foreach \y in {-3,-1,...,3}
+                    \draw [teal,fill] (\x,\y) circle (0.1);}
+            \node[teal,anchor=north east] at (-3,0) {$-3A$};
+            \node[teal,anchor=north east] at (-1,0) {$-A$};
+            \node[teal,anchor=north west] at (1,0) {$A$};
+            \node[teal,anchor=north west] at (3,0) {$3A$};
+        \end{scope}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Constelaciones QAM.}\label{fig:qam}
+\end{figure}
+
+En este caso $|c_k|^2 = a_k^2 + b_k^2$ por lo que $\sigma_c^2 = \sigma_a^2+\sigma_b^2$, y cada uno de estos términos se calcula como la potencia de los símbolos de un alfabeto $M-$ario unidimensional como los que ya vimos. Se tiene que:
+\begin{equation*}
 \sigma_a^2 = \frac{2}{M_a}\left(A^2 +
-(3A)^2+\cdots+(M_a-1)^2A^2\right) = \frac{M_a^2-1}{3}A^2.\]
-Tenemos:
-\begin{align*}
-S_{x_{ce}}(f) &= (\sigma_a^2+\sigma_b^2) f_s |\hat{P}(f)|^2 \\
-\Rightarrow S_{x_c}(f) &=
-\frac{(\sigma_a^2+\sigma_b^2)f_s\left(|\hat{P}(f-f_c)|^2 +
+(3A)^2+\cdots+(M_a-1)^2A^2\right) = \frac{M_a^2-1}{3}A^2,    
+\end{equation*}
+y análogamente para $b_k$ utilizando $M_b$. Por lo tanto:
+\begin{equation*}
+S_{x_{ce}}(f) = (\sigma_a^2+\sigma_b^2) f_s |\hat{P}(f)|^2 \Longrightarrow S_{x_c}(f) = \frac{(\sigma_a^2+\sigma_b^2)f_s\left(|\hat{P}(f-f_c)|^2 +
 |\hat{P}(f+f_c)|^2\right)}{4}.
-\end{align*}
+\end{equation*}
 
-
-
-Habitualmente $M_a = M_b = \sqrt{M}$. En ese caso
-$\sigma_a^2+\sigma_b^2 = \frac{2(M-1)}{3}A^2$.
-
-
-
-
-
+Nuevamente, los símbolos controlan la potencia y el pulso el ancho de banda utilizado. Habitualmente se elige una constelación cuadrada, es decir $M_a = M_b = \sqrt{M}$. En ese caso:
+\begin{equation*}
+\sigma_c^2 = \sigma_a^2+\sigma_b^2 = \frac{2(M-1)}{3}A^2.
+\end{equation*}
+Por ejemplo, para la constelación $16-$QAM de la Figura \ref{fig:qam}, $M=16$ de donde $\sigma_c^2 = 10A^2$. Nuevamente el factor $A$ controla la amplitud de la señal y actuará como \emph{margen de ruido} en la detección, controlando la probabilidad de error.
