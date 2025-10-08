@@ -380,7 +380,7 @@ S_x(f) = \sigma^2 T_s \sinc^2 (\pi T_s f) + \mu^2\delta(f).
             \draw [->] (-5,0) -- (5,0) node [anchor=north] {$f$};
             \draw [->] (0,-0.5) -- (0,3.5) node [anchor=east] {$S_x(f)$};
             \draw [teal, very thick, samples=200,domain=-5:5] plot (\x,{2*(sin(3*\x r)/(3*\x))^2});
-            \node[anchor=south west] at (0,2) {$\sigma^2 T_s$};
+            \node[teal,anchor=south west] at (0,2) {$\sigma^2 T_s$};
             \path (-pi/3,0) node [anchor=north] {$-f_s$} -- (pi/3,0) node [anchor=north] {$f_s$} -- (2*pi/3,0) node [anchor=north] {$2 f_s$};
             \draw [very thick, teal, ->] (0,0) -- (0,3) node [anchor=west] {$\mu^2$};
         \end{tikzpicture}
@@ -391,11 +391,11 @@ En particular para la onda binaria aleatoria, $\mu=0$ y $\sigma^2=1$ por lo que 
 
 Discutamos que conclusiones podemos sacar de $S_x(f)$:
 \begin{enumerate}
-    \item Potencia total: $\langle x^2\rangle = \displaystyle\int_{-\infty}^{\infty} S_x(f)\d f $.
+    \item Potencia total: $\langle x^2\rangle = \displaystyle\int_{-\infty}^{\infty} S_x(f) d f $.
     En el ejemplo de pulsos NRZ,
     \begin{equation*}
      \langle x^2\rangle = \mu^2 +\sigma^2 f_s \displaystyle\int_{-\infty}^{\infty}
-    \left|\hat{P}(f)\right|^2\d f = \mu^2 +\sigma^2 f_s \displaystyle\int_{-\infty}^{\infty} \left|p(t)\right|^2\d
+    \left|\hat{P}(f)\right|^2 d f = \mu^2 +\sigma^2 f_s \displaystyle\int_{-\infty}^{\infty} \left|p(t)\right|^2 d
     t = \mu^2 + \sigma^2.
     \end{equation*}
     \item Porcentaje de potencia dentro de una banda: en este caso el $90\%$ está en $[-f_s,f_s]$. Más abajo se discuten otros casos.
@@ -527,7 +527,7 @@ z^2\rangle = \mu^2 \|p\|^2 f_s$. En este caso, tendremos:
 \begin{equation}\label{eq:potencia energia pulso simplificada}
     \langle x^2\rangle  = \bar{E}_p f_s,
 \end{equation}
-fórmula con interpretación intuitiva: envío un pulso de energía media $\overline{E_p}$, cada $T_s$ segundos,
+fórmula con interpretación intuitiva: envío un pulso de energía media $\bar{E}_p$, cada $T_s$ segundos,
 la potencia media es $\bar{E}_p/T_s = \bar{E}_p f_s$. Sin embargo, para que esta interpretación sea válida es necesario que los pulsos
 sucesivos sean ortogonales entre sí, lo cual se cumple sólo en algunos casos, como detallamos a continuación:
 \begin{itemize}
