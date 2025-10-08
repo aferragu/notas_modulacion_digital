@@ -35,7 +35,7 @@
 \usetikzlibrary{decorations.pathreplacing}
 \usetikzlibrary{positioning}
 \usetikzlibrary{fit}
-\usetikzlibrary{calc}
+\usetikzlibrary{math,calc}
 \usetikzlibrary{backgrounds}
 \usetikzlibrary{shapes.geometric}
 \usetikzlibrary{babel}
@@ -48,6 +48,10 @@
 %\usepackage{pifont}
 \usepackage{siunitx}
 \DeclareSIUnit\bps{bps}
+
+\pgfmathdeclarefunction{invgauss}{2}{%
+  \pgfmathparse{sqrt(-2*ln(#1))*cos(deg(2*pi*#2))}%
+}
 
 % Filtro pasabajos
 \newcommand{\pasabajos}[2]{

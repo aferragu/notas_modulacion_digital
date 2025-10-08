@@ -576,7 +576,7 @@ donde se usaron identidades trigonométricas. Con un razonamiento similar se lle
      &= \sum_k b_k p(t-kT_s) + \text{términos de alta frecuencia}.
 \end{align*}
 
-Notar que el factor $2$ agregado al oscilador que genera las sinusoides hace que $x_i$ y $x_q$ repliquen el mensaje original en banda base. Otra forma de justificarlo es que el pulso de RF $\tilde{p}(t)$ verifica que $||\tilde{p}||^2 = \frac{1}{2}||p||^2$ y el factor $2$ corresponde a compensar este factor en la cadena de demodulación. Por lo tanto, las señales $x_i$ y $x_q$ contienen la onda PAM de banda base de la parte real e imaginaria de la constelación y los términos de alta frecuencia, que serán eliminador por el filtro de recepción. 
+Notar que el factor $2$ agregado al oscilador que genera las sinusoides hace que $x_i$ y $x_q$ repliquen el mensaje original en banda base. Otra forma de justificarlo es que el pulso de RF $\tilde{p}(t)$ verifica que $||\tilde{p}||^2 = \frac{1}{2}||p||^2$ y el factor $2$ corresponde a compensar este factor en la cadena de demodulación. Por lo tanto, las señales $x_i$ y $x_q$ contienen la onda PAM de banda base de la parte real e imaginaria de la constelación y los términos de alta frecuencia, que serán eliminados por el filtro de recepción. 
 
 Modelemos ahora las componentes de ruido $n_i$ y $n_q$. Supongamos que en el canal de RF la señal se ve afectada por un ruido blanco Gaussiano $w(t)$ de densidad espectral de potencia $\eta_0/2$. A la entrada del demodulador, para limitar el ruido, se coloca un filtro pasabanda centrado en $f_c$ y de ancho $B$, de manera de que los pulsos pasen intactos. Por lo tanto, la señal recibida por el demodulador es:
 \begin{equation*}
@@ -615,612 +615,378 @@ Por lo tanto, tomando como ejemplo el demodulador de la componente en fase, a la
 
 Tenemos entonces el mismo problema de la detección en banda base, donde se debe utilizar un filtro acoplado al pulso $p(t)$ para detectar. La única diferencia es que ahora la varianza del ruido es:
 \begin{equation*}
-    \sigma_N^2 = \eta_0 \int_{-\infty}^\infty |\hat{H}_r(f)|^2 df,
+    \sigma_N^2 = \eta_0 \int_{-\infty}^\infty |\hat{H}_r(f)|^2 df.
 \end{equation*}
-debido al factor $2$ introducido en la demodulación. Otra 
 
-\noindent {\bf Notas:}
-%\begin{remarksSN}$\phantom{1}$
-    \begin{itemize}
-        \item El filtro acoplado de banda base también elimina la
-        frecuencia doble $2f_c$.
-        \item Colocamos una ganancia $2$ en el oscilador local. Esto simplifica las expresiones evitando el factor $\frac{1}{2}$ que aparecía en la detección
-        sincrónica analógica.
-        Otra forma de motivarlo es observar que
-        $||\tilde{p}||^2=\frac{1}{2}||p||^2$, y $K$ en el filtro
-        acoplado se toma inversamente proporcional a esta
-        cantidad.
-        \item No require sincronismo fino en el muestreo, pero sí del oscilador local con la onda, por eso se llama \emph{detección coherente}.
-            Es más fácil sincronizar osciladores que el muestreo.
-        \item En la práctica, también se colocaría un pasabanda ``ancho'' de RF para limitar el ruido antes de la demodulación
-        sincrónica; es decir que $n(t)$ es un ruido pasabanda de ancho $\gg$ que la banda de $x_c(t)$, ver después.
-    \end{itemize}
-%\end{remarksSN}
+Por lo tanto, para obtener los símbolos $a_k$ y $b_k$, se debe usar un filtro acoplado al pulso de banda base $p(t)$. Es decir, $h_r(t)=p(\tau-t)$ con $\tau$ el momento de muestreo. En ese caso, recordando la fórmula \eqref{eq:snr filtro acoplado}, y observando que ahora la densidad del ruido es $\eta_0$ y no $\eta_0/2$ se obtiene:
+\begin{equation}\label{eq:snr detector coherente}
+    \left(\frac{A'}{\sigma_N}\right)^2_{\max} = \frac{|a_0|^2||p||^2}{\eta_0},
+\end{equation}
+donde nuevamente usamos que $||\tilde{p}||^2 = ||p||^2/2$. Esto muestra que el filtro logra la misma relación señal a ruido que el filtro acoplado al pulso $\tilde{p}$, pero requiere un sincronismo mucho menos fino en el instante de muestreo. Notar que sí requiere un sincronismo fino del oscilador local con la frecuencia y fase del oscilador original.
 
-\begin{ejemplo}pulso NRZ
-    \begin{center}\begin{minipage}{\textwidth}
-        \bpgf{Imagenes/DDPasa/DDPasa-4}
-        \begin{tikzpicture}
-            \draw (-0.5,0) -- (2.5,0) node [anchor=south] {$p(t)$};
-            \draw (0,-0.5) -- (0,1.5);
-            \draw [thick] (0,0) -- (0,1) -- (2,1) -- (2,0);
-            \begin{scope}[shift={(6,0)}]
-                \draw (-0.5,0) -- (2.5,0);
-                \draw (0,-1.5) -- (0,1.5) node [anchor=east] {$\tilde{p}(t)$};
-                \draw [domain=0:2,samples=200] plot (\x,{cos(5*pi*\x r)});
-                \draw [dotted] (2,1) -- (2,0);
-            \end{scope}
-        \end{tikzpicture}
-        \endpgfgraphicnamed\end{minipage}
+Aplicamos el resultado de la fórmula \eqref{eq:snr detector coherente} ahora a los diferentes esquemas de modulación. Utilizamos como ejemplo el pulso de banda base NRZ, pero puede utilizarse cualquier pulso adecuado.
+
+\begin{ejemplo}[ASK con pulso NRZ y detector coherente]
+En este caso, solo hace falta recuperar la componente en fase $x_i(t)$, ya que el alfabeto es $c_k=\{0+0j,A+0j\}$. El filtro acoplado al pulso NRZ es:
+\begin{equation*}
+    h(t) = \frac{1}{T_s}p_{[0,T_s]}(t), \quad \tau=T_s
+\end{equation*}
+Observemos que el filtro corresponde a \emph{promediar la señal de banda base en un tiempo de símbolo}, por lo que el detector tiene la forma:
+    \begin{center}
+        \begin{blockdiagram}
+            \node at (0,0) (input) {$x_c(t)+n(t)$};
+            \node[circle, draw, thick, right=2cm of input] (mult) {$\times$};
+            \draw[thick,->] (input) -- (mult);
+
+            \node[coordinate, below= of mult] (demod) {};
+            \node[right = of demod] (oscillator) {\begin{circuitikz}\node[oscillator]{};\end{circuitikz} $f_c$};
+            \draw[thick,->] (oscillator) -- (demod) --node[midway,left] {$2\cos(2\pi f_c t)$} (mult);
+
+            \node[right=3cm of mult, block] (inphase) {$\displaystyle{\frac{1}{T_s}\int_{t-T_s}^t}$};
+            \draw[thick,->] (mult) --node[midway]{$x_i(t)+n_i(t)$} (inphase);
+
+            \node[block, right =1.5cm of inphase, inner sep=4pt, label=below:{\footnotesize $\tau=kT_s$}] (samplei) {\begin{circuitikz}\draw (0,0) to[switch] node[ocirc]{} (.8,0);\end{circuitikz}};
+            \draw[thick,->] (inphase) -- (samplei);
+
+            \node[block, right =of samplei, label=below:{\footnotesize Umbral: $A/2$}] (detectori) {\begin{tikzpicture} \draw (0,0) -| ++(.3,.3) |- ++(.3,.3); \end{tikzpicture}};
+
+            \draw[thick,->] (samplei) -- (detectori);
+            
+            \draw[thick,->] (detectori) -- ++(2,0) node[right] {$\hat{a}_k$};
+
+        \end{blockdiagram}
     \end{center}
-    \begin{figure}[htb]
-        \centering
-        \resizebox{\textwidth}{!}{
-        \bpgf{Imagenes/DDPasa/DDPasa-5}
-            \begin{blockdiagram}[decoration={brace,amplitude=10}]
-                \matrix[row sep=5 mm, column sep=10mm, ampersand replacement=\&]{
-                    \& \& \& \& \& \node[punto] (p1) {}; \& \node[etiqueta] (muestreo) {};\\
-                    \node [etiqueta] (p6) {$\sum_k a_k p(t)\cos(\omega_ct)+n(t)$}; \& \node[operator] (mult) {$\times$}; \& \node [block] (filtro) {$\displaystyle \frac{1}{T_s} \int_{t-T_s}^t$}; \& \node [punto] (p2) {}; \&\node [punto] (p3) {}; \& \&\node [punto] (p4) {}; \&\node [block] (comp) {COMP};\\
-                    \& \node [etiqueta] (osc) {$2\cos(\omega_ct)$}; \& \& \& \node [block] (sinc) {SINCR}; \& \node [punto] (p5) {};\\
-                };
-                \draw [-stealth] (p6) --  (mult);
-                \draw [-stealth] (mult) -- node [anchor=south] {$x_o(t)$} (filtro);
-                \draw [-stealth] (osc) -- (mult);
-                %\draw (filtro) -- (p2) -- (p3) -- (muestreo);
-                \draw (filtro) -- (p2) -- node [anchor=south] {$y$} (p3) -- (muestreo);
-                \draw [-stealth] (p2) |- (sinc);
-                \draw (sinc) -- (p5);
-                \draw [-stealth,dashed] (p5) -- (p1);
-                \draw [-stealth] (p4) -- (comp);
-                \draw [decorate]  (filtro.south east) --node [below=3mm] {\parbox{3cm}{filtro acop. a NRZ, integra en un período de símb.}} (filtro.south west);
-            \end{blockdiagram}
-            \endpgfgraphicnamed}
-    \end{figure}
-    \FloatBarrier
+
+    Recordando que la energía del pulso NRZ es $\int_0^{T_s} p^2(t)dt = T_s$, se tiene que:
+    \begin{equation*}
+        \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2||p||^2}{\eta_0} = \frac{A^2 T_s}{\eta_0} \Rightarrow P_e = Q\left(\frac{1}{2}\sqrt{\frac{A^2 T_s}{\eta_0}}\right).
+    \end{equation*}
+    Para comparar entre modulaciones, conviene escribir lo anterior en términos de la \emph{energía de bit}, que en este caso corresponde a la energía del pulso de RF transmitido. Observemos que:
+    \begin{equation*}
+        \bar{E}_{\tilde{p}} = E[a_k^2] ||\tilde{p}||^2 = \frac{A^2}{2} \frac{T_s}{2} \Rightarrow A^2 = 4\bar{E}_{\tilde{p}} f_s \Rightarrow P_e = Q\left(\sqrt{\frac{\bar{E}_{\tilde{p}}}{\eta_0}}\right) = Q\left(\sqrt{\gamma}\right),
+    \end{equation*}
+    es decir, la misma probabilidad de error que en el pulso NRZ \emph{unipolar} en banda base.
 \end{ejemplo}
-Analizamos este caso (pulso NRZ) de aquí en adelante por simplicidad.
 
-\newpage
+\begin{ejemplo}[BPSK con pulso NRZ y detector coherente]
+En este caso, nuevamente solo se requiere la componente en fase, ya que el alfabeto es $\pm A + 0j$. Volvemos a realizar una demodulación y detección con filtro acoplado, colocando ahora $0$ como umbral de detección.
 
-\noindent {\bf Notas:}
-    \begin{itemize}
-        \item Los pulsos rectangulares son los de uso más frecuente en radiofrecuencia, ya que es
-             difícil hacer amplificadores de potencia para antena, que operen en forma lineal, lo que haría falta para pulsos de amplitud variable.
-        \item Los pulsos de Nyquist se utilizan, por ejemplo, en TV cable digital.
-    \end{itemize}
+    \begin{center}
+        \begin{blockdiagram}
+            \node at (0,0) (input) {$x_c(t)+n(t)$};
+            \node[circle, draw, thick, right=2cm of input] (mult) {$\times$};
+            \draw[thick,->] (input) -- (mult);
 
+            \node[coordinate, below= of mult] (demod) {};
+            \node[right = of demod] (oscillator) {\begin{circuitikz}\node[oscillator]{};\end{circuitikz} $f_c$};
+            \draw[thick,->] (oscillator) -- (demod) --node[midway,left] {$2\cos(2\pi f_c t)$} (mult);
 
+            \node[right=3cm of mult, block] (inphase) {$\displaystyle{\frac{1}{T_s}\int_{t-T_s}^t}$};
+            \draw[thick,->] (mult) --node[midway]{$x_i(t)+n_i(t)$} (inphase);
 
-\subsection*{Análisis de probabilidad de error en el detector coherente con pulso NRZ}
+            \node[block, right =1.5cm of inphase, inner sep=4pt, label=below:{\footnotesize $\tau=kT_s$}] (samplei) {\begin{circuitikz}\draw (0,0) to[switch] node[ocirc]{} (.8,0);\end{circuitikz}};
+            \draw[thick,->] (inphase) -- (samplei);
 
-Suponemos que el canal tiene ruido blanco Gaussiano, al que se
-aplica un filtro pasabanda de entrada, centrado en $f_c$ y de
-ancho mucho mayor que $f_s$, de modo de no distorsionar los
-pulsos. El ruido recibido $n(t)$ tendrá densidad espectral de
-potencia como se indica:
+            \node[block, right =of samplei, label=below:{\footnotesize Umbral: $0$}] (detectori) {\begin{tikzpicture} \draw (0,0) -| ++(.3,.3) |- ++(.3,.3); \end{tikzpicture}};
 
-\begin{center}\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/DDPasa/DDPasa-6}
-    \begin{tikzpicture}
-        \draw [-stealth] (-6,0) -- (6,0) node [anchor=north] {$f$};
-        \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=east] {$S_n(f)$};
-        \draw (-4,0) -- (-4,1) -- (-2,1) -- (-2,0) -- (2,0) -- (2,1) -- (4,1) node [anchor=west] {$\frac{\eta}{2}$} -- (4,0);
-        \draw [dotted] (3,1) -- (3,0) node [anchor=north] {$f_c$};
-    \end{tikzpicture}
-    \endpgfgraphicnamed\end{minipage}
-\end{center}
+            \draw[thick,->] (samplei) -- (detectori);
+            
+            \draw[thick,->] (detectori) -- ++(2,0) node[right] {$\hat{a}_k$};
 
-Modelamos el ruido pasabanda como
-\[n(t) = n_i(t)\cos(\omega_ct) - n_q(t)\sen(\omega_ct),\]
-donde $n_i$, $n_q$ son ruidos de banda base: $S_{n_i}=S_{n_q} =
-\eta$ en una banda $[-B,B]$, $B \gg f_s$.
+        \end{blockdiagram}
+    \end{center}
 
-La señal de entrada es
-\begin{align*}
-    x_c(t)+n(t) &= \sum_k a_k p(t-kT_s)\cos(\omega_ct) + n_i(t)\cos(\omega_ct) - n_q(t)\sen(\omega_ct)\\
-    \Rightarrow x_o(t) &= 2 [x_c(t)+n(t)]\cos(\omega_ct) = \sum_k a_k p(t-kT_s) + n_i(t) + \text{ términos de
-    alta frecuencia.}
-\end{align*}
+Se tiene entonces que:
+    \begin{equation*}
+        \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2||p||^2}{\eta_0} = \frac{A^2 T_s}{\eta_0} \Rightarrow P_e = Q\left(\sqrt{\frac{A^2 T_s}{\eta_0}}\right).
+    \end{equation*}
+    Y reescribiendo en términos de la relación entre energía de bit y ruido:
+    \begin{equation*}
+        \bar{E}_{\tilde{p}} = E[a_k^2] ||\tilde{p}||^2 = A^2 \frac{T_s}{2} \Rightarrow A^2 = 2\bar{E}_{\tilde{p}} f_s \Rightarrow P_e = Q\left(\sqrt{\frac{2\bar{E}_{\tilde{p}}}{\eta_0}}\right) = Q\left(\sqrt{2\gamma}\right),
+    \end{equation*}
+    es decir, la misma probabilidad de error que en el pulso NRZ \emph{polar} en banda base.
+\end{ejemplo}
 
-Las componentes de alta frecuencia las elimina el filtro, por lo
-que el problema se reduce a uno de detección óptima en banda base,
-con ruido $n_i$. Esto  motiva colocar $h=\frac{1}{T_s}
-p_{[0,T_s]}(t)$, el filtro acoplado al pulso NRZ. Obtenemos
-\[y((k+1)T_s) = a_k \underbrace{(h\ast p)((k+1)T_s)}_{=1} + \underbrace{(h\ast n_i)((k+1)T_s)}_{n_k}.\]
+\begin{ejemplo}[QPSK y 4 QAM con pulso NRZ y detector coherente]
+En este caso sí se requiere la demodulación completa de componente en fase y cuadratura, ilustrada en la Figura \ref{fig:detector coherente}. Comencemos analizando el caso QPSK, cuyo alfabeto es:
+\begin{equation*}
+    c_k \in \{A+0j, 0+Aj, -A+0j, 0-Aj\}.
+\end{equation*}
+De manera equivalente, corresponde a utilizar las fases $\{0,\pi/2,\pi,3\pi/2\}$ y amplitud constante $A$.
 \begin{center}
-    \col{y_k=a_k+n_k}
+\begin{tikzpicture}
+    \begin{axis}[x=2cm,y=2cm,
+        axis lines=middle,
+        xmin=-1.5,xmax=1.5,
+        ymin=-1.5,ymax=1.5,
+        xtick = {-1,1},
+        ytick = {-1,1},
+        xticklabels = {$-A$,$A$},
+        yticklabels = {$-A$,$A$},
+        ]
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({1+.1*invgauss(rnd,rnd)},{.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,,only marks, samples=100] ({0+.1*invgauss(rnd,rnd)},{1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({-1+.1*invgauss(rnd,rnd)},{.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({.1*invgauss(rnd,rnd)},{-1+.1*invgauss(rnd,rnd)});
+        \addplot [black,only marks] coordinates { (1,0) (0,1) (-1,0) (0,-1) };
+        \addplot [dashed, gray, domain=-1:1] (\x,\x);
+        \addplot [dashed, gray, domain=-1:1] (\x,-\x);
+        \draw[->,thick, dashed] (axis cs:1,0) --node[pos=0.75,right] {$\frac{A}{\sqrt{2}}$} (axis cs:.5,.5);
+        \draw[->,thick, dashed] (axis cs:1,0) -- (axis cs:.5,-.5);
+        
+        \node[above right] at (axis cs:1,0) {\bf $(00)$};
+        \node[above right] at (axis cs:0,1) {\bf $(10)$};
+        \node[above right] at (axis cs:-1,0) {\bf $(11)$};
+        \node[above right] at (axis cs:0,-1) {\bf $(01)$};
+    \end{axis}
+    \node[above] at (current bounding box.north) {QPSK};
+\end{tikzpicture}\hspace{1cm}
+\begin{tikzpicture}
+    \begin{axis}[x=2cm,y=2cm,
+        axis lines=middle,
+        xmin=-1.5,xmax=1.5,
+        ymin=-1.5,ymax=1.5,
+        xtick = {-1,1},
+        ytick = {-1,1},
+        xticklabels = {$-A$,$A$},
+        yticklabels = {$-A$,$A$},
+        grid,
+        ]
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({1+.1*invgauss(rnd,rnd)},{1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({-1+.1*invgauss(rnd,rnd)},{1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({-1+.1*invgauss(rnd,rnd)},{-1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({1+.1*invgauss(rnd,rnd)},{-1+.1*invgauss(rnd,rnd)});
+        \addplot [black,only marks] coordinates { (1,1) (-1,1) (-1,-1) (1,-1) };
+        \draw[->,thick, dashed] (axis cs:1,1) --node[midway,right] {$A$} (axis cs:1,0);
+        \draw[->,thick, dashed] (axis cs:1,1) -- (axis cs:0,1);
+
+        \node[above right] at (axis cs:1,1) {\bf $(00)$};
+        \node[above right] at (axis cs:-1,1) {\bf $(10)$};
+        \node[above right] at (axis cs:-1,-1) {\bf $(11)$};
+        \node[above right] at (axis cs:1,-1) {\bf $(01)$};
+    \end{axis}
+    \node[above] at (current bounding box.north) {4-QAM};
+\end{tikzpicture}
 \end{center}
-La varianza del ruido es
-\[\sigma^2=E[n_k^2] = E[n^2] = \int_{-\infty}^{+\infty}|\hat{H}(f)|^2\underbrace{S_{n_i}(f)}_{\eta}\d f \approx \eta ||h||^2 = \eta\frac{1}{T_s} = \eta f_s.\]
 
-La hipótesis $B\gg f_s$ se utilizó en la aproximación de arriba. % En
-%otras palabras: si el pasabanda de entrada es ancho como para
-%dejar intacto el pulso, su equivalente pasabajos deja pasar toda
-%la energía del filtro acoplado.
- O sea que tengo el mismo problema
-de detección de banda base, polar o unipolar, con el doble de
-ruido: $\sigma^2=\eta f_s$.
+A la salida del detector coherente de la Figura \ref{fig:detector coherente} tendremos entonces:
+\begin{equation*}
+    \hat{a}_k = a_k + n_{i,k}, \quad \hat{b}_k = b_k + n_{q,k},
+\end{equation*}
+con $n_{i,k}$ y $n_{q,k}$ muestras independientes de ruido gaussiano de varianza $\eta_0 ||h||^2 = \eta_0 f_s$. Es bastante claro que los umbrales óptimos de detección son las rectas inclinadas de pendiente $\pm \pi/4$ (bisectrices de la fase), por lo que el margen de ruido es $\frac{A}{\sqrt{2}}$. Considerando la probabilidad de error sólo a símbolos adyacentes, que es la que domina, se tiene que:
+\begin{equation*}
+    P_{e,\mathrm{simbolo}} \approx P_{e,a_k} + P_{e,b_k} = 2 Q\left(\frac{A}{\sqrt{2}\sigma_N}\right)
+\end{equation*}
 
-%Calculamos las correspondientes probabilidades de error óptimas:
+Utilizando la fórmula \eqref{eq:snr detector coherente} tenemos que:
+\begin{equation*}
+    \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2||p||^2}{\eta_0} \Rightarrow P_{e,\mathrm{simbolo}} = 2Q\left(\sqrt{\frac{A^2}{2\eta_0 f_s}}\right)
+\end{equation*}
 
+Para realizar una comparación adecuada con los esquemas anteriores, conviene escribir lo anterior en términos de la \emph{energía de bit} y la \emph{tasa de error de bit}. Como cada pulso envía $2$ bits, tenemos que $\bar{E}_b = \frac{1}{2}\bar{E}_{\tilde{p}}$, es decir:
+\begin{equation*}
+    \bar{E}_b = \frac{1}{2}\bar{E}_{\tilde{p}} = \frac{1}{2}\left[ \underbrace{\E{a_k^2}}_{A^2/2}\underbrace{||p(t)\cos(2\pi f_c t)||^2}_{T_s/2} + \underbrace{\E{b_k^2}}_{A^2/2}\underbrace{||p(t)\sin(2\pi f_c t)||^2}_{T_s/2} \right]= \frac{A^2}{4} T_s.
+\end{equation*}
+Sustituyendo arriba se tiene que $P_{e,\mathrm{simbolo}} = 2Q\left(\sqrt{2\bar{E}_b/\eta_0}\right)$. Si utilizamos codificación de Gray, para que los símbolos adyacentes difieran en un solo bit, se tiene que:
+\begin{equation*}
+    \mathrm{BER} = \frac{1}{2}P_{e,\mathrm{simbolo}} = Q\left(\sqrt{\frac{2\bar{E}_b}{\eta_0}}\right) = Q\left(\sqrt{2\gamma}\right).
+\end{equation*}
+En particular, QPSK logra transmitir el doble de tasa de bits en el mismo ancho de banda, y con la misma probabilidad de error en términos de energía de bit que BPSK. Otra forma de interpretarlo es que QPSK consiste en dos ondas BPSK moduladas en cuadratura una de otra, por lo que se demodulan de manera independiente.
 
-\begin{description}
-    \item[ASK] $a_k=\{0,A\}$ (unipolar). Umbral: $\frac{A}{2}$,
-    $P_e=Q\left(\frac{A}{2\sigma}\right)$.
-    \item[BPSK] $a_k=\pm A$ (polar). Umbral: $0$,
-    $P_e=Q\left(\frac{A}{\sigma}\right)$.
- \end{description}
+Analicemos ahora el caso QAM. De la figura es claro que la constelación es la misma que QPSK, solo que rotada $45^\circ$. Si bien ahora el margen de ruido, en términos de $A$, es mayor que antes, también lo es la potencia transmitida ya que $a_k$ y $b_k$ valen simultáneamente $\pm 1$ cada uno (en el otro caso, uno valía $0$ con probabilidad $1/2$). Es de esperar que en términos de la energía de bit, tengamos un comportamiento equivalente como se muestra a continuación.
 
-Al igual que en banda base, se estila escribir $P_e$ en términos de
-$\frac{\overline{E_p}}{\eta}$, donde $\overline{E_p} =
-E[a_k^2]||\tilde{p}||^2$, energía media del pulso de RF
-transmitido. \\ Aquí $\tilde{p}(t) = p(t)\cos(\omega_c t)
-\Longrightarrow ||\tilde{p}||^2=\frac{1}{2}||p||^2=\frac{T_s}{2}$
-para NRZ.
+A la salida del detector de la Figura \ref{fig:detector coherente} tenemos $a_k$ y $b_k$ contaminados por ruido gaussiano de varianza $\eta_0 ||h||^2 = \eta_0 f_s$. Los umbrales de detección son los ejes, y el margen de ruido es $A/\sigma$ por lo que, despreciando errores de más de dos símbolos:
+\begin{equation*}
+    P_{e,\mathrm{simbolo}} \approx P_{e,a_k} + P_{e,b_k} = 2 Q\left(\frac{A}{\sigma_N}\right)
+\end{equation*}
+Utilizando nuevamente la fórmula \eqref{eq:snr detector coherente} tenemos que:
+\begin{equation*}
+    \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2||p||^2}{\eta_0} \Rightarrow P_{e,\mathrm{simbolo}} = 2Q\left(\sqrt{\frac{A^2}{\eta_0 f_s}}\right).
+\end{equation*}
+Por último, la energía media de bit verifica:
+\begin{equation*}
+    \bar{E}_b = \frac{1}{2}\bar{E}_{\tilde{p}} = \frac{1}{2}\left[ \underbrace{\E{a_k^2}}_{A^2}\underbrace{||p(t)\cos(2\pi f_c t)||^2}_{T_s/2} + \underbrace{\E{b_k^2}}_{A^2}\underbrace{||p(t)\sin(2\pi f_c t)||^2}_{T_s/2} \right]= \frac{A^2}{2} T_s.
+\end{equation*}
+Sustituyendo se obtiene $P_{e,\mathrm{simbolo}} = Q\left(\sqrt{2\bar{E}_b/\eta_0}\right)$ y nuevamente utilizando codificación de Gray llegamos a:
+\begin{equation*}
+    \mathrm{BER} = \frac{1}{2}P_{e,\mathrm{simbolo}} = Q\left(\sqrt{\frac{2\bar{E}_b}{\eta_0}}\right) = Q\left(\sqrt{2\gamma}\right),
+\end{equation*}
+por lo que ambas modulaciones son equivalentes en términos de eficiencia espectral y probabilidad de error.
 
-\begin{description}
-    \item[ASK]
-    \begin{equation*}
-%        \left \lbrace
-       \left. \begin{aligned} \overline{E_p}=\frac{A^2}{2}\frac{T_s}{2} \Rightarrow  A^2&=4 \overline{E_p} f_s\\
-                                                            \sigma^2 &= \eta f_s
-                                                           \end{aligned}\right\rbrace \Rightarrow
-                                                           \frac{A}{2\sigma}=\sqrt{\frac{\overline{E_p}}{\eta}}.
-    \end{equation*}
-    \begin{center}
-        \col{P_e=Q\left(\sqrt{\frac{\overline{E_p}}{\eta}}\right)} \  \ igual que en banda base unipolar.
-    \end{center}
-
-    \item[BPSK]
-    \begin{equation*}
-         \left.\begin{aligned}
-          \overline{E_p}=A^2\frac{T_s}{2} \Rightarrow A^2 &=2 \overline{E_p} f_s\\
-                                                            \sigma^2 &= \eta f_s
-                                                           \end{aligned}\right\rbrace \Rightarrow
-                                                           \frac{A}{\sigma}=\sqrt{2\frac{\overline{E_p}}{\eta}}.
-    \end{equation*}
-        \begin{center}
-        \col{P_e=Q\left(\sqrt{2 \frac{\overline{E_p}}{\eta}}\right)} \  \ igual que en banda base polar.
-    \end{center}
- \end{description}
-
-A continuación, generalizamos el detector coherente y el análisis de probabilidad de error para
-las modulaciones pasabanda M-arias.
-
-\newpage
-\subsection*{Detección 4-QAM coherente}
-
-Luego de un filtrado (de banda ancha) en la entrada, la señal que ingresa al detector es
-\[
-x_c(t)+ n(t) = \sum_k p(t-kT_s)\left[a_k\cos(\omega_ct)-b_k\sen(\omega_ct)\right] +
-n(t),\]
-donde $a_k=\pm A$, $b_k=\pm A$
-independientes y equiprobables, y  el ruido es Gaussiano de densidad espectral de
-potencia $\frac{\eta}{2}$ en la banda de interés.
-
-\subsubsection*{Detector coherente (para pulsos NRZ)}
-
-\begin{figure}[htb]
-    \centering
-    \resizebox{\textwidth}{!}{
-    \bpgf{Imagenes/DDPasa/DDPasa-7}
-    \begin{blockdiagram}
-        \matrix[row sep=5 mm, column sep=10mm, ampersand replacement=\&]{
-            \& \& \& \& \& \& \node[punto] (p1) {}; \& \node[etiqueta] (muestreo) {};\\
-            \node [punto] (inicio) {}; \& \node [punto] (p6) {}; \& \node[operator] (mult) {$\times$}; \& \node [block] (filtro) {$\displaystyle \frac{1}{T_s} \int_{t-T_s}^t$}; \& \node [punto] (p2) {}node [anchor=south] {$y$}; \&\node [punto] (p3) {}; \& \&\node [punto] (p4) {}; \&\node [block] (comp) {COMP}; \& \node [etiqueta] (salida) {$\hat{a}_k$};\\
-            \& \& \node [etiqueta] (osc) {$2\cos(\omega_ct)$}; \& \& \& \node [block] (sinc) {SINCR}; \& \node [punto] (p5) {};\\
-            \& \& \& \& \& \& \node[punto] (p1b) {}; \& \node[etiqueta] (muestreob) {};\\
-            \& \& \node[operator] (multb) {$\times$}; \& \node [block] (filtrob) {$\displaystyle \frac{1}{T_s} \int_{t-T_s}^t$}; \& \node [punto] (p2b) {} node [anchor=south] {$z$}; \&\node [punto] (p3b) {}; \& \&\node [punto] (p4b) {}; \&\node [block] (compb) {COMP}; \& \node [etiqueta] (salidab) {$\hat{b}_k$};\\
-            \& \& \node [etiqueta] (oscb) {$-2\sen(\omega_ct)$}; \& \& \& \node [block] (sincb) {SINCR}; \& \node [punto] (p5b) {};\\
-        };
-        \draw (inicio) -- (p6);
-        \draw [-stealth] (p6) --  (mult);
-        \draw [-stealth] (mult) -- (filtro);
-        \draw [-stealth] (osc) -- (mult);
-        \draw (filtro) -- (p2) -- (p3) -- (muestreo);
-        \draw [-stealth] (p2) |- (sinc);
-        \draw (sinc) -- (p5);
-        \draw [-stealth,dashed] (p5) -- (p1);
-        \draw [-stealth] (p4) -- (comp);
-        \draw [-stealth] (comp) -- (salida);
-
-        \draw [-stealth] (p6) |-  (multb);
-        \draw [-stealth] (multb) -- (filtrob);
-        \draw [-stealth] (oscb) -- (multb);
-        \draw (filtrob) -- (p2b) -- (p3b) -- (muestreob);
-        \draw [-stealth] (p2b) |- (sincb);
-        \draw (sincb) -- (p5b);
-        \draw [-stealth,dashed] (p5b) -- (p1b);
-        \draw [-stealth] (p4b) -- (compb);
-        \draw [-stealth] (compb) -- (salidab);
-    \end{blockdiagram}
-    \endpgfgraphicnamed}
-\end{figure}
-
-Similar al detector QAM analógico, aquí el filtro es el acoplado.
-
-Escribimos el ruido como $n_i(t)\cos(\omega_ct)-n_q(t)\sen(\omega_ct)$, tenemos
-\begin{align*}
-    y((k+1)T_s) &= a_k + (h\ast n_i)((k+1)T_s) = a_k + n_k^i,\\
-    z((k+1)T_s) &= b_k + (h\ast n_q)((k+1)T_s) = b_k + n_k^q,\\
-\end{align*}
-donde $n_k^i, n_k^q$ son Gaussianos $(0,\sigma^2=\eta f_s)$ (igual
-que en BPSK). Suponiendo que el filtro de entrada es simétrico
-alrededor de $f_c$, $n_i(t)$ y $n_q(t)$ son no correlacionados y
-luego (por ser Gaussianos) son independientes. Por tanto $n_k^i,
-n_k^q$ son variables aleatorias independientes.
-
-Las probabilidades de error en la detección de cada $a_k$ y $b_k$
-son
-\[P_e(a_k) = P_e(b_k) = Q\left(\frac{A}{\sigma}\right).\]
-La probabilidad de error de símbolo es
-\[
-P_e(\text{símbolo})= 1 - (1-P_e(a_k))(1-P_e(b_k)) \approx 2
-Q\left(\frac{A}{\sigma}\right).\]
-
-\subsubsection*{Expresión con $\frac{\overline{E_p}}{\eta}$}
-
-\begin{gather*}
-    \overline{E_p}=\underbrace{E[a_k^2]}_{A^2} \underbrace{\left\|p(t)\cos(\omega_ct)\right\|^2}_{\frac{T_s}{2}} + \underbrace{E[b_k^2]}_{A^2} \underbrace{\left\|p(t)\sen(\omega_ct)\right\|^2}_{\frac{T_s}{2}} = A^2 T_s\\
-    \Rightarrow \frac{A}{\sigma}=\sqrt{\frac{\overline{E_p}}{\eta}}
-    \Rightarrow  P_e(\text{símbolo})  = 2
-    Q\left(\sqrt{\frac{\overline{E_p}}{\eta}}\right).
-\end{gather*}
-
-Para comparar correctamente con las modulaciones binarias,
-conviene considerar la probabilidad de error de bit
-\[
-P_e(\text{bit})=Q\left(\frac{A}{\sigma}\right),\] y también
-introducir la \emph{energía media por bit}, que considera que
-cada pulso lleva 2 bits:
-\[
-\overline{E_b} = \frac{1}{2}\overline{E_p}.
-\]
-Se obtiene entonces (igual que en BPSK) la expresión
-\[
-P_e(\text{bit}) = Q\left(\sqrt{\frac{2
-\overline{E_b}}{\eta}}\right).
-\]
-
-
-\subsection*{Generalización: QAM M-ario}
-
-\noindent Suponemos $M=M_a^2=M_b^2$, y usamos los niveles $\pm
-A,\pm 3A,\ldots,\pm(\sqrt{M}-1)A$ para $a_k$ y $b_k$
-
-
-En el intervalo $[k T_s, (k+1)T_s]$, la onda enviada
-$\left[a_k\cos(\omega_ct)-b_k\sen(\omega_ct)\right]$ es sinusoidal con envolvente compleja (fasor) $(a_k+jb_k)$, punto de la constelación.
-En ausencia de ruido, la correlación con las componentes $\cos(\omega_ct)$ y $\sen(\omega_ct)$ produciría precisamente los símbolos $a_k$, $b_k$. El efecto del ruido es ``borronear" los puntos de la constelación. La tarea del detector es clasificar cual fue el punto enviado, lo que se hace mediante umbrales en las componentes en fase y cuadratura.
-
-El detector es igual al 4QAM, excepto que cada variable $y_k$, $z_k$ se compara con más umbrales.
-
-
-\newpage
-
-%
-%    \begin{figure}[htb]
-%        \centering
-\begin{minipage}{0.5\textwidth}
-\begin{ejemplo} 16 QAM, $\sqrt{M}=4$
-\begin{itemize}
-    \item $y_k$ es cuaternario $\rightarrow$ umbrales $0,\pm 2A$.
-    \item $z_k$ es cuaternario $\rightarrow$ umbrales $0,\pm 2A$.
-\end{itemize}
 \end{ejemplo}
-\end{minipage}
-\begin{minipage}{0.5\textwidth}
-    \resizebox{\textwidth}{!}{
-        \bpgf{Imagenes/DDPasa/DDPasa-8}
-        \begin{tikzpicture}
-            \draw [-stealth] (-4,0) -- (4,0);
-            \draw [-stealth] (0,-4) -- (0,4);
-            \foreach \x in {-3,-1,...,3}
-                {\draw  (\x,-3) -- (\x,3);
-                \draw  (-3,\x) -- (3,\x);
-                \foreach \y in {-3,-1,...,3}
-                    \draw [fill] (\x,\y) circle (0.07);}
-            \path (-3,0) node [anchor=north east] {$-3A$} -- (-1,0) node [anchor=north east] {$-A$} (1,0) node [anchor=north west] {$A$} -- (3,0) node [anchor=north west] {$3A$};
-            \draw [dotted] (2,-3.5)  node [anchor=north west] {umbrales de detección}-- (2,3.5);
-            \draw [dotted] (-2,-3.5) -- (-2,3.5);
-            \draw [dotted] (-3.5,2) -- (3.5,2);
-            \draw [dotted] (-3.5,-2) -- (3.5,-2);
-        \end{tikzpicture}
-        \endpgfgraphicnamed}\end{minipage}
-%    \end{figure}
-%    \FloatBarrier
 
 
-Recordando la detección M-aria en banda base,
-$P_e(a_k)=2\frac{M_a-1}{M_a} Q\left(\frac{A}{\sigma}\right)$.
+\begin{ejemplo}[$M$-QAM]
 
-Incluyendo $M_a=\sqrt{M}$, y considerando también $P_e(b_k)$
-obtenemos
+    Pasemos ahora al caso de $M$-QAM, en el cual los símbolos del alfabeto se disponen en una grilla equiespaciada en el plano complejo, que se muestra en la figura. Aquí $A$ es el parámetro de escala que controla la energía transmitida. Como se observa en la Figura, esto corresponde a elegir $a_k$ y $b_k$ constelaciones polares de dimensión $1$ como las analizadas en banda base. Normalmente se toma $M=M_a^2=M_b^2$ (en general $M$ además es potencia de $2$ para transmitir una cantidad entera de bits).
 
-\[
-P_e(\text{símbolo})=4\frac{\sqrt{M}-1}{\sqrt{M}}
-Q\left(\frac{A}{\sigma}\right).\]
+    A la salida del detector coherente de la Figura \ref{fig:detector coherente} tenemos entonces dos muestras $\hat{a}_k$ y $\hat{b}_k$ contaminadas por ruidos de varianza $\sigma_N^2 = \eta_0 ||p||^2$ independientes. La detección se hace entonces de manera independiente para $a_k$ y $b_k$ usando como umbrales $0,\pm 2A,\pm 4A,\ldots$ por lo que la probabilidad de error de símbolo, despreciando errores no adyacentes queda:
+    \begin{equation*}
+        P_{e,\mathrm{simbolo}} \approx P_{e,a_k} + P_{e,b_k} = 4\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\frac{A}{\sigma_N}\right)
+    \end{equation*}
+    donde usamos la fórmula para probabilidad de error en cada eje con alfabeto de tamaño $M_a=M_b=\sqrt{M}$.
 
-\paragraph{Expresión con $\overline{E_p}$}
+    Utilizando nuevamente la fórmula \eqref{eq:snr detector coherente} tenemos que:
+    \begin{equation*}
+        \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2||p||^2}{\eta_0} \Rightarrow P_{e,\mathrm{simbolo}} = 4\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{A^2}{\eta_0 f_s}}\right).
+    \end{equation*}
 
-\begin{gather*}
-    \overline{E_p}=\left(E[a_k^2]+E[b_k^2]\right)\frac{T_s}{2} =  E[a_k^2]T_s = \frac{M_a^2-1}{3} A^2T_s = \frac{M-1}{3} A^2T_s  \\
-    \Rightarrow A^2= \frac{3 \overline{E_p}}{M-1} f_s \Rightarrow \frac{A}{\sigma} = \sqrt{\frac{3\overline{E_p}}{(M-1)\eta}}.\\
-    \col{P_e(\text{simb}) = 4\frac{\sqrt{M}-1}{\sqrt{M}}Q\left(\sqrt{\frac{3\overline{E_p}}{(M-1)\eta}}\right)}
-\end{gather*}
+    Para realizar la comparación, conviene calcular la energía media por bit nuevamente como:
+    \begin{align*}
+        \bar{E}_b &= \frac{1}{\log_2 M}\bar{E}_{\tilde{p}} = \frac{1}{\log_2 M}\left[ \E{a_k^2}\underbrace{||p(t)\cos(2\pi f_c t)||^2}_{T_s/2} + \E{b_k^2}\underbrace{||p(t)\sin(2\pi f_c t)||^2}_{T_s/2} \right]\\
+        &= \frac{1}{\log_2 M}\left(\E{a_k^2} + \E{b_k^2}\right)\frac{T_s}{2} \\
+        &= \frac{1}{\log_2 M}\left(\frac{M_a^2-1}{3}A^2 \frac{T_s}{2} + \frac{M_b^2-1}{3}A^2 \frac{T_s}{2}\right)\\
+        &= \frac{1}{\log_2 M} \frac{M-1}{3}A^2T_s,
+    \end{align*}
+    donde usamos el resultado para $\E{a_k^2}=\E{b_k^2}$ del caso $M-$ario de banda base.
 
-%\newpage
+    Sustituyendo en la probabilidad de error se obtiene:
+    \begin{equation*}
+        P_{e,\mathrm{simbolo}} = 4\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{3\log_2M\bar{E}_b}{(M-1)\eta_0}}\right) = 4\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{3\log_2M }{(M-1)}\gamma}\right) 
+    \end{equation*}
 
-\subsection*{Detección PSK M-aria}
-%
-%\begin{figure}[htb]
+    Nuevamente, observando que cada símbolo codifica $\log_2 M$ bits, se llega a la tasa de error de QAM:
+    \begin{equation*}
+        \mathrm{BER} =  \frac{4}{\log_2 M}\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{3\log_2M }{(M-1)}\gamma}\right) 
+    \end{equation*}
+
     \begin{center}
-\begin{minipage}{0.4\textwidth}
-    \resizebox{\textwidth}{!}{
-    \bpgf{Imagenes/DDPasa/DDPasa-9}
-    \begin{tikzpicture}
-        \draw (-4,0) -- (4,0);
-        \draw (0,-4) -- (0,4);
-        \draw (0,0) circle (3);
-        \foreach \x in {0,30,...,330}
-            \draw [fill] (0,0) -- (\x:3) circle (0.07) -- (\x:3.7);
-        \draw (35:3.5) [stealth-stealth] arc (35:55:3.5);
-        \path (45:3.7) node [anchor=south west] {$\frac{2\pi}{M}$};
+        \begin{tikzpicture}
+        \begin{axis}[x=1cm,y=1cm,
+            axis lines=middle,
+            xmin=-3.5,xmax=3.5,
+            ymin=-3.5,ymax=3.5,
+            xtick = {-3,-1,1,3},
+            ytick = {-3,-1,1,3},
+            xticklabels = {$-3A$,$-A$,$A$,$3A$},
+            yticklabels = {$-3A$,$-A$,$A$,$3A$},
+            grid,
+            ]
+            \foreach \a in {-3,-1,1,3} {
+                \foreach \b in {-3,-1,1,3} {
+                    \addplot[teal, opacity=0.15,only marks, samples=20] ({\a+.1*invgauss(rnd,rnd)},{\b+.1*invgauss(rnd,rnd)});
+                    \addplot [black,only marks] coordinates {(\a,\b)};
+                }
+            }
+        \end{axis}
+        \node[above] at (current bounding box.north) {16-QAM};
     \end{tikzpicture}
-    \endpgfgraphicnamed}
-    \end{minipage}%
-\end{center}
-%\end{figure}
-%\FloatBarrier
+    \end{center}
 
-\begin{figure}[htb]
-    \centering    \resizebox{\textwidth}{!}{
-    \bpgf{Imagenes/DDPasa/DDPasa-10}
-    \begin{blockdiagram}
-        \matrix[row sep=5 mm, column sep=10mm, ampersand replacement=\&]{
-            \& \& \& \& \& \node [punto] (p1a) {};\\
-            \node [etiqueta] (inicio) {$Ap(t)\cos(\omega_ct+\theta_k)+n(t)$}; \& \node [punto] (p) {};\& \node[operator] (multa) {$\times$}; \& \node[block] (filtroa) {$\frac{1}{T}\int$}; \& \node[punto] (p2a) {}; \& \node [punto] (p3a) {}; \& \node[etiqueta] (salidaa) {$A\cos(\theta_k)+n_k^i$};\\
-            \& \& \node[etiqueta] (osca) {$2\cos(\omega_ct)$};\\
-            \& \& \& \& \& \node [punto] (p1b) {};\\
-            \& \& \node[operator] (multb) {$\times$}; \& \node[block] (filtrob) {$\frac{1}{T}\int$}; \& \node[punto] (p2b) {}; \& \node [punto] (p3b) {}; \& \node[etiqueta] (salidab) {$A\sen(\theta_k)+n_k^q$};\\
-            \& \& \node[etiqueta] (oscb) {$-2\sen(\omega_ct)$};\\
-        };
-        \draw (inicio) -- (p);
-        \draw [-stealth] (p) -- (multa);
-        \draw [-stealth] (osca) -- (multa);
-        \draw [-stealth] (multa) -- (filtroa);
-        \draw (filtroa) -- (p2a) -- (p1a);
-        \draw [-stealth] (p3a) -- (salidaa);
+\end{ejemplo}
 
-        \draw [-stealth] (p) |- (multb);
-        \draw [-stealth] (oscb) -- (multb);
-        \draw [-stealth] (multb) -- (filtrob);
-        \draw (filtrob) -- (p2b) -- (p1b);
-        \draw [-stealth] (p3b) -- (salidab);
-    \end{blockdiagram}
-    \endpgfgraphicnamed}
-\end{figure}
-\FloatBarrier
+\begin{ejemplo}[$M$-PSK]
 
-Ruido $(n_k^i,n_k^q)$ igual que en QAM.
+    Por último, analicemos un alfabeto $M-$ario codificado solo en fase, lo que corresponde a la modulación $M-$PSK. En este caso, corresponde a tomar $a_k = A\cos(\theta_k)$ y $b_k=A\sin(\theta_k)$ (o bien símbolos complejos $c_k = Ae^{j\theta_k}$) con fases $\theta_k$ equiespaciadas $0,2\pi/M,\ldots,2\frac{M-1}{M}\pi$.
 
-\begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/DDPasa/DDPasa-11}
-    \begin{tikzpicture}
-        \draw [fill,red!50,opacity=0.2] (0,0) -- (22.5:7)  arc (22.5:67.5:7) -- (0,0);
-        \draw (-30:5) arc (-30:120:5);
-        \draw (-3,0) -- (6,0);
-        \draw (0,-3) -- (0,6);
-        \draw (22.5:7) -- (0,0) -- (67.5:7);
-        \draw (0,0) -- (45:6);
-        \draw [-stealth,thick] (1,0) arc (0:45:1);
-        \draw [stealth-stealth] (22.5:3)  arc  (22.5:45:3);
-        \path (22.5:3) -- (45:3) node [anchor=south west,midway] {$\frac{\pi}{M}$};
-        \draw [fill] (45:5) circle (0.07) node [anchor=east] {$A\e^{j\theta_k}$};
-        \draw [fill] (45:5) -- ++(1,0) circle (0.05) node [anchor=west] {$(y_k,z_k)$};
+    Nuevamente, a la salida del detector coherente de la Figura \ref{fig:detector coherente} tenemos entonces dos muestras $\hat{a}_k$ y $\hat{b}_k$ contaminadas por ruidos de varianza $\sigma_N^2 = \eta_0 ||p||^2$ independientes. La detección se hace entonces clasificando cada símbolo a su fase más cercana, es decir clasificamos según $\arctan\left(b_k/a_k\right)$ (umbrales radiales). Esto es difícil de analizar de manera exacta, ya que debemos calcular la probabilidad de que el símbolo perturbado por el ruido gaussiano caiga en un arco de círculo de ángulo $2\pi/M$. Sin embargo, tomando como margen de ruido la distancia entre el punto de la constelación y el punto más cercano del umbral tenemos la aproximación:
+    \begin{equation*}
+        P_{e,\mathrm{simbolo}} \approx 2 Q\left(\frac{A\sin(\pi/M)}{\sigma_N}\right),
+    \end{equation*}
+    donde usamos que para cada símbolo hay un margen $A\sin(\pi/M)$ al umbral y cada símbolo puede dar error a los dos adyacentes. Esta aproximación es razonable para $M\geqslant 4$ y $A\gg \sigma_N$.
+
+    Para evaluar lo anterior, volvemos a la fórmula \eqref{eq:snr detector coherente}:
+    \begin{equation*}
+        \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2||p||^2}{\eta_0} \Rightarrow P_{e,\mathrm{simbolo}} = 2 Q\left(\sqrt{\frac{A^2\sin^2(\pi/M)}{\eta_0 f_s}}\right).
+    \end{equation*}
+
+    Calculamos también la energía media por bit como:
+    \begin{align*}
+        \bar{E}_b &= \frac{1}{\log_2 M}\bar{E}_{\tilde{p}} = \frac{1}{\log_2 M}\left[ \E{a_k^2}\underbrace{||p(t)\cos(2\pi f_c t)||^2}_{T_s/2} + \E{b_k^2}\underbrace{||p(t)\sin(2\pi f_c t)||^2}_{T_s/2} \right]\\
+        &= \frac{1}{\log_2 M}\left(\E{a_k^2} + \E{b_k^2}\right)\frac{T_s}{2} \\
+        &= \frac{1}{\log_2 M}\frac{T_s}{2}\E{|c_k|^2}\\
+        &= \frac{1}{\log_2 M} \frac{T_s}{2}A^2
+    \end{align*}
+    donde usamos que el símbolo $|c_k|$ tiene amplitud constante.
+
+    Sustituyendo en la probabilidad de error se obtiene:
+    \begin{equation*}
+        P_{e,\mathrm{simbolo}} = 2 Q\left(\sqrt{\frac{2\log_2M\sin(\pi/M)\bar{E}_b}{\eta_0}}\right) = 2Q\left(\sqrt{2\log_2M \sin^2(\pi/M)\gamma}\right) 
+    \end{equation*}
+
+    Nuevamente, observando que cada símbolo codifica $\log_2 M$ bits, se llega a la tasa de error de QAM:
+    \begin{equation*}
+        \mathrm{BER} = \frac{2}{\log_2 M}Q\left(\sqrt{2\log_2M \sin^2(\pi/M)\gamma}\right) 
+    \end{equation*}
+
+    \begin{center}
+        \begin{tikzpicture}
+        \begin{axis}[x=2cm,y=2cm,
+            axis lines=middle,
+            xmin=-1.5,xmax=1.5,
+            ymin=-1.5,ymax=1.5,
+            xtick = {-1,1},
+            ytick = {-1,1},
+            xticklabels = {$-A$,$A$},
+            yticklabels = {$-A$,$A$},
+            grid,
+            ]
+            \foreach \a in {0,1,...,15}{
+                    \addplot[teal, opacity=0.15,only marks, samples=20] ({cos(\a*360/16)+0.05*invgauss(rnd,rnd)},{sin(\a*360/16)+0.05*invgauss(rnd,rnd)});
+                    \addplot [black,only marks] coordinates {({cos(\a*360/16)},{sin(\a*360/16)})};
+            }
+        \end{axis}
+        \node[above] at (current bounding box.north) {16-PSK};
     \end{tikzpicture}
-    \endpgfgraphicnamed \end{minipage}
-\end{figure}
-\FloatBarrier
+    \end{center}
 
-Umbrales de detección: al recibir $(y_k,z_k)$ busco el símbolo más
-cercano $\Rightarrow$ umbrales radiales. La $P_e$ no depende del
-símbolo enviado.
+    
+\end{ejemplo}
 
-
-
-Para calcular $P_e$, por simplicidad tomo
-$\theta_k=0$.
-
-\begin{minipage}{0.5\textwidth}
-    \resizebox{\textwidth}{!}{
-%\begin{center}
-    \bpgf{Imagenes/DDPasa/DDPasa-11b}
-    \begin{tikzpicture}
-        \draw [-stealth] (0,0) -- (4,0) node [anchor=north] {$A$};
-        \draw [-stealth] (4,0) -- (5,0) node [anchor=north] {$n^i_k$};
-        \draw [-stealth] (5,0) -- (intersection of 0,0--15:1 and 5,0--5,1) node [anchor=west] {$n^q_k$};
-        \draw (0,0) -- (intersection of 0,0 -- 15:1 and 5,0--5,1);
-        \draw (2,0) arc (0:15:2);
-        \path (7.5:2.3) node {$\theta$};
-    \end{tikzpicture}
-    \endpgfgraphicnamed}
-%\end{center}
-\end{minipage}\hfil
-\begin{minipage}{0.5\textwidth}
-\begin{gather*}
-    \tan(\theta)=\frac{n^q_k}{A+n^i_k},\\
-    P_e(\text{símbolo}) = P\left(|\theta|>\frac{\pi}{M}\right).
-\end{gather*}
-\end{minipage}
-
-Esto es complejo de evaluar analíticamente, pero existe una
-aproximación para $M\geq 4$ y $A \gg \sigma$:
-\[P_e(\text{símbolo})\approx 2 Q\left(\sqrt{\frac{\overline{E_p}}{\frac{\eta}{2}}\sen^2\left(\tfrac{\pi}{M}\right)}\right).\]
-
-
-\subsection*{Comparación MQAM-MPSK(M grande)}
-
+Para terminar esta sección, hagamos una comparativa de la eficiencia de PSK y QAM. Observemos que si $M$ es grande podemos aproximar las probabilidades de error de la siguiente forma:
 \begin{description}
     \item[QAM] $P_e\approx 4 Q\left(\sqrt{\frac{3\overline{E_p}}{M\eta}}\right)$
     \item[PSK] $P_e\approx 2 Q\left(\sqrt{\frac{2\pi^2\overline{E_p}}{M^2\eta}}\right)$.
  \end{description}
-El argumento de la función $Q(\cdot)$ cae más rápido con $M$ en
-PSK que en QAM $\Longrightarrow P_e$ es mayor (peor) en PSK que en QAM.
+El argumento de la función $Q(\cdot)$ cae más rápido con $M$ en PSK que en QAM, por lo que $P_e$ es mayor en PSK que en QAM para las mismas energías de pulso.
 
- {\bf QAM superior a MPSK (M
-grande).}
+La intuición del resultado anterior es la siguiente: el margen de ruido está determinado por la separación entre los símbolos, mientras que la restricción de potencia limita el tamaño promedio de la constelación. En el caso de PSK, la constelación tiene módulo constante, por lo que para separar más los símbolos debo aumentar la potencia (o incurrir en más error). En cambio QAM aprovecha el espacio interior del círculo modulando la amplitud además de la fase y manteniendo una mayor separación.
 
-\paragraph{Intuición: } La separación de los puntos de la constelación, en relación al ruido es lo que determina $P_e$.
-La restricción de potencia (o $\overline{E_p}$) limita cuan lejos
-en el plano se puede extender la constelación. Entonces, para
-lograr la mejor $P_e$ con una $\overline{E_p}$ dada, lo mejor es
-una constelación uniforme de puntos en el plano. Esto se consigue
-mejor con QAM.
+Retomemos ahora el tema de la eficiencia espectral. Como vimos antes, la señal pasabanda ocupa el doble de ancho de banda que la señal de banda base equivalente. Si utilizamos pulsos NRZ en banda base (el análisis es similar para otros pulsos) y tomamos como ancho de banda del pulso $f_s$, el lóbulo central, entonces en pasabanda:
+\begin{equation*}
+    \mathrm{Eff} = \frac{\mathrm{vti}}{B} = \frac{\log_2 M f_s}{2f_s} = \frac{\log_2 M}{2}.
+\end{equation*}
 
-\begin{figure}[htb]
-    \centering
-    \resizebox{\textwidth}{!}{
-    \bpgf{Imagenes/DDPasa/DDPasa-12}
-    \begin{tikzpicture}
-        \draw (-3,0) -- (3,0);
-        \draw (0,-3) -- (0,3);
-        \foreach \x in {-2.5,-1.5,...,2.5}
-            \foreach \y in {-2.5,-1.5,...,2.5}
-                \draw [fill] (\x,\y) circle (0.07);
-        \begin{scope}[shift={(8,0)}]
-            \draw (-3,0) -- (3,0);
-            \draw (0,-3) -- (0,3);
-            \draw (0,0) circle (2.5);
-            \foreach \x in {0,10,...,350}
-                \draw [fill] (\x:2.5) circle (0.07);
-        \end{scope}
-    \end{tikzpicture}
-    \endpgfgraphicnamed}
-\end{figure}
-\FloatBarrier
+En la Figura \ref{fig:comparacion qam psk} se grafica la relación $\gamma=\bar{E}_b/\eta_0$ en $\unit{\decibel}$ necesaria para QAM y PSK con diferentes valores de $M$ y la eficiencia espectral correspondiente, para una probabilidad de error de diseño de $\mathrm{BER}=10^{-6}$. Claramente QAM requiere menos potencia para la misma eficiencia y misma probabilidad de error.
 
-Las anteriores son las probabilidades de error de símbolo. Igual
-que en banda base, se plantea el tema de cuantos bits son
-afectados por cada error de símbolo.
-
-Claramente, son mucho más probables los errores a un vecino de la
-constelación. Si logramos codificar los bits de modo que símbolos
-vecinos difieran en un sólo bit (codificación de Gray), tenemos
-que
-
-
-\[P_e(\text{bit})=\text{``BER''} = \col{\frac{P_e(\text{simb})}{\log_2(M)}}\]
-
-%\newpage
-\subsubsection*{Codificación de Gray}
-
-Para MPSK, la constelación es esencialmente unidimensional (en un
-círculo), por lo tanto podemos generar códigos de Gray en forma
-similar al caso de banda base. Ejemplo de 8-PSK:
-
-
-\begin{figure}[htb]
-    \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/DDPasa/DDPasa-14}
-    \begin{tikzpicture}
-        \draw (-4,0) -- (4,0);
-        \draw (0,-4) -- (0,4);
-        \draw (0,0) circle (3);
-        \foreach \x in {0,45,...,315}
-            {\draw [fill] (\x:3) circle (0.07);
-            \draw (0,0) -- (\x:3.5);}
-        \path (0:3) node [anchor=south west] {$000$};
-        \path (45:3) node [anchor=west] {$001$};
-        \path (90:3) node [anchor=south west] {$011$};
-        \path (135:3) node [anchor=east] {$010$};
-        \path (180:3) node [anchor=south east] {$110$};
-        \path (225:3) node [anchor=east] {$111$};
-        \path (270:3) node [anchor=north east] {$101$};
-        \path (315:3) node [anchor=west] {$100$};
-    \end{tikzpicture}
-    \endpgfgraphicnamed\end{minipage}
-\end{figure}
-
-
-Para lograr esta propiedad en QAM hace falta una codificación de
-Gray para una constelación bidimensional. La solución es codificar
-por Gray  cada coordenada, que representa bits independientes.
-Ejemplo con 16-QAM:
-
-
-    \FloatBarrier
-    \begin{figure}[htb]
-        \centering\begin{minipage}{\textwidth}
-        \bpgf{Imagenes/DDPasa/DDPasa-13}
+\begin{figure}
+    \begin{center}
         \begin{tikzpicture}
-            \draw (-4,0) -- (4,0);
-            \draw (0,-4) -- (0,4);
-            \foreach \x/\p in {-3/-3,-1/-,1/{},3}
-                {\draw [dotted] (\x,-3.5) -- (\x,3.5);
-                \draw [dotted] (-3.5,\x) -- (3.5,\x);
-                \path (\x,0) node  [anchor=north east] {$\p A$};
-                \foreach \y in {-3,-1,...,3}
-                    \draw [fill] (\x,\y) circle (0.07);}
-            \path (-3,-3) node [anchor=west] {\footnotesize $0000$};
-            \path (-1,-3) node [anchor=west] {\footnotesize $0100$};
-            \path (1,-3) node [anchor=west] {\footnotesize $1100$};
-            \path (3,-3) node [anchor=west] {\footnotesize $1000$};
+            \begin{axis}[width=0.6\textwidth,
+                axis lines=middle,
+                xmin=8,xmax=30.5,
+                ymin=0,ymax=3.4,
+                xlabel=$\gamma$ $(\unit{\decibel})$,
+                ylabel=$\mathrm{Eff}$ $(\unit{\bps /\hertz})$,
+                grid,
+                legend style={legend pos=south east},
+                x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+                y label style={at={(axis description cs:-0.1,0.5)},rotate=90,anchor=south}]
 
-            \path (-3,-1) node [anchor=west] {\footnotesize $0001$};
-            \path (-1,-1) node [anchor=west] {\footnotesize $0101$};
-            \path (1,-1) node [anchor=west] {\footnotesize $1101$};
-            \path (3,-1) node [anchor=west] {\footnotesize $1001$};
-
-            \path (-3,3) node [anchor=west] {\footnotesize $0010$};
-            \path (-1,3) node [anchor=west] {\footnotesize $0110$};
-            \path (1,3) node [anchor=west] {\footnotesize $1110$};
-            \path (3,3) node [anchor=west] {\footnotesize $1010$};
-
-            \path (-3,1) node [anchor=west] {\footnotesize $0011$};
-            \path (-1,1) node [anchor=west] {\footnotesize $0111$};
-            \path (1,1) node [anchor=west] {\footnotesize $1111$};
-            \path (3,1) node [anchor=west] {\footnotesize $1011$};
-
-            \draw [dashed] (-2,-3.5) -- (-2,3.5);
-            \draw [dashed] (-3.5,-2) -- (3.5,-2);
-            \path (-2,0) node [anchor=north east] {$2A$};
-            \draw [stealth-stealth] (-3.5,-2) -- node [anchor=east] {$A$} (-3.5,-3);
-            \draw [stealth-stealth] (-3,-3.5) -- node [anchor=north] {$A$, umbral} (-2,-3.5);
+                \addplot[teal, thick, mark=*] coordinates {
+                    (10.52983169956084, .5)
+                    (10.52983169956084, 1)
+                    (12.393482720329594, 1.5)
+                    (14.401727044112327, 2)
+                    (16.535902046832312, 2.5)
+                    (18.777249982943914, 3)
+                };
+                \addlegendentry{$M$-QAM}
+                \addplot[teal, thick,mark=square*] coordinates {
+                    (10.52983169956084, .5)
+                    (10.52983169956084, 1)
+                    (13.949556574666492, 1.5)
+                    (18.441008301342784, 2)
+                    (23.362371184842722, 2.5)
+                    (28.50731616802202, 3)
+                };
+                \addlegendentry{$M$-PSK}
+                \node[right] at (axis cs:10.53,.5) {BPSK};
+                \node[right] at (axis cs:10.53,1) {QPSK-4QAM};
+                \node[above] at (axis cs:18.77,3) {$64$-QAM};
+                \node[above] at (axis cs:28.5,3) {$64$-PSK};
+            \end{axis}
         \end{tikzpicture}
-        \endpgfgraphicnamed\end{minipage}
-    \end{figure}
-    \FloatBarrier
-Errores de más de $1$ bit requieren errores en dos coordenadas
-(distancia $\sqrt{2}A$), o en una coordenada, pero más de un
-salto.
-
-
-\subsubsection*{Comparación (Carlson)}
-
-Una forma de evaluar la eficiencia relativa de MQAM y MPSK con
-codificación de Gray es definir
-$E_b=\frac{\overline{E_p}}{\log_2(M)}$ (energía por bit) y
-graficar la eficiencia espectral en función de $\frac{E_b}{\eta}$,
-para una BER (probabilidad de error de bit) fija.
-
-\begin{figure}[htb]
- \centering\begin{minipage}{\textwidth}
- \bpgf{Imagenes/DDPasa/DDPasa-14b}
-
-  \begin{tikzpicture}
-      \draw [-stealth] (-0.5,0) -- (5,0) node [anchor=north] {$\frac{E_b}{\eta}$};
-      \draw [-stealth] (0,-0.5) -- (0,6) node [anchor=east] {$\frac{bps}{Hz}$};
-      \draw [dotted] (0,1) node [anchor=east] {$2$} -- (1,1) -- (1,2) [dotted] -- (0,2) node [anchor=east] {$4$};
-      \draw (1,1) -- (1,2);
-      \draw (1,2) -- (4.5,5) node [anchor=west] {PSK};
-      \draw (0,4) -- (5,4);
-      \path ({10/3},4) node [anchor=north] {$16$};
-      \draw [domain=1:4.5] plot (\x,{2.5*ln(\x)+2}) node [anchor=west] {QAM};
-      \path ({exp(2/2.5)},4) node [anchor=south] {$16$};
-  \end{tikzpicture}
-  \endpgfgraphicnamed\end{minipage}
-
+    \end{center}
+    \caption{Comparación de $M-$QAM con $M-$PSK: graficamos eficiencia espectral contra relación $\bar{E}_b/\eta_0$ en $\unit{\decibel}$ para una probabilidad de error de diseño de $\mathrm{BER}=10^{-6}$.}\label{fig:comparacion qam psk}
 \end{figure}
-
