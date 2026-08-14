@@ -688,7 +688,7 @@ Por lo tanto:
 
 Concluimos entonces que la relación señal a ruido se degrada \emph{linealmente} en $m$. Si bien esto es mejor que no repetir (en general la atenuación cae más rápido que lineal), de todos modos la $P_e$ se degrada fuertemente, como muestra el siguiente ejemplo.
 
-\begin{ejemplo}[Repetición no regenerativa]
+\begin{ejemplo}[Repetición no regenerativa]\label{ejemplo:repeticion no regenerativa}
     Consideremos una señal polar en la situación ideal que utilizamos filtros acoplados. En ese caso $P_e=Q(\sqrt{S/N})$. Supongamos que, en una única etapa se logra una relación $S/N$ de $20 \unit{\deci\bel}$, es decir $S/N = 100$. En ese caso, al cabo de $m=20$ repetidores tenemos:
     \begin{equation*}
         \left(\frac{S}{N}\right)_m = \frac{1}{20} \left(\frac{S}{N}\right)_1 = 5 \Rightarrow P_{e,m} = Q\left(\sqrt{5}\right) \approx 1.20\times 10^{-2},
@@ -710,7 +710,7 @@ P_{e,m} \approx m P_{e,1}.
 \end{equation*}
 Con este método, es $P_{e,m}$ la que se deteriora linealmente con $m$ y no la relación señal a ruido.
 
-\begin{ejemplo}[Repetidor regenerativo]
+\begin{ejemplo}[Repetidor regenerativo]\label{ejemplo:repetidor regenerativo}
 Retomando el ejemplo anterior, $(S/N)_1=100$ ($20 \unit{\deci\bel}$) por lo que $p=Q(10) = 7.6 \times 10^{-24}$ como ya vimos para una etapa. Luego de $m=20$ repetidores tendremos entonces:
 \begin{equation*}
     P_{e,m} \approx m P_{e,1} = 20 p \approx 1.5 \times 10^{-22},
