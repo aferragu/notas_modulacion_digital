@@ -10,21 +10,23 @@
 \usepackage[utf8]{inputenc}
 %\usepackage{lmodern}
 \usepackage[adobe-utopia]{mathdesign}
+%\usepackage{roboto}
 \usepackage[T1]{fontenc}
 \usepackage{graphicx}
-\usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm]{geometry}
-\setlength{\parskip}{\baselineskip}
+\usepackage[top=2.5cm,bottom=2.5cm,left=2cm,right=2cm]{geometry}
+%\setlength{\parskip}{0.7\baselineskip}
 \usepackage[spanish,es-noquoting]{babel}
 \usepackage{float}
+\usepackage[export]{adjustbox}
 \usepackage[    pdftex,unicode=true,
         pdfdisplaydoctitle=true,
         colorlinks,
-        linkcolor=black,]{hyperref}
+        linkcolor=black,urlcolor=blue]{hyperref}
 
 \graphicspath{Imagenes/}
 \usepackage[usenames,dvipsnames]{xcolor}
 
-%\usepackage[font={scriptsize,sf},format=plain,labelfont={bf},labelsep=period,skip=-0.5pt,justification=centering]{caption}
+\usepackage[font={footnotesize},format=plain,labelfont={bf},labelsep=period]{caption}
 %\usepackage[font+=scriptsize,skip=-0.5pt]{subcaption}
 
 \usepackage{indentfirst}
@@ -32,9 +34,12 @@
 \usepackage{tikz}
 \usetikzlibrary{decorations.pathreplacing}
 \usetikzlibrary{positioning}
-\usetikzlibrary{calc}
+\usetikzlibrary{fit}
+\usetikzlibrary{math,calc}
+\usetikzlibrary{backgrounds}
 \usetikzlibrary{shapes.geometric}
 \usetikzlibrary{babel}
+\tikzset{>=stealth}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \usepackage{circuitikz}
@@ -42,6 +47,22 @@
 %\usepackage{lscape}
 %\usepackage{pifont}
 \usepackage{siunitx}
+\DeclareSIUnit\bps{bps}
+
+\pgfmathdeclarefunction{invgauss}{2}{%
+  \pgfmathparse{sqrt(-2*ln(#1))*cos(deg(2*pi*#2))}%
+}
+
+% Filtro pasabajos
+\newcommand{\pasabajos}[2]{
+        \begin{tikzpicture}[scale=#2]
+                \draw [->] (-2,0) -- (2,0);
+                \draw [->] (0,-.2) -- (0,1.5);
+                \draw[teal, thick] (-1.5,0) -- (-1,0) -- (-1,1) -- (1,1) -- (1,0) -- (1.5,0);
+                \node [anchor=north] at (-1,0) {\tiny $-#1$};
+                \node [anchor=north] at (1,0) {\tiny $#1$};
+        \end{tikzpicture}
+}
 
 %-------------------------------------------------------------------------------------------------------
                                          %Para imágenes lindas
@@ -51,36 +72,8 @@
 %-------------------------------------------------------------------------------------------------------
 
 
-
-\newcommand\mypart[1]{\clearpage\part[#1]{\Large{}#1}}
-\AtBeginDocument{\renewcommand{\partname}{Capítulo}}
-
-
-\renewcommand{\section}{\@startsection {section}{1}{0pt}%
-    {-3.5ex plus -1ex minus -.2ex}%
-    {2.3ex plus .2ex}%
-    {\FloatBarrier\normalfont\normalsize\bfseries\MakeUppercase}}
-
-\renewcommand{\subsection}{\@startsection {subsection}{2}{0pt}%
-    {-3.25ex plus -1ex minus -.2ex}%
-    {1ex plus .2ex}%
-    {\FloatBarrier\indent\normalfont\normalsize\bfseries}}
-
-\renewcommand{\subsubsection}{\@startsection {subsubsection}{3}{0pt}%
-    {-3.25ex plus -1ex minus -.2ex}%
-    {1ex plus .2ex}%
-    {\indent\normalfont\normalsize\itshape}}
-
-
-\AtBeginDocument{\renewcommand{\contentsname}{Índice}\setcounter{tocdepth}{2}}
+\AtBeginDocument{\renewcommand{\contentsname}{Índice}\setcounter{tocdepth}{1}}
 \AtBeginDocument{\renewcommand{\proofname}{Demostración}}
-
-
-\renewcommand{\theequation}{\thesection.\arabic{equation}}
-\@addtoreset{equation}{section}
-\renewcommand{\thefigure}{\scriptstyle\thesection.\arabic{figure}}
-\@addtoreset{figure}{section}
-
 
 
 %usage:\rfrac{num}{den}
@@ -97,6 +90,14 @@
 \newcommand{\epi}[1][\ensuremath{f_c}]{\e^{j2\pi #1 t}}
 \newcommand{\mepi}[1][\ensuremath{f_c}]{\e^{-j2\pi #1 t}}
 \newcommand{\back}{$\phantom{1}$}
+\newcommand{\E}[1]{\mathrm{E}\left[#1\right]}
+\newcommand{\p}[1]{\mathrm{P}\left(#1\right)}
+\renewcommand{\phi}{\varphi}
+\renewcommand{\iff}{\Leftrightarrow}
+\newcommand{\fourier}{\;\displaystyle{\mathop{\longmapsto}^{\mathcal{F}}}\;}
+\newcommand{\fourierinv}{\;\displaystyle{\mathop{\longmapsto}^{\mathcal{F}^{-1}}}\;}
+\newcommand{\vti}{\mathrm{vti}}
+
 
 %% cajas de color rojo, arreglado en 2011.
 
@@ -110,21 +111,22 @@
 \newcommand{\myref}[1]{sección~\ref{#1}~- \nameref{#1}, en la página~\pageref{#1}}
 
 
-\newtheorem{teorema}{Teorema}
+\newtheorem{teorema}{Teorema}[chapter]
 \newtheorem{corolario}[teorema]{Corolario}
 \newtheorem{lema}[teorema]{Lema}
 \newtheorem{proposicion}[teorema]{Proposición}
-\newtheorem{definicion}{Definición}
-\newtheorem{remark}{Nota}
-\newtheorem{problema}{Problema}
-\newtheorem{ejemplo}{Ejemplo}
-\newtheorem{condicion}{Condición}
-\@addtoreset{ejemplo}{part}
+\newtheorem{definicion}{Definición}[chapter]
+\newtheorem{condicion}{Condición}[chapter]
+
+%\theoremstyle{remark}
+\newtheorem{remark}{Nota}[chapter]
+\newtheorem{problema}{Problema}[chapter]
+\newtheorem{ejemplo}{Ejemplo}[chapter]
 
 \newtheorem*{corolarioSN}{Corolario}
 \newtheorem*{lemaSN}{Lema}
 \newtheorem*{proposicionSN}{Proposición}
-\newtheorem*{definicionSN}{Definición}
+\newtheorem*{definicion*}{Definición}
 \newtheorem*{remarkSN}{Nota}
 \newtheorem*{remarksSN}{Notas}
 \newtheorem*{condicionSN}{Condición}
