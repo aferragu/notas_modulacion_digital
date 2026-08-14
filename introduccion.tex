@@ -215,19 +215,20 @@ Es decir, recuperamos exactamente el largo medio del código de Huffman anterior
     \begin{equation}\label{eq:entropia binaria}
         H(p) = -p\log_2 (p) - (1-p) \log_2(1-p),
     \end{equation}
-    cuya gráfica puede verse en la Figura \ref{fig:entropia binaria}
-
-    \begin{figure}
-        \begin{center}
-            \begin{tikzpicture}
-                \begin{axis}[grid]
-                \addplot[domain=0:1,samples=100, color=teal, very thick] {-x*ln(x)/ln(2) - (1-x)*ln(1-x)/ln(2)};
-                \end{axis}
-            \end{tikzpicture}
-        \end{center}
-        \caption{Entropía de una fuente binaria. Notar que el máximo se alcanza para $p=1/2$, es decir, distribución uniforme.}\label{fig:entropia binaria}
-    \end{figure}
+    cuya gráfica puede verse en la Figura \ref{fig:entropia binaria}.
 \end{ejemplo}
+
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[grid]
+            \addplot[domain=0.01:.99,samples=100, color=teal, very thick] {-x*ln(x)/ln(2) - (1-x)*ln(1-x)/ln(2)};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Entropía de una fuente binaria. Notar que el máximo se alcanza para $p=1/2$, es decir, distribución uniforme.}\label{fig:entropia binaria}
+\end{figure}
 
 El Teorema de Shannon muestra que para una fuente dada, su entropía es la mínima cantidad de bits por símbolo alcanzable:
 \begin{teorema}[Shannon, 1948]
