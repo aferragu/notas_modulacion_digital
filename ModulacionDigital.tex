@@ -1,64 +1,229 @@
 \documentclass[a4paper,11pt]{report}
 
-%%% REVISION 2024: NOTAS DE MODULACIÓN DIGITAL UNICAMENTE
+%%%BIBLIOTECAS Y CONFIGURACION
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage{amsthm}
+\usepackage{ifthen}
+\usepackage[utf8]{inputenc}
+\usepackage[adobe-utopia]{mathdesign}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage[top=2.5cm,bottom=2.5cm,left=2cm,right=2cm]{geometry}
+%\setlength{\parskip}{0.7\baselineskip}
+\usepackage[spanish,es-noquoting]{babel}
+\usepackage{float}
+\usepackage[export]{adjustbox}
+\usepackage[    pdftex,unicode=true,
+        pdfdisplaydoctitle=true,
+        colorlinks,
+        linkcolor=black,urlcolor=blue]{hyperref}
 
-\usepackage{misSett}
+\usepackage[usenames,dvipsnames]{xcolor}
 
-%\pgfrealjobname{ModulacionDigital}
-%\usetikzlibrary{external}
-%\tikzexternalize[prefix=figuras/,optimize=false]
+\usepackage[font={footnotesize},format=plain,labelfont={bf},labelsep=period]{caption}
+
+\usepackage{indentfirst}
+\usepackage{placeins}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{positioning}
+\usetikzlibrary{fit}
+\usetikzlibrary{math,calc}
+\usetikzlibrary{backgrounds}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{babel}
+\tikzset{>=stealth}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{circuitikz}
+\usepackage{siunitx}
+\DeclareSIUnit\bps{bps}
+
+\pgfmathdeclarefunction{invgauss}{2}{%
+  \pgfmathparse{sqrt(-2*ln(#1))*cos(deg(2*pi*#2))}%
+}
+
+% Filtro pasabajos
+\newcommand{\pasabajos}[2]{
+        \begin{tikzpicture}[scale=#2]
+                \draw [->] (-2,0) -- (2,0);
+                \draw [->] (0,-.2) -- (0,1.5);
+                \draw[teal, thick] (-1.5,0) -- (-1,0) -- (-1,1) -- (1,1) -- (1,0) -- (1.5,0);
+                \node [anchor=north] at (-1,0) {\tiny $-#1$};
+                \node [anchor=north] at (1,0) {\tiny $#1$};
+        \end{tikzpicture}
+}
+
+%-------------------------------------------------------------------------------------------------------
+                                         %Para imágenes lindas
+\floatstyle{boxed}
+\newfloat{figura}{thpb}{fig}[section]
+\floatname{figura}{Figura}
+%-------------------------------------------------------------------------------------------------------
 
 
-\listfiles
+\AtBeginDocument{\renewcommand{\contentsname}{Índice}\setcounter{tocdepth}{1}}
+\AtBeginDocument{\renewcommand{\proofname}{Demostración}}
+
+
+%usage:\rfrac{num}{den}
+\newcommand{\rfrac}[2]{\ensuremath{\,^{#1}\!/\!_{#2}}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\R}{\mathbb{R}}
+\DeclareMathOperator{\sen}{sen}
+\DeclareMathOperator{\sinc}{sinc}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\var}{Var}
+\renewcommand{\Re}{Re}
+\renewcommand{\Im}{Im}
+\renewcommand{\d}{\ensuremath{\mathrm{d}}}
+\newcommand{\epi}[1][\ensuremath{f_c}]{\e^{j2\pi #1 t}}
+\newcommand{\mepi}[1][\ensuremath{f_c}]{\e^{-j2\pi #1 t}}
+\newcommand{\back}{$\phantom{1}$}
+\newcommand{\E}[1]{\mathrm{E}\left[#1\right]}
+\newcommand{\p}[1]{\mathrm{P}\left(#1\right)}
+\renewcommand{\phi}{\varphi}
+\renewcommand{\iff}{\Leftrightarrow}
+\newcommand{\fourier}{\;\displaystyle{\mathop{\longmapsto}^{\mathcal{F}}}\;}
+\newcommand{\fourierinv}{\;\displaystyle{\mathop{\longmapsto}^{\mathcal{F}^{-1}}}\;}
+\newcommand{\vti}{\mathrm{vti}}
+
+
+%% cajas de color rojo, arreglado en 2011.
+
+\newcommand{\col}[1]{\protect\color{Red}
+{\boxed{\normalcolor #1}}\normalcolor\normalfont}
+
+\newcommand{\refer}[1]{{\itshape ver \hyperref[#1]{sección~\ref{#1}~- \nameref{#1}, en la página~\pageref{#1}}}}
+\newcommand{\refFigura}[1]{{(\itshape ver \hyperref[#1]{\normalsize Figura~\ref{#1}})}}
+\newcommand{\myref}[1]{sección~\ref{#1}~- \nameref{#1}, en la página~\pageref{#1}}
+
+\newtheorem{teorema}{Teorema}[chapter]
+\newtheorem{corolario}[teorema]{Corolario}
+\newtheorem{lema}[teorema]{Lema}
+\newtheorem{proposicion}[teorema]{Proposición}
+\newtheorem{definicion}{Definición}[chapter]
+\newtheorem{condicion}{Condición}[chapter]
+
+%\theoremstyle{remark}
+\newtheorem{remark}{Nota}[chapter]
+\newtheorem{problema}{Problema}[chapter]
+\newtheorem{ejemplo}{Ejemplo}[chapter]
+
+\newtheorem*{corolarioSN}{Corolario}
+\newtheorem*{lemaSN}{Lema}
+\newtheorem*{proposicionSN}{Proposición}
+\newtheorem*{definicion*}{Definición}
+\newtheorem*{remarkSN}{Nota}
+\newtheorem*{remarksSN}{Notas}
+\newtheorem*{condicionSN}{Condición}
+\newtheorem*{conclusionSN}{Conclusion}
+\newtheorem*{propiedadesSN}{Propiedades}
+
+%%%%COMANDOS PARA TIKZ
+
+\newcommand{\specleft}[1]{%
+\draw [domain=#1-0.95:#1-0.4-0.001, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
+\draw [domain=#1-0.4+0.001:#1, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});}
+
+\newcommand{\specright}[1]{%
+\draw [domain=#1:#1+0.4-0.001, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
+\draw [domain=#1+0.4+0.001:#1+0.95, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});}
+
+\newcommand{\specleftf}[1]{%
+\draw [domain=#1-0.95:#1-0.4-0.001, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
+\draw [domain=#1-0.4+0.001:#1, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))}) -- (#1,0);}
+
+\newcommand{\specrightf}[1]{%
+\draw [domain=#1:#1+0.4-0.001, samples=50] (#1,0) -- plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
+\draw [domain=#1+0.4+0.001:#1+0.95, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});}
+
+\newcommand{\specfull}[1]{\specleft{#1}\specright{#1}}
+
+\newenvironment{blockdiagram}[1][]{%
+\begin{tikzpicture}[
+     block/.style={
+    % The shape:
+    rectangle,
+    % The size:
+    minimum size=6mm,draw,
+    % The border:
+    thick,
+    },
+    operator/.style={
+    circle,draw,
+    minimum size=7mm,
+    inner sep=1mm,
+    thick},
+    punto/.style={coordinate},auto,
+    etiqueta/.style={rectangle,inner sep=0mm},
+    multD/.style={isosceles triangle,draw,isosceles triangle apex angle=50,shape border rotate =-90,thick},#1]
+}{\end{tikzpicture}}
+
+
+\newcommand{\bpgf}[1]{\beginpgfgraphicnamed{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%
+
+
 \begin{document}
 
-\title{\Huge Modulación Digital \\ \, \\ \LARGE Universidad ORT Uruguay }
-\author{\LARGE Prof. Fernando Paganini \\ \\ \\
-\Large Versión electrónica 2024 elaborada por \\ \\
-\Large Andrés Ferragut y Fabián Kozynski}
-\date{\LARGE Revisado en: 2024} 
+\title{\Huge Modulación Digital e Introducción a la Propagación \\ \, \\ \LARGE Universidad ORT Uruguay }
+\author{\LARGE Andrés Ferragut}
+\date{\LARGE Agosto 2026} 
 
 \maketitle
 
-\newpage
+\thispagestyle{empty}
+
+\chapter*{Prefacio}
+
+Estas notas de curso presentan una introducción a los conceptos básicos de modulación de señales digitales, su propagación en medios físicos y la detección y reconstrucción de mensajes, permitiendo así la comunicación digital de extremo a extremo.
+
+El contenido de estas notas se basa fuertemente en las notas de Modulación Digital del Prof. Fernando Paganini (recopiladas en formato digital por Fabián Kozynski). Los ejercicios que acompañan estas notas fueron compilados inicialmente por los Prof. Guillermo Langwagen y Fernando Paganini, así como agregados propios. Los conceptos de propagación en medios guiados están basados en el material del Prof. Enrique Maciel. Cabe agradecer a todos ellos por sus aportes, así como a los estudiantes que han realizado este curso y sus antecesores que también han aportado ideas y correcciones relevantes.
+
+El objetivo de estas notas es, entonces, dar una visión unificada de los conceptos de propagación y modulación que permitan entonces comprender de manera integral los problemas inherentes a la comunicación digital, sus ventajas respecto a la comunicación analógica, y las técnicas básicas de generación de señales moduladas, ecualización y sincronismo.
+
+Estas notas se dividen en tres grandes secciones. La primera, correspondiente a los capítulos \ref{chapter:introduccion} y \ref{chapter:procesos estocasticos} definen el modelo base de un sistema de transmisión digital, e incorporan las nociones básicas de \emph{procesos aleatorios}, necesarias para realizar un modelo adecuado del sistema transmisión-recepción. 
+
+En una segunda parte, los capítulos \ref{chapter:modulacion banda base}, \ref{chapter:deteccion ruido} y \ref{chapter:modulacion pasabanda} introducen los mecanismos básicos de transmisión de símbolos discretos (digitales) sobre un medio continuo (canal), tanto en banda base como en radiofrecuencia (RF o pasabanda). Se estudian los fenómenos de interferencia intersímbólica, ruido y detección óptima, así como el uso de constelaciones de símbolos.
+
+En la tercera parte nos enfocamos más específicamente en los conceptos de \emph{propagación de señales} y su impacto en la transmisión en el Capítulo \ref{chapter:propagacion guiada}. Esto le da sentido físico al modelo de canal simplificado utilizado en las partes anteriores e introduce los conceptos de distorsión del canal. Una vez conocido dicho canal, incorporamos los conceptos básicos de \emph{ecualización} y \emph{sincronismo}, cruciales para la comunicación a distancia entre dispositivos que no disponen de un reloj común, y que se comunican utilizando un medio que distorsiona la señal. Por último, construyendo sobre estos conceptos, en el capítulo \ref{chapter:ofdm} se introducen nuevas técnicas de modulación que aprovechan el ancho de banda del canal de transmisión de manera eficiente. En los apéndices se repasan algunos conceptos previos para referencia.
+
+La comunicación digital es hoy en día el núcleo central de la era de la conectividad global que atravesamos. Descubrir sus fundamentos teóricos, así como las implicaciones prácticas de los mismos es crucial para la formación como Ingeniero en Telecomunicaciones. El objetivo entonces es acercar estos conceptos de manera amigable y con ejemplos concretos. Acompaña a estas notas un conjunto de ejercicios prácticos, así como un laboratorio de comunicación utilizando el software GNURadio, para implementar de forma práctica los conceptos vistos a lo largo de este texto.
 
 \tableofcontents
 
-\chapter{Introducción}
-\input{intro}
-\input{modulacion}
 
-\chapter{Procesos aleatorios}
-\input{ruido}
-\input{prob}
-\input{estoc}
-\input{modEst}
-\input{ruidoPasa}
+\chapter{Introducción}\label{chapter:introduccion}
+\input{introduccion}
 
-\chapter{Modulación Digital en Banda Base}
+\chapter{Procesos aleatorios}\label{chapter:procesos estocasticos}
+\input{procesos_estocasticos}
 
-\input{modDig}
-\input{codLinBB}
-\input{formPuls}
-\input{detDig}
-\input{digBB}
-\input{filAc}
-\input{repReg}
+\chapter{Modulación Digital en Banda Base}\label{chapter:modulacion banda base}
+\input{banda_base}
 
-\chapter{Modulación Digital Pasabanda}%
-\input{MDPasa}
-\input{binariopasa}
-\input{Mariopasa}
-\input{DetCoh}
-\input{FSK.tex}
-\input{incoh.tex}
+\chapter{Detección Digital en Presencia de Ruido}\label{chapter:deteccion ruido}
+\input{deteccion}
+
+\chapter{Modulación Digital Pasabanda}\label{chapter:modulacion pasabanda}
+\input{modulacion_pasabanda}
+
+\chapter{Propagación en medios guiados}\label{chapter:propagacion guiada}
+
+\chapter{Ecualización y sincronismo}\label{chapter:ecualización y sincronismo}
+
+\chapter{Modulación ortogonal en frecuencia}\label{chapter:ofdm}
 
 \appendix
 
-\chapter{Demostraciones}
+\chapter{Apéndice}
 
-\input{App-ruidoPasa}
+\input{repaso_probabilidad.tex}
 
-\input{Ap-dens-esp-dig}
+\input{ruidoPasabanda.tex}
+
 
 \end{document}

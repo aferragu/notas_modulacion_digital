@@ -1,0 +1,992 @@
+Hasta ahora hemos estudiado la transmisión de símbolos digitales utilizando pulsos de banda base, que son apropiados para canales que responden adecuadamente a dichas frecuencias. Por ejemplo, el par trenzado de cobre o el cable coaxial, usado por ejemplo en Ethernet o en USB. Sin embargo, muchas veces, hace falta modular los datos digitales en otras partes del espectro, ya sea porque el medio así lo requiere (por ejemplo: enlaces satelitales o de terrestres de microondas, que utilizan señales de $\unit{\giga\hertz}$, WiFi, etc.), o por la necesidad de utilizar muchos canales dentro del mismo medio (ej: televisión digital sobre cable coaxial).
+
+En principio, una solución posible sería modular tomar la onda PAM $x(t)=\sum_k a_k p(t-kT_s)$ generada por un modulador digital de banda base, y modularla de forma analógica en frecuencia, utilizando cualquier técnica de las vistas anteriormente como AM, FM, etc. Esto es conceptualmente correcto, pero no necesariamente es lo más eficiente. El hecho de que las señales sean digitales hace que pueda convenir combinar la modulación digital y la modulación pasabanda en un mismo proceso: desde el punto de vista de la modulación esto puede pensarse como que utilizamos \emph{pulsos de radiofrecuencia} $p_{\textrm{RF}}(t)$ para generar $x_{c}(t)$, una señal digital modulada con espectro en la región de frecuencias deseada. Las dos interpretaciones son complementarias, como veremos.
+
+Una segunda observación es que, desde el punto de vista de la detección, no es necesario volver a demodular completamente la señal (como sí lo requiere la transmisión analógica, por ejemplo FM comercial) sino simplemente \emph{detectar} el símbolo enviado mediante un muestreo y detección adecuados.
+
+Consideremos una sinusoide base portadora $\cos(2\pi f_c t)$ a modular utilizando símbolos. Podemos cambiar varias características de la onda base para lograr enviar los datos digitales, por ejemplo:
+\begin{description}
+    \item[Amplitud:] 
+    \begin{equation*}
+        x_c(t) = a_k \cos(2\pi f_c t), \quad t\in[kT_s,(k+1)T_s],
+    \end{equation*}
+    con la amplitud codificando los símbolos
+    \item[Fase:] 
+    \begin{equation*}
+        x_c(t) = \cos(2\pi f_c t + \theta_k), \quad t\in[kT_s,(k+1)T_s],
+    \end{equation*}
+    con $\theta_k$ codificando los símbolos.
+    \item[Frecuencia: ] 
+    \begin{equation*}
+        x_c(t) = a_k \cos\left(2\pi (f_c+a_kf_{\Delta}) t\right), \quad t\in[kT_s,(k+1)T_s],
+    \end{equation*}
+     con la variación en frecuencia $a_kf_{\Delta}$ codificando los símbolos.
+\end{description}
+En la Figura \ref{fig:ejemplos pasabanda} se muestran tres modulaciones de este tipo, junto con la modulación banda base del mismo mensaje utilizando pulsos NRZ. Cuando la señal digital afecta uno solo de estos parámetros, se habla de \emph{keying} (por analogía a las llaves discretas de la telegrafía), dando lugar a los llamados \emph{Amplitude Shift Keying (ASK)}, \emph{Phase Shift Keying (PSK)} y \emph{Frequency Shift Keying (FSK)}. Obviamente podemos combinar varias de estas estrategias simultáneamente como veremos.
+
+\begin{figure}
+    \begin{center}
+    \begin{tikzpicture}
+        \node[align=center] at (-2,1) {Mensaje $\{a_k\}$};
+        \path (1,1) node {$1$} -- (3,1) node {$0$} -- (5,1) node {$1$} -- (7,1) node {$1$} -- (9,1) node {$0$};
+        \begin{scope}[shift={(0,-1)}]
+            \node [align=center] at (-2,.5) {Banda base\\Pulso NRZ};
+            \draw (0,1) -- (2,1) -- (2,0) -- (4,0) -- (4,1) -- (8,1) -- (8,0) -- (10,0);
+        \end{scope}
+        \begin{scope}[shift={(0,-3)}]
+            \node [align=center] at (-2,0) {ASK\\$a_k=\{0,A\}$};
+            \draw [samples=200,domain=0:2] plot (\x,{.5*cos(8*pi*\x r)}) -- (2,0) -- (4,0) -- plot [samples=200,domain=4:8] (\x,{.5*cos(8*pi*\x r)}) -- (8,0) -- (10,0);
+        \end{scope}
+        \begin{scope}[shift={(0,-5)}]
+            \node [align=center] at (-2,0) {Binary PSK (BPSK)\\$\theta_k=\{-\pi,\pi\}$};
+            \draw [samples=200,domain=0:2] plot (\x,{.5*sin(8*pi*\x r)}) -- plot [domain=2:4] (\x,{-.5*sin(8*pi*\x r)}) -- plot [samples=200,domain=4:8] (\x,{.5*sin(8*pi*\x r)}) -- plot [domain=8:10] (\x,{-.5*sin(8*pi*\x r)});
+        \end{scope}
+       \begin{scope}[shift={(0,-7)}]
+            \node [align=center] at (-2,0) {FSK\\$f_k=f_c\pm f_\Delta$};
+            \draw [samples=200,domain=0:2] plot (\x,{.5*cos(8*pi*\x r)}) -- plot [domain=2:4] (\x,{.5*cos(4*pi*\x r)}) -- plot [samples=200,domain=4:8] (\x,{.5*cos(8*pi*\x r)}) -- plot [domain=8:10] (\x,{.5*cos(4*pi*\x r)});
+        \end{scope}
+    \end{tikzpicture}
+    \end{center}
+    \caption{Ejemplos de modulación digital pasabanda y comparación con banda base.}\label{fig:ejemplos pasabanda}
+\end{figure}
+
+Como veremos a continuación, los casos de ASK (también llamado ON-OFF keying, OOK, en el caso binario) y BPSK (Binary Phase Shift Keying) corresponden a una modulación lineal (al igual que la modulación AM o DSB). En cambio en FSK la dependencia es no lineal, como en el caso de FM.
+
+\section{Modulación pasabanda binaria}
+
+Sea entonces $\{a_k\}$ un proceso estocástico de tiempo discreto de símbolos binarios independientes e idénticamente distribuidos, y consideremos la onda digital de radiofrecuencia:
+\begin{equation}\label{eq:onda PAM RF}
+x_c(t) = \sum_k a_k p(t-kT_s) \cos(2\pi f_c t + \theta),    
+\end{equation}
+donde $p(t)$ es un pulso de banda base (ej: NRZ) y $\theta\sim\textrm{Uniforme}[0,2\pi]$ una fase aleatoria\footnote{En lo que sigue omitiremos esta fase aleatoria.}, que indica que el oscilador no necesariamente está sincronizado con los símbolos. Entonces $x_c(t)$ es una onda PAM de radiofrecuencia.
+
+Observemos que la onda de la ecuación \eqref{eq:onda PAM RF} corresponde a realizar una modulación DSB de la onda PAM de banda base $x(t)=\sum_k a_k p(t-kT_s)$. Por lo visto en la Sección \ref{sec:modulacion wss}, podemos calcular el espectro de la onda $x_c$ como:
+\begin{equation}\label{eq:dep PAM RF}
+    S_{x_c}(f) = \frac{S_x(f-f_c) + S_x(f+f_c)}{4},
+\end{equation}
+donde recordamos la expresión para la densidad espectral de potencia en banda base \eqref{eq:dep onda pam iid}:
+\begin{equation*}
+S_x(f) = \sigma_a^2 f_s |\hat{P}(f)|^2 + \mu^2 f_s^2 \sum_{n=-\infty}^{+\infty} |\hat{P}(n f_s)|^2\delta(f-nf_s).    
+\end{equation*}
+Aquí $\mu$ y $\sigma_a^2$ son la media y varianza, respectivamente, de los símbolos $\{a_k\}$, y $\hat{P}(f)$ la transformada de Fourier del pulso de banda base.
+
+Apliquemos el resultado anterior para analizar el espectro de diferentes modulaciones simples binarias.
+
+\begin{ejemplo}[ON-OFF Keying (OOK), modulación ASK binaria]
+    Este es el caso más simple, corresponde a utilizar un pulso de RF de amplitud $A$ para indicar un símbolo y ausencia de pulso para indicar el otro (ver Figura \ref{fig:ejemplos pasabanda}). Podemos identificar este esquema con la onda \eqref{eq:onda PAM RF} utilizando:
+    \begin{equation*}
+        a_k \in \{0,A\}, \quad p(t)=p_{[0,T_s]}(t)
+    \end{equation*}
+    es decir, en banda base, la modulación OOK se ve como una modulación binaria unipolar $\{0,A\}$ con pulsos NRZ.
+
+    De lo visto en banda base, sabemos que $\mu = A/2$ y $\sigma_a^2=A^2/4$. A su vez $|\hat{P}(f)|^2= T_s \sinc(\pi f_s t)$ por lo que el espectro de $x(t)$ es:
+    \begin{equation*}
+        S_x(f) = \frac{A^2 T_s}{4} \sinc^2(\pi f_s t) + \frac{A^2}{4}\delta(f).
+    \end{equation*}
+
+    Utilizando entonces el resultado de modulación \eqref{eq:dep PAM RF} llegamos al siguiente espectro para la onda de RF, donde solo graficamos las frecuencias positivas:
+
+    \begin{center}
+    \begin{tikzpicture}
+        \draw [->] (-0.5,0) -- (8,0) node [anchor=north] {$f$};
+        \draw [->] (0,-0.5) -- (0,2.5) node[left] {$S_{x_c}$};
+        \draw [teal,thick,samples=210,domain=1:7] plot (\x,{(sin(pi*(\x-4) r)/(pi*(\x-4)))^2});
+        \node[teal,right] at (4,1) {$\frac{A^2 T_s}{16}$};
+        \draw [very thick, teal, ->] (4,0) -- (4,2) node (a) [anchor=west] {$\frac{A^2}{16}$};
+        \node [below] at (4,0) {\footnotesize $f_c$};
+        \node [below] at (5,0) {\footnotesize $f_c+f_s$};
+        \node [below] at (3,0) {\footnotesize $f_c+f_s$};
+        \node [anchor=west, align=center] (b) at (6,2) {Tiene portadora\\(como AM)};
+        \draw [->] (a) -- (b);
+    \end{tikzpicture}
+    \end{center}
+
+    Notemos que esta modulación tiene ``portadora'' (como AM). A su vez, buena parte del espectro queda contenido a la banda $f_c\pm f_s$ por lo que si $f_c\gg f_s$, la señal ocupa una pequeña banda alrededor de la frecuencia de portadora. Esta señal es muy fácil de generar (y también de detectar como veremos), requiriendo únicamente encender y apagar un oscilador de RF. Es por ello que es ampliamente utilizada en aplicaciones sencillas, como por ejemplo, control remoto de dispositivos.
+\end{ejemplo}
+
+
+\begin{ejemplo}[Binary Phase Shift Keying (BPSK)]
+    En este caso, el símbolo va codificado en la fase, es decir se transmite o bien $A\cos(2\pi f_c t)$ o bien $A\cos(2\pi f_c + \pi)$, de manera de separarlos lo más posible. Como $\cos(x+\pi) = -\cos(x)$, podemos identificar la onda PAM \eqref{eq:onda PAM RF} con la siguiente onda en banda base:
+    \begin{equation*}
+        a_k \in \{-A,A\}, \quad p(t) = p_{[0,T_s]}(t),
+    \end{equation*}
+    es decir, BPSK corresponde a utilizar en banda base una onda binaria polar NRZ. Nuevamente, por lo visto en banda base:
+    \begin{equation*}
+        S_x(f) = A^2 T_s \sinc^2(\pi f_s t),
+    \end{equation*}
+    de donde obtenemos el siguiente espectro de radiofrecuencia:
+    \begin{center}
+    \begin{tikzpicture}
+        \draw [->] (-0.5,0) -- (8,0) node [anchor=north] {$f$};
+        \draw [->] (0,-0.5) -- (0,2.5) node[left] {$S_{x_c}$};
+        \draw [teal,thick,samples=210,domain=1:7] plot (\x,{2*(sin(pi*(\x-4) r)/(pi*(\x-4)))^2});
+        \node[teal,right] at (4,2) {$\frac{A^2 T_s}{4}$};
+        \node [below] at (4,0) {\footnotesize $f_c$};
+        \node [below] at (5,0) {\footnotesize $f_c+f_s$};
+        \node [below] at (3,0) {\footnotesize $f_c+f_s$};
+    \end{tikzpicture}
+    \end{center}
+
+    Este es el ejemplo más sencillo de modulación digital eficiente en RF. En particular no tiene portadora. Nuevamente, la mayor parte de la potencia se encuentra concentrada en $f_c \pm f_s$, aunque al igual que en ASK, el ancho de banda es en principio infinito. Esto puede traer problemas de interferencia a bandas adyacentes así como ISI en la detección, como veremos.
+\end{ejemplo}
+
+\begin{ejemplo}[Binary Phase Shift Keying (BPSK) con pulsos de Nyquist]\label{ej:bpsk nyquist}
+    Si queremos \emph{limitar} el ancho de banda de la señal BPSK, notemos que no es estrictamente necesario en la modulación utilizar un pulso cuadrado NRZ. Si cambiamos $x(t)$ por:
+    \begin{equation*}
+        x(t) = \sum_k a_k p(t-kT_s)
+    \end{equation*}
+    con $p(t)$ un pulso de Nyquist de exceso de ancho de banda $\alpha$, entonces la señal de banda base tiene densidad espectral acotada a la banda $\pm \frac{f_s}{2}(1+\alpha)$. Por lo tanto, la señal $x_c$ estará completamente contenida en la banda $f_c\pm \frac{f_s}{2}(1+\alpha)$ permitiendo ``encajar'' la onda en un canal acotado.
+
+    \begin{center}
+    \begin{tikzpicture}
+        \draw [->] (-0.2,0) -- (8,0) node [anchor=north] {$f$};
+        \draw [->] (0,-0.2) -- (0,2.5) node [anchor=west] {$S_{x_c}(f)$};
+        \begin{scope}[shift={(4,0)}]
+                \draw [teal, thick, samples=200,domain=-1.25:-0.75] plot (\x,{(1+cos(2*pi*(\x-0.25) r))}) -- (0.75,2);
+                \draw [teal, thick, samples=200,domain=0.75:1.25] plot (\x,{(1+cos(2*pi*(\x+0.25) r))});
+                \node[anchor=south west, teal] at (0,2) {$A^2\frac{T_s}{4}$};
+                \node[below] at (0,0) {\footnotesize $f_c$};
+                \node[below] at (1.25,0) {\footnotesize $f_c+\frac{f_s}{2}(1+\alpha)$};
+                \draw[dotted] (1.25,0) -- (1.25,2);
+                \draw[dotted] (-1.25,0) -- (-1.25,2);
+                \draw[dashed] (0,0) -- (0,2);
+        \end{scope}
+    \end{tikzpicture}
+    \end{center}
+
+    La Figura \ref{fig:bpsk nyquist} muestra la forma de onda resultante, que es más complicada de generar que simplemente controlar un oscilador. Sin embargo, permite controlar el ``spillover'' de frecuencia (interferencia a bandas adyacentes) por lo cual este tipo de pulso es utilizado en la TV digital así como en la transmisión de datos RDS (Radio Data System) que envía datos digitales sobre las emisiones de radio FM comercial.
+\end{ejemplo}
+ 
+\begin{figure}    
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[ x=2.7cm, y=2cm, axis lines=middle,  
+                every x tick label/.append style={font=\footnotesize},
+                xlabel=$t$,
+                x label style={anchor=north west},
+                ylabel=\empty,
+                ytick=\empty,
+                xmin=-.2,xmax=5.8,ymin=-1.2,ymax=1.2,
+                xtick = {1,2,3,4,5},
+                xticklabels = {$T_s$,$2T_s$,$3T_s$,$4T_s$, $5T_s$},
+                clip=false,
+                ]
+                \pgfmathdeclarefunction{rcpulse}{1}{\pgfmathparse{cos(deg(pi*#1))/(1-(2*#1)^2)*sin(deg(pi*#1))/(pi*#1)}};
+                \addplot[teal, thick, dotted, domain=-0.01:5.5, samples=100] {-rcpulse(\x) + rcpulse(\x-1) - rcpulse(\x-2) + rcpulse(\x-3) + rcpulse(\x-4) - rcpulse(\x-5) + rcpulse(\x-6)};
+                \addplot[teal, thick, dotted, domain=0.01:5.5, samples=100] {-(-rcpulse(\x)+rcpulse(\x-1) - rcpulse(\x-2) + rcpulse(\x-3) + rcpulse(\x-4) - rcpulse(\x-5) + rcpulse(\x-6))};
+                \addplot[teal, very thick, domain=0.01:5.5, samples=400] {(-rcpulse(\x) + rcpulse(\x-1) - rcpulse(\x-2) + rcpulse(\x-3) + rcpulse(\x-4) - rcpulse(\x-5) + rcpulse(\x-6) )*cos(deg(8*pi*\x))};
+                \node[above] at (axis cs:1,1.1) {$1$};
+                \node[above] at (axis cs:2,1.1) {$0$};
+                \node[above] at (axis cs:3,1.1) {$1$};
+                \node[above] at (axis cs:4,1.1) {$1$};
+                \node[above] at (axis cs:5,1.1) {$0$};
+                \end{axis}    
+        \end{tikzpicture}
+    \end{center}
+    \caption{Onda BPSK con pulsos de Nyquist de exceso de ancho de banda $\alpha=1$.}\label{fig:bpsk nyquist}
+\end{figure}
+
+Los anteriores ejemplos corresponden a modulaciones lineales, donde simplemente el pulso digital modula a la portadora, como en DSB o modulación AM clásica. Un ejemplo de modulación \emph{no lineal} se presenta a continuación, aunque un análisis completo excede a los objetivos de este curso.
+
+\begin{ejemplo}[Modulación Binaria en frecuencia, BFSK]
+    En este caso, la información de los símbolos va en la frecuencia de la portadora, transmitiéndose:
+    \begin{equation*}
+        x_c(t) = \sum_k A p(t-kT_s) \cos(2\pi (f_c + f_k) t),
+    \end{equation*}
+donde $p(t)$ es el pulso NRZ (indicando que solo se activa $f_k$ durante un tiempo de símbolo $T_s$) y el desvío de frecuencia es $f_k=\pm f_\Delta$.
+
+Una forma de interpretar lo anterior es pensar que tenemos dos ondas de OOK con distinta frecuencia, que se alternan en el tiempo de acuerdo al símbolo a transmitir (en lugar de una única que se activa para el símbolo $1$, como en OOK). Es de esperar entonces que el espectro contenga impulsos en las frecuencias $f_c\pm f_\Delta$ debido a esto. Sin embargo, como las ondas que ASK superpuestas no son independientes, no es tan sencillo como sumar sus espectros.
+
+De hecho, un análisis riguroso es complejo de hacer. El caso más común es la Modulación de Sunde, donde se elige $f_\Delta = f_s/2$. Esta elección tiene la virtud de que no produce discontinuidades bruscas en la fase, y puede verse que el espectro equivalente en banda base satisface:
+\begin{equation*} 
+    S_{x}(f) = \frac{A^2}{4}\left[\delta\left(f-\frac{f_s}{2}\right)+\delta\left(f+\frac{f_s}{2}\right)\right] + \frac{4 A^2 T_s \cos^2(\pi T_s f)}{\pi^2 (4 T_s^2 f^2 - 1)^2}.
+\end{equation*}
+
+\begin{center}
+\begin{tikzpicture}[xscale=2.0]
+    \draw [->] (-3,0) -- (3,0) node [anchor=north] {$f$};
+    \draw [->] (0,-0.5) -- (0,2.5);
+    \draw [teal, thick, samples=400,domain=-2.5:2.5] plot (\x,{20*(cos(pi*\x r)/(pi*(4*\x^2-1)))^2});
+    \draw [->,teal, thick] (-0.5,0) node [anchor=north] {$-\frac{f_s}{2}$} -- (-0.5,2.1);
+    \draw [->,teal, thick] (0.5,0) node [anchor=north] {$\frac{f_s}{2}$} -- (0.5,2.1);
+    \draw (-1.5,0.1) -- (-1.5,-0.1) node [anchor=north] {$-3\frac{f_s}{2}$};
+    \draw (1.5,0.1) -- (1.5,-0.1) node [anchor=north] {$3\frac{f_s}{2}$};
+\end{tikzpicture}
+\end{center}
+
+Lo importante aquí es que la onda FSK ocupa un mayor ancho de banda que las modulaciones lineales ASK, BPSK ($3f_s$ respecto a $2f_s$ para los lóbulos centrales) al igual que ocurría en FM por comparación a AM.
+
+La modulación FSK resultó muy popular en los comienzos de la transmisión digital, debido a que simplemente requería alternar entre dos osciladores, y a su vez como el espectro para el caso de Sunde cae como $f^4$, tiene poca interferencia a bandas adyacentes en comparación a ASK o BPSK con pulsos NRZ. Fue utilizada en las primeras versiones de Bluetooth, pero hoy ha caído en desuso, siendo más común la utilización de BPSK en el caso sencillo (con pulsos de Nyquist para controlar el spillover) y sus generalizaciones $M-$arias.
+
+\end{ejemplo}
+
+Para finalizar esta sección, comentemos ahora el tema de la \emph{eficiencia espectral} de las modulaciones pasabanda. En todos los casos, como se comentó, el ancho de banda requerido es \emph{como mínimo el doble} que la correspondiente situación de banda base. Esto es evidente en los casos lineales, ya que corresponde a trasladar el espectro de banda base a la frecuencia de portadora, y es aún mayor en el caso de la FSK de Sunde. Por lo tanto, la eficiencia espectral en $\unit{\bps/\hertz}$ será la mitad (o menos).
+
+A modo de ejemplo, si se utiliza BPSK con pulsos de Nyquist ideales ($\alpha=0$ en el Ejemplo \ref{ej:bpsk nyquist}), ocupa un ancho de banda $f_s$ y obtiene una eficiencia espectral igual a $1$ bit por $\unit{\hertz}$, comparado con $2$ en el caso de banda base. La única forma de compensar esto es enviando más bits por símbolo, es decir pasar a modulaciones $M$-arias, que estudiamos a continuación.
+
+\section{Modulación pasabanda $M$-aria}
+
+Antes de generalizar los conceptos anteriores, es conveniente retomar la noción de \emph{envolvente compleja}, ya utilizada en el estudio de la modulación analógica. La idea es que una señal pasabanda $x_c(t)$ puede escribirse como:
+\begin{equation}\label{eq:transformada pasabanda}
+    x_c(t) = \mathrm{Re}\left[x_{ce}(t)e^{j2\pi f_c t}\right],
+\end{equation}
+donde $x_{ce}(t)$ es una señal a valores \emph{complejos}, que juega el rol de un fasor, que indica el desvío instantáneo en amplitud y fase de la portadora sinusoidal base. Si la señal $x_c(t)$ es pasabanda (es decir, tiene un espectro acotado a una banda alrededor de $f_c$), entonces $x_{ce}$ ``varía lentamente'' en comparación a la frecuencia de portadora $f_c$ y podemos pensar la misma como una señal de banda base. Esta interpretación es muy útil a la hora de considerar señales moduladas. Más formalmente, tenemos la siguiente:
+
+\begin{definicion}[Envolvente compleja]\label{def:envolvemente compleja}
+    Dada una señal pasabanda $x_c(t)$ se define su \emph{envolvente compleja} alrededor de la frecuencia $f_c$ como la señal $x_{ce}(t)$ dada por:
+    \begin{equation}\label{eq:envolvente compleja}
+        x_{ce}(t) = \left(x_c(t) + j x_c^{H}(t) \right)e^{-j2\pi f_c t},
+    \end{equation}
+    siendo $x^{H}(t)$ la transformada de Hilbert de $x$. La operación inversa, que construye $x_c$ a partir de una señal en banda base $x_{ce}(t)$ está dada por la ecuación \eqref{eq:transformada pasabanda}.
+\end{definicion}
+
+La operación anterior se explica mejor en frecuencia en la Figura \ref{fig:envolvente compleja}. La señal compleja $x_c(t)+jx_c^{H}(t)$ retiene solo la mitad positiva del espectro de $x_c$ y luego este espectro se traslada por la exponencial compleja a banda base, identificando la frecuencia $f_c$ con $0$.
+
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \draw (-.5,0) -- (.5,0);
+            \draw[dashed] (.5,0) -- (2,0);
+            \draw [->] (2,0) -- (8,0) node [anchor=north] {$f$};
+            \draw [->] (0,-0.5) -- (0,2.5) node[left] {$\hat{X}_c(f)$};
+            \draw [teal, thick, samples=100,domain=4:6] plot (\x,{(exp(-8*(\x-4.5)^2)+2*exp(-8*(\x-5.5)^2))*cos(pi/2*(\x-5) r)});
+            \node [below] at (4,0) {\footnotesize $f_c-B$};
+            \node [below] at (5,0) {\footnotesize $f_c$};
+            \node [below] at (6,0) {\footnotesize $f_c+B$};
+        \end{tikzpicture}\hspace{1cm}
+        \begin{tikzpicture}
+            \draw [->] (-2,0) -- (2,0) node [anchor=north] {$f$};
+            \draw [->] (0,-0.5) -- (0,2.5) node[left] {$\hat{X}_{ce}(f)$};
+            \draw [teal, thick, samples=100,domain=-1:1] plot (\x,{(exp(-8*(\x+.5)^2)+2*exp(-8*(\x-.5)^2))*cos(pi/2*\x r)});
+            \node [below] at (1,0) {\footnotesize $B$};
+            \node [below] at (-1,0) {\footnotesize $-B$};    
+        \end{tikzpicture}
+    \end{center}
+    \caption{Ilustración en frecuencia de la Definición \ref{def:envolvemente compleja}. La envolvente compleja contiene toda la información del mensaje en la banda alrededor de $f_c$, llevada a banda base. Como el espectro no es necesariamente simétrico alrededor de $f_c$, $x_{ce}$ puede ser compleja a pesar de que $x_c$ sea real.}\label{fig:envolvente compleja}
+\end{figure}
+
+Observemos que si $x_{ce}(t) = x_I (t) + j x_Q(t)$, entonces sustituyendo en \eqref{eq:transformada pasabanda} se tiene que:
+\begin{equation*}
+    x_c(t) = x_I(t)\cos(2\pi f_c t) - x_Q(t)\sin(2\pi f_c t).
+\end{equation*}
+A $x_I(t)$ y $x_Q(t)$ se les denomina componentes en fase y cuadratura de la onda pasabanda $x_c$.
+
+Para analizar la modulación digital pasabanda, consideramos una señal cuya envolvente compleja sea una \emph{onda PAM compleja}, es decir:
+\begin{equation}\label{eq:onda pam compleja}
+    x_{ce}(t) = \sum_k c_k p(t-kT_s),
+\end{equation}
+con $p(t)$ un pulso real, $T_s$ el tiempo de símbolo y $c_k = a_k+jb_k$ un símbolo complejo que se elige dentro de una \emph{constelación de símbolos}.
+
+\begin{ejemplo}[ASK y BPSK como envolvente compleja]
+
+    Sea $p(t)$ el pulso NRZ $p_{[0,T_s]}(t)$ y tomemos:
+    \begin{equation*}
+        c_k \in \{0+0j, A+0j\},
+    \end{equation*}
+    entonces $x_c(t)$ corresponde a la modulación ASK binaria (OOK).
+
+    Si en cambio tomamos:
+    \begin{equation*}
+        c_k \in \{A+0j, -A+0j\},
+    \end{equation*}
+    entonces $x_c(t)$ corresponde a la modulación PSK binaria o BPSK con pulso NRZ.
+
+    Por último, si $p(t)$ es un pulso de Nyquist y $c_k$ es como antes, tenemos la modulación BPSK con pulso de Nyquist.
+
+    \begin{center}
+    \begin{tikzpicture}
+        \draw[->] (-1.5,0) -- (1.5,0);
+        \draw[->] (0,-1.5) -- (0,1.5);
+        \draw[teal,fill] (0,0) circle (0.1)  node[below left] {$0$};
+        \draw[teal,fill] (1,0) circle (0.1) node[below right] {$A$};
+        \node[above] at (0,2) {Constelación OOK (ASK binario)};
+    \end{tikzpicture}\hspace{2cm}
+    \begin{tikzpicture}
+        \draw[->] (-1.5,0) -- (1.5,0);
+        \draw[->] (0,-1.5) -- (0,1.5);
+        \draw[teal,fill] (-1,0) circle (0.1) node[below left] {$-A$};
+        \draw[teal,fill] (1,0) circle (0.1) node[below right] {$A$};
+        \node[above] at (0,2) {Constelación BPSK};
+    \end{tikzpicture}
+    \end{center}
+    
+\end{ejemplo}
+
+Analicemos ahora el espectro de la señal $x_c(t)$ dada por la ecuación \eqref{eq:transformada pasabanda}, cuando la señal es generada por una onda PAM aleatoria compleja de banda base dada por la ecuación \eqref{eq:onda pam compleja}. Se tiene el siguiente resultado:
+
+\begin{teorema}\label{thm:espectro pasabanda}
+    El espectro de la onda pasabanda aleatoria $x_c(t)$ está dado por:
+    \begin{equation*}
+        S_{x_c}(f) = \frac{1}{4}\left[S_{x_{ce}}(f-f_c) + S_{x_{ce}}(f+f_c)\right],
+    \end{equation*}
+    que es una generalización del resultado \eqref{eq:dep modulacion}. Aquí el espectro $S_{x_{ce}}$ es el espectro de banda base de la envolvente compleja. Cuando la señal de banda base es una onda PAM compleja como en \eqref{eq:onda pam compleja}, con símbolos \emph{centrados} ($\mu=\E{c_k}=0$), se tiene que:
+    \begin{equation*}
+        S_{x_{ce}} = \sigma_c^2 f_s |\hat{P}(f)|^2,
+    \end{equation*}
+    siendo $\sigma_c^2 = E[|c_k|^2] = E[a_k^2 + b_k^2]$ la varianza del \emph{módulo} de los símbolos, y $\hat{P}(f)$ la transformada del pulso de banda base utilizado.
+\end{teorema}
+
+Observemos que en particular, el ancho de banda utilizado por la señal alrededor de $f_c$ está controlado por la forma de los pulsos $p(t)$ utilizados, mientras que la potencia total es controlada por los niveles o amplitudes de los símbolos complejos $E[|c_k|^2]$.
+
+A partir de este resultado consideraremos dos tipos de modulación $M-$aria: la modulación en fase (PSK) y la modulación QAM.
+
+\subsection{Modulación PSK $M-$aria}
+
+En este caso, se mantiene una amplitud \emph{constante} igual a $A$ que controla la potencia de la señal, y el símbolo va codificado completamente en la fase de la portadora modulada. Esto corresponde a utilizar la constelación:
+\begin{equation}\label{eq:constelacion psk}
+c_k \in A e^{j2\pi \frac{m}{M}} \quad m=0,1,\ldots,M-1.    
+\end{equation}
+
+El caso $M=2$ corresponde exactamente a BPSK $(c_k\in \{-A,A\})$. El caso $M=4$ se denomina Quadrature Phase-Shift Keying (QPSK) y corresponde a enviar simultáneamente dos ondas BPSK, moduladas en cuadratura una de otra. La Figura \ref{fig:mpsk} muestra constelaciones de más símbolos.
+
+\begin{figure}
+    \begin{center}
+    \begin{tikzpicture}
+        \draw[->] (-1.5,0) -- (1.5,0);
+        \draw[->] (0,-1.5) -- (0,1.5);
+        \draw[teal,fill] (-1,0) circle (0.1) node[below left] {$-A$};
+        \draw[teal,fill] (1,0) circle (0.1) node[below right] {$A$};
+        \node[above] at (0,2) {PSK $M=2$ (BPSK)};
+    \end{tikzpicture}\hspace{1cm}
+    \begin{tikzpicture}
+        \draw[->] (-1.5,0) -- (1.5,0);
+        \draw[->] (0,-1.5) -- (0,1.5);
+        \draw[teal,fill] (-1,0) circle (0.1) node[below left] {$-A$};
+        \draw[teal,fill] (1,0) circle (0.1) node[below right] {$A$};
+        \draw[teal,fill] (0,1) circle (0.1) node[below left] {$A$};
+        \draw[teal,fill] (0,-1) circle (0.1) node[below left] {$-A$};
+        \node[above] at (0,2) {PSK $M=4$ (QPSK)};
+    \end{tikzpicture}\hspace{1cm}
+    \begin{tikzpicture}
+        \draw[->] (-1.5,0) -- (1.5,0);
+        \draw[->] (0,-1.5) -- (0,1.5);
+        \foreach \theta in {0,...,7} {
+            \draw[teal,fill] ({cos(2*pi*\theta/8 r)}, {sin(2*pi*\theta/8 r)}) circle (0.1);
+        }
+        \node[teal,below right] at (1,0) {$A$};
+        \node[teal,below left] at (-1,0) {$-A$};
+        \node[above] at (0,2) {PSK $M=8$};
+    \end{tikzpicture}
+    \end{center}
+    \caption{Constelaciones $M$-PSK para diferentes valores de $M$.}\label{fig:mpsk}
+\end{figure}
+
+Suponiendo que los símbolos son equiprobables, tenemos que $\mu=\E{c_k} = 0$ ya que la constelación está centrada, y en este caso $|c_k|^2=A$ constante, por lo que $\sigma_c^2 = E[|c_k|^2] = A^2$. Por lo tanto:
+\begin{equation*}
+    S_{x_{ce}}(f) = A^2 f_s |\hat{P}(f)|^2 \Longrightarrow S_{x_c}(f) = \frac{A^2 f_s}{4}\left(|\hat{P}(f-f_c)|^2+|\hat{P}(f+f_c)|^2\right).
+\end{equation*}
+En particular, el espectro que $M-$PSK no depende de $M$, el número de puntos de la constelación y solamente está controlado por la forma del pulso $p(t)$. Es decir, aumentar el tamaño de la constelación no incrementa el ancho de banda utilizado, aunque sí modifica la probabilidad de error en detección, como veremos.
+
+\subsection{Quadrature Amplitude Modulation (QAM)}
+
+La modulación QAM consiste en elegir una constelación de coordenadas cartesianas, $c_k = a_k+j b_k$, donde cada coordenada se construye utilizando un alfabeto polar, de tamaños $M_a$ y $M_b$, pudiendo identificar $M$ símbolos con $M=M_a M_b$. Típicamente se toma $M=2^l$ con $l\geqslant 2$. El caso $l=1$ correspondería a utilizar BPSK, y el caso $l=2$ es similar a QPSK pero con la constelación rotada $45^{\circ}$, como se ilustra en la Figura \ref{fig:qam}.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \node[above] at (0,2) {$4$-QAM (análogo a QPSK)};
+            \draw [-stealth] (-2,0) -- (2,0);
+            \draw [-stealth] (0,-2) -- (0,2);
+            \foreach \x in {-1,1}
+                {\draw [dotted] (\x,-1) -- (\x,1);
+                \draw [dotted] (-1,\x) -- (1,\x);
+                \foreach \y in {-1,1}
+                    \draw [teal,fill] (\x,\y) circle (0.1);}
+            \node[teal,anchor=north east] at (-1,0) {$-A$};
+            \node[teal,anchor=north west] at (1,0) {$A$};
+        \begin{scope}[shift={(8,0)}]
+            \node[above] at (0,4) {$16$-QAM};
+            \draw [-stealth] (-4,0) -- (4,0);
+            \draw [-stealth] (0,-4) -- (0,4);
+            \foreach \x in {-3,-1,...,3}
+                {\draw [dotted] (\x,-3) -- (\x,3);
+                \draw [dotted] (-3,\x) -- (3,\x);
+                \foreach \y in {-3,-1,...,3}
+                    \draw [teal,fill] (\x,\y) circle (0.1);}
+            \node[teal,anchor=north east] at (-3,0) {$-3A$};
+            \node[teal,anchor=north east] at (-1,0) {$-A$};
+            \node[teal,anchor=north west] at (1,0) {$A$};
+            \node[teal,anchor=north west] at (3,0) {$3A$};
+        \end{scope}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Constelaciones QAM.}\label{fig:qam}
+\end{figure}
+
+En este caso $|c_k|^2 = a_k^2 + b_k^2$ por lo que $\sigma_c^2 = \sigma_a^2+\sigma_b^2$, y cada uno de estos términos se calcula como la potencia de los símbolos de un alfabeto $M-$ario unidimensional como los que ya vimos. Se tiene que:
+\begin{equation*}
+\sigma_a^2 = \frac{2}{M_a}\left(A^2 +
+(3A)^2+\cdots+(M_a-1)^2A^2\right) = \frac{M_a^2-1}{3}A^2,    
+\end{equation*}
+y análogamente para $b_k$ utilizando $M_b$. Por lo tanto:
+\begin{equation*}
+S_{x_{ce}}(f) = (\sigma_a^2+\sigma_b^2) f_s |\hat{P}(f)|^2 \Longrightarrow S_{x_c}(f) = \frac{(\sigma_a^2+\sigma_b^2)f_s\left(|\hat{P}(f-f_c)|^2 +
+|\hat{P}(f+f_c)|^2\right)}{4}.
+\end{equation*}
+
+Nuevamente, los símbolos controlan la potencia y el pulso el ancho de banda utilizado. Habitualmente se elige una constelación cuadrada, es decir $M_a = M_b = \sqrt{M}$. En ese caso:
+\begin{equation*}
+\sigma_c^2 = \sigma_a^2+\sigma_b^2 = \frac{2(M-1)}{3}A^2.
+\end{equation*}
+Por ejemplo, para la constelación $16-$QAM de la Figura \ref{fig:qam}, $M=16$ de donde $\sigma_c^2 = 10A^2$. Nuevamente el factor $A$ controla la amplitud de la señal y actuará como \emph{margen de ruido} en la detección, controlando la probabilidad de error.
+
+\section{Detección coherente para la modulación pasabanda lineal}
+
+Pasamos ahora a estudiar el problema de detección de una señal digital pasabanda, cuando se recibe por un canal contaminada de ruido blanco. Para ilustrar el problema, comencemos analizando la detección BPSK, y luego generalizamos a otras constelaciones.
+
+Recordemos que en el caso BPSK la onda trasmitida es:
+\begin{equation*}
+ x_c(t)=\sum_k a_kp(t-kT_s)\cos(2\pi f_c t), \quad a_k=\pm A.
+\end{equation*}
+Supongamos por simplificdad que $f_c$ es múltiplo de $f_s$, es decir, hay un número entero de ciclos de la portadora en el intervalo de un símbolo. Si $f_c\gg f_s$ esto siempre se cumple aproximadamente. Bajo esta hipótesis:
+\begin{equation*}
+ x_c(t)=\sum_k a_kp(t-kT_s)\cos(2\pi f_c t) = \sum_k a_kp(t-kT_s)\cos(2\pi f_c (t-kT_s) = \sum_k a_k \tilde{p}(t-kT_s)
+\end{equation*}
+donde definimos el pulso de radio frecuencia $\tilde{p}(t) = p(t)\cos(2\pi f_c t)$. Observemos que la fórmula de la derecha corresponde a una onda PAM con pulso básico $\tilde{p}(t)$ reemplazando al pulso $p$. Por lo visto para modulación en banda base, el detector óptimo en presencia de ruido blanco consistiría en utilizar un filtro \emph{acoplado al pulso $\tilde{p}$}, análogo al utilizado en banda base e ilustrado en la Figura \ref{fig:RF acoplado}.
+
+\begin{figure}
+    \begin{center}
+        \begin{blockdiagram}
+            \node at (0,0) (input) {\small $x_c(t)+w(t)$};
+            \node[block, right = of input, align=center, inner sep=14pt, label=above:{\small Filtro acoplado RF}] (rx) {$\hat{\tilde{H}}_r$};
+            \draw[thick, ->] (input) -- (rx);
+            \node[below=of rx] (sincr_input) {};
+            \node[block, right =.5cm of sincr_input, align=center] (sincr) {Sincronismo};
+            \draw[thick, dashed, ->] (sincr_input) -- (sincr);
+            \node[block, right =3cm of rx, align=center, inner sep=4pt] (sample) {\begin{circuitikz}\draw (0,0) to[switch] node[ocirc]{} (.8,0);\end{circuitikz}};
+            \draw[thick, ->] (rx) -- node[midway,above]{\small $x_R(t)+n(t)$} (sample);
+            \draw[thick,->] (sincr) -| (sample);
+            \node[block, right =of sample, align=center, label=above:{\small Detector}] (detector) {\begin{tikzpicture} \draw (0,0) -| ++(.3,.3) |- ++(.3,.3); \end{tikzpicture}};
+            \node[right =of detector] (salida) {\small $\hat{a}_k$};
+            \node[above=1cm of sample] (top) {};
+            \draw[thick,->] (sample) --node[midway]{\small $y_k$} (detector);
+            \draw[thick,->] (detector) -- (salida);
+            \begin{scope}[on background layer]
+                \node[draw, rectangle, dashed, fill=gray!15!white, fit=(rx) (sincr_input) (sincr) (sample) (detector) (top), inner sep=20pt] {};
+            \end{scope}
+        \end{blockdiagram}
+    \end{center}
+    \caption{Filtro acoplado al pulso RF para detectar BPSK. Este filtro no es útil por requerir un grado alto de sincronismo en el instante de muestreo.}\label{fig:RF acoplado}
+\end{figure}
+
+El filtro acoplado $\hat{\tilde{H}}_{\mathrm{opt}}$ tendría respuesta impulsiva:
+\begin{equation*}
+\tilde{h}_{opt}(t) = K\tilde{p}(\tau-t)=Kp(\tau-t)\cos\left(2\pi f_c (t-\tau)\right).
+\end{equation*}
+
+El problema de utilizar este filtro es que la señal $x_R(t)$ a la salida del filtro, aún en ausencia de ruido, sigue siendo pasabanda, del orden de $f_c$. Es decir, oscila rápidamente. Para muestrearla en el instante correcto haría falta una sincronización muy fina, con precisión del orden de $1/f_c \ll T_s$, muy difícil de lograr en la práctica. Un pequeño desvío en el instante de muestreo conduce a error, como se ilustra en la Figura \ref{fig:RF acoplado respuesta} para el caso de pulsos NRZ en banda base.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \draw [->] (-0.5,0) -- (3,0) node [anchor=north] {$t$};
+            \draw [->] (0,-1.5) -- (0,1.5) node [anchor=east] {$\tilde{p}(t)$};
+            \draw [teal, thick, samples=200,domain=0:2] plot (\x,{cos(2*pi*5*\x r)});
+            \draw [teal, thick] (-.2,0)--(0,0);
+            \draw [teal, thick] (2,0)--(2.5,0);
+            \draw (2,0.05) -- (2,-0.05);
+            \node[below right] at (2,0) {$T_s$};
+            \begin{scope}[shift={(5,0)}]
+                \draw [->] (-0.5,0) -- (3,0) node [anchor=north] {$t$};
+                \draw [->] (0,-1.5) -- (0,1.5) node [anchor=east] {$\tilde{h}(t)$};
+                \draw [teal, thick, samples=200,domain=0:2] plot (\x,{cos(2*pi*5*\x r)});
+                \draw [teal, thick] (-.2,0)--(0,0);
+                \draw [teal, thick] (2,0)--(2.5,0);
+                \draw (2,0.05) -- (2,-0.05);
+                \node[below right] at (2,0) {$T_s$};
+            \end{scope}
+            \begin{scope}[shift={(10,0)}]
+                \draw [-stealth] (-0.5,0) -- (5,0) node [anchor=north] {$t$};
+                \draw [-stealth] (0,-1.5) -- (0,1.5) node [anchor=west] {$x_R$};
+                \draw [teal, thick, samples=200,domain=0:2] plot (\x,{1/2*\x*cos(2*pi*5*\x r)});
+                \draw [teal, thick, samples=200,domain=2:4] plot (\x,{1/2*(4-\x)*cos(2*pi*5*\x r)});
+                \draw (2,0.05) -- (2,-0.05);
+                \node[below] at (2,0) {$T_s$};
+                \draw (4,0.05) -- (4,-0.05);
+                \node[below] at (4,0) {$2T_s$};
+                \draw [dotted] (0,0) -- (2,1) -- (4,0) -- (2,-1) -- (0,0);
+                \draw [<-,teal, very thick] (2,1) -- (2,1.3) node[above] {$\tau$};
+            \end{scope}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Respuesta impulsiva del filtro acoplado al pulso de RF $\tilde{p}$ para $p(t)$ el pulso NRZ, y salida del filtro acoplado adecuado. Observar que la oscilación rápida de orden $f_c$ requiere un error mínimo en el instante de muestreo $\tau=T_s$ para no cometer error.}\label{fig:RF acoplado respuesta}
+\end{figure}
+
+Se requiere entonces una alternativa que mantenga el desempeño sin requerir realizar un filtro acoplado de RF. Dicha alternativa es el \emph{detector coherente} para señales digitales de RF, y es equivalente al anterior siempre que $f_c=n f_s$, es decir, la hipótesis ya realizada de que tenemos un número entero de ciclos de la portadora durante el símbolo. El esquema es el que se ilustra en la Figura \ref{fig:detector coherente}.
+
+\begin{figure}
+    \begin{center}
+        \begin{blockdiagram}
+            \node at (0,0) (input) {$x_c(t)+n(t)$};
+            \node[right=of input, coordinate] (split) {};
+            \node[right=of split, coordinate] (demod) {};
+            \node[circle, draw, thick, above=2cm of demod] (mult1) {$\times$};
+            \node[circle, draw, thick, below=2cm of demod] (mult2) {$\times$};
+            \draw[thick,->] (input) -- (split) |- (mult1);
+            \draw[thick,->] (split) |- (mult2);
+
+            \node[right = of demod] (oscillator) {\begin{circuitikz}\node[oscillator]{};\end{circuitikz} $f_c$};
+            \draw[thick,->] (oscillator) -- (demod) --node[midway,right] {\footnotesize $2\cos(2\pi f_c t)$} (mult1);
+            \draw[thick,->] (oscillator) -- (demod) --node[midway,right] {\footnotesize $-2\sin(2\pi f_c t)$} (mult2);
+
+            \node[right=3cm of mult1, block, inner sep=10pt, label=above:Filtro acoplado] (inphase) {$\hat{H}_r$};
+            \node[right=3cm of mult2, block, inner sep=10pt, label=above:Filtro acoplado] (quad) {$\hat{H}_r$};
+
+            \draw[thick,->] (mult1) --node[midway, above] {$x_i(t)+n_i(t)$} (inphase);
+            \draw[thick,->] (mult2) --node[midway, above] {$x_q(t)+n_q(t)$} (quad);
+
+            \node[coordinate, above=.5cm of inphase] (top) {};
+
+            \node[block, right =1.5cm of inphase, align=center, inner sep=4pt] (samplei) {\begin{circuitikz}\draw (0,0) to[switch] node[ocirc]{} (.8,0);\end{circuitikz}};
+            \node[block, right =1.5cm of quad, align=center, inner sep=4pt] (sampleq) {\begin{circuitikz}\draw (0,0) to[switch] node[ocirc]{} (.8,0);\end{circuitikz}};
+            \draw[thick,->] (inphase) -- (samplei);
+            \draw[thick,->] (quad) -- (sampleq);
+
+            \node[block, right =of samplei, align=center, label=above:{\small Detector}] (detectori) {\begin{tikzpicture} \draw (0,0) -| ++(.3,.3) |- ++(.3,.3); \end{tikzpicture}};
+            \node[block, right =of sampleq, align=center, label=above:{\small Detector}] (detectorq) {\begin{tikzpicture} \draw (0,0) -| ++(.3,.3) |- ++(.3,.3); \end{tikzpicture}};
+
+            \draw[thick,->] (samplei) -- (detectori);
+            \draw[thick,->] (sampleq) -- (detectorq);
+            
+            \draw[thick,->] (detectori) -- ++(2,0) node[right] {$\hat{a}_k$};
+            \draw[thick,->] (detectorq) -- ++(2,0) node[right] {$\hat{b}_k$};
+
+            \begin{scope}[on background layer]
+                \node[draw, rectangle, dashed, fill=gray!15!white, fit=(split) (inphase) (quad) (top) (detectori) (detectorq), inner sep=10pt, label=above:Detector pasabanda coherente] {};
+            \end{scope}
+        \end{blockdiagram}
+    \end{center}
+    \caption{Detector pasabanda digital coherente, que permite recuperar la componente en fase y cuadratura de cada símbolo.}\label{fig:detector coherente}
+\end{figure}
+
+Esencialmente, se trata de una demodulación sincrónica de las componentes en fase y cuadratura de la señal, para luego ser trabajadas como señales de banda base, por lo cual podemos aplicar las ideas de las secciones anteriores a las señales $x_i$ y $x_q$ a la salida de los multiplicadores (normalmente llamados \emph{mixers} en la jerga de RF).
+
+Analicemos primero la parte de señal. Observemos que:
+\begin{align*}
+    x_i(t) &= x_c(t) (2\cos(2\pi f_c t)) = \left[\sum_k a_kp(t-kT_s)\cos(2\pi f_c t) - b_k p(t-kT_s)\sin(2\pi f_c t)\right] 2\cos(2\pi f_c t) \\
+     &= \sum_k  a_k p(t-kT_s) 2\cos^2(2\pi f_c t)  - \sum_k b_k p(t-kT_s) \sin(2\pi f_c t) 2\cos(2\pi f_c t) \\
+     &= \sum_k a_k p(t-kT_s) + \sum_k a_k p(t-kT_s) \cos(2\pi 2f_c t) - \sum_k b_k p(t-kT_s) \sin(2\pi 2f_c t) \\
+     &= \sum_k a_k p(t-kT_s) + \text{términos de alta frecuencia},
+\end{align*}
+donde se usaron identidades trigonométricas. Con un razonamiento similar se llega a que:
+\begin{align*}
+    x_q(t) &= x_c(t) (-2\sin(2\pi f_c t)) = \left[\sum_k a_kp(t-kT_s)\cos(2\pi f_c t) - b_k p(t-kT_s)\sin(2\pi f_c t)\right] (-2\sin(2\pi f_c t)) \\
+     &= -\sum_k  a_k p(t-kT_s) \cos (2\pi f_c t)2\sin(2\pi f_c t)  + \sum_k b_k p(t-kT_s) 2 \sin^2(2\pi f_c t) \\
+     &= \sum_k b_k p(t-kT_s) + \text{términos de alta frecuencia}.
+\end{align*}
+
+Notar que el factor $2$ agregado al oscilador que genera las sinusoides hace que $x_i$ y $x_q$ repliquen el mensaje original en banda base. Otra forma de justificarlo es que el pulso de RF $\tilde{p}(t)$ verifica que $||\tilde{p}||^2 = \frac{1}{2}||p||^2$ y el factor $2$ corresponde a compensar este factor en la cadena de demodulación. Por lo tanto, las señales $x_i$ y $x_q$ contienen la onda PAM de banda base de la parte real e imaginaria de la constelación y los términos de alta frecuencia, que serán eliminados por el filtro de recepción. 
+
+Modelemos ahora las componentes de ruido $n_i$ y $n_q$. Supongamos que en el canal de RF la señal se ve afectada por un ruido blanco Gaussiano $w(t)$ de densidad espectral de potencia $\eta_0/2$. A la entrada del demodulador, para limitar el ruido, se coloca un filtro pasabanda centrado en $f_c$ y de ancho $B$, de manera de que los pulsos pasen intactos. Por lo tanto, la señal recibida por el demodulador es:
+\begin{equation*}
+    x_R(t) = x_c(t) + n(t),
+\end{equation*}
+donde el proceso $n(t)$ tiene densidad espectral de potencia aproximadamente constante $\eta_0/2$ en la banda de interés. Al demodular este proceso utilizando el oscilador obtenemos dos componentes $n_i$ y $n_q$ no correlacionadas, y cuya densidad espectral de potencia es $\eta_0$ constante en la banda $[-B,B]$, como se ilustra en la Figura \ref{fig:ruido pasabanda}.
+
+
+\begin{figure}
+    \begin{center}
+    \begin{tikzpicture}
+        \draw [->] (-4,0) -- (4,0) node [anchor=north] {$f$};
+        \draw [->] (0,-0.5) -- (0,1.5) node [anchor=east] {$S_n(f)$};
+        \draw[thick, teal] (-4,0) -- (-3,0) -- (-3,.5) -- (-2,.5) -- (-2,0) -- (2,0) -- (2,.5) -- (3,.5) node [anchor=west] {$\frac{\eta_0}{2}$} -- (3,0) -- (4,0);
+        \draw [dotted] (2.5,0) -- (2.5,1) node [anchor=south] {\footnotesize $f_c$};
+        \node[below] at (3,0) {\footnotesize $f_c+B$};
+        \node[below] at (2,0) {\footnotesize $f_c-B$};
+        \begin{scope}[shift={(8,0)}]
+            \draw [->] (-2,0) -- (2,0) node [anchor=north] {$f$};
+            \draw [->] (0,-0.5) -- (0,1.5) node [anchor=east] {$S_{n_i}(f) = S_{n_q}(f)$};
+            \draw[thick, teal] (-2,0) -- (-.5,0) -- (-.5,1) -- (.5,1) node[anchor=west] {$\eta_0$} -- (.5,0) -- (2,0);
+            \node[below] at (-.5,0) {\footnotesize $-B$};
+            \node[below] at (.5,0) {\footnotesize $B$};
+        \end{scope}
+    \end{tikzpicture}
+    \end{center}
+    \caption{Densidad espectral del ruido pasabanda y su equivalente en banda base.}\label{fig:ruido pasabanda}
+\end{figure}
+
+Por lo tanto, tomando como ejemplo el demodulador de la componente en fase, a la entrada del filtro de recepción tenemos $x_i(t)+n_i(t)+e(t)$ donde:
+\begin{itemize}
+    \item $x_i(t) = \sum_k a_k p(t-kT_s)$ es una onda PAM de banda base con símbolos $a_k$ y pulso $p(t)$.
+    \item $n_i(t)$ es ruido blanco de densidad espectral $\eta_0$ (el doble que en el analizado en banda base).
+    \item $e_i(t)$ incluye todos los componentes de alta frecuencia (que serán eliminados por el filtro).
+\end{itemize}
+
+Tenemos entonces el mismo problema de la detección en banda base, donde se debe utilizar un filtro acoplado al pulso $p(t)$ para detectar. La única diferencia es que ahora la varianza del ruido es:
+\begin{equation*}
+    \sigma_N^2 = \eta_0 \int_{-\infty}^\infty |\hat{H}_r(f)|^2 df.
+\end{equation*}
+
+Por lo tanto, para obtener los símbolos $a_k$ y $b_k$, se debe usar un filtro acoplado al pulso de banda base $p(t)$. Es decir, $h_r(t)=p(\tau-t)$ con $\tau$ el momento de muestreo. En ese caso, recordando la fórmula \eqref{eq:snr filtro acoplado}, y observando que ahora la densidad del ruido es $\eta_0$ y no $\eta_0/2$ se obtiene:
+\begin{equation}\label{eq:snr detector coherente}
+    \left(\frac{A'}{\sigma_N}\right)^2_{\max} = \frac{|a_0|^2||p||^2}{\eta_0},
+\end{equation}
+donde nuevamente usamos que $||\tilde{p}||^2 = ||p||^2/2$. Esto muestra que el filtro logra la misma relación señal a ruido que el filtro acoplado al pulso $\tilde{p}$, pero requiere un sincronismo mucho menos fino en el instante de muestreo. Notar que sí requiere un sincronismo fino del oscilador local con la frecuencia y fase del oscilador original.
+
+Aplicamos el resultado de la fórmula \eqref{eq:snr detector coherente} ahora a los diferentes esquemas de modulación. Utilizamos como ejemplo el pulso de banda base NRZ, pero puede utilizarse cualquier pulso adecuado.
+
+\begin{ejemplo}[ASK con pulso NRZ y detector coherente]
+En este caso, solo hace falta recuperar la componente en fase $x_i(t)$, ya que el alfabeto es $c_k=\{0+0j,A+0j\}$. El filtro acoplado al pulso NRZ es:
+\begin{equation*}
+    h(t) = \frac{1}{T_s}p_{[0,T_s]}(t), \quad \tau=T_s
+\end{equation*}
+Observemos que el filtro corresponde a \emph{promediar la señal de banda base en un tiempo de símbolo}, por lo que el detector tiene la forma:
+    \begin{center}
+        \begin{blockdiagram}
+            \node at (0,0) (input) {$x_c(t)+n(t)$};
+            \node[circle, draw, thick, right=2cm of input] (mult) {$\times$};
+            \draw[thick,->] (input) -- (mult);
+
+            \node[coordinate, below= of mult] (demod) {};
+            \node[right = of demod] (oscillator) {\begin{circuitikz}\node[oscillator]{};\end{circuitikz} $f_c$};
+            \draw[thick,->] (oscillator) -- (demod) --node[midway,left] {$2\cos(2\pi f_c t)$} (mult);
+
+            \node[right=3cm of mult, block] (inphase) {$\displaystyle{\frac{1}{T_s}\int_{t-T_s}^t}$};
+            \draw[thick,->] (mult) --node[midway]{$x_i(t)+n_i(t)$} (inphase);
+
+            \node[block, right =1.5cm of inphase, inner sep=4pt, label=below:{\footnotesize $\tau=kT_s$}] (samplei) {\begin{circuitikz}\draw (0,0) to[switch] node[ocirc]{} (.8,0);\end{circuitikz}};
+            \draw[thick,->] (inphase) -- (samplei);
+
+            \node[block, right =of samplei, label=below:{\footnotesize Umbral: $A/2$}] (detectori) {\begin{tikzpicture} \draw (0,0) -| ++(.3,.3) |- ++(.3,.3); \end{tikzpicture}};
+
+            \draw[thick,->] (samplei) -- (detectori);
+            
+            \draw[thick,->] (detectori) -- ++(2,0) node[right] {$\hat{a}_k$};
+
+        \end{blockdiagram}
+    \end{center}
+
+    Recordando que la energía del pulso NRZ es $\int_0^{T_s} p^2(t)dt = T_s$, se tiene que:
+    \begin{equation*}
+        \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2||p||^2}{\eta_0} = \frac{A^2 T_s}{\eta_0} \Rightarrow P_e = Q\left(\frac{1}{2}\sqrt{\frac{A^2 T_s}{\eta_0}}\right).
+    \end{equation*}
+    Para comparar entre modulaciones, conviene escribir lo anterior en términos de la \emph{energía de bit}, que en este caso corresponde a la energía del pulso de RF transmitido. Observemos que:
+    \begin{equation*}
+        \bar{E}_{\tilde{p}} = E[a_k^2] ||\tilde{p}||^2 = \frac{A^2}{2} \frac{T_s}{2} \Rightarrow A^2 = 4\bar{E}_{\tilde{p}} f_s \Rightarrow P_e = Q\left(\sqrt{\frac{\bar{E}_{\tilde{p}}}{\eta_0}}\right) = Q\left(\sqrt{\gamma}\right),
+    \end{equation*}
+    es decir, la misma probabilidad de error que en el pulso NRZ \emph{unipolar} en banda base.
+\end{ejemplo}
+
+\begin{ejemplo}[BPSK con pulso NRZ y detector coherente]
+En este caso, nuevamente solo se requiere la componente en fase, ya que el alfabeto es $\pm A + 0j$. Volvemos a realizar una demodulación y detección con filtro acoplado, colocando ahora $0$ como umbral de detección.
+
+    \begin{center}
+        \begin{blockdiagram}
+            \node at (0,0) (input) {$x_c(t)+n(t)$};
+            \node[circle, draw, thick, right=2cm of input] (mult) {$\times$};
+            \draw[thick,->] (input) -- (mult);
+
+            \node[coordinate, below= of mult] (demod) {};
+            \node[right = of demod] (oscillator) {\begin{circuitikz}\node[oscillator]{};\end{circuitikz} $f_c$};
+            \draw[thick,->] (oscillator) -- (demod) --node[midway,left] {$2\cos(2\pi f_c t)$} (mult);
+
+            \node[right=3cm of mult, block] (inphase) {$\displaystyle{\frac{1}{T_s}\int_{t-T_s}^t}$};
+            \draw[thick,->] (mult) --node[midway]{$x_i(t)+n_i(t)$} (inphase);
+
+            \node[block, right =1.5cm of inphase, inner sep=4pt, label=below:{\footnotesize $\tau=kT_s$}] (samplei) {\begin{circuitikz}\draw (0,0) to[switch] node[ocirc]{} (.8,0);\end{circuitikz}};
+            \draw[thick,->] (inphase) -- (samplei);
+
+            \node[block, right =of samplei, label=below:{\footnotesize Umbral: $0$}] (detectori) {\begin{tikzpicture} \draw (0,0) -| ++(.3,.3) |- ++(.3,.3); \end{tikzpicture}};
+
+            \draw[thick,->] (samplei) -- (detectori);
+            
+            \draw[thick,->] (detectori) -- ++(2,0) node[right] {$\hat{a}_k$};
+
+        \end{blockdiagram}
+    \end{center}
+
+Se tiene entonces que:
+    \begin{equation*}
+        \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2||p||^2}{\eta_0} = \frac{A^2 T_s}{\eta_0} \Rightarrow P_e = Q\left(\sqrt{\frac{A^2 T_s}{\eta_0}}\right).
+    \end{equation*}
+    Y reescribiendo en términos de la relación entre energía de bit y ruido:
+    \begin{equation*}
+        \bar{E}_{\tilde{p}} = E[a_k^2] ||\tilde{p}||^2 = A^2 \frac{T_s}{2} \Rightarrow A^2 = 2\bar{E}_{\tilde{p}} f_s \Rightarrow P_e = Q\left(\sqrt{\frac{2\bar{E}_{\tilde{p}}}{\eta_0}}\right) = Q\left(\sqrt{2\gamma}\right),
+    \end{equation*}
+    es decir, la misma probabilidad de error que en el pulso NRZ \emph{polar} en banda base.
+\end{ejemplo}
+
+\begin{ejemplo}[QPSK y 4 QAM con pulso NRZ y detector coherente]
+En este caso sí se requiere la demodulación completa de componente en fase y cuadratura, ilustrada en la Figura \ref{fig:detector coherente}. Comencemos analizando el caso QPSK, cuyo alfabeto es:
+\begin{equation*}
+    c_k \in \{A+0j, 0+Aj, -A+0j, 0-Aj\}.
+\end{equation*}
+De manera equivalente, corresponde a utilizar las fases $\{0,\pi/2,\pi,3\pi/2\}$ y amplitud constante $A$.
+\begin{center}
+\begin{tikzpicture}
+    \begin{axis}[x=2cm,y=2cm,
+        axis lines=middle,
+        xmin=-1.5,xmax=1.5,
+        ymin=-1.5,ymax=1.5,
+        xtick = {-1,1},
+        ytick = {-1,1},
+        xticklabels = {$-A$,$A$},
+        yticklabels = {$-A$,$A$},
+        ]
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({1+.1*invgauss(rnd,rnd)},{.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,,only marks, samples=100] ({0+.1*invgauss(rnd,rnd)},{1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({-1+.1*invgauss(rnd,rnd)},{.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({.1*invgauss(rnd,rnd)},{-1+.1*invgauss(rnd,rnd)});
+        \addplot [black,only marks] coordinates { (1,0) (0,1) (-1,0) (0,-1) };
+        \addplot [dashed, gray, domain=-1:1] (\x,\x);
+        \addplot [dashed, gray, domain=-1:1] (\x,-\x);
+        \draw[->,thick, dashed] (axis cs:1,0) --node[pos=0.75,right] {$\frac{A}{\sqrt{2}}$} (axis cs:.5,.5);
+        \draw[->,thick, dashed] (axis cs:1,0) -- (axis cs:.5,-.5);
+        
+        \node[above right] at (axis cs:1,0) {\bf $(00)$};
+        \node[above right] at (axis cs:0,1) {\bf $(10)$};
+        \node[above right] at (axis cs:-1,0) {\bf $(11)$};
+        \node[above right] at (axis cs:0,-1) {\bf $(01)$};
+    \end{axis}
+    \node[above] at (current bounding box.north) {QPSK};
+\end{tikzpicture}\hspace{1cm}
+\begin{tikzpicture}
+    \begin{axis}[x=2cm,y=2cm,
+        axis lines=middle,
+        xmin=-1.5,xmax=1.5,
+        ymin=-1.5,ymax=1.5,
+        xtick = {-1,1},
+        ytick = {-1,1},
+        xticklabels = {$-A$,$A$},
+        yticklabels = {$-A$,$A$},
+        grid,
+        ]
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({1+.1*invgauss(rnd,rnd)},{1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({-1+.1*invgauss(rnd,rnd)},{1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({-1+.1*invgauss(rnd,rnd)},{-1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100] ({1+.1*invgauss(rnd,rnd)},{-1+.1*invgauss(rnd,rnd)});
+        \addplot [black,only marks] coordinates { (1,1) (-1,1) (-1,-1) (1,-1) };
+        \draw[->,thick, dashed] (axis cs:1,1) --node[midway,right] {$A$} (axis cs:1,0);
+        \draw[->,thick, dashed] (axis cs:1,1) -- (axis cs:0,1);
+
+        \node[above right] at (axis cs:1,1) {\bf $(00)$};
+        \node[above right] at (axis cs:-1,1) {\bf $(10)$};
+        \node[above right] at (axis cs:-1,-1) {\bf $(11)$};
+        \node[above right] at (axis cs:1,-1) {\bf $(01)$};
+    \end{axis}
+    \node[above] at (current bounding box.north) {4-QAM};
+\end{tikzpicture}
+\end{center}
+
+A la salida del detector coherente de la Figura \ref{fig:detector coherente} tendremos entonces:
+\begin{equation*}
+    \hat{a}_k = a_k + n_{i,k}, \quad \hat{b}_k = b_k + n_{q,k},
+\end{equation*}
+con $n_{i,k}$ y $n_{q,k}$ muestras independientes de ruido gaussiano de varianza $\eta_0 ||h||^2 = \eta_0 f_s$. Es bastante claro que los umbrales óptimos de detección son las rectas inclinadas de pendiente $\pm \pi/4$ (bisectrices de la fase), por lo que el margen de ruido es $\frac{A}{\sqrt{2}}$. Considerando la probabilidad de error sólo a símbolos adyacentes, que es la que domina, se tiene que:
+\begin{equation*}
+    P_{e,\mathrm{simbolo}} \approx P_{e,a_k} + P_{e,b_k} = 2 Q\left(\frac{A}{\sqrt{2}\sigma_N}\right)
+\end{equation*}
+
+Utilizando la fórmula \eqref{eq:snr detector coherente} tenemos que:
+\begin{equation*}
+    \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2||p||^2}{\eta_0} \Rightarrow P_{e,\mathrm{simbolo}} = 2Q\left(\sqrt{\frac{A^2}{2\eta_0 f_s}}\right)
+\end{equation*}
+
+Para realizar una comparación adecuada con los esquemas anteriores, conviene escribir lo anterior en términos de la \emph{energía de bit} y la \emph{tasa de error de bit}. Como cada pulso envía $2$ bits, tenemos que $\bar{E}_b = \frac{1}{2}\bar{E}_{\tilde{p}}$, es decir:
+\begin{equation*}
+    \bar{E}_b = \frac{1}{2}\bar{E}_{\tilde{p}} = \frac{1}{2}\left[ \underbrace{\E{a_k^2}}_{A^2/2}\underbrace{||p(t)\cos(2\pi f_c t)||^2}_{T_s/2} + \underbrace{\E{b_k^2}}_{A^2/2}\underbrace{||p(t)\sin(2\pi f_c t)||^2}_{T_s/2} \right]= \frac{A^2}{4} T_s.
+\end{equation*}
+Sustituyendo arriba se tiene que $P_{e,\mathrm{simbolo}} = 2Q\left(\sqrt{2\bar{E}_b/\eta_0}\right)$. Si utilizamos codificación de Gray, para que los símbolos adyacentes difieran en un solo bit, se tiene que:
+\begin{equation*}
+    \mathrm{BER} = \frac{1}{2}P_{e,\mathrm{simbolo}} = Q\left(\sqrt{\frac{2\bar{E}_b}{\eta_0}}\right) = Q\left(\sqrt{2\gamma}\right).
+\end{equation*}
+En particular, QPSK logra transmitir el doble de tasa de bits en el mismo ancho de banda, y con la misma probabilidad de error en términos de energía de bit que BPSK. Otra forma de interpretarlo es que QPSK consiste en dos ondas BPSK moduladas en cuadratura una de otra, por lo que se demodulan de manera independiente.
+
+Analicemos ahora el caso QAM. De la figura es claro que la constelación es la misma que QPSK, solo que rotada $45^\circ$. Si bien ahora el margen de ruido, en términos de $A$, es mayor que antes, también lo es la potencia transmitida ya que $a_k$ y $b_k$ valen simultáneamente $\pm 1$ cada uno (en el otro caso, uno valía $0$ con probabilidad $1/2$). Es de esperar que en términos de la energía de bit, tengamos un comportamiento equivalente como se muestra a continuación.
+
+A la salida del detector de la Figura \ref{fig:detector coherente} tenemos $a_k$ y $b_k$ contaminados por ruido gaussiano de varianza $\eta_0 ||h||^2 = \eta_0 f_s$. Los umbrales de detección son los ejes, y el margen de ruido es $A/\sigma$ por lo que, despreciando errores de más de dos símbolos:
+\begin{equation*}
+    P_{e,\mathrm{simbolo}} \approx P_{e,a_k} + P_{e,b_k} = 2 Q\left(\frac{A}{\sigma_N}\right)
+\end{equation*}
+Utilizando nuevamente la fórmula \eqref{eq:snr detector coherente} tenemos que:
+\begin{equation*}
+    \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2||p||^2}{\eta_0} \Rightarrow P_{e,\mathrm{simbolo}} = 2Q\left(\sqrt{\frac{A^2}{\eta_0 f_s}}\right).
+\end{equation*}
+Por último, la energía media de bit verifica:
+\begin{equation*}
+    \bar{E}_b = \frac{1}{2}\bar{E}_{\tilde{p}} = \frac{1}{2}\left[ \underbrace{\E{a_k^2}}_{A^2}\underbrace{||p(t)\cos(2\pi f_c t)||^2}_{T_s/2} + \underbrace{\E{b_k^2}}_{A^2}\underbrace{||p(t)\sin(2\pi f_c t)||^2}_{T_s/2} \right]= \frac{A^2}{2} T_s.
+\end{equation*}
+Sustituyendo se obtiene $P_{e,\mathrm{simbolo}} = Q\left(\sqrt{2\bar{E}_b/\eta_0}\right)$ y nuevamente utilizando codificación de Gray llegamos a:
+\begin{equation*}
+    \mathrm{BER} = \frac{1}{2}P_{e,\mathrm{simbolo}} = Q\left(\sqrt{\frac{2\bar{E}_b}{\eta_0}}\right) = Q\left(\sqrt{2\gamma}\right),
+\end{equation*}
+por lo que ambas modulaciones son equivalentes en términos de eficiencia espectral y probabilidad de error.
+
+\end{ejemplo}
+
+
+\begin{ejemplo}[$M$-QAM]
+
+    Pasemos ahora al caso de $M$-QAM, en el cual los símbolos del alfabeto se disponen en una grilla equiespaciada en el plano complejo, que se muestra en la figura. Aquí $A$ es el parámetro de escala que controla la energía transmitida. Como se observa en la Figura, esto corresponde a elegir $a_k$ y $b_k$ constelaciones polares de dimensión $1$ como las analizadas en banda base. Normalmente se toma $M=M_a^2=M_b^2$ (en general $M$ además es potencia de $2$ para transmitir una cantidad entera de bits).
+
+    A la salida del detector coherente de la Figura \ref{fig:detector coherente} tenemos entonces dos muestras $\hat{a}_k$ y $\hat{b}_k$ contaminadas por ruidos de varianza $\sigma_N^2 = \eta_0 ||p||^2$ independientes. La detección se hace entonces de manera independiente para $a_k$ y $b_k$ usando como umbrales $0,\pm 2A,\pm 4A,\ldots$ por lo que la probabilidad de error de símbolo, despreciando errores no adyacentes queda:
+    \begin{equation*}
+        P_{e,\mathrm{simbolo}} \approx P_{e,a_k} + P_{e,b_k} = 4\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\frac{A}{\sigma_N}\right)
+    \end{equation*}
+    donde usamos la fórmula para probabilidad de error en cada eje con alfabeto de tamaño $M_a=M_b=\sqrt{M}$.
+
+    Utilizando nuevamente la fórmula \eqref{eq:snr detector coherente} tenemos que:
+    \begin{equation*}
+        \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2||p||^2}{\eta_0} \Rightarrow P_{e,\mathrm{simbolo}} = 4\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{A^2}{\eta_0 f_s}}\right).
+    \end{equation*}
+
+    Para realizar la comparación, conviene calcular la energía media por bit nuevamente como:
+    \begin{align*}
+        \bar{E}_b &= \frac{1}{\log_2 M}\bar{E}_{\tilde{p}} = \frac{1}{\log_2 M}\left[ \E{a_k^2}\underbrace{||p(t)\cos(2\pi f_c t)||^2}_{T_s/2} + \E{b_k^2}\underbrace{||p(t)\sin(2\pi f_c t)||^2}_{T_s/2} \right]\\
+        &= \frac{1}{\log_2 M}\left(\E{a_k^2} + \E{b_k^2}\right)\frac{T_s}{2} \\
+        &= \frac{1}{\log_2 M}\left(\frac{M_a^2-1}{3}A^2 \frac{T_s}{2} + \frac{M_b^2-1}{3}A^2 \frac{T_s}{2}\right)\\
+        &= \frac{1}{\log_2 M} \frac{M-1}{3}A^2T_s,
+    \end{align*}
+    donde usamos el resultado para $\E{a_k^2}=\E{b_k^2}$ del caso $M-$ario de banda base.
+
+    Sustituyendo en la probabilidad de error se obtiene:
+    \begin{equation*}
+        P_{e,\mathrm{simbolo}} = 4\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{3\log_2M\bar{E}_b}{(M-1)\eta_0}}\right) = 4\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{3\log_2M }{(M-1)}\gamma}\right) 
+    \end{equation*}
+
+    Nuevamente, observando que cada símbolo codifica $\log_2 M$ bits, se llega a la tasa de error de QAM:
+    \begin{equation*}
+        \mathrm{BER} =  \frac{4}{\log_2 M}\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{3\log_2M }{(M-1)}\gamma}\right) 
+    \end{equation*}
+
+    \begin{center}
+        \begin{tikzpicture}
+        \begin{axis}[x=1cm,y=1cm,
+            axis lines=middle,
+            xmin=-3.5,xmax=3.5,
+            ymin=-3.5,ymax=3.5,
+            xtick = {-3,-1,1,3},
+            ytick = {-3,-1,1,3},
+            xticklabels = {$-3A$,$-A$,$A$,$3A$},
+            yticklabels = {$-3A$,$-A$,$A$,$3A$},
+            grid,
+            ]
+            \foreach \a in {-3,-1,1,3} {
+                \foreach \b in {-3,-1,1,3} {
+                    \addplot[teal, opacity=0.15,only marks, samples=20] ({\a+.1*invgauss(rnd,rnd)},{\b+.1*invgauss(rnd,rnd)});
+                    \addplot [black,only marks] coordinates {(\a,\b)};
+                }
+            }
+        \end{axis}
+        \node[above] at (current bounding box.north) {16-QAM};
+    \end{tikzpicture}
+    \end{center}
+
+\end{ejemplo}
+
+\begin{ejemplo}[$M$-PSK]
+
+    Por último, analicemos un alfabeto $M-$ario codificado solo en fase, lo que corresponde a la modulación $M-$PSK. En este caso, corresponde a tomar $a_k = A\cos(\theta_k)$ y $b_k=A\sin(\theta_k)$ (o bien símbolos complejos $c_k = Ae^{j\theta_k}$) con fases $\theta_k$ equiespaciadas $0,2\pi/M,\ldots,2\frac{M-1}{M}\pi$.
+
+    Nuevamente, a la salida del detector coherente de la Figura \ref{fig:detector coherente} tenemos entonces dos muestras $\hat{a}_k$ y $\hat{b}_k$ contaminadas por ruidos de varianza $\sigma_N^2 = \eta_0 ||p||^2$ independientes. La detección se hace entonces clasificando cada símbolo a su fase más cercana, es decir clasificamos según $\arctan\left(b_k/a_k\right)$ (umbrales radiales). Esto es difícil de analizar de manera exacta, ya que debemos calcular la probabilidad de que el símbolo perturbado por el ruido gaussiano caiga en un arco de círculo de ángulo $2\pi/M$. Sin embargo, tomando como margen de ruido la distancia entre el punto de la constelación y el punto más cercano del umbral tenemos la aproximación:
+    \begin{equation*}
+        P_{e,\mathrm{simbolo}} \approx 2 Q\left(\frac{A\sin(\pi/M)}{\sigma_N}\right),
+    \end{equation*}
+    donde usamos que para cada símbolo hay un margen $A\sin(\pi/M)$ al umbral y cada símbolo puede dar error a los dos adyacentes. Esta aproximación es razonable para $M\geqslant 4$ y $A\gg \sigma_N$.
+
+    Para evaluar lo anterior, volvemos a la fórmula \eqref{eq:snr detector coherente}:
+    \begin{equation*}
+        \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2||p||^2}{\eta_0} \Rightarrow P_{e,\mathrm{simbolo}} = 2 Q\left(\sqrt{\frac{A^2\sin^2(\pi/M)}{\eta_0 f_s}}\right).
+    \end{equation*}
+
+    Calculamos también la energía media por bit como:
+    \begin{align*}
+        \bar{E}_b &= \frac{1}{\log_2 M}\bar{E}_{\tilde{p}} = \frac{1}{\log_2 M}\left[ \E{a_k^2}\underbrace{||p(t)\cos(2\pi f_c t)||^2}_{T_s/2} + \E{b_k^2}\underbrace{||p(t)\sin(2\pi f_c t)||^2}_{T_s/2} \right]\\
+        &= \frac{1}{\log_2 M}\left(\E{a_k^2} + \E{b_k^2}\right)\frac{T_s}{2} \\
+        &= \frac{1}{\log_2 M}\frac{T_s}{2}\E{|c_k|^2}\\
+        &= \frac{1}{\log_2 M} \frac{T_s}{2}A^2
+    \end{align*}
+    donde usamos que el símbolo $|c_k|$ tiene amplitud constante.
+
+    Sustituyendo en la probabilidad de error se obtiene:
+    \begin{equation*}
+        P_{e,\mathrm{simbolo}} = 2 Q\left(\sqrt{\frac{2\log_2M\sin(\pi/M)\bar{E}_b}{\eta_0}}\right) = 2Q\left(\sqrt{2\log_2M \sin^2(\pi/M)\gamma}\right) 
+    \end{equation*}
+
+    Nuevamente, observando que cada símbolo codifica $\log_2 M$ bits, se llega a la tasa de error de QAM:
+    \begin{equation*}
+        \mathrm{BER} = \frac{2}{\log_2 M}Q\left(\sqrt{2\log_2M \sin^2(\pi/M)\gamma}\right) 
+    \end{equation*}
+
+    \begin{center}
+        \begin{tikzpicture}
+        \begin{axis}[x=2cm,y=2cm,
+            axis lines=middle,
+            xmin=-1.5,xmax=1.5,
+            ymin=-1.5,ymax=1.5,
+            xtick = {-1,1},
+            ytick = {-1,1},
+            xticklabels = {$-A$,$A$},
+            yticklabels = {$-A$,$A$},
+            grid,
+            ]
+            \foreach \a in {0,1,...,15}{
+                    \addplot[teal, opacity=0.15,only marks, samples=20] ({cos(\a*360/16)+0.05*invgauss(rnd,rnd)},{sin(\a*360/16)+0.05*invgauss(rnd,rnd)});
+                    \addplot [black,only marks] coordinates {({cos(\a*360/16)},{sin(\a*360/16)})};
+            }
+        \end{axis}
+        \node[above] at (current bounding box.north) {16-PSK};
+    \end{tikzpicture}
+    \end{center}
+
+    
+\end{ejemplo}
+
+Para terminar esta sección, hagamos una comparativa de la eficiencia de PSK y QAM. Observemos que si $M$ es grande podemos aproximar las probabilidades de error de la siguiente forma:
+\begin{description}
+    \item[QAM] $P_e\approx 4 Q\left(\sqrt{\frac{3\overline{E_p}}{M\eta}}\right)$
+    \item[PSK] $P_e\approx 2 Q\left(\sqrt{\frac{2\pi^2\overline{E_p}}{M^2\eta}}\right)$.
+ \end{description}
+El argumento de la función $Q(\cdot)$ cae más rápido con $M$ en PSK que en QAM, por lo que $P_e$ es mayor en PSK que en QAM para las mismas energías de pulso.
+
+La intuición del resultado anterior es la siguiente: el margen de ruido está determinado por la separación entre los símbolos, mientras que la restricción de potencia limita el tamaño promedio de la constelación. En el caso de PSK, la constelación tiene módulo constante, por lo que para separar más los símbolos debo aumentar la potencia (o incurrir en más error). En cambio QAM aprovecha el espacio interior del círculo modulando la amplitud además de la fase y manteniendo una mayor separación.
+
+Retomemos ahora el tema de la eficiencia espectral. Como vimos antes, la señal pasabanda ocupa el doble de ancho de banda que la señal de banda base equivalente. Si utilizamos pulsos NRZ en banda base (el análisis es similar para otros pulsos) y tomamos como ancho de banda del pulso $f_s$, el lóbulo central, entonces en pasabanda:
+\begin{equation*}
+    \mathrm{Eff} = \frac{\mathrm{vti}}{B} = \frac{\log_2 M f_s}{2f_s} = \frac{\log_2 M}{2}.
+\end{equation*}
+
+En la Figura \ref{fig:comparacion qam psk} se grafica la relación $\gamma=\bar{E}_b/\eta_0$ en $\unit{\decibel}$ necesaria para QAM y PSK con diferentes valores de $M$ y la eficiencia espectral correspondiente, para una probabilidad de error de diseño de $\mathrm{BER}=10^{-6}$. Claramente QAM requiere menos potencia para la misma eficiencia y misma probabilidad de error.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[width=0.6\textwidth,
+                axis lines=middle,
+                xmin=8,xmax=30.5,
+                ymin=0,ymax=3.4,
+                xlabel=$\gamma$ $(\unit{\decibel})$,
+                ylabel=$\mathrm{Eff}$ $(\unit{\bps /\hertz})$,
+                grid,
+                legend style={legend pos=south east},
+                x label style={at={(axis description cs:0.5,-0.1)},anchor=north},
+                y label style={at={(axis description cs:-0.1,0.5)},rotate=90,anchor=south}]
+
+                \addplot[teal, thick, mark=*] coordinates {
+                    (10.52983169956084, .5)
+                    (10.52983169956084, 1)
+                    (12.393482720329594, 1.5)
+                    (14.401727044112327, 2)
+                    (16.535902046832312, 2.5)
+                    (18.777249982943914, 3)
+                };
+                \addlegendentry{$M$-QAM}
+                \addplot[teal, thick,mark=square*] coordinates {
+                    (10.52983169956084, .5)
+                    (10.52983169956084, 1)
+                    (13.949556574666492, 1.5)
+                    (18.441008301342784, 2)
+                    (23.362371184842722, 2.5)
+                    (28.50731616802202, 3)
+                };
+                \addlegendentry{$M$-PSK}
+                \node[right] at (axis cs:10.53,.5) {BPSK};
+                \node[right] at (axis cs:10.53,1) {QPSK-4QAM};
+                \node[above] at (axis cs:18.77,3) {$64$-QAM};
+                \node[above] at (axis cs:28.5,3) {$64$-PSK};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Comparación de $M-$QAM con $M-$PSK: graficamos eficiencia espectral contra relación $\bar{E}_b/\eta_0$ en $\unit{\decibel}$ para una probabilidad de error de diseño de $\mathrm{BER}=10^{-6}$.}\label{fig:comparacion qam psk}
+\end{figure}
