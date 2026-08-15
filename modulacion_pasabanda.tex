@@ -224,7 +224,7 @@ Para finalizar esta sección, comentemos ahora el tema de la \emph{eficiencia es
 
 A modo de ejemplo, si se utiliza BPSK con pulsos de Nyquist ideales ($\alpha=0$ en el Ejemplo \ref{ej:bpsk nyquist}), ocupa un ancho de banda $f_s$ y obtiene una eficiencia espectral igual a $1$ bit por $\unit{\hertz}$, comparado con $2$ en el caso de banda base. La única forma de compensar esto es enviando más bits por símbolo, es decir pasar a modulaciones $M$-arias, que estudiamos a continuación.
 
-\section{Modulación pasabanda $M$-aria}
+\section{Modulación pasabanda $M$-aria}\label{sec:modulacion pasabanda m aria}
 
 Antes de generalizar los conceptos anteriores, es conveniente retomar la noción de \emph{envolvente compleja}, ya utilizada en el estudio de la modulación analógica. La idea es que una señal pasabanda $x_c(t)$ puede escribirse como:
 \begin{equation}\label{eq:transformada pasabanda}
@@ -431,7 +431,7 @@ Nuevamente, los símbolos controlan la potencia y el pulso el ancho de banda uti
 \end{equation*}
 Por ejemplo, para la constelación $16-$QAM de la Figura \ref{fig:qam}, $M=16$ de donde $\sigma_c^2 = 10A^2$. Nuevamente el factor $A$ controla la amplitud de la señal y actuará como \emph{margen de ruido} en la detección, controlando la probabilidad de error.
 
-\section{Detección coherente para la modulación pasabanda lineal}
+\section{Detección coherente para la modulación pasabanda lineal}\label{sec:deteccion coherente}
 
 Pasamos ahora a estudiar el problema de detección de una señal digital pasabanda, cuando se recibe por un canal contaminada de ruido blanco. Para ilustrar el problema, comencemos analizando la detección BPSK, y luego generalizamos a otras constelaciones.
 

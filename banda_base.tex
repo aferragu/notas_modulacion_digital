@@ -970,7 +970,7 @@ En cuanto a la eficiencia espectral, hemos aumentado el ancho de banda, por lo c
 
 Nuevamente, si $M$ pudiera ser arbitrario, en principio no hay límites a la eficiencia espectral alcanzable. Sin embargo, para distinguir símbolos en presencia de ruido, hay que separarlos mediante un aumento de potencia. Esto es lo que analizamos en el Capítulo \ref{chapter:deteccion ruido}.
 
-\section{Ecualización de canal}
+\section{Ecualización de canal}\label{sec:ecualizacion canal zfe}
 
 En diversas situaciones la interferencia intersimbólica no se logra evitar, y se recibe una onda $x_R(t) = \sum a_k \tilde{p}(t-kT_s)$ donde el pulso $\tilde{p}(t)$ introduce ISI. Por ejemplo, si se envían  pulsos rectangulares por un canal muy
 angosto. Una posible solución  en el receptor es compensar con un \emph{filtro ecualizador} $\hat{H}_e$, que esencialmente invierte el canal en la banda de interés. Una forma popular de hacerlo es por un filtro transversal como se muestra en la Figura \ref{fig:filtro eq}, que verifica la siguiente ecuación:

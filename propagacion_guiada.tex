@@ -9,9 +9,9 @@ La idea central es discretizar la línea en segmentos infinitesimales de longitu
 \begin{definicion}[Parámetros primarios de la línea]\label{def:parametros primarios}
 Una línea de transmisión de dos conductores queda caracterizada por cuatro parámetros por unidad de longitud, en general dependientes de la frecuencia:
 \begin{itemize}
-    \item $R(f)$ [$\Omega/\unit{\meter}$]: resistencia serie de los conductores, debida a su conductividad finita.
+    \item $R$ ($\unit{\ohm/\meter}$): resistencia serie de los conductores, debida a su conductividad finita.
     \item $L$ [$\unit{\henry}/\unit{\meter}$]: inductancia serie, asociada al campo magnético que rodea a los conductores cuando circula corriente por ellos.
-    \item $G(f)$ [$\unit{\siemens}/\unit{\meter}$]: conductancia paralelo, debida a las pérdidas (corrientes de fuga) en el dieléctrico que separa los conductores.
+    \item $G$ [$\unit{\siemens}/\unit{\meter}$]: conductancia paralelo, debida a las pérdidas (corrientes de fuga) en el dieléctrico que separa los conductores.
     \item $C$ [$\unit{\farad}/\unit{\meter}$]: capacidad paralelo, asociada al campo eléctrico entre los conductores.
 \end{itemize}
 \end{definicion}
@@ -22,19 +22,16 @@ Un segmento de línea de longitud $\Delta z$ se modela mediante el circuito de p
 
 \begin{figure}
     \begin{center}
-        \begin{circuitikz}[scale=1.15, european]
-            \draw (0,0) to[R=$R\Delta z$] (1.9,0) to[L=$L\Delta z$] (3.6,0);
-            \draw (3.6,0) -- (4.4,0);
-            \draw (3.6,0) to[R=$1/G\Delta z$] (3.6,-1.1) to[C=$C\Delta z$] (3.6,-2.2);
-            \draw (0,-2.2) -- (3.6,-2.2);
-            \draw (3.6,-2.2) -- (4.4,-2.2);
-            \draw (0,-2.2) -- (0,0);
-            \draw[-latex, thick] (-0.6,-1.85) -- (-0.6,-0.35);
-            \node[left] at (-0.6,-1.1) {$v(z,t)$};
-            \draw[-latex, thick] (0.15,0.75) -- (1.15,0.75);
-            \node[above] at (0.65,0.75) {\footnotesize $i(z,t)$};
-            \node[below left] at (0,-2.2) {\footnotesize $z$};
-            \node[below right] at (4.4,-2.2) {\footnotesize $z+\Delta z$};
+        \begin{circuitikz}[scale=1.5, american]
+            \draw (0,0) to[R=$R\Delta z$] (1.9,0) to[L=$L\Delta z$] (4,0);
+            \draw (4,0) -- (4.4,0);
+            \draw (4,0) to[R=$1/G\Delta z$] (4,-1.1) to[C=$C\Delta z$] (4,-2.2);
+            \draw (0,-2.2) -- (4,-2.2);
+            \draw (4,-2.2) -- (4.4,-2.2);
+            \draw[-latex, thick] (0,-1.85) -- (0,-0.35) node[midway,left] {$v(z,t)$};
+            \draw[-latex, thick] (1.6,0.5) -- (2.4,0.5) node[midway,above] {$i(z,t)$};
+            \node[below left] at (0,-2.2) {$z$};
+            \node[below right] at (4.4,-2.2) {$z+\Delta z$};
         \end{circuitikz}
     \end{center}
     \caption{Circuito de parámetros concentrados equivalente a un segmento de línea de longitud $\Delta z$. La línea completa es la cascada de infinitos segmentos de este tipo.}\label{fig:segmento linea}
@@ -55,23 +52,37 @@ Tomando el límite $\Delta z \to 0$, el miembro izquierdo es por definición $\p
     i(z,t) - i(z+\Delta z, t) = G\Delta z\, v(z+\Delta z,t) + C \Delta z\, \frac{\partial v(z+\Delta z,t)}{\partial t},
 \end{equation*}
 que en el mismo límite $\Delta z \to 0$ da $-\partial i(z,t)/\partial z$ en el miembro izquierdo. Se obtiene así el siguiente sistema de ecuaciones diferenciales en derivadas parciales, acopladas, conocidas como las \emph{ecuaciones del telegrafista}:
-\begin{equation}\label{eq:telegrafista}
-    \begin{aligned}
-        \frac{\partial v(z,t)}{\partial z} &= -R\, i(z,t) - L\, \frac{\partial i(z,t)}{\partial t}, \\
-        \frac{\partial i(z,t)}{\partial z} &= -G\, v(z,t) - C\, \frac{\partial v(z,t)}{\partial t}.
-    \end{aligned}
-\end{equation}
-Estas ecuaciones, planteadas por Kelvin y luego completadas por Heaviside en el contexto del cable telegráfico transatlántico, son el punto de partida de todo el análisis de líneas de transmisión: relacionan cómo cambia la tensión (corriente) en el espacio con cómo cambia la corriente (tensión) en el tiempo, acoplando así la dimensión espacial que el modelo de parámetros concentrados ignoraba.
+\begin{subequations}\label{eq:telegrafista}
+\begin{align}
+    \frac{\partial v(z,t)}{\partial z} &= -R\, i(z,t) - L\, \frac{\partial i(z,t)}{\partial t}, \\
+    \nonumber \\ 
+    \frac{\partial i(z,t)}{\partial z} &= -G\, v(z,t) - C\, \frac{\partial v(z,t)}{\partial t}.
+\end{align}    
+\end{subequations}
+Estas ecuaciones, planteadas por Kelvin y luego completadas por Heaviside en el contexto del cable telegráfico transatlántico, son el punto de partida de todo el análisis de líneas de transmisión: relacionan cómo cambia la tensión en el espacio con cómo cambia la corriente en el tiempo y viceversa, acoplando así la dimensión espacial que el modelo de parámetros concentrados ignoraba.
 
 \section{Ecuación de onda y propagación en la línea}\label{sec:ecuacion de onda}
 
-Combinando las dos ecuaciones de \eqref{eq:telegrafista} -- derivando la primera respecto de $z$ y sustituyendo la segunda -- se obtiene una única ecuación de segundo orden para $v(z,t)$ (y, de forma simétrica, otra para $i(z,t)$):
-\begin{equation*}
-    \frac{\partial^2 v(z,t)}{\partial z^2} = LC\, \frac{\partial^2 v(z,t)}{\partial t^2} + (RC+LG)\, \frac{\partial v(z,t)}{\partial t} + RG\, v(z,t),
-\end{equation*}
-la \emph{ecuación de onda} de la línea con pérdidas. En el caso ideal sin pérdidas ($R=G=0$) se reduce a la ecuación de onda clásica $\partial^2 v/\partial z^2 = LC\, \partial^2 v/\partial t^2$, cuya solución general es $v(z,t) = f(t-z/v_0) + g(t+z/v_0)$ con $v_0=1/\sqrt{LC}$: dos ondas viajando sin distorsión, una en cada sentido. Con pérdidas, sin embargo, esta ecuación no tiene en general una solución tan simple en el dominio temporal.
+Derivando la primera ecuación de \eqref{eq:telegrafista} respecto de $z$ y sustituyendo en la segunda, se obtiene una única ecuación de segundo orden para $v(z,t)$ (y, de forma simétrica, otra para $i(z,t)$):
+\begin{equation}\label{eq:onda con perdidas}
+    \frac{\partial^2 v(z,t)}{\partial z^2} = LC\, \frac{\partial^2 v(z,t)}{\partial t^2} + (RC+LG)\, \frac{\partial v(z,t)}{\partial t} + RG\, v(z,t).
+\end{equation}
 
-Como el sistema \eqref{eq:telegrafista} es lineal e invariante en el tiempo (para $z$ fijo, $R,L,G,C$ no dependen de $t$), conviene resolverlo trabajando frecuencia a frecuencia, tal como hicimos para los sistemas LTI en capítulos anteriores. Tomando transformada de Fourier en $t$ a ambos miembros de \eqref{eq:telegrafista}, con $v(z,t) \fourier \hat{V}(z,f)$ e $i(z,t) \fourier \hat{I}(z,f)$, y usando que derivar en $t$ equivale a multiplicar por $j2\pi f$, se obtiene, para cada frecuencia $f$, un sistema de ecuaciones diferenciales \emph{ordinarias} en $z$:
+Esta ecuación se denomina \emph{ecuación de onda de la línea con pérdidas}. 
+
+\begin{ejemplo}[Línea sin pérdidas]
+    Supongamos un caso ideal de línea sin pérdidas, es decir $R=G=0$. En este caso la ecuación \eqref{eq:onda con perdidas} se reduce a:
+    \begin{equation*}
+        \frac{\partial^2 v}{\partial z^2} = LC\, \frac{\partial^2 v}{\partial t^2}.
+    \end{equation*}
+Esta es la ecuación de onda clásica, cuya solución general es $v(z,t) = f(t-z/v_0) + g(t+z/v_0)$ con $v_0=1/\sqrt{LC}$, denominada velocidad de propagación. Se trata entonces de dos formas de onda $f$ y $g$ genéricas viajando sin distorsión, una en cada sentido. 
+\end{ejemplo}
+
+Con pérdidas, sin embargo, esta ecuación no tiene en general una solución tan simple en el dominio temporal. Sin embargo, como el sistema \eqref{eq:telegrafista} es lineal e invariante en el tiempo (para $z$ fijo, $R,L,G,C$ no dependen de $t$), conviene resolverlo trabajando en frecuencia, tal como en la teoría general de sistemas LTI. Tomando transformada de Fourier en $t$ a ambos miembros de \eqref{eq:telegrafista}, definimos:
+\begin{equation*}
+v(z,t) \fourier \hat{V}(z,f), \quad \quad i(z,t) \fourier \hat{I}(z,f).
+\end{equation*}
+Usando que derivar en $t$ equivale a multiplicar por $j2\pi f$, se obtiene, para cada frecuencia $f$, un sistema de ecuaciones diferenciales \emph{ordinarias} en $z$:
 \begin{equation}\label{eq:telegrafista fourier}
     \begin{aligned}
         \frac{d\hat{V}(z,f)}{dz} &= -\left(R+j2\pi f L\right)\hat{I}(z,f), \\
@@ -79,16 +90,17 @@ Como el sistema \eqref{eq:telegrafista} es lineal e invariante en el tiempo (par
     \end{aligned}
 \end{equation}
 Derivando la primera ecuación respecto de $z$ y sustituyendo la segunda:
-\begin{equation*}
-    \frac{d^2\hat{V}(z,f)}{dz^2} = \left(R+j2\pi f L\right)\left(G+j2\pi f C\right) \hat{V}(z,f) =: \gamma(f)^2\, \hat{V}(z,f),
-\end{equation*}
+\begin{equation}\label{eq:onda perdida fourier}
+    \frac{d^2\hat{V}(z,f)}{dz^2} = \left(R+j2\pi f L\right)\left(G+j2\pi f C\right) \hat{V}(z,f) = \gamma(f)^2\, \hat{V}(z,f),
+\end{equation}
 donde definimos la \emph{constante de propagación}:
 \begin{equation}\label{eq:gamma}
-    \gamma(f) := \alpha(f) + j\beta(f) = \sqrt{\left(R+j2\pi f L\right)\left(G+j2\pi f C\right)},
+    \gamma(f) := \alpha(f) + j\beta(f) = \sqrt{\left(R+j2\pi f L\right)\left(G+j2\pi f C\right)}.
 \end{equation}
-tomando la raíz cuadrada con la determinación que hace $\alpha(f)\geqslant 0$ (una elección física: las ondas se atenúan al propagarse, no crecen). Llamamos a $\alpha(f)$ la \emph{constante de atenuación} (en $\unit{\neper\per\meter}$, o convertida a $\unit{\deci\bel\per\meter}$ multiplicando por $20\log_{10}\e \approx 8.686$) y a $\beta(f)$ la \emph{constante de fase} (en $\unit{\radian\per\meter}$).
 
-La ecuación diferencial resultante, $d^2\hat V/dz^2 = \gamma(f)^2 \hat V(z,f)$, tiene solución general:
+Notar que $\gamma(f)$ es en principio la raíz cuadrada de un número complejo: elegimos aquella raíz que posee $\alpha(f)\geqslant 0$. Esto corresponde a una elección física: las ondas se atenúan al propagarse (en la dirección $z$ creciente). De este modo, $\alpha(f)$ se denomina la \emph{constante de atenuación} y posee unidades de $\unit{\per\meter}$, aunque es común expresarla en $\unit{\deci\bel\per\meter}$. A $\beta(f)$ se le denomina \emph{constante de fase} y su unidad es $\unit{\radian/\meter}$.
+
+La ecuación diferencial \eqref{eq:onda perdida fourier} posee como solución general:
 \begin{equation}\label{eq:solucion V}
     \hat{V}(z,f) = \hat{V}^+(f)\, \e^{-\gamma(f) z} + \hat{V}^-(f)\, \e^{\gamma(f) z}.
 \end{equation}
