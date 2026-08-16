@@ -1,13 +1,14 @@
 \documentclass[a4paper,11pt]{report}
 
 %%%BIBLIOTECAS Y CONFIGURACION
-\usepackage{amsmath}
+\usepackage{amsmath, amssymb}
 \usepackage{array}
 \usepackage{amsthm}
 \usepackage{ifthen}
 \usepackage[utf8]{inputenc}
-\usepackage[adobe-utopia]{mathdesign}
 \usepackage[T1]{fontenc}
+%\usepackage[adobe-utopia]{mathdesign}
+\usepackage{fourier}
 \usepackage{graphicx}
 \usepackage[top=2.5cm,bottom=2.5cm,left=2cm,right=2cm]{geometry}
 %\setlength{\parskip}{0.7\baselineskip}
@@ -175,9 +176,9 @@
 
 \maketitle
 
-\thispagestyle{empty}
 
 \chapter*{Prefacio}
+\thispagestyle{empty}
 
 Estas notas de curso presentan una introducción a los conceptos básicos de modulación de señales digitales, su propagación en medios físicos y la detección y reconstrucción de mensajes, permitiendo así la comunicación digital de extremo a extremo.
 
@@ -214,8 +215,8 @@ La comunicación digital es hoy en día el núcleo central de la era de la conec
 \chapter{Propagación en medios guiados}\label{chapter:propagacion guiada}
 \input{propagacion_guiada}
 
-\chapter{Ecualización y sincronismo}\label{chapter:ecualización y sincronismo}
-\input{ecualizacion_sincronismo.tex}
+\chapter{Sincronización}\label{chapter:sincronizacion}
+\input{sincronismo.tex}
 
 \chapter{Modulación ortogonal en frecuencia}\label{chapter:ofdm}
 

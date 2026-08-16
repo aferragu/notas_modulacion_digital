@@ -100,11 +100,18 @@ donde definimos la \emph{constante de propagación}:
 
 Notar que $\gamma(f)$ es en principio la raíz cuadrada de un número complejo: elegimos aquella raíz que posee $\alpha(f)\geqslant 0$. Esto corresponde a una elección física: las ondas se atenúan al propagarse (en la dirección $z$ creciente). De este modo, $\alpha(f)$ se denomina la \emph{constante de atenuación} y posee unidades de $\unit{\per\meter}$, aunque es común expresarla en $\unit{\deci\bel\per\meter}$. A $\beta(f)$ se le denomina \emph{constante de fase} y su unidad es $\unit{\radian/\meter}$.
 
-La ecuación diferencial \eqref{eq:onda perdida fourier} posee como solución general:
+La ecuación diferencial \eqref{eq:onda perdida fourier} es, para cada $f$, una ecuación de segundo orden en $z$ que posee como solución general:
 \begin{equation}\label{eq:solucion V}
-    \hat{V}(z,f) = \hat{V}^+(f)\, \e^{-\gamma(f) z} + \hat{V}^-(f)\, \e^{\gamma(f) z}.
+    \hat{V}(z,f) = \hat{V}^+(f)\, e^{-\gamma(f) z} + \hat{V}^-(f)\, e^{\gamma(f) z},
 \end{equation}
-Interpretemos cada término recordando que $\e^{j2\pi f t}$ es nuestra convención para una sinusoide (Sección \ref{sec:parametros distribuidos} en adelante venimos usando $\fourier$ con esta convención). El primer término, $\hat{V}^+(f)\e^{-\alpha(f) z}\e^{-j\beta(f) z}$, se atenúa a medida que $z$ crece y acumula un atraso de fase creciente con $z$: corresponde, al antitransformar, a una onda que se propaga en el sentido de $z$ creciente y llega retardada y atenuada -- la llamamos \emph{onda incidente}. El segundo término, con $\e^{+\gamma(f) z}$, crece con $z$: no es físico para una línea semi-infinita, pero si la línea tiene longitud finita y termina en una carga que refleja parte de la energía (Sección \ref{sec:linea cargada}), representa la \emph{onda reflejada}, que se propaga en el sentido de $z$ decreciente y por lo tanto se atenúa a medida que $z$ decrece.
+donde las constantes $\hat{V}^+(f)$, $\hat{V}^-(f)$ precisamente pueden depender de $f$, así como de las condiciones de borde de la línea.
+
+Interpretemos entonces cada uno de estos términos:
+\begin{itemize}
+    \item $\hat{V}^+(f)\, e^{-\gamma(f) z} = \hat{V}^+(f)e^{-\alpha(f) z}e^{-j\beta(f) z}$
+\end{itemize}
+
+el primer término, $\hat{V}^+(f)\e^{-\alpha(f) z}\e^{-j\beta(f) z}$, se atenúa a medida que $z$ crece y acumula un atraso de fase creciente con $z$: corresponde, al antitransformar, a una onda que se propaga en el sentido de $z$ creciente y llega retardada y atenuada -- la llamamos \emph{onda incidente}. El segundo término, con $\e^{+\gamma(f) z}$, crece con $z$: no es físico para una línea semi-infinita, pero si la línea tiene longitud finita y termina en una carga que refleja parte de la energía (Sección \ref{sec:linea cargada}), representa la \emph{onda reflejada}, que se propaga en el sentido de $z$ decreciente y por lo tanto se atenúa a medida que $z$ decrece.
 
 Sustituyendo \eqref{eq:solucion V} en la primera ecuación de \eqref{eq:telegrafista fourier} se obtiene $\hat I(z,f)$:
 \begin{equation*}
@@ -433,7 +440,85 @@ El Ejemplo \ref{ejemplo:repetidor regenerativo} del Capítulo \ref{chapter:detec
 Es decir, para no exceder el presupuesto de pérdidas que aquel ejemplo asumía, un repetidor cada $620\ \unit{\meter}$ aproximadamente -- el número concreto que la Sección \ref{sec:dispersion pulsos} le debía al Capítulo \ref{chapter:deteccion ruido}.
 \end{ejemplo}
 
-Con esto cerramos el círculo que abrió este capítulo: partiendo de los parámetros $R,L,G,C$ de la línea (Sección \ref{sec:parametros distribuidos}), llegamos a la constante de propagación y a $\hat H(f)$ (Secciones \ref{sec:ecuacion de onda} y \ref{sec:dispersion pulsos}), entendimos el rol de la carga y la reflexión (Sección \ref{sec:linea cargada}), y finalmente le dimos contenido físico tanto a la distorsión que produce ISI (Capítulo \ref{chapter:modulacion banda base}) como a la atenuación que limita el alcance de un enlace (Capítulo \ref{chapter:deteccion ruido}). En el próximo capítulo retomamos el filtro ecualizador que \S3.6 dejó apenas esbozado, ahora motivados por un $\hat H(f)$ con origen físico concreto, y avanzamos hacia el problema, igualmente pendiente, del sincronismo.
+Con esto entendimos, de punta a punta, de dónde sale $\hat H(f)$: de los parámetros $R,L,G,C$ (Sección \ref{sec:parametros distribuidos}), a través de la constante de propagación (Sección \ref{sec:ecuacion de onda}), hasta la atenuación creciente con la frecuencia que efectivamente limita el ancho de banda del canal (Sección \ref{sec:dispersion pulsos}). Queda una pregunta que la Sección \ref{sec:ecualizacion canal zfe} dejó pendiente al esbozar el filtro ecualizador sin resolverlo del todo: ahora que conocemos a $\hat H(f)$ con precisión, ¿podemos deshacer su efecto? Cerramos este capítulo respondiendo esa pregunta.
+
+\section{Ecualización de canal}\label{sec:ecualizacion}
+
+\subsection*{Resolución explícita del filtro de cero forzado}
+
+Recordemos el planteo de la Sección \ref{sec:ecualizacion canal zfe} (Figura \ref{fig:filtro eq}): se recibe una onda con ISI, $x_R(t) = \sum_k a_k \tilde p(t-kT_s)$, y se la pasa por un filtro transversal de $2N+1$ ganancias $\{c_n\}_{n=-N}^N$, obteniendo una nueva onda PAM con pulso
+\begin{equation*}
+    \hat p(t) = \sum_{n=-N}^N c_n\, \tilde p(t-nT_s).
+\end{equation*}
+El criterio de \emph{cero forzado} (ZFE) pide $\hat p(kT_s)=0$ para $k=\pm 1,\ldots,\pm N$, junto con $\hat p(0)=1$ (para no perder la ganancia de la muestra útil). Escribamos esto explícitamente: evaluando $\hat p$ en $t=kT_s$,
+\begin{equation*}
+    \hat p(kT_s) = \sum_{n=-N}^N c_n\, \tilde p\big((k-n)T_s\big) = \sum_{n=-N}^N c_n\, \tilde p_{k-n},
+\end{equation*}
+donde abreviamos $\tilde p_m := \tilde p(mT_s)$ (las muestras del pulso recibido, el ``dato experimental'' que menciona la Sección \ref{sec:ecualizacion canal zfe}). La condición $\hat p(kT_s)=\delta_{k,0}$ para $k=-N,\ldots,N$ es entonces un sistema \emph{lineal} de $2N+1$ ecuaciones en las $2N+1$ incógnitas $c_n$:
+\begin{equation}\label{eq:sistema zfe}
+    \sum_{n=-N}^N \tilde p_{k-n}\, c_n = \delta_{k,0}, \qquad k=-N,\ldots,N.
+\end{equation}
+En forma matricial, $\mathbf P\,\mathbf c = \mathbf e_0$, donde $\mathbf c=(c_{-N},\ldots,c_N)^\top$, $\mathbf e_0$ es el vector con un $1$ en la posición central y ceros en el resto, y $\mathbf P$ es la matriz $(2N+1)\times(2N+1)$ de entradas $P_{k,n}=\tilde p_{k-n}$. Como $P_{k,n}$ depende solo de $k-n$, $\mathbf P$ es una \emph{matriz de Toeplitz} (constante en cada diagonal). La solución formal es $\mathbf c = \mathbf P^{-1}\mathbf e_0$, que existe siempre que $\mathbf P$ sea inversible -- lo es en la generalidad de los casos de interés práctico.
+
+\begin{ejemplo}[ZFE de tres ganancias, $N=1$]\label{ejemplo:zfe n1}
+Supongamos que, al medir el canal, obtenemos las muestras del pulso recibido (simétricas, un caso frecuente en la práctica): $\tilde p_0=1$, $\tilde p_{\pm 1}=0{,}2$, $\tilde p_{\pm 2}=0{,}05$ (y $\tilde p_m\approx 0$ para $|m|>2$). Con $N=1$, el sistema \eqref{eq:sistema zfe} tiene tres ecuaciones ($k=-1,0,1$) en las incógnitas $c_{-1},c_0,c_1$:
+\begin{equation*}
+    \begin{pmatrix} \tilde p_0 & \tilde p_{-1} & \tilde p_{-2} \\ \tilde p_1 & \tilde p_0 & \tilde p_{-1} \\ \tilde p_2 & \tilde p_1 & \tilde p_0 \end{pmatrix}
+    \begin{pmatrix} c_{-1} \\ c_0 \\ c_1 \end{pmatrix}
+    =
+    \begin{pmatrix} 1 & 0{,}2 & 0{,}05 \\ 0{,}2 & 1 & 0{,}2 \\ 0{,}05 & 0{,}2 & 1 \end{pmatrix}
+    \begin{pmatrix} c_{-1} \\ c_0 \\ c_1 \end{pmatrix}
+    =
+    \begin{pmatrix} 0 \\ 1 \\ 0 \end{pmatrix}.
+\end{equation*}
+Por la simetría de $\tilde p$, la solución también es simétrica, $c_{-1}=c_1$: de la primera ecuación, $c_{-1}(1{,}05) + 0{,}2\, c_0 = 0 \Rightarrow c_{-1}=-0{,}1905\, c_0$; sustituyendo en la segunda, $0{,}4\,c_{-1}+c_0=1 \Rightarrow 0{,}9238\, c_0 = 1$. Resolviendo:
+\begin{equation*}
+    c_0 \approx 1{,}0825, \qquad c_{-1}=c_1\approx -0{,}2062.
+\end{equation*}
+Verificando: $\hat p(0)=1$, $\hat p(\pm T_s)=0$ exactamente, como se pidió. Pero $\hat p(\pm 2T_s)\approx 0{,}0129$: \emph{no} es cero -- el ZFE con $N=1$ solo garantiza los ceros dentro del rango pedido, no más allá. Vamos a ver en breve, con precisión, por qué aparece este residuo y de qué depende.
+\end{ejemplo}
+
+Como ya anticipaba la Sección \ref{sec:ecualizacion canal zfe}, ajustar el filtro requiere conocer $\tilde p_m$, lo que se obtiene experimentalmente (transmitiendo un pulso o secuencia de entrenamiento conocida y midiendo la respuesta). En la práctica rara vez se calcula $\mathbf c=\mathbf P^{-1}\mathbf e_0$ de una sola vez: el canal puede variar levemente, o no conocerse con precisión de antemano, y es más robusto \emph{adaptar} los $c_n$ iterativamente a partir del error observado (algoritmos como LMS, \emph{Least Mean Squares}). No desarrollamos el algoritmo adaptativo en este curso -- el canal guiado es, a diferencia de uno inalámbrico, esencialmente \emph{invariante en el tiempo} una vez instalado, por lo que un ecualizador fijo, calibrado una vez, alcanza en la gran mayoría de los casos.
+
+\subsection*{Equivalencia con la inversión del canal}
+
+El residuo que quedó en el Ejemplo \ref{ejemplo:zfe n1} sugiere que el ZFE de $2N+1$ términos es una aproximación de algo más grande. Formalicémoslo. Para una sucesión genérica $\{x_n\}_{n\in\mathbb Z}$, definamos su \emph{transformada}
+\begin{equation*}
+    \hat X(f) := \sum_{n=-\infty}^{\infty} x_n\, \e^{-j2\pi f nT_s},
+\end{equation*}
+una función de $f$, periódica de período $f_s=1/T_s$ (los $x_n$ son, precisamente, sus coeficientes de Fourier). Aplicada a las muestras del pulso recibido, $\hat P_d(f):=\sum_m \tilde p_m\,\e^{-j2\pi fmT_s}$, es el análogo, en el dominio discreto de las muestras, del $\hat P(f)$ continuo que dedujimos en la Sección \ref{sec:dispersion pulsos}.
+
+\begin{teorema}[ZFE de infinitos términos = inversión en frecuencia]\label{teorema:zfe inversion}
+Si $\hat P_d(f)\neq 0$ para todo $f$, existe una única sucesión $\{c_n\}_{n\in\mathbb Z}$ que resuelve el sistema \eqref{eq:sistema zfe} \emph{sin truncar} ($k\in\mathbb Z$ en vez de $k=-N,\ldots,N$), y está dada por los coeficientes de Fourier de $1/\hat P_d(f)$:
+\begin{equation*}
+    c_n = f_s\int_{-f_s/2}^{f_s/2} \frac{\e^{j2\pi f nT_s}}{\hat P_d(f)}\; df.
+\end{equation*}
+\end{teorema}
+\begin{proof}
+Sea $\{c_n\}$ una solución del sistema sin truncar, y $y_k:=\sum_n \tilde p_{k-n}c_n$ (que por hipótesis vale $\delta_{k,0}$). Calculemos la transformada de $\{y_k\}$, sustituyendo $m:=k-n$:
+\begin{equation*}
+    \hat Y(f) = \sum_k y_k\, \e^{-j2\pi f kT_s} = \sum_n c_n \sum_m \tilde p_m\, \e^{-j2\pi f(m+n)T_s} = \left(\sum_n c_n\, \e^{-j2\pi fnT_s}\right)\left(\sum_m \tilde p_m\, \e^{-j2\pi fmT_s}\right) = \hat C(f)\,\hat P_d(f),
+\end{equation*}
+el \emph{teorema de convolución} discreto -- exactamente análogo al continuo ya conocido: la transformada de una convolución es el producto de las transformadas. Por otro lado, $y_k=\delta_{k,0}$ para todo $k$ da $\hat Y(f)=\sum_k \delta_{k,0}\e^{-j2\pi fkT_s}=1$. Combinando ambas expresiones para $\hat Y(f)$:
+\begin{equation*}
+    \hat C(f)\, \hat P_d(f) = 1 \quad\Longrightarrow\quad \hat C(f) = \frac{1}{\hat P_d(f)},
+\end{equation*}
+bien definida en todo $f$ porque $\hat P_d(f)\neq 0$ por hipótesis. Como $\{c_n\}$ son, por construcción, los coeficientes de Fourier de $\hat C(f)$, la fórmula de inversión de Fourier los determina de manera única.
+\end{proof}
+
+Esto es exacto, no una analogía: el ZFE de infinitos coeficientes \emph{es}, literalmente, la inversión de $\hat P_d(f)$ -- el mismo cociente ideal que uno esperaría escribir directamente en frecuencia, ahora obtenido a partir del sistema de ecuaciones que ya conocíamos, sin agregar ninguna herramienta nueva más que la transformada de una sucesión. El filtro finito de $2N+1$ términos del Ejemplo \ref{ejemplo:zfe n1} es, entonces, precisamente lo que sugiere su nombre: los $2N+1$ coeficientes centrales de esta serie de Fourier infinita, truncada -- y el residuo $\hat p(\pm 2T_s)\approx 0{,}0129$ que encontramos ahí es, ni más ni menos, el error de truncar una serie de Fourier a pocos términos.
+
+\begin{remark}[Verificación en el caso trivial]
+Si el pulso recibido ya es de Nyquist ($\tilde p_m=\delta_{m,0}$, sin ISI), entonces $\hat P_d(f)\equiv 1$ y el Teorema \ref{teorema:zfe inversion} da $c_0=1$, $c_n=0$ para $n\neq 0$: el ecualizador resulta el filtro identidad. No hay nada que corregir, como debe ser.
+\end{remark}
+
+\subsection*{El costo de invertir en banda ancha}
+
+La simplicidad de $\hat C(f)=1/\hat P_d(f)$ esconde un problema serio, que ya el texto original de la Sección \ref{sec:ecualizacion canal zfe} anticipaba cualitativamente (``si algunas ganancias son muy altas, el ruido puede verse amplificado''): en cualquier frecuencia donde $\hat P_d(f)$ sea chico, el ecualizador necesita una ganancia $|\hat C(f)|=1/|\hat P_d(f)|$ enorme. Y $\hat P_d(f)$ hereda, en cada punto, la forma de $\hat H(f)$ que dedujimos en la Sección \ref{sec:dispersion pulsos} (Figura \ref{fig:atenuacion comparada}): decrece con la frecuencia, así que corregirlo cerca del borde de la banda pedida exige ganancias cada vez mayores. El problema es que el ruido a la entrada del ecualizador (Capítulo \ref{chapter:deteccion ruido}) tiene energía en todas las frecuencias, y esa misma ganancia enorme amplifica el ruido en esa banda exactamente tanto como reconstruye la señal. En el límite, si $\hat P_d(f)\to 0$ en alguna banda (un cero real del canal, no solo una atenuación fuerte), $\hat C(f)\to\infty$ ahí: el ZFE intenta reconstruir información que, en esa banda, ya se perdió irremediablemente en ruido.
+
+Esto sugiere una idea distinta, que retomamos con toda su fuerza en el Capítulo \ref{chapter:ofdm}: en vez de invertir $\hat P_d(f)$ de una sola vez sobre todo el ancho de banda, \emph{partir} la banda en tramos angostos, cada uno lo suficientemente chico como para que $\hat P_d(f)$ sea aproximadamente \emph{plano} dentro de él. En cada tramo, invertir $\hat P_d(f)$ ya no requiere una ganancia extrema -- es, esencialmente, dividir por una constante (un único número complejo por tramo) en vez de por una función que varía mucho. La idea completa -- banda ancha partida en muchos subcanales angostos, cada uno ecualizado trivialmente -- es exactamente lo que hace OFDM, y es el motivo por el cual, adelantándolo aquí, ese capítulo empieza a tener sentido: \textbf{OFDM es, en el fondo, una forma práctica de resolver el problema de ecualización que acabamos de plantear}, evitando el costo de invertir en banda ancha.
+
+Con esto se cierra el círculo completo de este capítulo: de los parámetros físicos de la línea llegamos a $\hat H(f)$, entendimos por qué distorsiona la señal, y mostramos cómo deshacer exactamente esa distorsión -- incluso cuantificando el costo de hacerlo en banda ancha, la motivación última de OFDM. En el próximo capítulo atacamos el segundo problema que todo sistema de comunicaciones real debe resolver y que hasta ahora dimos por sentado: el sincronismo entre transmisor y receptor.
 
 
 
