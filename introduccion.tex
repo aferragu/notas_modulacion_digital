@@ -231,7 +231,7 @@ Es decir, recuperamos exactamente el largo medio del código de Huffman anterior
 \end{figure}
 
 El Teorema de Shannon muestra que para una fuente dada, su entropía es la mínima cantidad de bits por símbolo alcanzable:
-\begin{teorema}[Shannon, 1948]
+\begin{teorema}[Shannon, 1948 -- codificación de fuente]\label{teo:shannon fuente}
 Sea una fuente de símbolos $\{a_k\}$ y su entropía $H_a$. Entonces es posible agrupar los símbolos de a bloques de tamaño $N$ y codificarlos en palabras de $L_N$ bits de manera que el largo medio de palabra cumpla:
 \begin{equation*}
     N H_a \leqslant \bar{L}_N \leqslant NH_a + 1 
@@ -248,6 +248,56 @@ La entropía de una fuente nos entonces da la mínima cantidad de bits por símb
 En el Ejemplo \ref{ej:entropia binaria}, vemos que la entropía es máxima e igual a $1$ cuando los símbolos son \emph{equiprobables} ($p=1/2$). En ese caso, debemos utilizar 1 bit por símbolo y la señal es incompresible. Precisamente, el código de Huffman descrito logra que la fuente original genere cantidades equiprobables de $0$ y $1$, por lo cual no puede comprimirse más.
 
 Si en cambio $p\to 0$, la fuente tiene secuencias largas de $0$, y en ese caso puede ser más eficiente codificar el largo de la cadena de $0$s que indicar cada bit por separado. En el caso extremo, solo alcanza 1 bit para toda la cadena (``son todos ceros''). Análogamente, si $p\to 1$.
+
+El siguiente ejemplo retoma la idea de codificar por bloques, mencionada más arriba: a diferencia del Ejemplo \ref{ej:lossless}, donde Huffman alcanzaba la entropía ya con $N=1$, ahora la fuente no es diádica y el código símbolo a símbolo se queda corto. Veremos que agrupar de a dos símbolos, tal como permite el Teorema de Shannon, acerca el largo medio a la entropía.
+
+\begin{ejemplo}[Codificación por bloques]\label{ej:bloques huffman}
+Consideremos una fuente independiente con tres símbolos $a_k\in\{A,B,C\}$ y distribución:
+\begin{equation*}
+    \p{a_k=A}=0.7, \qquad \p{a_k=B}=0.2, \qquad \p{a_k=C}=0.1.
+\end{equation*}
+Su entropía es:
+\begin{equation*}
+    H(X) = -(0.7)\log_2(0.7) - (0.2)\log_2(0.2) - (0.1)\log_2(0.1) \approx 1.1568 \text{ bits/símbolo}.
+\end{equation*}
+
+\textbf{Codificación símbolo a símbolo ($N=1$).} Huffman combina primero $B$ y $C$ ($0.2+0.1=0.3$) y luego el resultado con $A$ ($0.7+0.3=1$), dando el código:
+\begin{equation*}
+    \begin{cases}
+        A \mapsto 0\\
+        B \mapsto 10\\
+        C \mapsto 11
+    \end{cases}
+\end{equation*}
+con largo medio $\bar{L}_1 = (0.7)(1)+(0.2)(2)+(0.1)(2) = 1.3$ bits/símbolo. Esta ya es la mejor codificación posible para $N=1$ (es el árbol de Huffman óptimo), y sin embargo queda lejos de $H(X)$: la brecha $\bar{L}_1 - H(X)\approx 0.143$ bits/símbolo (un $12\%$ de sobrecosto) no se puede cerrar eligiendo mejor el código de un único símbolo. El problema es de granularidad: con solo tres símbolos, no hay forma de asignarle a $A$ (con $\p{A}=0.7$, muy por encima de $1/2$) menos de $1$ bit completo.
+
+\textbf{Codificación por pares ($N=2$).} Agrupemos los símbolos de a dos. Por independencia, $\p{a_k a_{k+1}=XY}=\p{a_k=X}\,\p{a_{k+1}=Y}$, lo que da $9$ pares posibles. Aplicando Huffman a esas $9$ probabilidades:
+\begin{center}
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        Par & Probabilidad & Código & Largo \\
+        \hline
+        $AA$ & $0.49$ & $0$      & $1$ \\
+        $AB$ & $0.14$ & $110$    & $3$ \\
+        $BA$ & $0.14$ & $111$    & $3$ \\
+        $AC$ & $0.07$ & $1010$   & $4$ \\
+        $CA$ & $0.07$ & $1011$   & $4$ \\
+        $BB$ & $0.04$ & $1000$   & $4$ \\
+        $CB$ & $0.02$ & $10010$  & $5$ \\
+        $BC$ & $0.02$ & $100111$ & $6$ \\
+        $CC$ & $0.01$ & $100110$ & $6$ \\
+        \hline
+    \end{tabular}
+\end{center}
+con largo medio por \emph{par} de símbolos:
+\begin{align*}
+    \bar{L}_2 &= (0.49)(1)+(0.14)(3)+(0.14)(3)+(0.07)(4)+(0.07)(4)\\
+    &\quad+(0.04)(4)+(0.02)(5)+(0.02)(6)+(0.01)(6) = 2.33 \text{ bits/par},
+\end{align*}
+es decir $\bar{L}_2/2 = 1.165$ bits/símbolo. La brecha con la entropía se reduce a $\bar{L}_2/2 - H(X)\approx 0.008$ bits/símbolo (un $0.7\%$ de sobrecosto): casi veinte veces más chica que con $N=1$, solo por agrupar de a dos y explotar que, aun repetido, $A$ sigue siendo mucho más probable que las combinaciones que involucran a $B$ o $C$.
+
+Esto ilustra la cota del Teorema de Shannon: para $N=1$, $H(X)\leqslant \bar{L}_1 \leqslant H(X)+1$; para $N=2$, $H(X)\leqslant \bar{L}_2/2 \leqslant H(X)+1/2$. En ambos casos Huffman queda muy por debajo del extremo superior de la cota -- que es solo una garantía de peor caso -- y en la práctica se acerca a $H(X)$ mucho más rápido de lo que esa cota, por sí sola, deja anticipar. Aumentando $N$ seguimos acercándonos, al costo de un alfabeto de códigos cada vez más grande.
+\end{ejemplo}
 
 \subsection{Codificación de canal}
 
@@ -316,5 +366,24 @@ Un ejemplo de código de este tipo son los \href{https://en.wikipedia.org/wiki/H
 \end{equation*}
 es decir, la redundancia es del orden de $\log_2(N)\ll \sqrt{N}$. Sin embargo, si bien es más eficiente que la matriz de paridad, este código solo permite detectar errores de 1 o 2 bits, y corregir errores de un único bit. El tipo más común de código de bloques es el de \href{https://en.wikipedia.org/wiki/Reed\%E2\%80\%93Solomon_error_correction}{Reed--Solomon, 1960}, una familia de códigos que permite detectar errores de hasta $r$ bits y corregir hasta $\lfloor r/2 \rfloor$ bits, siendo $r$ un parámetro, la cantidad de redundancia deseada. Es además capaz de recuperar errores de ``borrado'', donde no es posible decidir si el bit recibido es $0$ o $1$.
 
-Más recientemente, la aparición de los \href{https://en.wikipedia.org/wiki/Convolutional_code}{códigos convolucionales}, \href{https://en.wikipedia.org/wiki/Turbo_code}{Turbo--codes} y códigos \href{https://en.wikipedia.org/wiki/Low-density_parity-check_code}{Low--Parity--Data--Check}, se logran tasas de codificación cercanas a $1$ con muy baja probabilidad de error. 
+Más recientemente, la aparición de los \href{https://en.wikipedia.org/wiki/Convolutional_code}{códigos convolucionales}, \href{https://en.wikipedia.org/wiki/Turbo_code}{Turbo--codes} y códigos \href{https://en.wikipedia.org/wiki/Low-density_parity-check_code}{Low--Parity--Data--Check}, se logran tasas de codificación cercanas a $1$ con muy baja probabilidad de error.
 
+Todos los ejemplos anteriores dejan abierta una pregunta: ¿qué tan cerca de $1$ puede estar la tasa de codificación, para una probabilidad de error dada, en un canal real? Dicho de otro modo: si la entropía nos dio el límite \emph{inferior} de bits por símbolo necesarios para representar una fuente, ¿existe un límite \emph{superior} análogo para la cantidad de información que un canal ruidoso puede transportar de forma confiable? La respuesta, debida también a Shannon en el mismo trabajo de 1948, es la segunda gran contribución de la teoría de la información, y cierra el círculo de esta introducción.
+
+\begin{teorema}[Shannon, 1948 -- capacidad del canal AWGN]\label{teo:capacidad awgn}
+Consideremos un canal continuo de ancho de banda $B$, en el que la señal se transmite con potencia media $S$ y es afectada por ruido blanco gaussiano aditivo, de potencia $N$ dentro de dicha banda. Entonces el canal tiene una \emph{capacidad}:
+\begin{equation*}
+    C = B\log_2\left(1+\frac{S}{N}\right) \quad \text{bits/segundo}.
+\end{equation*}
+Es posible transmitir información a través del canal, a cualquier tasa $R<C$, con probabilidad de error tan pequeña como se desee, mediante una codificación de canal adecuada (en general, a costa de codificar en bloques cada vez más largos). Por el contrario, ningún esquema de codificación permite transmitir de forma confiable a una tasa $R>C$: pasado ese límite, la probabilidad de error queda acotada lejos de cero sin importar cuánta redundancia se agregue.
+\end{teorema}
+
+El Teorema \ref{teo:capacidad awgn} es la contraparte exacta del Teorema \ref{teo:shannon fuente}: mientras la entropía fija cuánto se puede \emph{comprimir} una fuente sin perder información, la capacidad fija cuánto se puede \emph{transmitir} de manera confiable por un canal ruidoso. Los códigos Turbo y LDPC mencionados arriba son, precisamente, esquemas prácticos capaces de acercarse a $C$ tanto como se desee (a costa de mayor complejidad y mayor largo de bloque); la frase ``tasas cercanas a $1$ con muy baja probabilidad de error'' tiene sentido, en definitiva, en relación a esta cota.
+
+\begin{ejemplo}[Capacidad de un canal telefónico]\label{ej:capacidad telefonica}
+Una línea telefónica analógica tiene un ancho de banda de aproximadamente $B=3400\ \unit{\hertz}$, y una relación señal a ruido típica del orden de $30\ \unit{\decibel}$, es decir $S/N \approx 10^3$. Su capacidad resulta entonces:
+\begin{equation*}
+    C = 3400 \log_2(1+1000) \approx 3400 \times 9{,}97 \approx 33{,}9\ \unit{\kilo bps}.
+\end{equation*}
+Este valor no es casual: es, esencialmente, el límite que enfrentaron los módems telefónicos de los años 90 -- el estándar V.34 alcanzaba $33.6\ \unit{\kilo bps}$, muy cerca de esta cota -- y que solo pudo superarse parcialmente con los módems de $56\ \unit{\kilo bps}$, que evitaban una de las dos conversiones analógico-digitales del enlace explotando que el otro extremo era en realidad digital.
+\end{ejemplo}
