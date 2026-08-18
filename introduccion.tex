@@ -243,13 +243,13 @@ Como cada bloque codifica $N$ símbolos, la cantidad de bits por símbolo será 
 Además, no existe ningún código que logre mejorar esta cota.
 \end{teorema}
 
-La entropía de una fuente nos entonces da la mínima cantidad de bits por símbolo que podemos utilizar, es decir, el límite de la compresión alcanzable. Si volvemos al Ejemplo \ref{ej:lossless}, vemos que precisamente el código de Huffman alcanza la mínima entropía posible, incluso con $N=1$. Para otras distribuciones puede ser necesario utilizar un largo mayor de bloque para aproximar la entropía.
+La entropía de una fuente nos da entonces la \emph{mínima cantidad de bits por símbolo} que podemos utilizar, es decir, el límite de la compresión alcanzable. Si volvemos al Ejemplo \ref{ej:lossless}, vemos que precisamente el código de Huffman alcanza la mínima entropía posible, incluso con $N=1$. Para otras distribuciones puede ser necesario utilizar un largo mayor de bloque para aproximar la entropía.
 
 En el Ejemplo \ref{ej:entropia binaria}, vemos que la entropía es máxima e igual a $1$ cuando los símbolos son \emph{equiprobables} ($p=1/2$). En ese caso, debemos utilizar 1 bit por símbolo y la señal es incompresible. Precisamente, el código de Huffman descrito logra que la fuente original genere cantidades equiprobables de $0$ y $1$, por lo cual no puede comprimirse más.
 
-Si en cambio $p\to 0$, la fuente tiene secuencias largas de $0$, y en ese caso puede ser más eficiente codificar el largo de la cadena de $0$s que indicar cada bit por separado. En el caso extremo, solo alcanza 1 bit para toda la cadena (``son todos ceros''). Análogamente, si $p\to 1$.
+Si, en cambio, $p\to 0$, la fuente tiene secuencias largas de $0$, y en ese caso puede ser más eficiente codificar el largo de la cadena de $0$s que indicar cada bit por separado. En el caso extremo, solo alcanza 1 bit para toda la cadena (``son todos ceros''). Lo mismo ocurre si $p\to 1$.
 
-El siguiente ejemplo retoma la idea de codificar por bloques, mencionada más arriba: a diferencia del Ejemplo \ref{ej:lossless}, donde Huffman alcanzaba la entropía ya con $N=1$, ahora la fuente no es diádica y el código símbolo a símbolo se queda corto. Veremos que agrupar de a dos símbolos, tal como permite el Teorema de Shannon, acerca el largo medio a la entropía.
+Para ilustrar la necesidad de agrupar por bloques, consideremos el siguiente ejemplo, donde la distribución ya no tiene probabilidades potencia de dos.
 
 \begin{ejemplo}[Codificación por bloques]\label{ej:bloques huffman}
 Consideremos una fuente independiente con tres símbolos $a_k\in\{A,B,C\}$ y distribución:
@@ -261,7 +261,7 @@ Su entropía es:
     H(X) = -(0.7)\log_2(0.7) - (0.2)\log_2(0.2) - (0.1)\log_2(0.1) \approx 1.1568 \text{ bits/símbolo}.
 \end{equation*}
 
-\textbf{Codificación símbolo a símbolo ($N=1$).} Huffman combina primero $B$ y $C$ ($0.2+0.1=0.3$) y luego el resultado con $A$ ($0.7+0.3=1$), dando el código:
+\textbf{Codificación símbolo a símbolo ($N=1$).} El código de Huffman asigna las siguientes palabras, de manera análoga al Ejemplo \ref{ej:lossless}:
 \begin{equation*}
     \begin{cases}
         A \mapsto 0\\
@@ -269,9 +269,9 @@ Su entropía es:
         C \mapsto 11
     \end{cases}
 \end{equation*}
-con largo medio $\bar{L}_1 = (0.7)(1)+(0.2)(2)+(0.1)(2) = 1.3$ bits/símbolo. Esta ya es la mejor codificación posible para $N=1$ (es el árbol de Huffman óptimo), y sin embargo queda lejos de $H(X)$: la brecha $\bar{L}_1 - H(X)\approx 0.143$ bits/símbolo (un $12\%$ de sobrecosto) no se puede cerrar eligiendo mejor el código de un único símbolo. El problema es de granularidad: con solo tres símbolos, no hay forma de asignarle a $A$ (con $\p{A}=0.7$, muy por encima de $1/2$) menos de $1$ bit completo.
+con largo medio $\bar{L}_1 = (0.7)(1)+(0.2)(2)+(0.1)(2) = 1.3$ bits/símbolo. Esta ya es la mejor codificación posible para $N=1$ (es el árbol de Huffman óptimo). Sin embargo, aún queda lejos de $H(X)$: $\bar{L}_1 - H(X)\approx 0.143$ bits/símbolo (un $12\%$ de \emph{overhead}). El problema es de granularidad: con solo tres símbolos, no hay forma de asignarle a $A$ (con $\p{A}=0.7$, muy por encima de $1/2$) menos de $1$ bit completo.
 
-\textbf{Codificación por pares ($N=2$).} Agrupemos los símbolos de a dos. Por independencia, $\p{a_k a_{k+1}=XY}=\p{a_k=X}\,\p{a_{k+1}=Y}$, lo que da $9$ pares posibles. Aplicando Huffman a esas $9$ probabilidades:
+\textbf{Codificación por pares ($N=2$).} Agrupemos los símbolos de a dos. Por independencia, $\p{a_k a_{k+1}=XY}=\p{a_k=X}\,\p{a_{k+1}=Y}$, lo que da $9$ pares posibles. Aplicando el algoritmo de Huffman a esas $9$ probabilidades obtenemos por ejemplo el siguiente código:
 \begin{center}
     \begin{tabular}{|c|c|c|c|}
         \hline
@@ -294,9 +294,8 @@ con largo medio por \emph{par} de símbolos:
     \bar{L}_2 &= (0.49)(1)+(0.14)(3)+(0.14)(3)+(0.07)(4)+(0.07)(4)\\
     &\quad+(0.04)(4)+(0.02)(5)+(0.02)(6)+(0.01)(6) = 2.33 \text{ bits/par},
 \end{align*}
-es decir $\bar{L}_2/2 = 1.165$ bits/símbolo. La brecha con la entropía se reduce a $\bar{L}_2/2 - H(X)\approx 0.008$ bits/símbolo (un $0.7\%$ de sobrecosto): casi veinte veces más chica que con $N=1$, solo por agrupar de a dos y explotar que, aun repetido, $A$ sigue siendo mucho más probable que las combinaciones que involucran a $B$ o $C$.
+es decir $\bar{L}_2/2 = 1.165$ bits/símbolo. La brecha con la entropía se reduce a $\bar{L}_2/2 - H(X)\approx 0.008$ bits/símbolo (un $0.7\%$ de overhead). Solo con agrupar de a $N=2$ símbolos logramos una codificación más eficiente.
 
-Esto ilustra la cota del Teorema de Shannon: para $N=1$, $H(X)\leqslant \bar{L}_1 \leqslant H(X)+1$; para $N=2$, $H(X)\leqslant \bar{L}_2/2 \leqslant H(X)+1/2$. En ambos casos Huffman queda muy por debajo del extremo superior de la cota -- que es solo una garantía de peor caso -- y en la práctica se acerca a $H(X)$ mucho más rápido de lo que esa cota, por sí sola, deja anticipar. Aumentando $N$ seguimos acercándonos, al costo de un alfabeto de códigos cada vez más grande.
 \end{ejemplo}
 
 \subsection{Codificación de canal}
