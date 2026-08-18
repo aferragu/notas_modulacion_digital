@@ -298,6 +298,53 @@ es decir $\bar{L}_2/2 = 1.165$ bits/símbolo. La brecha con la entropía se redu
 
 \end{ejemplo}
 
+\begin{figure}[htbp]
+    \centering
+    \begin{blockdiagram}
+        % Nodos internos (probabilidad acumulada)
+        \node[operator, font=\scriptsize] (root) at (3.92,0)     {$1$};
+        \node[operator, font=\scriptsize] (N7)   at (7.83,-1.3)  {$0.51$};
+        \node[operator, font=\scriptsize] (N5)   at (5.16,-2.6)  {$0.23$};
+        \node[operator, font=\scriptsize] (N6)   at (10.50,-2.6) {$0.28$};
+        \node[operator, font=\scriptsize] (N3)   at (2.63,-3.9)  {$0.09$};
+        \node[operator, font=\scriptsize] (N4)   at (7.70,-3.9)  {$0.14$};
+        \node[operator, font=\scriptsize] (N2)   at (3.85,-5.2)  {$0.05$};
+        \node[operator, font=\scriptsize] (N1)   at (4.90,-6.5)  {$0.03$};
+
+        % Hojas (pares de símbolos)
+        \node[block, align=center, minimum width=9mm, minimum height=8mm, font=\scriptsize] (AA) at (0.00,-1.3)  {$AA$\\$0.49$};
+        \node[block, align=center, minimum width=9mm, minimum height=8mm, font=\scriptsize] (AB) at (9.80,-3.9)  {$AB$\\$0.14$};
+        \node[block, align=center, minimum width=9mm, minimum height=8mm, font=\scriptsize] (BA) at (11.20,-3.9) {$BA$\\$0.14$};
+        \node[block, align=center, minimum width=9mm, minimum height=8mm, font=\scriptsize] (BB) at (1.40,-5.2)  {$BB$\\$0.04$};
+        \node[block, align=center, minimum width=9mm, minimum height=8mm, font=\scriptsize] (AC) at (7.00,-5.2)  {$AC$\\$0.07$};
+        \node[block, align=center, minimum width=9mm, minimum height=8mm, font=\scriptsize] (CA) at (8.40,-5.2)  {$CA$\\$0.07$};
+        \node[block, align=center, minimum width=9mm, minimum height=8mm, font=\scriptsize] (CB) at (2.80,-6.5)  {$CB$\\$0.02$};
+        \node[block, align=center, minimum width=9mm, minimum height=8mm, font=\scriptsize] (CC) at (4.20,-7.8)  {$CC$\\$0.01$};
+        \node[block, align=center, minimum width=9mm, minimum height=8mm, font=\scriptsize] (BC) at (5.60,-7.8)  {$BC$\\$0.02$};
+
+        % Aristas con el bit correspondiente
+        \draw[thick] (root) -- node[sloped,above,font=\scriptsize] {0} (AA);
+        \draw[thick] (root) -- node[sloped,above,font=\scriptsize] {1} (N7);
+        \draw[thick] (N7)   -- node[sloped,above,font=\scriptsize] {0} (N5);
+        \draw[thick] (N7)   -- node[sloped,above,font=\scriptsize] {1} (N6);
+        \draw[thick] (N5)   -- node[sloped,above,font=\scriptsize] {0} (N3);
+        \draw[thick] (N5)   -- node[sloped,above,font=\scriptsize] {1} (N4);
+        \draw[thick] (N6)   -- node[sloped,above,font=\scriptsize] {0} (AB);
+        \draw[thick] (N6)   -- node[sloped,above,font=\scriptsize] {1} (BA);
+        \draw[thick] (N3)   -- node[sloped,above,font=\scriptsize] {0} (BB);
+        \draw[thick] (N3)   -- node[sloped,above,font=\scriptsize] {1} (N2);
+        \draw[thick] (N4)   -- node[sloped,above,font=\scriptsize] {0} (AC);
+        \draw[thick] (N4)   -- node[sloped,above,font=\scriptsize] {1} (CA);
+        \draw[thick] (N2)   -- node[sloped,above,font=\scriptsize] {0} (CB);
+        \draw[thick] (N2)   -- node[sloped,above,font=\scriptsize] {1} (N1);
+        \draw[thick] (N1)   -- node[sloped,above,font=\scriptsize] {0} (CC);
+        \draw[thick] (N1)   -- node[sloped,above,font=\scriptsize] {1} (BC);
+    \end{blockdiagram}
+    \caption{Árbol de Huffman para los 9 pares de símbolos del Ejemplo \ref{ej:bloques huffman} ($N=2$). Los círculos son nodos internos con su probabilidad acumulada; los rectángulos, los pares terminales con su probabilidad.}
+    \label{fig:huffman bloques}
+\end{figure}
+
+
 \subsection{Codificación de canal}
 
 El objetivo de la codificación de fuente es reducir la cantidad de datos a transmitir a su mínima expresión, eliminando redundancia sin pérdida de información (o en el caso con pérdida, sin distorsión relevante). La \emph{codificación de canal} va en sentido opuesto: agrega redundancia para anticiparse a posibles errores del canal de transmisión y poder detectarlos y corregirlos. A continuación damos algunos ejemplos.
@@ -363,7 +410,7 @@ Un ejemplo de código de este tipo son los \href{https://en.wikipedia.org/wiki/H
 \begin{equation*}
     R = 1-\frac{r}{2^r-1},
 \end{equation*}
-es decir, la redundancia es del orden de $\log_2(N)\ll \sqrt{N}$. Sin embargo, si bien es más eficiente que la matriz de paridad, este código solo permite detectar errores de 1 o 2 bits, y corregir errores de un único bit. El tipo más común de código de bloques es el de \href{https://en.wikipedia.org/wiki/Reed\%E2\%80\%93Solomon_error_correction}{Reed--Solomon, 1960}, una familia de códigos que permite detectar errores de hasta $r$ bits y corregir hasta $\lfloor r/2 \rfloor$ bits, siendo $r$ un parámetro, la cantidad de redundancia deseada. Es además capaz de recuperar errores de ``borrado'', donde no es posible decidir si el bit recibido es $0$ o $1$.
+es decir, la redundancia es del orden de $\log_2(N)\ll \sqrt{N}$. Sin embargo, si bien es más eficiente que la matriz de paridad, este código solo permite detectar errores de 1 o 2 bits, y corregir errores de un único bit. El tipo más común de código de bloques es el de \href{https://en.wikipedia.org/wiki/Reed\%E2\%80\%93Solomon_error_correction}{Reed--Solomon} (1960), una familia de códigos que permite detectar errores de hasta $r$ bits y corregir hasta $\lfloor r/2 \rfloor$ bits, siendo $r$ un parámetro, la cantidad de redundancia deseada. Es además capaz de recuperar errores de ``borrado'', donde no es posible decidir si el bit recibido es $0$ o $1$.
 
 Más recientemente, la aparición de los \href{https://en.wikipedia.org/wiki/Convolutional_code}{códigos convolucionales}, \href{https://en.wikipedia.org/wiki/Turbo_code}{Turbo--codes} y códigos \href{https://en.wikipedia.org/wiki/Low-density_parity-check_code}{Low--Parity--Data--Check}, se logran tasas de codificación cercanas a $1$ con muy baja probabilidad de error.
 
