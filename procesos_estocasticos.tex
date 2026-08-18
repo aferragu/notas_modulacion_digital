@@ -438,11 +438,11 @@ usando que la transformada del coseno son dos deltas de amplitud $1/2$. En este 
 
 Para el segundo caso, la autocorrelación es un triángulo, que puede escribirse de la siguiente manera:
 \begin{equation*}
-    R_x(\tau) = \frac{1}{T_s} p_{[-T_s,T_s]} (t) * p_{[-T_s,T_s]} (t),
+    R_x(\tau) = \frac{1}{T_s} p_{[-T_s/2,T_s/2]} (t) * p_{[-T_s/2,T_s/2]} (t),
 \end{equation*}
 siendo nuevamente $p_{[a,b]}(t)$ el pulso de altura $1$ en el intervalo $[a,b]$. Usando propiedades de la transformada de Fourier obtenemos:
 \begin{equation*}
-    p_{[-T_s,T_s]}(t) \fourier T_s \sinc(\pi T_s f) \quad \Longrightarrow \quad R_x(\tau) \fourier T_s \sinc^2(\pi T_s f)
+    p_{[-T_s/2,T_s/2]}(t) \fourier T_s \sinc(\pi T_s f) \quad \Longrightarrow \quad R_x(\tau) \fourier T_s \sinc^2(\pi T_s f)
 \end{equation*}
 Las mismas se grafican en la Figura \ref{fig:ejemplo dep continua}. Notar que en el segundo caso, el $90\%$ de la potencia está contenida en el primer lóbulo, es decir en el intervalo $[-f_s,f_s]$, siendo $f_s=1/T_s$ la frecuencia de símbolo.
 
