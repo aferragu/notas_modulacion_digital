@@ -624,6 +624,16 @@ Esto muestra que el filtro logra la misma relación señal a ruido que el filtro
 
 Aplicamos el resultado de la fórmula \eqref{eq:snr detector coherente} ahora a los diferentes esquemas de modulación. Utilizamos como ejemplo el pulso de banda base NRZ, pero puede utilizarse cualquier pulso adecuado.
 
+Para comparar los distintos esquemas necesitaremos en todos los casos la energía media del pulso de RF transmitido. Como $x_c$ tiene componente en fase con pulso $p(t)\cos(2\pi f_c t)$ y en cuadratura con pulso $p(t)\sin(2\pi f_c t)$, ambos de energía $\|p\|^2/2$, se tiene:
+\begin{equation*}
+    \bar{E}_{\tilde{p}} = \E{a_k^2}\|p(t)\cos(2\pi f_c t)\|^2 + \E{b_k^2}\|p(t)\sin(2\pi f_c t)\|^2 = \E{|c_k|^2}\frac{\|p\|^2}{2}.
+\end{equation*}
+Si cada símbolo transporta $\log_2 M$ bits, la energía media de bit resulta:
+\begin{equation}\label{eq:energia de bit}
+    \bar{E}_b = \frac{\bar{E}_{\tilde{p}}}{\log_2 M} = \frac{\E{|c_k|^2}\|p\|^2}{2\log_2 M} = \frac{\E{|c_k|^2}\,T_s}{2\log_2 M},
+\end{equation}
+donde en el último paso usamos el pulso NRZ, con $\|p\|^2=T_s$.
+
 \begin{ejemplo}[ASK con pulso NRZ y detector coherente]
 En este caso, solo hace falta recuperar la componente en fase $x_i(t)$, ya que el alfabeto es $c_k\in\{0+0j,A+0j\}$. El filtro acoplado al pulso NRZ es:
 \begin{equation*}
@@ -787,9 +797,9 @@ Utilizando la fórmula \eqref{eq:snr detector coherente} tenemos que:
     \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} \Rightarrow P_{e,\text{símbolo}} = 2Q\left(\sqrt{\frac{A^2}{2\eta_0 f_s}}\right)
 \end{equation*}
 
-Para realizar una comparación adecuada con los esquemas anteriores, conviene nuevamente escribir lo anterior en términos de la \emph{energía de bit} y también utilizar la \emph{tasa de error de bit}. Como cada pulso envía $2$ bits, tenemos que $\bar{E}_b = \frac{1}{2}\bar{E}_{\tilde{p}}$, es decir:
+Para realizar una comparación adecuada con los esquemas anteriores, conviene nuevamente escribir lo anterior en términos de la \emph{energía de bit} y también utilizar la \emph{tasa de error de bit}. Como cada pulso envía $2$ bits y $|c_k|^2=A^2$ para todos los símbolos, la fórmula \eqref{eq:energia de bit} da:
 \begin{equation*}
-    \bar{E}_b = \frac{1}{2}\bar{E}_{\tilde{p}} = \frac{1}{2}\left[ \underbrace{\E{a_k^2}}_{A^2/2}\underbrace{\|p(t)\cos(2\pi f_c t)\|^2}_{T_s/2} + \underbrace{\E{b_k^2}}_{A^2/2}\underbrace{\|p(t)\sin(2\pi f_c t)\|^2}_{T_s/2} \right]= \frac{A^2}{4} T_s.
+    \bar{E}_b = \frac{A^2 T_s}{4}.
 \end{equation*}
 Sustituyendo arriba se tiene que $P_{e,\text{símbolo}} = 2Q\left(\sqrt{2\bar{E}_b/\eta_0}\right)$. Si utilizamos codificación de Gray, para que los símbolos adyacentes difieran en un solo bit, se tiene que:
 \begin{equation*}
@@ -807,9 +817,9 @@ Utilizando nuevamente la fórmula \eqref{eq:snr detector coherente} tenemos que:
 \begin{equation*}
     \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} \Rightarrow P_{e,\text{símbolo}} = 2Q\left(\sqrt{\frac{A^2}{\eta_0 f_s}}\right).
 \end{equation*}
-Por último, la energía media de bit verifica:
+Por último, ahora $|c_k|^2 = a_k^2+b_k^2 = 2A^2$ para todos los símbolos, por lo que la fórmula \eqref{eq:energia de bit} da:
 \begin{equation*}
-    \bar{E}_b = \frac{1}{2}\bar{E}_{\tilde{p}} = \frac{1}{2}\left[ \underbrace{\E{a_k^2}}_{A^2}\underbrace{\|p(t)\cos(2\pi f_c t)\|^2}_{T_s/2} + \underbrace{\E{b_k^2}}_{A^2}\underbrace{\|p(t)\sin(2\pi f_c t)\|^2}_{T_s/2} \right]= \frac{A^2}{2} T_s.
+    \bar{E}_b = \frac{A^2 T_s}{2}.
 \end{equation*}
 Sustituyendo se obtiene $P_{e,\text{símbolo}} = 2 Q\left(\sqrt{2\bar{E}_b/\eta_0}\right)$ y nuevamente utilizando codificación de Gray llegamos a:
 \begin{equation*}
@@ -835,21 +845,17 @@ por lo que ambas modulaciones son equivalentes en términos de eficiencia espect
         \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} \Rightarrow P_{e,\text{símbolo}} = 4\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{A^2}{\eta_0 f_s}}\right).
     \end{equation*}
 
-    Para realizar la comparación, conviene calcular la energía media por bit nuevamente como:
-    \begin{align*}
-        \bar{E}_b &= \frac{1}{\log_2 M}\bar{E}_{\tilde{p}} = \frac{1}{\log_2 M}\left[ \E{a_k^2}\underbrace{\|p(t)\cos(2\pi f_c t)\|^2}_{T_s/2} + \E{b_k^2}\underbrace{\|p(t)\sin(2\pi f_c t)\|^2}_{T_s/2} \right]\\
-        &= \frac{1}{\log_2 M}\left(\E{a_k^2} + \E{b_k^2}\right)\frac{T_s}{2} \\
-        &= \frac{1}{\log_2 M}\left(\frac{M_a^2-1}{3}A^2 \frac{T_s}{2} + \frac{M_b^2-1}{3}A^2 \frac{T_s}{2}\right)\\
-        &= \frac{1}{\log_2 M} \frac{M-1}{3}A^2T_s,
-    \end{align*}
-    donde usamos el resultado para $\E{a_k^2}=\E{b_k^2}$ del caso $M-$ario de banda base.
+    Para realizar la comparación, calculamos la energía media por bit con la fórmula \eqref{eq:energia de bit}. Como $\E{|c_k|^2} = \E{a_k^2}+\E{b_k^2} = \sigma_c^2 = \frac{2(M-1)}{3}A^2$ para la constelación cuadrada, se obtiene:
+    \begin{equation*}
+        \bar{E}_b = \frac{1}{\log_2 M} \frac{M-1}{3}A^2T_s.
+    \end{equation*}
 
     Sustituyendo en la probabilidad de error se obtiene:
     \begin{equation*}
         P_{e,\text{símbolo}} = 4\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{3\log_2M\bar{E}_b}{(M-1)\eta_0}}\right) = 4\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{3\log_2M }{(M-1)}\gamma}\right) 
     \end{equation*}
 
-    Nuevamente, observando que cada símbolo codifica $\log_2 M$ bits, se llega a la tasa de error de QAM:
+    Nuevamente, observando que cada símbolo codifica $\log_2 M$ bits y utilizando codificación de Gray (en la figura se muestra la asignación para $16-$QAM: los dos primeros bits codifican $a_k$ y los dos últimos $b_k$, cada uno con código de Gray, por lo que símbolos adyacentes difieren en un solo bit), se llega a la tasa de error de QAM:
     \begin{equation*}
         \mathrm{BER} =  \frac{4}{\log_2 M}\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{3\log_2M }{(M-1)}\gamma}\right) 
     \end{equation*}
@@ -872,6 +878,22 @@ por lo que ambas modulaciones son equivalentes en términos de eficiencia espect
                     \addplot [black,only marks] coordinates {(\a,\b)};
                 }
             }
+            \node[above right, font=\scriptsize] at (axis cs:-3,3) {$1000$};
+            \node[above right, font=\scriptsize] at (axis cs:-1,3) {$1100$};
+            \node[above right, font=\scriptsize] at (axis cs:1,3) {$0100$};
+            \node[above right, font=\scriptsize] at (axis cs:3,3) {$0000$};
+            \node[above right, font=\scriptsize] at (axis cs:-3,1) {$1001$};
+            \node[above right, font=\scriptsize] at (axis cs:-1,1) {$1101$};
+            \node[above right, font=\scriptsize] at (axis cs:1,1) {$0101$};
+            \node[above right, font=\scriptsize] at (axis cs:3,1) {$0001$};
+            \node[above right, font=\scriptsize] at (axis cs:-3,-1) {$1011$};
+            \node[above right, font=\scriptsize] at (axis cs:-1,-1) {$1111$};
+            \node[above right, font=\scriptsize] at (axis cs:1,-1) {$0111$};
+            \node[above right, font=\scriptsize] at (axis cs:3,-1) {$0011$};
+            \node[above right, font=\scriptsize] at (axis cs:-3,-3) {$1010$};
+            \node[above right, font=\scriptsize] at (axis cs:-1,-3) {$1110$};
+            \node[above right, font=\scriptsize] at (axis cs:1,-3) {$0110$};
+            \node[above right, font=\scriptsize] at (axis cs:3,-3) {$0010$};
         \end{axis}
         \node[above] at (current bounding box.north) {16-QAM};
     \end{tikzpicture}
@@ -894,14 +916,10 @@ por lo que ambas modulaciones son equivalentes en términos de eficiencia espect
         \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} \Rightarrow P_{e,\text{símbolo}} = 2 Q\left(\sqrt{\frac{A^2\sin^2(\pi/M)}{\eta_0 f_s}}\right).
     \end{equation*}
 
-    Calculamos también la energía media por bit como:
-    \begin{align*}
-        \bar{E}_b &= \frac{1}{\log_2 M}\bar{E}_{\tilde{p}} = \frac{1}{\log_2 M}\left[ \E{a_k^2}\underbrace{\|p(t)\cos(2\pi f_c t)\|^2}_{T_s/2} + \E{b_k^2}\underbrace{\|p(t)\sin(2\pi f_c t)\|^2}_{T_s/2} \right]\\
-        &= \frac{1}{\log_2 M}\left(\E{a_k^2} + \E{b_k^2}\right)\frac{T_s}{2} \\
-        &= \frac{1}{\log_2 M}\frac{T_s}{2}\E{|c_k|^2}\\
-        &= \frac{1}{\log_2 M} \frac{T_s}{2}A^2
-    \end{align*}
-    donde usamos que el símbolo $c_k$ tiene amplitud $|c_k|$ constante.
+    Como el símbolo $c_k$ tiene módulo constante, $\E{|c_k|^2}=A^2$ y la fórmula \eqref{eq:energia de bit} da:
+    \begin{equation*}
+        \bar{E}_b = \frac{1}{\log_2 M} \frac{A^2 T_s}{2}.
+    \end{equation*}
 
     Sustituyendo en la probabilidad de error se obtiene:
     \begin{equation*}
