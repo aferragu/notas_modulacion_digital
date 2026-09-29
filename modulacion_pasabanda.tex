@@ -220,9 +220,9 @@ La modulación FSK resultó muy popular en los comienzos de la transmisión digi
 
 Para finalizar esta sección, comentemos ahora el tema de la \emph{eficiencia espectral} de las modulaciones pasabanda. En todos los casos, como se comentó, el ancho de banda requerido es \emph{como mínimo el doble} que la correspondiente situación de banda base. Esto es evidente en los casos lineales, ya que corresponde a trasladar el espectro de banda base a la frecuencia de portadora, y es aún mayor en el caso de la FSK de Sunde. Por lo tanto, la eficiencia espectral en $\unit{\bps/\hertz}$ será la mitad (o menos).
 
-A modo de ejemplo, si se utiliza BPSK con pulsos de Nyquist ideales ($\alpha=0$ en el Ejemplo \ref{ej:bpsk nyquist}), ocupa un ancho de banda $f_s$ y obtiene una eficiencia espectral igual a $1$ bit por $\unit{\hertz}$, comparado con $2$ en el caso de banda base. La única forma de compensar esto es enviando más bits por símbolo, es decir pasar a modulaciones $M$-arias, que estudiamos a continuación.
+A modo de ejemplo, si se utiliza BPSK con pulsos de Nyquist ideales ($\alpha=0$ en el Ejemplo \ref{ej:bpsk nyquist}), ocupa un ancho de banda $f_s$ y obtiene una eficiencia espectral igual a $1$ bit por $\unit{\hertz}$, comparado con $2$ en el caso de banda base. La única forma de compensar esto es enviando más bits por símbolo, es decir pasar a modulaciones $M-$arias, que estudiamos a continuación.
 
-\section{Modulación pasabanda $M$-aria}\label{sec:modulacion pasabanda m aria}
+\section{Modulación pasabanda $M-$aria}\label{sec:modulacion pasabanda m aria}
 
 Antes de generalizar los conceptos anteriores, es conveniente retomar la noción de \emph{envolvente compleja}, ya utilizada en el estudio de la modulación analógica. La idea es que una señal pasabanda $x_c(t)$ puede escribirse como:
 \begin{equation}\label{eq:transformada pasabanda}
@@ -830,9 +830,9 @@ por lo que ambas modulaciones son equivalentes en términos de eficiencia espect
 \end{ejemplo}
 
 
-\begin{ejemplo}[$M$-QAM]
+\begin{ejemplo}[$M-$QAM]
 
-    Pasemos ahora al caso de $M$-QAM, en el cual los símbolos del alfabeto se disponen en una grilla equiespaciada en el plano complejo, que se muestra en la figura. Aquí $A$ es el parámetro de escala que controla la energía transmitida. Como se observa en la Figura, esto corresponde a elegir $a_k$ y $b_k$ constelaciones polares de dimensión $1$ como las analizadas en banda base. Normalmente se toma $M=M_a^2=M_b^2$ (en general $M$ además es potencia de $2$ para transmitir una cantidad entera de bits).
+    Pasemos ahora al caso de $M-$QAM, en el cual los símbolos del alfabeto se disponen en una grilla equiespaciada en el plano complejo, que se muestra en la figura. Aquí $A$ es el parámetro de escala que controla la energía transmitida. Como se observa en la Figura, esto corresponde a elegir $a_k$ y $b_k$ constelaciones polares de dimensión $1$ como las analizadas en banda base. Normalmente se toma $M=M_a^2=M_b^2$ (en general $M$ además es potencia de $2$ para transmitir una cantidad entera de bits).
 
     A la salida del detector coherente de la Figura \ref{fig:detector coherente} tenemos entonces dos muestras $\hat{a}_k$ y $\hat{b}_k$ contaminadas por ruidos independientes. La detección se hace entonces de manera independiente para $a_k$ y $b_k$ usando como umbrales $0,\pm 2A,\pm 4A,\ldots$ por lo que la probabilidad de error de símbolo, despreciando errores no adyacentes queda:
     \begin{equation*}
@@ -901,7 +901,7 @@ por lo que ambas modulaciones son equivalentes en términos de eficiencia espect
 
 \end{ejemplo}
 
-\begin{ejemplo}[$M$-PSK]
+\begin{ejemplo}[$M-$PSK]
 
     Por último, analicemos un alfabeto $M-$ario codificado solo en fase, lo que corresponde a la modulación $M-$PSK. En este caso, corresponde a tomar $a_k = A\cos(\theta_k)$ y $b_k=A\sin(\theta_k)$ (o bien símbolos complejos $c_k = A\e^{j\theta_k}$) con fases $\theta_k$ equiespaciadas $0,2\pi/M,\ldots,2\frac{M-1}{M}\pi$.
 
@@ -991,7 +991,7 @@ En la Figura \ref{fig:comparacion qam psk} se grafica la relación $\gamma=\bar{
                     (14.401727044112327, 2)
                     (18.777249982943914, 3)
                 };
-                \addlegendentry{$M$-QAM}
+                \addlegendentry{$M-$QAM}
                 \addplot[teal, thick,mark=square*] coordinates {
                     (10.52983169956084, .5)
                     (10.52983169956084, 1)
@@ -1000,7 +1000,7 @@ En la Figura \ref{fig:comparacion qam psk} se grafica la relación $\gamma=\bar{
                     (23.362371184842722, 2.5)
                     (28.50731616802202, 3)
                 };
-                \addlegendentry{$M$-PSK}
+                \addlegendentry{$M-$PSK}
                 \node[right] at (axis cs:10.53,.5) {BPSK};
                 \node[right] at (axis cs:10.53,1) {QPSK-4QAM};
                 \node[above] at (axis cs:18.77,3) {$64$-QAM};
