@@ -465,7 +465,7 @@ Estudiamos ahora varios ejemplos del sistema completo distinguiendo según la fo
     
 \end{ejemplo}
 
-La observación crucial es la siguiente: el filtro de recepción no tiene por qué ser un pasabajos ideal, es parte del diseño del sistema. A la luz entonces de los últimos dos ejemplos, surge naturalmente la siguiente pregunta: ¿es posible diseñar un filtro que maximice la relación $A/\sigma_N$ en el instante de detección? Esto permite minimizar la probabilidad de error debida al ruido. Esto lleva al \emph{filtro acoplado} que analizamos a continuación.
+La observación crucial es la siguiente: \emph{el filtro de recepción no tiene por qué ser un pasabajos ideal, es parte del diseño del sistema}. A la luz entonces de los últimos dos ejemplos, surge naturalmente la siguiente pregunta: ¿es posible diseñar un filtro que maximice la relación $A/\sigma_N$ en el instante de detección? Esto permite minimizar la probabilidad de error debida al ruido. Esto lleva al \emph{filtro acoplado} que analizamos a continuación.
 
 \section{Detección óptima en presencia de ruido: filtro acoplado}\label{sec:filtro acoplado}
 
@@ -689,7 +689,7 @@ Por lo tanto:
 Concluimos entonces que la relación señal a ruido se degrada \emph{linealmente} en $m$. Si bien esto es mejor que no repetir (en general la atenuación cae más rápido que lineal), de todos modos la $P_e$ se degrada fuertemente, como muestra el siguiente ejemplo.
 
 \begin{ejemplo}[Repetición no regenerativa]\label{ejemplo:repeticion no regenerativa}
-    Consideremos una señal polar en la situación ideal que utilizamos filtros acoplados. En ese caso $P_e=Q(\sqrt{S/N})$. Supongamos que, en una única etapa se logra una relación $S/N$ de $20 \unit{\deci\bel}$, es decir $S/N = 100$. En ese caso, al cabo de $m=20$ repetidores tenemos:
+    Consideremos una señal polar en la situación ideal que utilizamos filtros acoplados. En ese caso $P_e=Q\left(\sqrt{S/N}\right)$. Supongamos que, en una única etapa se logra una relación $S/N$ de $20 \unit{\deci\bel}$, es decir $S/N = 100$. En ese caso, al cabo de $m=20$ repetidores tenemos:
     \begin{equation*}
         \left(\frac{S}{N}\right)_m = \frac{1}{20} \left(\frac{S}{N}\right)_1 = 5 \Rightarrow P_{e,m} = Q\left(\sqrt{5}\right) \approx 1.20\times 10^{-2},
     \end{equation*}

@@ -31,19 +31,19 @@ En la Figura \ref{fig:ejemplos pasabanda} se muestran tres modulaciones de este 
         \path (1,1) node {$1$} -- (3,1) node {$0$} -- (5,1) node {$1$} -- (7,1) node {$1$} -- (9,1) node {$0$};
         \begin{scope}[shift={(0,-1)}]
             \node [align=center] at (-2,.5) {Banda base\\Pulso NRZ};
-            \draw (0,1) -- (2,1) -- (2,0) -- (4,0) -- (4,1) -- (8,1) -- (8,0) -- (10,0);
+            \draw[teal,thick] (0,1) -- (2,1) -- (2,0) -- (4,0) -- (4,1) -- (8,1) -- (8,0) -- (10,0);
         \end{scope}
         \begin{scope}[shift={(0,-3)}]
             \node [align=center] at (-2,0) {ASK\\$a_k=\{0,A\}$};
-            \draw [samples=200,domain=0:2] plot (\x,{.5*cos(8*pi*\x r)}) -- (2,0) -- (4,0) -- plot [samples=200,domain=4:8] (\x,{.5*cos(8*pi*\x r)}) -- (8,0) -- (10,0);
+            \draw [samples=200,domain=0:2, teal,thick] plot (\x,{.5*cos(8*pi*\x r)}) -- (2,0) -- (4,0) -- plot [samples=200,domain=4:8] (\x,{.5*cos(8*pi*\x r)}) -- (8,0) -- (10,0);
         \end{scope}
         \begin{scope}[shift={(0,-5)}]
             \node [align=center] at (-2,0) {Binary PSK (BPSK)\\$\theta_k=\{-\pi,\pi\}$};
-            \draw [samples=200,domain=0:2] plot (\x,{.5*sin(8*pi*\x r)}) -- plot [domain=2:4] (\x,{-.5*sin(8*pi*\x r)}) -- plot [samples=200,domain=4:8] (\x,{.5*sin(8*pi*\x r)}) -- plot [domain=8:10] (\x,{-.5*sin(8*pi*\x r)});
+            \draw [samples=200,domain=0:2,teal,thick] plot (\x,{.5*sin(8*pi*\x r)}) -- plot [domain=2:4] (\x,{-.5*sin(8*pi*\x r)}) -- plot [samples=200,domain=4:8] (\x,{.5*sin(8*pi*\x r)}) -- plot [domain=8:10] (\x,{-.5*sin(8*pi*\x r)});
         \end{scope}
        \begin{scope}[shift={(0,-7)}]
             \node [align=center] at (-2,0) {FSK\\$f_k=f_c\pm f_\Delta$};
-            \draw [samples=200,domain=0:2] plot (\x,{.5*cos(8*pi*\x r)}) -- plot [domain=2:4] (\x,{.5*cos(4*pi*\x r)}) -- plot [samples=200,domain=4:8] (\x,{.5*cos(8*pi*\x r)}) -- plot [domain=8:10] (\x,{.5*cos(4*pi*\x r)});
+            \draw [samples=200,domain=0:2, teal,thick] plot (\x,{.5*cos(8*pi*\x r)}) -- plot [domain=2:4] (\x,{.5*cos(4*pi*\x r)}) -- plot [samples=200,domain=4:8] (\x,{.5*cos(8*pi*\x r)}) -- plot [domain=8:10] (\x,{.5*cos(4*pi*\x r)});
         \end{scope}
     \end{tikzpicture}
     \end{center}
