@@ -18,11 +18,11 @@ Consideremos una sinusoide base portadora $\cos(2\pi f_c t)$ a modular utilizand
     con $\theta_k$ codificando los símbolos.
     \item[Frecuencia: ] 
     \begin{equation*}
-        x_c(t) = A \cos\left(2\pi (f_c+a_kf_{\Delta}) t\right), \quad t\in[kT_s,(k+1)T_s],
+        x_c(t) = A \cos\left(2\pi (f_c+f_k) t\right), \quad t\in[kT_s,(k+1)T_s],
     \end{equation*}
-     con la variación en frecuencia $a_kf_{\Delta}$ codificando los símbolos.
+     con la variación en frecuencia $f_k$ codificando los símbolos.
 \end{description}
-En la Figura \ref{fig:ejemplos pasabanda} se muestran tres modulaciones de este tipo, junto con la modulación banda base del mismo mensaje utilizando pulsos NRZ. Cuando la señal digital afecta uno solo de estos parámetros, se habla de \emph{keying} (por analogía a las llaves discretas de la telegrafía), dando lugar a los llamados \emph{Amplitude Shift Keying (ASK)}, \emph{Phase Shift Keying (PSK)} y \emph{Frequency Shift Keying (FSK)}. Obviamente podemos combinar varias de estas estrategias simultáneamente como veremos.
+En la Figura \ref{fig:ejemplos pasabanda} se muestran tres modulaciones de este tipo, junto con la modulación banda base del mismo mensaje utilizando pulsos NRZ. Cuando la señal digital afecta uno solo de estos parámetros, se habla de \emph{keying} (por analogía a las llaves discretas de la telegrafía), dando lugar a los llamados \emph{Amplitude Shift Keying (ASK)}, \emph{Phase Shift Keying (PSK)} y \emph{Frequency Shift Keying (FSK)}. Obviamente, podemos combinar varias de estas estrategias simultáneamente como veremos.
 
 \begin{figure}
     \begin{center}
@@ -42,7 +42,7 @@ En la Figura \ref{fig:ejemplos pasabanda} se muestran tres modulaciones de este 
             \draw [samples=200,domain=0:2,teal,thick] plot (\x,{.5*sin(8*pi*\x r)}) -- plot [domain=2:4] (\x,{-.5*sin(8*pi*\x r)}) -- plot [samples=200,domain=4:8] (\x,{.5*sin(8*pi*\x r)}) -- plot [domain=8:10] (\x,{-.5*sin(8*pi*\x r)});
         \end{scope}
        \begin{scope}[shift={(0,-7)}]
-            \node [align=center] at (-2,0) {Binary FSK\\$f_k=f_c\pm f_\Delta$};
+            \node [align=center] at (-2,0) {Binary FSK\\$f_k=\pm f_\Delta$};
             \draw [samples=200,domain=0:2, teal,thick] plot (\x,{.5*cos(8*pi*\x r)}) -- plot [domain=2:4] (\x,{.5*cos(4*pi*\x r)}) -- plot [samples=200,domain=4:8] (\x,{.5*cos(8*pi*\x r)}) -- plot [domain=8:10] (\x,{.5*cos(4*pi*\x r)});
         \end{scope}
     \end{tikzpicture}
