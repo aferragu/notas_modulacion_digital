@@ -14,9 +14,9 @@ Cuando $M=2$, el alfabeto se denomina binario y cada símbolo puede interpretars
 
 Notemos además que los símbolos no son necesariamente $0$ y $1$. Por ejemplo, para un alfabeto binario veremos que puede ser interesante codificar los símbolos como $1$ y $-1$ en algunas aplicaciones, de manera de obtener señales de valor medio nulo.
 
-El objetivo entonces de un sistema de comunicación digital es transmitir, sobre un canal imperfecto, una señal digital de tiempo discreto y \emph{reconstruir}, a la salida, una señal digital $\{\hat{a}_k\}$ de manera tal de que \emph{maximizar la cantidad de símbolos reconstruidos de manera correcta}. Dicho de otro modo, si el sistema de transmisión, modulación, canal y detección introducen perturbaciones aleatorias, que la probabilidad de \emph{error de símbolo}, $\p{a_k\neq \hat{a}_k}$ sea (en régimen) la menor posible.
+El objetivo entonces de un sistema de comunicación digital es transmitir, sobre un canal imperfecto, una señal digital de tiempo discreto y \emph{reconstruir}, a la salida, una señal digital $\{\hat{a}_k\}$ de manera de \emph{maximizar la cantidad de símbolos reconstruidos de manera correcta}. Dicho de otro modo, si el sistema de transmisión, modulación, canal y detección introduce perturbaciones aleatorias, que la probabilidad de \emph{error de símbolo}, $\p{a_k\neq \hat{a}_k}$ sea (en régimen) la menor posible.
 
-Como se intuye de la ecuación anterior, aparecen dos conceptos clave a tener en cuenta en el presente curso:
+Como se intuye de lo anterior, aparecen dos conceptos clave a tener en cuenta en el presente curso:
 
 \begin{itemize}
     \item Es útil trabajar con \emph{señales aleatorias}. Esto es porque no conocemos a priori \emph{qué es lo que se va a transmitir}, y quizás solo propiedades estadísticas de la señal. A su vez, todo canal de comunicación está sujeto a \emph{ruido} que es intrínsecamente aleatorio. Esto requiere familiaridad con el concepto de \emph{proceso estocástico} que definiremos en el Capítulo \ref{chapter:procesos estocasticos}, así como con las reglas básicas de probabilidad, que se recuerdan en el Apéndice \ref{app:probabilidad}.
@@ -26,7 +26,7 @@ Como se intuye de la ecuación anterior, aparecen dos conceptos clave a tener en
 
 \section{Motivación de la transmisión digital}
 
-La primera pregunta que debemos contestar es por qué puede ser conveniente transmitir datos de manera digital, esto es, siguiendo un alfabeto finito, en lugar de transmitir o intentar reproducir una forma de onda, como se vio en la modulación analógica. Si bien esta última fue el primer mecanismo masivo de transmisión de datos a larga distancia, y aún se utiliza hoy en múltiples aplicaciones (radio comercial, control de tráfico aéreo, etc.), debemos recordar que el \emph{primer sistema de transmisión eléctrica de datos} corresponde a la telegrafía: esto es, el envío de mensajes sobre un cable de cobre (cable telegráfico). Dichos mensajes correspondían típicamente a mensajes de texto (letras y números), que eran \emph{codificados} como pulsos de distinta duración (cortos y largos). Esto dio lugar al primer ejemplo de código para la transmisión eléctrica: el código Morse (1844, c.f. \href{https://en.wikipedia.org/wiki/Electrical_telegraph}{telégrafía eléctrica}).
+La primera pregunta que debemos contestar es por qué puede ser conveniente transmitir datos de manera digital, esto es, siguiendo un alfabeto finito, en lugar de transmitir o intentar reproducir una forma de onda, como se vio en la modulación analógica. Si bien esta última fue el primer mecanismo masivo de transmisión de datos a larga distancia, y aún se utiliza hoy en múltiples aplicaciones (radio comercial, control de tráfico aéreo, etc.), debemos recordar que el \emph{primer sistema de transmisión eléctrica de datos} corresponde a la telegrafía: esto es, el envío de mensajes sobre un cable de cobre (cable telegráfico). Dichos mensajes correspondían típicamente a mensajes de texto (letras y números), que eran \emph{codificados} como pulsos de distinta duración (cortos y largos). Esto dio lugar al primer ejemplo de código para la transmisión eléctrica: el código Morse (1844, cf. \href{https://en.wikipedia.org/wiki/Electrical_telegraph}{telegrafía eléctrica}).
 
 \begin{figure}[h]
     \begin{center}
@@ -60,7 +60,7 @@ En la transmisión digital, se transmiten símbolos $a_k$ construyendo una seña
         \draw[thick, ->] (rx)--node[midway, above] {$\hat{x}(t)$} (transducer2);
         \draw[thick, ->] (transducer2)--(sink);
         \begin{scope}[on background layer]
-            \node[draw, rectangle, dashed, fill=gray!25!white, fit=(tx) (ch) (rx), inner sep=10pt, label=below:Moduladción analógica] (modulador) {};
+            \node[draw, rectangle, dashed, fill=gray!25!white, fit=(tx) (ch) (rx), inner sep=10pt, label=below:Modulación analógica] (modulador) {};
         \end{scope}
 
         \end{blockdiagram}
@@ -72,10 +72,10 @@ Complementario a lo anterior existen dos fuertes razones para analizar la transm
 \begin{enumerate}
     \item En primer lugar, en los últimos años, casi toda la información se almacena en forma digital (texto, fotos, video). En ese sentido, la información ya se encuentra en un alfabeto de símbolos (ej. binario) y no tiene sentido plantearse pasar por una etapa analógica, salvo para efectivamente transmitir sobre el medio físico.
     
-    \item En otros casos, la señal analógica se convierte en una señal digital mediante un conversor analógico/digital (A/D) (Figura \ref{fig:a/d}) Aquí se cumplen dos etapas:
+    \item En otros casos, la señal analógica se convierte en una señal digital mediante un conversor analógico/digital (A/D) (Figura \ref{fig:a/d}). Aquí se cumplen dos etapas:
      \begin{enumerate}
         \item Se \emph{muestrea la señal} a una frecuencia de muestreo $f_s$ (muestras por segundo).
-        \item Se \emph{cuantifica la señal} pasando el valor analógico a una cierta cantidad de símbolos (bits). Por ejemplo, las señales de audio se muestrean a $f_s=44100 \unit{Hz}$ y se digitalizan utilizando $16$ bits de resolución para cada canal estéreo. El resultado es una secuencia de muestras $a_k$ de $\approx 1.41 \unit{\mega bps}$.
+        \item Se \emph{cuantifica la señal} pasando el valor analógico a una cierta cantidad de símbolos (bits). Por ejemplo, las señales de audio se muestrean a $f_s=44100 \unit{\hertz}$ y se digitalizan utilizando $16$ bits de resolución para cada canal estéreo. El resultado es una secuencia de muestras $b_k$ de $\approx 1.41 \unit{\mega\bps}$.
      \end{enumerate}
 \end{enumerate}
 
@@ -84,19 +84,19 @@ Complementario a lo anterior existen dos fuertes razones para analizar la transm
         \begin{blockdiagram}
         \node [block, align=center] (fuente) {Fuente \\ analógica};
         \node [block, right = 5em of fuente, align=center, label=below:{Frec: $f_s$, $N$ bits}] (ad) {Conversor \\ A/D};
-        \node [right = 5em of ad] (salida) {$Nf_s \unit{bps}$};
+        \node [right = 5em of ad] (salida) {$Nf_s \unit{\bps}$};
         \draw[thick, ->] (fuente)--node[midway,above] {$x(t)$} (ad);
-        \draw[thick, ->] (ad)--node[midway, above] {$a_k$} (salida);
+        \draw[thick, ->] (ad)--node[midway, above] {$b_k$} (salida);
         \end{blockdiagram}
         \caption{Conversión analógica a digital.}\label{fig:a/d}
     \end{center}
 \end{figure}
 
-En el segundo caso, por el Teorema de Nyquist del muestreo, sabemos que si la señal $x(t)$ tiene ancho de banda $B$, entonces obteniendo muestras a frecuencia $f_s>2B$ es posible reconstruir la señal de manera \emph{exacta} a partir de las muestras $x(kT_s)$ con $T_s=1/f_s$. Sin embargo, como las muestras están cuantificadas, $a_k\approx x(kT_s)$ pero no es exacto, introduciendo el llamado \emph{ruido de cuantificación}. Este ruido es menor a mayor cantidad de bits utilizados para representar las muestras. Sin embargo, si la transmisión digital permite reconstruir las muestras $a_k$ exactamente, es probable que dicho ruido de cuantificación sea menor que el que introduce un esquema de modulación analógico, por lo cual la señal se recibe de mejor manera. A su vez, con los esquemas de modulación modernos, es posible aprovechar mejor el ancho de banda mandando más información (bits) sobre el mismo, por lo cual podemos realizar transmisiones de calidad.
+En el segundo caso, por el Teorema de Nyquist del muestreo, sabemos que si la señal $x(t)$ tiene ancho de banda $B$, entonces obteniendo muestras a frecuencia $f_s>2B$ es posible reconstruir la señal de manera \emph{exacta} a partir de las muestras $x(kT_s)$ con $T_s=1/f_s$. Sin embargo, como las muestras están cuantificadas, $b_k\approx x(kT_s)$ pero no es exacto, introduciendo el llamado \emph{ruido de cuantificación}. Este ruido es menor a mayor cantidad de bits utilizados para representar las muestras. Sin embargo, si la transmisión digital permite reconstruir las muestras $b_k$ exactamente, es probable que dicho ruido de cuantificación sea menor que el que introduce un esquema de modulación analógico, por lo cual la señal se recibe de mejor manera. A su vez, con los esquemas de modulación modernos, es posible aprovechar mejor el ancho de banda mandando más información (bits) sobre el mismo, por lo cual podemos realizar transmisiones de calidad.
 
 \section{Diagrama general de un sistema de transmisión digital}
 
-El diagrama general de un sistema de transmisión digital se muestra en la Figura \ref{fig:digital}. Allí partimos de una fuente ya digital que genera símbolos $\{a_k\}$, y se pasa por dos etapas de codificación que explicaremos. Con ello se genera una nueva señal digital $\{b_k\}$ que se enviará por el medio físico. Para ello, se requiere una etapa de \emph{modulación digital}, en la cual los símbolos $b_k$ se convierten en una señal analógica adecuada, se envían por el canal, y luego son reconstruidos por un \emph{detector} digital, que obtiene una secuencia $\hat{b}_k$. El objetivo de esta etapa es lograr que $\p{\hat{b}_k=b_k}$ sea máxima, de este modo permitiendo reconstruir la señal. Luego esta se decodifica por el proceso inverso a la codificación para obtener $\hat{a}_k$ y enviar esta señal al receptor. 
+El diagrama general de un sistema de transmisión digital se muestra en la Figura \ref{fig:digital}. Allí partimos de una fuente ya digital que genera símbolos $\{b_k\}$, y se pasa por dos etapas de codificación que explicaremos. Con ello se genera una nueva señal digital $\{a_k\}$ que se enviará por el medio físico. Para ello, se requiere una etapa de \emph{modulación digital}, en la cual los símbolos $a_k$ se convierten en una señal analógica adecuada, se envían por el canal, y luego son reconstruidos por un \emph{detector} digital, que obtiene una secuencia $\hat{a}_k$. El objetivo de esta etapa es lograr que $\p{\hat{a}_k=a_k}$ sea máxima, de este modo permitiendo reconstruir la señal. Luego esta se decodifica por el proceso inverso a la codificación para obtener $\hat{b}_k$ y enviar esta señal al receptor. 
 
 \begin{figure}
     \begin{center}
@@ -112,21 +112,21 @@ El diagrama general de un sistema de transmisión digital se muestra en la Figur
         \node [block, left = of decocanal] (decofuente) {Decod. fuente};
         \node [block, left = 5em of decofuente, align=center] (sink) {Receptor \\ digital};
 
-        \draw[thick, ->] (fuente)--node[midway,above] {$a_k$} (codfuente);
+        \draw[thick, ->] (fuente)--node[midway,above] {$b_k$} (codfuente);
         \draw[thick, ->] (codfuente)--(codcanal);
-        \draw[thick, ->] (codcanal)--node[midway,above] {$b_k$} (tx);
+        \draw[thick, ->] (codcanal)--node[midway,above] {$a_k$} (tx);
         \draw[thick, ->] (tx)--node[midway,right] {$x(t)$} (ch);
         \draw[thick, ->] (ch)--node[midway,right] {$\hat{x}(t)$} (rx);
-        \draw[thick, ->] (rx)--node[midway,above] {$\hat{b}_k$} (decocanal);
+        \draw[thick, ->] (rx)--node[midway,above] {$\hat{a}_k$} (decocanal);
         \draw[thick, ->] (decocanal)--(decofuente);
-        \draw[thick, ->] (decofuente)--node[midway,above] {$\hat{a}_k$} (sink);
+        \draw[thick, ->] (decofuente)--node[midway,above] {$\hat{b}_k$} (sink);
         
         \node [block, right = of ch] (sinc) {Sincronismo};
         \draw[thick, -] (tx) -| (sinc);
         \draw[thick, ->] (sinc) |- (rx);
 
         \begin{scope}[on background layer]
-            \node[draw, rectangle, dashed, fill=gray!25!white, fit=(tx) (ch) (rx) (sinc), inner sep=10pt, label=below:Moduladción digital] (modulador) {};
+            \node[draw, rectangle, dashed, fill=gray!25!white, fit=(tx) (ch) (rx) (sinc), inner sep=10pt, label=below:Modulación digital] (modulador) {};
             \node[draw, rectangle, dashed, fill=gray!25!white, fit=(codfuente) (codcanal), inner sep=10pt, label=below:Etapa de codificación] (cod) {};
             \node[draw, rectangle, dashed, fill=gray!25!white, fit=(decofuente) (decocanal), inner sep=10pt, label=below:Etapa de decodificación] (decod) {};
 
@@ -137,7 +137,7 @@ El diagrama general de un sistema de transmisión digital se muestra en la Figur
     \end{center}
 \end{figure}
 
-El objetivo de este curso es analizar la etapa de \emph{modulación digital}, es decir dada una secuencia de símbolos $\{b_k\}$, cómo construir una señal analógica $x(t)$ que contenga la información de dichos símbolos y sea adecuada para su transmisión por el medio físico (radio, par de cobre, fibra óptica). Luego de su transmisión, la señal alterada deberá ser detectada y de allí reconstruiremos una secuencia de símbolos con baja probabilidad de error. El término modulación digital hace referencia a que la señal discreta \emph{modula} características de la señal analógica. Notemos además que este proceso requiere un bloque adicional: el \emph{sincronismo}, para que el receptor sepa a qué velocidad se transmite la información y cuál es el mejor momento del tiempo para muestrear la señal $\hat{x}(t)$ de manera de recuperar $\hat{b}_k$.
+El objetivo de este curso es analizar la etapa de \emph{modulación digital}, es decir dada una secuencia de símbolos $\{a_k\}$, cómo construir una señal analógica $x(t)$ que contenga la información de dichos símbolos y sea adecuada para su transmisión por el medio físico (radio, par de cobre, fibra óptica). Luego de su transmisión, la señal alterada deberá ser detectada y de allí reconstruiremos una secuencia de símbolos con baja probabilidad de error. El término modulación digital hace referencia a que la señal discreta \emph{modula} características de la señal analógica. Notemos además que este proceso requiere un bloque adicional: el \emph{sincronismo}, para que el receptor sepa a qué velocidad se transmite la información y cuál es el mejor momento del tiempo para muestrear la señal $\hat{x}(t)$ de manera de recuperar $\hat{a}_k$.
 
 Si bien en este curso no trabajaremos sobre la etapa de \emph{codificación}, es importante entender el rol que cumplen las mismas previo a la transmisión. Introducimos ahora los principales conceptos.
 
@@ -149,47 +149,47 @@ Como se observa en la Figura \ref{fig:digital}, existen dos etapas: la \emph{cod
 
 El objetivo de la codificación de fuente es \emph{eliminar redundancia} de los datos, produciendo una secuencia de símbolos con menor cantidad de ``bits por símbolo'', de manera de requerir menor velocidad de transmisión de información. Existen dos tipos:
 \begin{description}
-    \item[Codificación sin pérdida:] Aquí la secuencia de símbolos generada contiene toda la información de la señal $\{a_k\}$, pero \emph{comprimida}. Esto es, utilizando propiedades estadísticas de la señal, se logra representar la misma información con menos bits. Un ejemplo de esto es el algoritmo \href{https://en.wikipedia.org/wiki/LZ77_and_LZ78}{Lempel-Ziv}, utilizado en la compresión ``.zip''.
+    \item[Codificación sin pérdida:] Aquí la secuencia de símbolos generada contiene toda la información de la señal $\{b_k\}$, pero \emph{comprimida}. Esto es, utilizando propiedades estadísticas de la señal, se logra representar la misma información con menos bits. Un ejemplo de esto es el algoritmo \href{https://en.wikipedia.org/wiki/LZ77_and_LZ78}{Lempel-Ziv}, utilizado en la compresión ``.zip''.
     
-    \item[Codificación con pérdida:] Aquí la secuencia de símbolos generada contiene \emph{menos información} que la original, eliminando por ejemplo partes que no son requeridas por el receptor. Ejemplos de esto son la compresión de imágenes JPEG, la compresión de video MPEG y la codificación de audio MP3. En estos casos, la señal reconstruida es una ``buena aproximación'' de la información original. Qué quiere decir ``buena aproximación'' depende de la aplicación, pero a modo de ejemplo el MP3 permite reducir la velocidad de audio mencionada anteriormente ($1.41 \unit{\mega bps}$) a $192 \unit{\kilo bps}$ o menos sin que el usuario detecte mayormente la diferencia. 
+    \item[Codificación con pérdida:] Aquí la secuencia de símbolos generada contiene \emph{menos información} que la original, eliminando por ejemplo partes que no son requeridas por el receptor. Ejemplos de esto son la compresión de imágenes JPEG, la compresión de video MPEG y la codificación de audio MP3. En estos casos, la señal reconstruida es una ``buena aproximación'' de la información original. Qué quiere decir ``buena aproximación'' depende de la aplicación, pero a modo de ejemplo el MP3 permite reducir la velocidad de audio mencionada anteriormente ($1.41 \unit{\mega\bps}$) a $192 \unit{\kilo\bps}$ o menos sin que el usuario detecte mayormente la diferencia. 
 \end{description}
 
 \begin{ejemplo}[Codificación sin pérdida]\label{ej:lossless}
 Consideremos una fuente de datos que genera símbolos \emph{independientes} con la siguiente estadística:
 \begin{equation*}
-    a_k \in \{0,1,2,3\} \text{ con distribución } \begin{cases}
-    \p{a_k=0} = 1/2 \\
-    \p{a_k=1} = 1/4 \\
-    \p{a_k=2} = 1/8 \\
-    \p{a_k=3} = 1/8 \\
+    b_k \in \{0,1,2,3\} \text{ con distribución } \begin{cases}
+    \p{b_k=0} = 1/2 \\
+    \p{b_k=1} = 1/4 \\
+    \p{b_k=2} = 1/8 \\
+    \p{b_k=3} = 1/8 \\
     \end{cases}
 \end{equation*}
 En este caso, una codificación sencilla sería tomar el código:
 \begin{equation*}
     \begin{cases}
-        a_k = 0 \mapsto \tilde{a}_k = 00 \\
-        a_k = 1 \mapsto \tilde{a}_k = 01 \\
-        a_k = 2 \mapsto \tilde{a}_k = 10 \\
-        a_k = 3 \mapsto \tilde{a}_k = 11 \\
+        b_k = 0 \mapsto \tilde{b}_k = 00 \\
+        b_k = 1 \mapsto \tilde{b}_k = 01 \\
+        b_k = 2 \mapsto \tilde{b}_k = 10 \\
+        b_k = 3 \mapsto \tilde{b}_k = 11 \\
     \end{cases}
 \end{equation*}
 Observemos que el código anterior requiere en promedio 2 bits por símbolo (ya que todos los códigos son de 2 bits). ¿Podemos hacerlo mejor? Consideremos el siguiente código, debido a \href{https://en.wikipedia.org/wiki/Huffman_coding}{Huffman}:
 \begin{equation*}
     \begin{cases}
-        a_k = 0 \mapsto \tilde{a}_k = 0 \\
-        a_k = 1 \mapsto \tilde{a}_k = 10 \\
-        a_k = 2 \mapsto \tilde{a}_k = 110 \\
-        a_k = 3 \mapsto \tilde{a}_k = 111 \\
+        b_k = 0 \mapsto \tilde{b}_k = 0 \\
+        b_k = 1 \mapsto \tilde{b}_k = 10 \\
+        b_k = 2 \mapsto \tilde{b}_k = 110 \\
+        b_k = 3 \mapsto \tilde{b}_k = 111 \\
     \end{cases}
 \end{equation*}
 
-Notemos que el código anterior es un \emph{código de prefijo} (cada símbolo empieza de manera diferente), lo que permite que sea invertible. Es decir si por ejemplo recibimos:
+Notemos que el código anterior es un \emph{código de prefijo} (ninguna palabra del código es prefijo de otra), lo que permite que pueda decodificarse sin separadores. Es decir si por ejemplo recibimos:
 \begin{equation*}
     0101001110110111 \mapsto 0\;10\;10\;0\;111\;0\;110\;111 \mapsto 01103023
 \end{equation*}
 Calculemos el largo medio de la palabra enviada de la siguiente forma, donde $\ell(\cdot)$ representa el largo del código:
 \begin{align*}
-    \bar{L} &= \p{a_k=0} \ell(0) + \p{a_k=1} \ell(10) + \p{a_k=2} \ell(110) + \p{a_k=3} \ell(111)\\
+    \bar{L} &= \p{b_k=0} \ell(0) + \p{b_k=1} \ell(10) + \p{b_k=2} \ell(110) + \p{b_k=3} \ell(111)\\
     &= \left(\frac{1}{2}\right)(1) + \left(\frac{1}{4}\right)(2) + \left(\frac{1}{8}\right)(3) + \left(\frac{1}{8}\right)(3) = 1.75 < 2
 \end{align*}
 
@@ -198,11 +198,11 @@ Esto quiere decir que en el largo plazo, una secuencia de $N$ símbolos podrá s
 
 La clave del ejemplo anterior está en elegir palabras más largas para símbolos menos frecuentes. Notemos que esto mismo ya había sido advertido por Morse en su código, como se ve en la Figura \ref{fig:morse}. Surgen entonces las siguientes preguntas: ¿cuál es el mínimo largo medio posible de codificación? ¿Es alcanzable?
 
-En 1948, \href{https://en.wikipedia.org/wiki/Claude_Shannon}{Claude Shannon} establece la teoría matemática de transmisión de información, introduciendo el concepto de \emph{entropía} de una fuente. Dicha entropía representa la cantidad de información contenida en una fuente (considerando sus propiedades estadísticas). Para una fuente $X$ que genera símbolos independientes $\{a_k\}$, la misma se define como:
+En 1948, \href{https://en.wikipedia.org/wiki/Claude_Shannon}{Claude Shannon} establece la teoría matemática de transmisión de información, introduciendo el concepto de \emph{entropía} de una fuente. Dicha entropía representa la cantidad de información contenida en una fuente (considerando sus propiedades estadísticas). Para una fuente $X$ que genera símbolos independientes $\{b_k\}$, la misma se define como:
 \begin{equation*}
-    H(X) = -\sum_k p_k \log_2(p_k)
+    H(X) = -\sum_{i=1}^{M} p_i \log_2(p_i)
 \end{equation*}
-siendo $p_k$ la probabilidad de cada símbolo y $\log_2$ el logaritmo en base $2$, lo que hace que la entropía quede en bits/símbolo.
+siendo $p_i=\p{b_k=s_i}$ la probabilidad de cada símbolo $s_i$ del alfabeto y $\log_2$ el logaritmo en base $2$, lo que hace que la entropía quede en bits/símbolo.
 
 Calculemos la entropía de la fuente anterior:
 \begin{equation*}
@@ -211,7 +211,7 @@ Calculemos la entropía de la fuente anterior:
 Es decir, recuperamos exactamente el largo medio del código de Huffman anterior.
 
 \begin{ejemplo}[Fuente binaria]\label{ej:entropia binaria}
-    Supongamos que los símbolos son binarios $a_k\in\{0,1\}$ con $\p{a_k=1} = p = 1-\p{a_k=0}$ e independientes. En ese caso la entropía queda (como función de $p$):
+    Supongamos que los símbolos son binarios $b_k\in\{0,1\}$ con $\p{b_k=1} = p = 1-\p{b_k=0}$ e independientes. En ese caso la entropía queda (como función de $p$):
     \begin{equation}\label{eq:entropia binaria}
         H(p) = -p\log_2 (p) - (1-p) \log_2(1-p),
     \end{equation}
@@ -222,7 +222,7 @@ Es decir, recuperamos exactamente el largo medio del código de Huffman anterior
 \begin{figure}
     \begin{center}
         \begin{tikzpicture}
-            \begin{axis}[grid]
+            \begin{axis}[grid, xlabel=$p$, ylabel=$H(p)$]
             \addplot[domain=0.01:.99,samples=100, color=teal, very thick] {-x*ln(x)/ln(2) - (1-x)*ln(1-x)/ln(2)};
             \end{axis}
         \end{tikzpicture}
@@ -232,29 +232,29 @@ Es decir, recuperamos exactamente el largo medio del código de Huffman anterior
 
 El Teorema de Shannon muestra que para una fuente dada, su entropía es la mínima cantidad de bits por símbolo alcanzable:
 \begin{teorema}[Shannon, 1948 -- codificación de fuente]\label{teo:shannon fuente}
-Sea una fuente de símbolos $\{a_k\}$ y su entropía $H_a$. Entonces es posible agrupar los símbolos de a bloques de tamaño $N$ y codificarlos en palabras de $L_N$ bits de manera que el largo medio de palabra cumpla:
+Sea una fuente $X$ de símbolos $\{b_k\}$ con entropía $H(X)$. Entonces es posible agrupar los símbolos de a bloques de tamaño $N$ y codificarlos en palabras de $L_N$ bits de manera que el largo medio de palabra cumpla:
 \begin{equation*}
-    N H_a \leqslant \bar{L}_N \leqslant NH_a + 1 
+    N H(X) \leqslant \bar{L}_N \leqslant NH(X) + 1 
 \end{equation*}
 Como cada bloque codifica $N$ símbolos, la cantidad de bits por símbolo será entonces:
 \begin{equation*}
-    H_a \leqslant \frac{\bar{L}}{N} \leqslant H_a + 1/N
+    H(X) \leqslant \frac{\bar{L}_N}{N} \leqslant H(X) + 1/N
 \end{equation*}
 Además, no existe ningún código que logre mejorar esta cota.
 \end{teorema}
 
-La entropía de una fuente nos da entonces la \emph{mínima cantidad de bits por símbolo} que podemos utilizar, es decir, el límite de la compresión alcanzable. Si volvemos al Ejemplo \ref{ej:lossless}, vemos que precisamente el código de Huffman alcanza la mínima entropía posible, incluso con $N=1$. Para otras distribuciones puede ser necesario utilizar un largo mayor de bloque para aproximar la entropía.
+La entropía de una fuente nos da entonces la \emph{mínima cantidad de bits por símbolo} que podemos utilizar, es decir, el límite de la compresión alcanzable. Si volvemos al Ejemplo \ref{ej:lossless}, vemos que precisamente el código de Huffman alcanza exactamente la entropía, incluso con $N=1$. Para otras distribuciones puede ser necesario utilizar un largo mayor de bloque para aproximar la entropía.
 
-En el Ejemplo \ref{ej:entropia binaria}, vemos que la entropía es máxima e igual a $1$ cuando los símbolos son \emph{equiprobables} ($p=1/2$). En ese caso, debemos utilizar 1 bit por símbolo y la señal es incompresible. Precisamente, el código de Huffman descrito logra que la fuente original genere cantidades equiprobables de $0$ y $1$, por lo cual no puede comprimirse más.
+En el Ejemplo \ref{ej:entropia binaria}, vemos que la entropía es máxima e igual a $1$ cuando los símbolos son \emph{equiprobables} ($p=1/2$). En ese caso, debemos utilizar 1 bit por símbolo y la señal es incompresible. Precisamente, el código de Huffman descrito logra que a la salida del codificador los $0$ y $1$ sean equiprobables, por lo cual no puede comprimirse más.
 
 Si, en cambio, $p\to 0$, la fuente tiene secuencias largas de $0$, y en ese caso puede ser más eficiente codificar el largo de la cadena de $0$s que indicar cada bit por separado. En el caso extremo, solo alcanza 1 bit para toda la cadena (``son todos ceros''). Lo mismo ocurre si $p\to 1$.
 
 Para ilustrar la necesidad de agrupar por bloques, consideremos el siguiente ejemplo, donde la distribución ya no tiene probabilidades potencia de dos.
 
 \begin{ejemplo}[Codificación por bloques]\label{ej:bloques huffman}
-Consideremos una fuente independiente con tres símbolos $a_k\in\{A,B,C\}$ y distribución:
+Consideremos una fuente independiente con tres símbolos $b_k\in\{A,B,C\}$ y distribución:
 \begin{equation*}
-    \p{a_k=A}=0.7, \qquad \p{a_k=B}=0.2, \qquad \p{a_k=C}=0.1.
+    \p{b_k=A}=0.7, \qquad \p{b_k=B}=0.2, \qquad \p{b_k=C}=0.1.
 \end{equation*}
 Su entropía es:
 \begin{equation*}
@@ -271,7 +271,7 @@ Su entropía es:
 \end{equation*}
 con largo medio $\bar{L}_1 = (0.7)(1)+(0.2)(2)+(0.1)(2) = 1.3$ bits/símbolo. Esta ya es la mejor codificación posible para $N=1$ (es el árbol de Huffman óptimo). Sin embargo, aún queda lejos de $H(X)$: $\bar{L}_1 - H(X)\approx 0.143$ bits/símbolo (un $12\%$ de \emph{overhead}). El problema es de granularidad: con solo tres símbolos, no hay forma de asignarle a $A$ (con $\p{A}=0.7$, muy por encima de $1/2$) menos de $1$ bit completo.
 
-\textbf{Codificación por pares ($N=2$).} Agrupemos los símbolos de a dos. Por independencia, $\p{a_k a_{k+1}=XY}=\p{a_k=X}\,\p{a_{k+1}=Y}$, lo que da $9$ pares posibles. Aplicando el algoritmo de Huffman a esas $9$ probabilidades obtenemos por ejemplo el siguiente código:
+\textbf{Codificación por pares ($N=2$).} Agrupemos los símbolos de a dos. Por independencia, $\p{b_k b_{k+1}=XY}=\p{b_k=X}\,\p{b_{k+1}=Y}$, lo que da $9$ pares posibles. Aplicando el algoritmo de Huffman a esas $9$ probabilidades (ver el árbol de la Figura \ref{fig:huffman bloques}) obtenemos por ejemplo el siguiente código:
 \begin{center}
     \begin{tabular}{|c|c|c|c|}
         \hline
@@ -350,17 +350,17 @@ es decir $\bar{L}_2/2 = 1.165$ bits/símbolo. La brecha con la entropía se redu
 El objetivo de la codificación de fuente es reducir la cantidad de datos a transmitir a su mínima expresión, eliminando redundancia sin pérdida de información (o en el caso con pérdida, sin distorsión relevante). La \emph{codificación de canal} va en sentido opuesto: agrega redundancia para anticiparse a posibles errores del canal de transmisión y poder detectarlos y corregirlos. A continuación damos algunos ejemplos.
 
 \begin{ejemplo}[Bit de paridad]\label{ej:paridad}
-    Supongamos una fuente binaria $\{a_k\}$ y formemos bloques de largo $N$. Al final de cada bloque se agrega un bit $a_N = a_0 \oplus \ldots \oplus a_{N-1}$ donde $\oplus$ es la operación XOR. Luego se transmite la palabra $b = (a_0,\ldots,a_N)$. El resultado final es que $a_N=1$ si hay una cantidad impar de $1$s en el bloque, o dicho de otro modo, cada bloque $b$ tiene una cantidad par de bits. Esto permite \emph{detectar} (pero no corregir) errores de $1$ bit, con un overhead de $1/N$ bits por símbolo.
+    Supongamos una fuente binaria $\{b_k\}$ y formemos bloques de largo $N$. Al final de cada bloque se agrega un bit $b_N = b_0 \oplus \ldots \oplus b_{N-1}$ donde $\oplus$ es la operación XOR. Luego se transmite la palabra $a = (b_0,\ldots,b_N)$. El resultado final es que $b_N=1$ si hay una cantidad impar de $1$s en el bloque, o dicho de otro modo, cada bloque $a$ tiene una cantidad par de unos. Esto permite \emph{detectar} (pero no corregir) errores de $1$ bit, con un overhead de $1/N$ bits por símbolo.
 
     Obviamente, si el largo de bloque $N$ es grande, el overhead es mínimo, pero la probabilidad de que haya errores de más de un bit es mayor, por lo cual la elección de $N$ es un compromiso entre ambos efectos.
 \end{ejemplo}
 
 \begin{ejemplo}[Código de repetición]\label{ej:codrep}
-    Supongamos una fuente binaria $\{a_k\}$ y realicemos el siguiente procedimiento: para cada símbolo $a_k$ formamos un bloque $b=(a_k, a_k, a_k)$. Esto es un código de repetición de largo $3$. Observemos que si hay un error de $1$ bit, podemos decidir por mayoría si el bloque corresponde a un $0$ o a un $1$. Por ejemplo $(110)\mapsto 1$ y $(010)\mapsto 0$. Esto permite \emph{detectar y corregir} errores de $1$ bit. Sin embargo, requiere 3 bits por símbolo, lo cual es ineficiente.
+    Supongamos una fuente binaria $\{b_k\}$ y realicemos el siguiente procedimiento: para cada símbolo $b_k$ formamos un bloque $a=(b_k, b_k, b_k)$. Esto es un código de repetición de largo $3$. Observemos que si hay un error de $1$ bit, podemos decidir por mayoría si el bloque corresponde a un $0$ o a un $1$. Por ejemplo $(110)\mapsto 1$ y $(010)\mapsto 0$. Esto permite \emph{detectar y corregir} errores de $1$ bit. Sin embargo, requiere 3 bits por símbolo, lo cual es ineficiente.
 \end{ejemplo}
 
 \begin{ejemplo}[Matriz de paridad]\label{ej:parity matrix}
-    Consideremos ahora el siguiente procedimiento para una fuente binaria $\{a_k\}$. Elegimos un número $M$ y formamos bloques de tamaño $N=M^2$ dispuestos en forma de matriz de $M\times M$. Luego se agrega a dicha matriz un bit de paridad para cada fila y cada columna, así como un bit de paridad total. Por ejemplo, si $M=4$, $N=16$:
+    Consideremos ahora el siguiente procedimiento para una fuente binaria $\{b_k\}$. Elegimos un número $M$ y formamos bloques de tamaño $N=M^2$ dispuestos en forma de matriz de $M\times M$. Luego se agrega a dicha matriz un bit de paridad para cada fila y cada columna, así como un bit de paridad total. Por ejemplo, si $M=4$, $N=16$:
     \begin{equation*}
         (1001000111111011) \; \mapsto\; \begin{pmatrix}
             1 & 0 & 0 & 1 \\
@@ -376,7 +376,7 @@ El objetivo de la codificación de fuente es reducir la cantidad de datos a tran
             1 & 1 & 0 & 0 & \vdots & 0 \\
         \end{pmatrix}
     \end{equation*}
-    Luego se envían los $N$ bits y los $M+1$ bits de paridad agregados.
+    Luego se envían los $N$ bits y los $2M+1$ bits de paridad agregados.
 
     Si hay un error de un bit, el mismo se \emph{detecta} y se \emph{corrige} porque los errores de paridad indican la fila y columna del error, por ejemplo:
     \begin{equation*}
@@ -397,39 +397,39 @@ El objetivo de la codificación de fuente es reducir la cantidad de datos a tran
             1 & 1 & 0{\color{red} *} & 0 & \vdots & 0 \\
         \end{pmatrix}
     \end{equation*}
-    El código detecta entonces donde ocurrió el error porque la paridad de la fila y la columna no es correcto. Notar que el error también puede ocurrir en la fila o en la columna de paridad. Esto también se detecta y se corrige gracias al bit extra de paridad total.
+    El código detecta entonces dónde ocurrió el error porque las paridades de la fila y la columna no son correctas. Notar que el error también puede ocurrir en la fila o en la columna de paridad. Esto también se detecta y se corrige gracias al bit extra de paridad total.
 
-    El resultado es que se envían $N$ bits con una redundancia de $2M+1 = 2\sqrt{N} + 1$ por lo que en un bloque de $N=1024$ bits solo se requieren $65$ bits extra. El overhead crece más lento que el tamaño de bloque. De todos modos sigue siendo ineficiente y solo permite corregir errores de $1$ bit, por lo que si el tamaño de bloque es grande, tenemos el mismo problema que en Ejemplo \ref{ej:paridad}.
+    El resultado es que se envían $N$ bits con una redundancia de $2M+1 = 2\sqrt{N} + 1$ por lo que en un bloque de $N=1024$ bits solo se requieren $65$ bits extra. El overhead crece más lento que el tamaño de bloque. De todos modos sigue siendo ineficiente y solo permite corregir errores de $1$ bit, por lo que si el tamaño de bloque es grande, tenemos el mismo problema que en el Ejemplo \ref{ej:paridad}.
 \end{ejemplo}
 
 El punto común de todos los ejemplos anteriores es el siguiente: dado un alfabeto de símbolos (por ejemplo binario), construimos bloques de largo $N$. Esto permite generar $2^N$ símbolos posibles. Luego agregamos bits de control, generando palabras de largo $N+r$, y aplicando un código que lleva secuencias de largo $N$ a un \emph{espacio mayor} de largo $N+r$, donde los códigos ``válidos'' se encuentran \emph{más separados entre sí} (solo hay $2^N$ palabras válidas de las $2^{N+r}$ posibles). Cuando ocurre algún error, encontramos una palabra no válida y detectamos el error. Si el código es adecuado, podemos además mapear esa palabra no válida a un símbolo válido ``cercano'' corrigiendo entonces el error.
 
 A mayor $r$, más redundancia se agrega, más espacio se genera, y podemos detectar y corregir errores más grandes. Pero por otra parte, el overhead es mayor. Se le denomina \emph{tasa de codificación (code rate)} al cociente $N/(N+r)$.
 
-Un ejemplo de código de este tipo son los \href{https://en.wikipedia.org/wiki/Hamming_code}{Códigos de Hamming}, en los cuales se elige un tamaño de bloque $N+r=2^{r}-1$ con $r\geqslant 1$ y se envía un mensaje de largo $N=2^{r} - r - 1$ con $r$ bits de redundancia, utilizando una transformación lineal invertible. En ese caso, la tasa de codificación queda:
+Un ejemplo de código de este tipo son los \href{https://en.wikipedia.org/wiki/Hamming_code}{Códigos de Hamming}, en los cuales se elige un tamaño de bloque $N+r=2^{r}-1$ con $r\geqslant 2$ y se envía un mensaje de largo $N=2^{r} - r - 1$ con $r$ bits de redundancia, utilizando una transformación lineal invertible. En ese caso, la tasa de codificación queda:
 \begin{equation*}
     R = 1-\frac{r}{2^r-1},
 \end{equation*}
-es decir, la redundancia es del orden de $\log_2(N)\ll \sqrt{N}$. Sin embargo, si bien es más eficiente que la matriz de paridad, este código solo permite detectar errores de 1 o 2 bits, y corregir errores de un único bit. El tipo más común de código de bloques es el de \href{https://en.wikipedia.org/wiki/Reed\%E2\%80\%93Solomon_error_correction}{Reed--Solomon} (1960), una familia de códigos que permite detectar errores de hasta $r$ bits y corregir hasta $\lfloor r/2 \rfloor$ bits, siendo $r$ un parámetro, la cantidad de redundancia deseada. Es además capaz de recuperar errores de ``borrado'', donde no es posible decidir si el bit recibido es $0$ o $1$.
+es decir, la redundancia es del orden de $\log_2(N)\ll \sqrt{N}$. Sin embargo, si bien es más eficiente que la matriz de paridad, este código solo permite detectar errores de 1 o 2 bits, y corregir errores de un único bit. El tipo más común de código de bloques es el de \href{https://en.wikipedia.org/wiki/Reed\%E2\%80\%93Solomon_error_correction}{Reed--Solomon} (1960), una familia de códigos que opera sobre símbolos de varios bits (típicamente bytes) y permite detectar hasta $r$ símbolos erróneos y corregir hasta $\lfloor r/2 \rfloor$, siendo $r$ la cantidad de símbolos de redundancia agregados. Esto lo hace especialmente adecuado para errores en ráfaga, que afectan varios bits de un mismo símbolo. Es además capaz de recuperar errores de ``borrado'', donde no es posible decidir si el bit recibido es $0$ o $1$.
 
-Más recientemente, la aparición de los \href{https://en.wikipedia.org/wiki/Convolutional_code}{códigos convolucionales}, \href{https://en.wikipedia.org/wiki/Turbo_code}{Turbo--codes} y códigos \href{https://en.wikipedia.org/wiki/Low-density_parity-check_code}{Low--Parity--Data--Check}, se logran tasas de codificación cercanas a $1$ con muy baja probabilidad de error.
+Además de los códigos de bloque existen los \href{https://en.wikipedia.org/wiki/Convolutional_code}{códigos convolucionales} (1955), que en lugar de procesar bloques independientes codifican el flujo de bits de manera continua, con memoria de los bits anteriores, y que se decodifican eficientemente mediante el algoritmo de Viterbi (1967). Más recientemente, los \href{https://en.wikipedia.org/wiki/Turbo_code}{códigos Turbo} (1993) y los códigos \href{https://en.wikipedia.org/wiki/Low-density_parity-check_code}{LDPC} (\emph{Low-Density Parity-Check}, propuestos por Gallager en 1962 pero recién aprovechados en la práctica desde los años 90) permitieron por primera vez acercarse, con muy baja probabilidad de error, al límite teórico que veremos a continuación.
 
 Todos los ejemplos anteriores dejan abierta una pregunta: ¿qué tan cerca de $1$ puede estar la tasa de codificación, para una probabilidad de error dada, en un canal real? Dicho de otro modo: si la entropía nos dio el límite \emph{inferior} de bits por símbolo necesarios para representar una fuente, ¿existe un límite \emph{superior} análogo para la cantidad de información que un canal ruidoso puede transportar de forma confiable? La respuesta, debida también a Shannon en el mismo trabajo de 1948, es la segunda gran contribución de la teoría de la información, y cierra el círculo de esta introducción.
 
 \begin{teorema}[Shannon, 1948 -- capacidad del canal AWGN]\label{teo:capacidad awgn}
-Consideremos un canal continuo de ancho de banda $B$, en el que la señal se transmite con potencia media $S$ y es afectada por ruido blanco gaussiano aditivo, de potencia $N$ dentro de dicha banda. Entonces el canal tiene una \emph{capacidad}:
+Consideremos un canal continuo de ancho de banda $B$, en el que la señal se transmite con potencia media $S$ y es afectada por ruido blanco gaussiano aditivo, de potencia $N$ dentro de dicha banda, y sea $\mathrm{SNR}=S/N$ la \emph{relación señal a ruido}, es decir, el cociente entre la potencia media de la señal y la potencia del ruido. Entonces el canal tiene una \emph{capacidad}:
 \begin{equation*}
-    C = B\log_2\left(1+\frac{S}{N}\right) \quad \text{bits/segundo}.
+    C = B\log_2\left(1+\mathrm{SNR}\right) \quad \unit{\bit/\second}.
 \end{equation*}
 Es posible transmitir información a través del canal, a cualquier tasa $R<C$, con probabilidad de error tan pequeña como se desee, mediante una codificación de canal adecuada (en general, a costa de codificar en bloques cada vez más largos). Por el contrario, ningún esquema de codificación permite transmitir de forma confiable a una tasa $R>C$: pasado ese límite, la probabilidad de error queda acotada lejos de cero sin importar cuánta redundancia se agregue.
 \end{teorema}
 
-El Teorema \ref{teo:capacidad awgn} es la contraparte exacta del Teorema \ref{teo:shannon fuente}: mientras la entropía fija cuánto se puede \emph{comprimir} una fuente sin perder información, la capacidad fija cuánto se puede \emph{transmitir} de manera confiable por un canal ruidoso. Los códigos Turbo y LDPC mencionados arriba son, precisamente, esquemas prácticos capaces de acercarse a $C$ tanto como se desee (a costa de mayor complejidad y mayor largo de bloque); la frase ``tasas cercanas a $1$ con muy baja probabilidad de error'' tiene sentido, en definitiva, en relación a esta cota.
+El Teorema \ref{teo:capacidad awgn} es la contraparte exacta del Teorema \ref{teo:shannon fuente}: mientras la entropía fija cuánto se puede \emph{comprimir} una fuente sin perder información, la capacidad fija cuánto se puede \emph{transmitir} de manera confiable por un canal ruidoso. Los códigos Turbo y LDPC mencionados arriba son, precisamente, esquemas prácticos capaces de acercarse a $C$ tanto como se desee (a costa de mayor complejidad y mayor largo de bloque).
 
 \begin{ejemplo}[Capacidad de un canal telefónico]\label{ej:capacidad telefonica}
-Una línea telefónica analógica tiene un ancho de banda de aproximadamente $B=3400\ \unit{\hertz}$, y una relación señal a ruido típica del orden de $30\ \unit{\decibel}$, es decir $S/N \approx 10^3$. Su capacidad resulta entonces:
+Una línea telefónica analógica tiene un ancho de banda de aproximadamente $B=3400\ \unit{\hertz}$, y una relación señal a ruido típica del orden de $30\ \unit{\decibel}$, es decir $\mathrm{SNR} \approx 10^3$. Su capacidad resulta entonces:
 \begin{equation*}
-    C = 3400 \log_2(1+1000) \approx 3400 \times 9{,}97 \approx 33{,}9\ \unit{\kilo bps}.
+    C = 3400 \log_2(1+1000) \approx 3400 \times 9.97 \approx 33.9\ \unit{\kilo\bps}.
 \end{equation*}
-Este valor no es casual: es, esencialmente, el límite que enfrentaron los módems telefónicos de los años 90 -- el estándar V.34 alcanzaba $33.6\ \unit{\kilo bps}$, muy cerca de esta cota -- y que solo pudo superarse parcialmente con los módems de $56\ \unit{\kilo bps}$, que evitaban una de las dos conversiones analógico-digitales del enlace explotando que el otro extremo era en realidad digital.
+Este valor no es casual: es, esencialmente, el límite que enfrentaron los módems telefónicos de los años 90 -- el estándar V.34 alcanzaba $33.6\ \unit{\kilo\bps}$, muy cerca de esta cota -- y que solo pudo superarse parcialmente con los módems de $56\ \unit{\kilo\bps}$, que evitaban una de las dos conversiones analógico-digitales del enlace explotando que el otro extremo era en realidad digital.
 \end{ejemplo}
