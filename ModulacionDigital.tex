@@ -129,10 +129,7 @@
 \newcommand{\specfull}[1]{\specleft{#1}\specright{#1}}
 
 \tikzset{blockdiagram/.style={
-        execute at end picture={%
-        \path (current bounding box.south west) +(-3mm,-3mm)
-              (current bounding box.north east) +(3mm,3mm);},
-     block/.style={
+    block/.style={
     % The shape:
     rectangle,
     % The size:

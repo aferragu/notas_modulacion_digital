@@ -818,12 +818,11 @@ Por último, ahora $|c_k|^2 = a_k^2+b_k^2 = 2A^2$ para todos los símbolos, por 
 \begin{equation*}
     \bar{E}_b = \frac{A^2 T_s}{2}.
 \end{equation*}
-Sustituyendo se obtiene $P_{e,\text{símbolo}} = 2 Q\left(\sqrt{2\bar{E}_b/\eta_0}\right)$ y nuevamente utilizando codificación de Gray llegamos a:
+Sustituyendo se obtiene $P_{e,\text{símbolo}} = 2 Q\left(\sqrt{2\bar{E}_b/\eta_0}\right)$ y nuevamente utilizando codificación de Gray se tiene:
 \begin{equation*}
     \mathrm{BER} = \frac{1}{2}P_{e,\text{símbolo}} = Q\left(\sqrt{\frac{2\bar{E}_b}{\eta_0}}\right) = Q\left(\sqrt{2\gamma}\right),
 \end{equation*}
 por lo que ambas modulaciones son equivalentes en términos de eficiencia espectral y probabilidad de error.
-
 \end{ejemplo}
 
 
@@ -865,8 +864,16 @@ por lo que ambas modulaciones son equivalentes en términos de eficiencia espect
             ymin=-3.5,ymax=3.5,
             xtick = {-3,-1,1,3},
             ytick = {-3,-1,1,3},
+            xticklabel style={
+                font=\small,
+                anchor=north east
+            },
+            yticklabel style={
+                font=\small,
+                anchor=north east
+            },
             xticklabels = {$-3A$,$-A$,$A$,$3A$},
-            yticklabels = {$-3A$,$-A$,$A$,$3A$},
+            yticklabels = {$-j3A$,$-jA$,$jA$,$j3A$},
             grid,
             ]
             \foreach \a in {-3,-1,1,3} {
@@ -895,7 +902,6 @@ por lo que ambas modulaciones son equivalentes en términos de eficiencia espect
         \node[above] at (current bounding box.north) {16-QAM};
     \end{tikzpicture}
     \end{center}
-
 \end{ejemplo}
 
 \begin{ejemplo}[$M-$PSK]
@@ -948,8 +954,6 @@ por lo que ambas modulaciones son equivalentes en términos de eficiencia espect
         \node[above] at (current bounding box.north) {16-PSK};
     \end{tikzpicture}
     \end{center}
-
-    
 \end{ejemplo}
 
 Para terminar esta sección, hagamos una comparativa de la eficiencia de PSK y QAM. Observemos que si $M$ es grande podemos aproximar las probabilidades de error de la siguiente forma:
