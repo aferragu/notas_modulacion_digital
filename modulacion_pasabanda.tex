@@ -66,9 +66,9 @@ Observemos que la onda de la ecuación \eqref{eq:onda PAM RF} corresponde a real
 \end{equation}
 donde recordamos la expresión para la densidad espectral de potencia en banda base \eqref{eq:dep onda pam iid}:
 \begin{equation*}
-S_x(f) = \sigma_a^2 f_s |\hat{P}(f)|^2 + \mu^2 f_s^2 \sum_{n=-\infty}^{+\infty} |\hat{P}(n f_s)|^2\delta(f-nf_s).    
+S_x(f) = \sigma_a^2 f_s |\hat{P}(f)|^2 + \mu_a^2 f_s^2 \sum_{n=-\infty}^{+\infty} |\hat{P}(n f_s)|^2\delta(f-nf_s).    
 \end{equation*}
-Aquí $\mu$ y $\sigma_a^2$ son la media y varianza, respectivamente, de los símbolos $\{a_k\}$, y $\hat{P}(f)$ la transformada de Fourier del pulso de banda base.
+Aquí $\mu_a$ y $\sigma_a^2$ son la media y varianza, respectivamente, de los símbolos $\{a_k\}$, y $\hat{P}(f)$ la transformada de Fourier del pulso de banda base.
 
 Apliquemos el resultado anterior para analizar el espectro de diferentes modulaciones simples binarias.
 
@@ -79,7 +79,7 @@ Apliquemos el resultado anterior para analizar el espectro de diferentes modulac
     \end{equation*}
     es decir, en banda base, la modulación OOK se ve como una modulación binaria unipolar $\{0,A\}$ con pulsos NRZ.
 
-    De lo visto en banda base, sabemos que $\mu = A/2$ y $\sigma_a^2=A^2/4$. A su vez $|\hat{P}(f)|^2= T_s^2 \sinc^2(\pi T_s f)$ por lo que el espectro de $x(t)$ es:
+    De lo visto en banda base, sabemos que $\mu_a = A/2$ y $\sigma_a^2=A^2/4$. A su vez $|\hat{P}(f)|^2= T_s^2 \sinc^2(\pi T_s f)$ por lo que el espectro de $x(t)$ es:
     \begin{equation*}
         S_x(f) = \frac{A^2 T_s}{4} \sinc^2(\pi T_s f) + \frac{A^2}{4}\delta(f).
     \end{equation*}
@@ -170,7 +170,7 @@ Apliquemos el resultado anterior para analizar el espectro de diferentes modulac
                 xticklabels = {$T_s$,$2T_s$,$3T_s$,$4T_s$, $5T_s$},
                 clip=false,
                 ]
-                \pgfmathdeclarefunction{rcpulse}{1}{\pgfmathparse{cos(deg(pi*#1))/(1-(2*#1)^2)*sin(deg(pi*#1))/(pi*#1)}};
+                \pgfmathdeclarefunction{rcpulse}{1}{\pgfmathparse{cos(deg(pi*#1))/(1-(2*#1)^2)*sin(deg(pi*#1))/(pi*#1)}}
                 \addplot[teal, thick, dotted, domain=-0.01:5.5, samples=100] {-rcpulse(\x) + rcpulse(\x-1) - rcpulse(\x-2) + rcpulse(\x-3) + rcpulse(\x-4) - rcpulse(\x-5) + rcpulse(\x-6)};
                 \addplot[teal, thick, dotted, domain=0.01:5.5, samples=100] {-(-rcpulse(\x)+rcpulse(\x-1) - rcpulse(\x-2) + rcpulse(\x-3) + rcpulse(\x-4) - rcpulse(\x-5) + rcpulse(\x-6))};
                 \addplot[teal, very thick, domain=0.01:5.5, samples=400] {(-rcpulse(\x) + rcpulse(\x-1) - rcpulse(\x-2) + rcpulse(\x-3) + rcpulse(\x-4) - rcpulse(\x-5) + rcpulse(\x-6) )*cos(deg(8*pi*\x))};
@@ -318,11 +318,11 @@ Analicemos ahora el espectro de la señal $x_c(t)$ dada por la ecuación \eqref{
     \begin{equation*}
         S_{x_c}(f) = \frac{1}{4}\left[S_{x_{ce}}(f-f_c) + S_{x_{ce}}(-f-f_c)\right],
     \end{equation*}
-    que es una generalización del resultado \eqref{eq:dep modulacion}. Aquí el espectro $S_{x_{ce}}$ es el espectro de banda base de la envolvente compleja. Cuando la señal de banda base es una onda PAM compleja como en \eqref{eq:onda pam compleja}, con símbolos \emph{centrados} ($\mu=\E{c_k}=0$), se tiene que:
+    que es una generalización del resultado \eqref{eq:dep modulacion}. Aquí el espectro $S_{x_{ce}}$ es el espectro de banda base de la envolvente compleja. Cuando la señal de banda base es una onda PAM compleja como en \eqref{eq:onda pam compleja}, con símbolos \emph{centrados} ($\mu_c=\E{c_k}=0$), se tiene que:
     \begin{equation*}
         S_{x_{ce}}(f) = \sigma_c^2 f_s |\hat{P}(f)|^2,
     \end{equation*}
-    siendo $\sigma_c^2 = \E{|c_k|^2} = \E{a_k^2 + b_k^2}$ la \emph{potencia media de símbolo} (coincide con la varianza del \emph{módulo} de los símbolos ya que $\mu=0$), y $\hat{P}(f)$ la transformada del pulso de banda base utilizado.
+    siendo $\sigma_c^2 = \E{|c_k|^2} = \E{a_k^2 + b_k^2}$ la \emph{potencia media de símbolo} (coincide con la varianza del \emph{módulo} de los símbolos ya que $\mu_c=0$), y $\hat{P}(f)$ la transformada del pulso de banda base utilizado.
 \end{teorema}
 
 Observemos que en particular, el ancho de banda utilizado por la señal alrededor de $f_c$ está controlado por la forma de los pulsos $p(t)$ utilizados, mientras que la potencia total es controlada por los niveles o amplitudes de los símbolos complejos $\E{|c_k|^2}$.
@@ -370,7 +370,7 @@ El caso $M=2$ corresponde exactamente a BPSK $(c_k\in \{-A,A\})$. El caso $M=4$ 
     \caption{Constelaciones $M-$PSK para diferentes valores de $M$.}\label{fig:mpsk}
 \end{figure}
 
-Suponiendo que los símbolos son equiprobables, tenemos que $\mu=\E{c_k} = 0$ ya que la constelación está centrada, y en este caso $|c_k|=A$ constante, por lo que $\sigma_c^2 = \E{|c_k|^2} = A^2$. Por lo tanto:
+Suponiendo que los símbolos son equiprobables, tenemos que $\mu_c=\E{c_k} = 0$ ya que la constelación está centrada, y en este caso $|c_k|=A$ constante, por lo que $\sigma_c^2 = \E{|c_k|^2} = A^2$. Por lo tanto:
 \begin{equation*}
     S_{x_{ce}}(f) = A^2 f_s |\hat{P}(f)|^2 \Longrightarrow S_{x_c}(f) = \frac{A^2 f_s}{4}\left(|\hat{P}(f-f_c)|^2+|\hat{P}(f+f_c)|^2\right).
 \end{equation*}
@@ -738,10 +738,10 @@ De manera equivalente, corresponde a utilizar las fases $\{0,\pi/2,\pi,3\pi/2\}$
         xticklabels = {$-A$,$A$},
         yticklabels = {$-A$,$A$},
         ]
-        \addplot [teal, opacity=0.15,only marks, samples=100] ({1+.1*invgauss(rnd,rnd)},{.1*invgauss(rnd,rnd)});
-        \addplot [teal, opacity=0.15,,only marks, samples=100] ({0+.1*invgauss(rnd,rnd)},{1+.1*invgauss(rnd,rnd)});
-        \addplot [teal, opacity=0.15,only marks, samples=100] ({-1+.1*invgauss(rnd,rnd)},{.1*invgauss(rnd,rnd)});
-        \addplot [teal, opacity=0.15,only marks, samples=100] ({.1*invgauss(rnd,rnd)},{-1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100, domain=0:1] ({1+.1*invgauss(rnd,rnd)},{.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100, domain=0:1] ({0+.1*invgauss(rnd,rnd)},{1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100, domain=0:1] ({-1+.1*invgauss(rnd,rnd)},{.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100, domain=0:1] ({.1*invgauss(rnd,rnd)},{-1+.1*invgauss(rnd,rnd)});
         \addplot [black,only marks] coordinates { (1,0) (0,1) (-1,0) (0,-1) };
         \addplot [dashed, gray, domain=-1:1] (\x,\x);
         \addplot [dashed, gray, domain=-1:1] (\x,-\x);
@@ -766,10 +766,10 @@ De manera equivalente, corresponde a utilizar las fases $\{0,\pi/2,\pi,3\pi/2\}$
         yticklabels = {$-A$,$A$},
         grid,
         ]
-        \addplot [teal, opacity=0.15,only marks, samples=100] ({1+.1*invgauss(rnd,rnd)},{1+.1*invgauss(rnd,rnd)});
-        \addplot [teal, opacity=0.15,only marks, samples=100] ({-1+.1*invgauss(rnd,rnd)},{1+.1*invgauss(rnd,rnd)});
-        \addplot [teal, opacity=0.15,only marks, samples=100] ({-1+.1*invgauss(rnd,rnd)},{-1+.1*invgauss(rnd,rnd)});
-        \addplot [teal, opacity=0.15,only marks, samples=100] ({1+.1*invgauss(rnd,rnd)},{-1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100, domain=0:1] ({1+.1*invgauss(rnd,rnd)},{1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100, domain=0:1] ({-1+.1*invgauss(rnd,rnd)},{1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100, domain=0:1] ({-1+.1*invgauss(rnd,rnd)},{-1+.1*invgauss(rnd,rnd)});
+        \addplot [teal, opacity=0.15,only marks, samples=100, domain=0:1] ({1+.1*invgauss(rnd,rnd)},{-1+.1*invgauss(rnd,rnd)});
         \addplot [black,only marks] coordinates { (1,1) (-1,1) (-1,-1) (1,-1) };
         \draw[->,thick, dashed] (axis cs:1,1) --node[midway,right] {$A$} (axis cs:1,0);
         \draw[->,thick, dashed] (axis cs:1,1) -- (axis cs:0,1);
@@ -874,7 +874,7 @@ por lo que ambas modulaciones son equivalentes en términos de eficiencia espect
             ]
             \foreach \a in {-3,-1,1,3} {
                 \foreach \b in {-3,-1,1,3} {
-                    \addplot[teal, opacity=0.15,only marks, samples=20] ({\a+.1*invgauss(rnd,rnd)},{\b+.1*invgauss(rnd,rnd)});
+                    \addplot[teal, opacity=0.15,only marks, samples=20, domain=0:1] ({\a+.1*invgauss(rnd,rnd)},{\b+.1*invgauss(rnd,rnd)});
                     \addplot [black,only marks] coordinates {(\a,\b)};
                 }
             }
@@ -944,7 +944,7 @@ por lo que ambas modulaciones son equivalentes en términos de eficiencia espect
             grid,
             ]
             \foreach \a in {0,1,...,15}{
-                    \addplot[teal, opacity=0.15,only marks, samples=20] ({cos(\a*360/16)+0.05*invgauss(rnd,rnd)},{sin(\a*360/16)+0.05*invgauss(rnd,rnd)});
+                    \addplot[teal, opacity=0.15,only marks, samples=20, domain=0:1] ({cos(\a*360/16)+0.05*invgauss(rnd,rnd)},{sin(\a*360/16)+0.05*invgauss(rnd,rnd)});
                     \addplot [black,only marks] coordinates {({cos(\a*360/16)},{sin(\a*360/16)})};
             }
         \end{axis}
