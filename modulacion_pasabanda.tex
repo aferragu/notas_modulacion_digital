@@ -616,9 +616,9 @@ Tenemos entonces el mismo problema de la detección en banda base, donde se debe
     \sigma_N^2 = \eta_0 \int_{-\infty}^\infty |\hat{H}_r(f)|^2 df.
 \end{equation*}
 
-Por lo tanto, para obtener los símbolos $a_k$ y $b_k$, se debe usar un filtro acoplado al pulso de banda base $p(t)$. Es decir, $h_r(t)=p(\tau-t)$ con $\tau$ el momento de muestreo. En ese caso, recordando la fórmula \eqref{eq:snr filtro acoplado}, y observando que ahora la densidad del ruido es $\eta_0$ y no $\eta_0/2$ se obtiene:
+Por lo tanto, para obtener los símbolos $a_k$ y $b_k$, se debe usar un filtro acoplado al pulso de banda base $p(t)$. Es decir, $h_r(t)=\frac{1}{\|p\|^2}p(\tau-t)$ con $\tau$ el momento de muestreo (normalizado como en la Nota \ref{rem:margen ruido}). En ese caso, recordando la fórmula \eqref{eq:snr filtro acoplado}, y observando que ahora la densidad del ruido es $\eta_0$ y no $\eta_0/2$ se obtiene:
 \begin{equation}\label{eq:snr detector coherente}
-    \left(\frac{A'}{\sigma_N}\right)^2_{\max} = \frac{|a_0|^2\|p\|^2}{\eta_0},
+    \left(\frac{|a_0|}{\sigma_N}\right)^2_{\max} = \frac{|a_0|^2\|p\|^2}{\eta_0},
 \end{equation}
 Esto muestra que el filtro logra la misma relación señal a ruido que el filtro acoplado al pulso $\tilde{p}$ (corresponde a usar la fórmula original de filtro acoplado con $\|\tilde{p}\|^2 = \|p\|^2/2$), pero requiere un sincronismo mucho menos fino en el instante de muestreo. Notar que sí requiere un sincronismo fino del oscilador local con la frecuencia y fase del oscilador original.
 
@@ -667,13 +667,10 @@ Observemos que el filtro corresponde a \emph{promediar la señal de banda base e
 
     Recordando que la energía del pulso NRZ es $\int_0^{T_s} p^2(t)dt = T_s$, se tiene que:
     \begin{equation*}
-        \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} = \frac{A^2 T_s}{\eta_0} \Rightarrow P_e = Q\left(\frac{1}{2}\sqrt{\frac{A^2 T_s}{\eta_0}}\right).
+        \left(\frac{A}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} = \frac{A^2 T_s}{\eta_0} \Rightarrow P_e = Q\left(\frac{1}{2}\sqrt{\frac{A^2 T_s}{\eta_0}}\right).
     \end{equation*}
-    Para comparar entre modulaciones, conviene escribir lo anterior en términos de la \emph{energía de bit} su relación con la densidad del ruido $\eta_0$. La energía media de bit, $\bar{E}_b$ es la energía media del pulso de RF transmitido, dividido la cantidad de bits que conlleva cada pulso. Al cociente:
-    \begin{equation*}
-        \gamma := \frac{\bar{E}_b}{\eta_0},
-    \end{equation*}
-    generalmente medido en $\unit{\deci\bel}$, se lo utiliza como medida normalizada de comparación entre diferentes modulaciones, ya que cada constelación de símbolos tiene diferente cantidad de bits.
+    Para comparar entre modulaciones, conviene escribir lo anterior en términos de la relación $\gamma = \bar{E}_b/\eta_0$ definida en \eqref{eq:def gamma}, donde ahora la energía media de bit $\bar{E}_b$ es la energía media del pulso de RF transmitido dividida la cantidad de bits que conlleva cada pulso.
+    Esta es la medida normalizada de comparación entre diferentes modulaciones, ya que cada constelación de símbolos tiene diferente cantidad de bits.
 
     En este caso, como cada pulso de RF corresponde a un único bit, $\bar{E}_b = \bar{E}_{\tilde{p}}$. Observemos que:
     \begin{equation*}
@@ -712,7 +709,7 @@ En este caso, nuevamente solo se requiere la componente en fase, ya que el alfab
 
 Se tiene entonces que:
     \begin{equation*}
-        \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} = \frac{A^2 T_s}{\eta_0} \Rightarrow P_e = Q\left(\sqrt{\frac{A^2 T_s}{\eta_0}}\right).
+        \left(\frac{A}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} = \frac{A^2 T_s}{\eta_0} \Rightarrow P_e = Q\left(\sqrt{\frac{A^2 T_s}{\eta_0}}\right).
     \end{equation*}
     Y reescribiendo en términos de la relación entre energía de bit y ruido:
     \begin{equation*}
@@ -794,7 +791,7 @@ con $n_{i,k}$ y $n_{q,k}$ muestras independientes de ruido gaussiano de varianza
 
 Utilizando la fórmula \eqref{eq:snr detector coherente} tenemos que:
 \begin{equation*}
-    \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} \Rightarrow P_{e,\text{símbolo}} = 2Q\left(\sqrt{\frac{A^2}{2\eta_0 f_s}}\right)
+    \left(\frac{A}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} \Rightarrow P_{e,\text{símbolo}} = 2Q\left(\sqrt{\frac{A^2}{2\eta_0 f_s}}\right)
 \end{equation*}
 
 Para realizar una comparación adecuada con los esquemas anteriores, conviene nuevamente escribir lo anterior en términos de la \emph{energía de bit} y también utilizar la \emph{tasa de error de bit}. Como cada pulso envía $2$ bits y $|c_k|^2=A^2$ para todos los símbolos, la fórmula \eqref{eq:energia de bit} da:
@@ -815,7 +812,7 @@ A la salida del detector de la Figura \ref{fig:detector coherente} tenemos $a_k$
 \end{equation*}
 Utilizando nuevamente la fórmula \eqref{eq:snr detector coherente} tenemos que:
 \begin{equation*}
-    \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} \Rightarrow P_{e,\text{símbolo}} = 2Q\left(\sqrt{\frac{A^2}{\eta_0 f_s}}\right).
+    \left(\frac{A}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} \Rightarrow P_{e,\text{símbolo}} = 2Q\left(\sqrt{\frac{A^2}{\eta_0 f_s}}\right).
 \end{equation*}
 Por último, ahora $|c_k|^2 = a_k^2+b_k^2 = 2A^2$ para todos los símbolos, por lo que la fórmula \eqref{eq:energia de bit} da:
 \begin{equation*}
@@ -842,7 +839,7 @@ por lo que ambas modulaciones son equivalentes en términos de eficiencia espect
 
     Utilizando nuevamente la fórmula \eqref{eq:snr detector coherente} tenemos que:
     \begin{equation*}
-        \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} \Rightarrow P_{e,\text{símbolo}} = 4\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{A^2}{\eta_0 f_s}}\right).
+        \left(\frac{A}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} \Rightarrow P_{e,\text{símbolo}} = 4\frac{\sqrt{M}-1}{\sqrt{M}} Q\left(\sqrt{\frac{A^2}{\eta_0 f_s}}\right).
     \end{equation*}
 
     Para realizar la comparación, calculamos la energía media por bit con la fórmula \eqref{eq:energia de bit}. Como $\E{|c_k|^2} = \E{a_k^2}+\E{b_k^2} = \sigma_c^2 = \frac{2(M-1)}{3}A^2$ para la constelación cuadrada, se obtiene:
@@ -913,7 +910,7 @@ por lo que ambas modulaciones son equivalentes en términos de eficiencia espect
 
     Para evaluar lo anterior, volvemos a la fórmula \eqref{eq:snr detector coherente}:
     \begin{equation*}
-        \left(\frac{A'}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} \Rightarrow P_{e,\text{símbolo}} = 2 Q\left(\sqrt{\frac{A^2\sin^2(\pi/M)}{\eta_0 f_s}}\right).
+        \left(\frac{A}{\sigma_N}\right)_{\max}^2 = \frac{A^2\|p\|^2}{\eta_0} \Rightarrow P_{e,\text{símbolo}} = 2 Q\left(\sqrt{\frac{A^2\sin^2(\pi/M)}{\eta_0 f_s}}\right).
     \end{equation*}
 
     Como el símbolo $c_k$ tiene módulo constante, $\E{|c_k|^2}=A^2$ y la fórmula \eqref{eq:energia de bit} da:

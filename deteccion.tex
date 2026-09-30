@@ -48,7 +48,7 @@ Por ahora no discutiremos cómo el ruido $n(t)$ se generó en el canal analógic
         \draw [->] (0,-0.5) -- (0,2.5) node [anchor=west] {$f_N(n)$};
         \draw [teal, thick, domain=-2.5:2.5,samples=200] plot (\x,{2*exp(-1*((\x)^2))});
         \node[align=left] at (8,1.5) {Densidad del ruido\\
-        \; -- $\E{n_k}=0$\\\; -- $\mathrm{Var}(n_k) = \E{n_k^2} = \sigma_N^2$};
+        \; -- $\E{n_k}=0$\\\; -- $\var(n_k) = \E{n_k^2} = \sigma_N^2$};
     \end{tikzpicture}
     \end{center}
     \caption{Ejemplo de densidad de ruido en recepción.}\label{fig:densidad ruido}
@@ -96,12 +96,12 @@ La probabilidad de error de detección es entonces:
 \begin{equation*}
 P_e := \p{\text{error}} = \p{\text{error}\mid A_1} \p{a_k=A_1} + \p{\text{error}\mid A_2} \p{a_k=A_2}.
 \end{equation*}
-Calculemos la probabilidad condicionales de cada evento, indicada en sombreado en la Figura \ref{fig:ruido deteccion binaria}.
+Calculemos las probabilidades condicionales de cada evento, indicada en sombreado en la Figura \ref{fig:ruido deteccion binaria}.
 \begin{align*}
-    P(\text{error}|A_1) &= \int_{A_0}^\infty f_N(y-A_1)dy = \int_{A_0-A_1}^\infty f_N(n) dn;\\
-    P(\text{error}|A_2) &= \int_{-\infty}^{A_0} f_N(y-A_2)dy = \int_{-\infty}^{-(A_2-A_0)} f_N(n)dn.\\
+    \p{\text{error}\mid A_1} &= \int_{A_0}^\infty f_N(y-A_1)dy = \int_{A_0-A_1}^\infty f_N(n) dn;\\
+    \p{\text{error}\mid A_2} &= \int_{-\infty}^{A_0} f_N(y-A_2)dy = \int_{-\infty}^{-(A_2-A_0)} f_N(n)dn.\\
 \end{align*}
-Esta descomposición de ilustra en la Figura \ref{fig:ruido deteccion binaria 2}
+Esta descomposición se ilustra en la Figura \ref{fig:ruido deteccion binaria 2}.
 \begin{figure}
     \begin{center}
     \begin{tikzpicture}
@@ -117,7 +117,7 @@ Esta descomposición de ilustra en la Figura \ref{fig:ruido deteccion binaria 2}
     \caption{Probabilidades condicionales de error de detección en términos de la densidad del ruido.}\label{fig:ruido deteccion binaria 2}
 \end{figure}
 
-Si subimos el umbral $A_0$, $\p{\text{error}\mid A_1}$ baja pero sube $P\p{\text{error}\mid A_2}$, y viceversa. Entonces hay un compromiso en la elección del umbral. La selección óptima es la que minimiza $P_e$; la hallamos por
+Si subimos el umbral $A_0$, $\p{\text{error}\mid A_1}$ baja pero sube $\p{\text{error}\mid A_2}$, y viceversa. Entonces hay un compromiso en la elección del umbral. La selección óptima es la que minimiza $P_e$; la hallamos por
 diferenciación:
 \begin{equation*}
 \frac{\partial P_e}{\partial A_0} = - \p{A_1} f_N (A_0 - A_1) + \p{A_2} f_N(A_0 - A_2) = 0
@@ -141,7 +141,7 @@ de donde:
 \begin{equation}
 {\col{P_e= \p{\text{error}|A_1} = \p{\text{error}|A_2} = \int_{\frac{A_2-A_1}{2}}^\infty f_N(n)\d n}}
 \end{equation}
-Si en cambio, $P(A_2) > P(A_1)$ por ejemplo, entonces $f_N(A_0^*-A_1) > f_N(A_0^*-A_2) \Rightarrow A_0^*-A_1 < A_2-A_0^*$,  es decir, el umbral óptimo se desplaza hacia el símbolo menos probable.
+Si en cambio, $\p{A_2} > \p{A_1}$ por ejemplo, entonces $f_N(A_0^*-A_1) > f_N(A_0^*-A_2) \Rightarrow A_0^*-A_1 < A_2-A_0^*$,  es decir, el umbral óptimo se desplaza hacia el símbolo menos probable.
 
 Especialicemos la fórmula anterior al caso más usado: el ruido tiene distribución normal o Gaussiana, de media $0$ y varianza $\sigma_N^2$ como antes. En ese caso:
 \begin{equation*}
@@ -149,39 +149,39 @@ f_N(n) = \frac{1}{\sqrt{2\pi}\sigma_N}\e^{-\frac{n^2}{2\sigma_N^2}}.
 \end{equation*}
 En este caso, si $n_k\sim \mathcal{N}(0,\sigma_N^2)$, entonces $n_k/\sigma_N \sim \mathcal{N}(0,1)$ estándar. Utilizando la definición \eqref{eq:def cola gaussiana} para la cola de la distribución normal estándar tenemos que:
 \begin{equation}\label{eq:error binario gaussiano}
-P_e=\int_{\frac{A_2-A_1}{2}}^\infty f_N(n)\d n = \p{n_k>\frac{A_2-A_1}{2}} = \p{\frac{n_k}{\sigma_N}>\frac{A_2-A_1}{2\sigma_N}} = Q\left(\frac{A_2-A_1}{2\sigma}\right).    
+P_e=\int_{\frac{A_2-A_1}{2}}^\infty f_N(n)\d n = \p{n_k>\frac{A_2-A_1}{2}} = \p{\frac{n_k}{\sigma_N}>\frac{A_2-A_1}{2\sigma_N}} = Q\left(\frac{A_2-A_1}{2\sigma_N}\right).    
 \end{equation}
 La función $Q(z)$ como se mencionó está tabulada y disponible en los paquetes de software. Para $z\gg 1$ también vale la aproximación:
 \begin{equation*}
-    Q(z) \approx \frac{1}{\sqrt{2\pi}z}e^{-\frac{z^2}{2}}.
+    Q(z) \approx \frac{1}{\sqrt{2\pi}z}\e^{-\frac{z^2}{2}}.
 \end{equation*}
 
 \begin{ejemplo}[Transmisión unipolar binaria y equiprobable con ruido Gaussiano]
-Este caso corresponde a elegir $A_1=A$ y $A_2=0$, por lo que $A_0^* = A/2$ y:
+Este caso corresponde a elegir $A_1=0$ y $A_2=A$, por lo que $A_0^* = A/2$ y:
 \begin{equation*}
     P_e = Q\left(\frac{A}{2\sigma_N}\right)
 \end{equation*}
 \end{ejemplo}
 
 \begin{ejemplo}[Transmisión polar binaria y equiprobable con ruido Gaussiano]
-Este caso corresponde a elegir $A_1=A$ y $A_2=-A$, por lo que $A_0^*=0$ y:
+Este caso corresponde a elegir $A_1=-A$ y $A_2=A$, por lo que $A_0^*=0$ y:
 \begin{equation*}
     P_e = Q\left(\frac{A}{\sigma_N}\right)
 \end{equation*}
 \end{ejemplo}
 
-Notar que en ambos casos, para reducir $P_e$, debo aumentar $\frac{A}{\sigma}$. De hecho, $P_e$ cae muy rápidamente:
+Notar que en ambos casos, para reducir $P_e$, debo aumentar $\frac{A}{\sigma_N}$. De hecho, $P_e$ cae muy rápidamente:
 \begin{center}
     \begin{tabular}{c|c}
         $\frac{A}{\sigma_N}$ & $Q\left(\frac{A}{\sigma_N}\right)$\\
         \hline
         $2$ & $0.022$\\
         $4$ & $3\times 10^{-5}$\\
-        $6$ & $10^{-8}$
+        $6$ & $10^{-9}$
     \end{tabular}
 \end{center}
 
-El cociente $\frac{A}{\sigma_N}$ está operando como una relación señal a ruido. De hecho, $\sigma_N^2=E[n_k^2]=N$ es la potencia media del ruido. La amplitud $A^2$ está relacionado siempre relacionada con la potencia media de la onda $x(t) = \sum a_k p(t-kT_s)$. La relación exacta depende también del pulso $p(t)$ y el código de línea utilizado. Veamos un ejemplo.
+El cociente $\frac{A}{\sigma_N}$ está operando como una relación señal a ruido. De hecho, $\sigma_N^2=\E{n_k^2}=N$ es la potencia media del ruido. La amplitud $A^2$ está siempre relacionada con la potencia media de la onda $x(t) = \sum a_k p(t-kT_s)$. La relación exacta depende también del pulso $p(t)$ y el código de línea utilizado. Veamos un ejemplo.
 
 \begin{ejemplo}[Pulsos rectangulares NRZ en ruido Gaussiano]
     Supongamos que utilizamos pulsos NRZ, es decir $p(t)= p_{[0,T_s]}(t)$ NRZ. En este caso, vimos que se cumplía la fórmula simple \eqref{eq:potencia energia pulso simplificada} para la potencia transmitida:
@@ -201,7 +201,7 @@ El cociente $\frac{A}{\sigma_N}$ está operando como una relación señal a ruid
     En particular, la onda polar es más eficiente, ya que tiene menor $P_e$ para igual relación señal a ruido.
 \end{ejemplo}
 
-\section{Error de detección en un alfabeto $M$-ario}
+\section{Error de detección en un alfabeto $M-$ario}
 
 En este caso, elegimos una ``constelación'' de niveles para representar los $M$ símbolos. Por ejemplo, para $M$ par, elegimos una constelación polar $\{\pm A, \pm 3A,\pm 5A,\ldots,\pm (M-1)A\}$, espaciados $2A$. Para este caso, solo analizaremos la situación en que todos los símbolos son equiprobables y el ruido es Gaussiano, que se presenta en la Figura \ref{fig:ruido m-ario}.
 
@@ -227,12 +227,12 @@ En este caso, elegimos una ``constelación'' de niveles para representar los $M$
             }
         \end{tikzpicture}
     \end{center}
-    \caption{Densidades condicionales y umbrales de detección en un alfabeto $M$-ario equiespaciado.}\label{fig:ruido m-ario}
+    \caption{Densidades condicionales y umbrales de detección en un alfabeto $M-$ario equiespaciado.}\label{fig:ruido m-ario}
 \end{figure}
 
 Resulta intuitivo de la Figura \ref{fig:ruido m-ario} que los umbrales de detección óptimos son los puntos intermedios entre los símbolos de la constelación, $0,\pm 2A, \pm 4A,\ldots$. En este caso, para todos los símbolos intermedios se tiene que:
 \begin{equation*}
-    \p{\text{error} \mid a_k=l} = \p{|n|>A} = 2\p{n>A} = 2Q\left(\frac{A}{\sigma_N}\right) \quad l=\pm A,\ldots, (M-3)A.
+    \p{\text{error} \mid a_k} = \p{|n|>A} = 2\p{n>A} = 2Q\left(\frac{A}{\sigma_N}\right) \quad a_k=\pm A,\ldots, \pm(M-3)A.
 \end{equation*}
 Para los símbolos extremos:
 \begin{equation*}
@@ -247,10 +247,10 @@ Notar que la probabilidad anterior es la probabilidad de \emph{error de símbolo
 
 Nuevamente $A/\sigma_N$ juega el rol de una relación señal a ruido, como lo ilustra el siguiente Ejemplo.
 
-\begin{ejemplo}[Pulsos rectangulares NRZ, alfabeto $M$-ario y ruido Gaussiano]
+\begin{ejemplo}[Pulsos rectangulares NRZ, alfabeto $M-$ario y ruido Gaussiano]
     Nuevamente utilizamos la fórmula simplificada \eqref{eq:potencia energia pulso simplificada} para obtener:
     \begin{equation*}
-        S := \langle x^2 \rangle = \bar{E}_p f_s = \E{a_k^2} ||p||^2 f_s = \E{a_k^2}.
+        S := \langle x^2 \rangle = \bar{E}_p f_s = \E{a_k^2} \|p\|^2 f_s = \E{a_k^2}.
     \end{equation*}
     Calculando:
     \begin{equation*}
@@ -258,7 +258,7 @@ Nuevamente $A/\sigma_N$ juega el rol de una relación señal a ruido, como lo il
     \end{equation*}
     donde se utilizó arriba una fórmula para la suma de los cuadrados de los números impares. La relación señal a ruido resulta entonces en:
     \begin{equation*}
-        \left(\frac{S}{N}\right)=\frac{A^2}{\sigma^2}\left(\frac{M^2-1}{3}\right),
+        \left(\frac{S}{N}\right)=\frac{A^2}{\sigma_N^2}\left(\frac{M^2-1}{3}\right),
     \end{equation*}
     y la probabilidad de error de decodificación de símbolo queda:
     \begin{equation}\label{eq:prob error simbolo m-ario}
@@ -273,11 +273,11 @@ Para finalizar esta sección, volvamos a la discusión entre \emph{error de sím
     Se denomina \emph{Bit Error Rate (BER)} a la tasa de bits erróneos sobre la tasa de bits transmitidos por el canal.
 \end{definicion}
 
-La tasa de bits transmitidos por el canal es precisamente la $\vti=f_s \log_2 M$, siendo el caso más común el que $M$ es potencia de $2$. La tasa de bits erróneos es igual a la frecuencia de símbolo $f_s$ por la probabilidad de error de símbolo $P_{e,\textrm{simbolo}}$ por la cantidad media de bits equivocados en cada símbolo.
+La tasa de bits transmitidos por el canal es precisamente la $\vti=f_s \log_2 M$, siendo el caso más común el que $M$ es potencia de $2$. La tasa de bits erróneos es igual a la frecuencia de símbolo $f_s$ por la probabilidad de error de símbolo $P_{e,\text{símbolo}}$ por la cantidad media de bits equivocados en cada símbolo.
 
 Como la función $Q(z)$ decae muy rápidamente, la probabilidad de error de símbolo está fuertemente concentrada solo en los símbolos adyacentes. Por lo tanto, podemos despreciar la probabilidad de error de símbolo a los no adyacentes. Además, para símbolos adyacentes podemos asignar los bits utilizando \href{https://en.wikipedia.org/wiki/Gray_code}{codificación de Gray}. Con este mecanismo, ilustrado en el Cuadro \ref{tabla:codigo gray} para el caso $M=8$, los símbolos adyacentes difieren en un único bit, por lo que la cantidad de bits erróneos al equivocar un símbolo es aproximadamente $1$, si despreciamos los errores a símbolos no adyacentes. Con este razonamiento llegamos a:
 \begin{equation*}
-\textrm{BER} \approx \frac{P_{e,\text{símbolo}}}{\log_2 M}.
+\mathrm{BER} \approx \frac{P_{e,\text{símbolo}}}{\log_2 M},
 \end{equation*}
 siendo $P_{e,\text{símbolo}}$ la calculada en \eqref{eq:error polar m-ario gaussiano}.
 
@@ -301,7 +301,7 @@ siendo $P_{e,\text{símbolo}}$ la calculada en \eqref{eq:error polar m-ario gaus
 
 \section{Detección digital en un canal con ruido blanco Gaussiano}
 
-Apliquemos ahora lo visto anteriormente al caso práctico en que la señal digital PAM se envía por un canal de ancho de banda acotado, el cual introduce ruido blanco Gaussiano. Para limitar el ruido es necesario, al igual que en la comunicación analógica, colocar un filtro de recepción, antes de pasar a la etapa de detección estudiada anteriormente. El esquema general es el que de ilustra en la Figura \ref{fig:deteccion canal ruido}. Tenemos entonces tres ondas PAM:
+Apliquemos ahora lo visto anteriormente al caso práctico en que la señal digital PAM se envía por un canal de ancho de banda acotado, el cual introduce ruido blanco Gaussiano. Para limitar el ruido es necesario, al igual que en la comunicación analógica, colocar un filtro de recepción, antes de pasar a la etapa de detección estudiada anteriormente. El esquema general es el que se ilustra en la Figura \ref{fig:deteccion canal ruido}. Tenemos entonces tres ondas PAM:
 \begin{itemize}
 \item $x_T(t)= \sum_k a_k p_T(t-kT_s)$, la onda transmitida. $p_T(t)$ es la forma de pulso del transmisor.
 \item $x(t)=\sum a_k p(t-kT_s)$, la onda a la salida del canal, a la que se superpone el ruido blanco Gaussiano $w(t)$ de densidad espectral $\eta_0/2$. La forma de pulso $p(t)$ incorpora la distorsión del canal.
@@ -342,7 +342,7 @@ Apliquemos ahora lo visto anteriormente al caso práctico en que la señal digit
     \caption{Transmisión digital sobre un canal ideal de ancho $B$ con ruido aditivo blanco y Gaussiano.}\label{fig:deteccion canal ruido}
 \end{figure}
 
-Comencemos analizando el ruido filtrado: utilizando \eqref{eq:espectro filtrado}, éste tiene media nula y
+Comencemos analizando el ruido filtrado: por \eqref{eq:potencia ruido filtrado}, éste tiene media nula y
 varianza
 \begin{equation}\label{eq:varianza ruido filtrado}
 \sigma_N^2=\E{n(t)^2}=\frac{\eta_0}{2}\int_{-\infty}^{\infty}|\hat{H}_R(f)|^2 df.    
@@ -352,13 +352,13 @@ Estudiamos ahora varios ejemplos del sistema completo distinguiendo según la fo
 
 \begin{ejemplo}[Pulsos de Nyquist ideales]
 
-    Una primera aproximación sería utilizar como $p_T(t)$ pulsos ideales, con $f_s=2B$, por lo que:
+    Una primera aproximación sería utilizar como $p_T(t)$ pulsos de Nyquist ideales, con $f_s=2B$, por lo que:
     \begin{equation*}
         p_T(t) = \sinc(\pi f_s t) = \sinc(\pi 2B t) \fourier \hat{P}_T(f) = T_s p_{\left[-\frac{f_s}{2},\frac{f_s}{2}\right]}(f) = T_s p_{[-B,B]}(f).
     \end{equation*}
     En este caso, la señal $x(t)=x_T(t)$ pasa sin distorsión por el canal y solo se adiciona ruido. Tiene sentido entonces colocar como filtro de recepción otro pasabajos ideal $\hat{H}_R(f) = p_{[-B,B]}(f)$ por lo que, utilizando \eqref{eq:varianza ruido filtrado}, $\sigma_N^2 = \eta_0 B$.
 
-    Supongamos ahora que los símbolos $\{a_k\}$ son independientes con media $\mu$ y varianza $\sigma_a^2$, la densidad espectral de potencia de $x_T(t)=x(t)$ es:
+    Supongamos ahora que los símbolos $\{a_k\}$ son independientes con media $\mu_a$ y varianza $\sigma_a^2$, la densidad espectral de potencia de $x_T(t)=x(t)$ es:
 
     \begin{center}
     \begin{tikzpicture}
@@ -380,18 +380,18 @@ Estudiamos ahora varios ejemplos del sistema completo distinguiendo según la fo
                 \addplot[teal, very thick, domain=1:1.8, samples=10] {0};
                 \draw[dotted, teal, very thick] (axis cs:-1,0) -- (axis cs:-1,.8);
                 \draw[dotted, teal, very thick] (axis cs:1,0) -- (axis cs:1,.8);
-                \draw[->, teal, very thick] (axis cs:0,0) -- (axis cs:0,1.2) node[right] {$\mu^2$};
+                \draw[->, teal, very thick] (axis cs:0,0) -- (axis cs:0,1.2) node[right] {$\mu_a^2$};
             \end{axis}
     \end{tikzpicture}
     \end{center}
 
     Integrando $S_x$ se obtiene la potencia transmitida:
     \begin{equation*}
-        S:=\langle x^2 \rangle = \int_{-\infty}^\infty S_x(f)df = \mu^2+\sigma_a^2 = \E{a_k^2}.
+        S:=\langle x^2 \rangle = \int_{-\infty}^\infty S_x(f)df = \mu_a^2+\sigma_a^2 = \E{a_k^2}.
     \end{equation*}
-    En particular, como $||p||^2 = T_s$ (calcularla en frecuencia), se verifica en este caso también que:
+    En particular, como $\|p\|^2 = T_s$ (calcularla en frecuencia), se verifica en este caso también que:
     \begin{equation*}
-        S:=\langle x^2 \rangle = \E{a_k^2} ||p||^2 f_s = \bar{E}_p f_s.
+        S:=\langle x^2 \rangle = \E{a_k^2} \|p\|^2 f_s = \bar{E}_p f_s.
     \end{equation*}
 
     Tenemos entonces una potencia transmitida $S=\bar{E}_p f_s = \E{a_k^2}$ y una potencia de ruido $N:=\sigma_N^2=\eta_0 B = \eta_0 f_s/2$. Calculamos la probabilidad de error:
@@ -400,13 +400,13 @@ Estudiamos ahora varios ejemplos del sistema completo distinguiendo según la fo
         \begin{equation*}
             P_e = Q\left(\frac{A}{\sigma_N}\right) = Q\left(\sqrt{\frac{S}{N}}\right).
         \end{equation*}
-        Observar que coincide con la expresión para pulsos NRZ. Otra expresión posible es surge de observar que:
+        Observar que coincide con la expresión para pulsos NRZ. Otra expresión posible surge de observar que:
         \begin{equation*}
             S = \bar{E}_p f_s , \quad N=\eta_0 \frac{f_s}{2} \Longrightarrow P_e = Q\left(\sqrt{\frac{2\bar{E}_p}{\eta_0}}\right),
         \end{equation*}
         una expresión que solo depende de parámetros físicos del canal (energía de pulso, densidad del ruido). En particular \emph{no depende de la frecuencia de señalización}.
 
-        \item[Caso unipolar binario: ]  Se procede igual que en el caso anterior, tomando $a_k=\{0,A\}$ de donde $A_0^* =A/2$, $\mu=A/2$ y $\sigma_a^2 = A^2/4$. La potencia transmitida en este caso es $S=\bar{E}_p f_s = A^2/2$. Utilizando nuevamente \eqref{eq:error binario gaussiano}:
+        \item[Caso unipolar binario: ]  Se procede igual que en el caso anterior, tomando $a_k\in\{0,A\}$ de donde $A_0^* =A/2$, $\mu_a=A/2$ y $\sigma_a^2 = A^2/4$. La potencia transmitida en este caso es $S=\bar{E}_p f_s = A^2/2$. Utilizando nuevamente \eqref{eq:error binario gaussiano}:
         \begin{equation*}
             P_e = Q\left(\frac{A}{2\sigma_N}\right) = Q\left(\frac{1}{\sqrt{2}}\sqrt{\frac{S}{N}}\right).
         \end{equation*}
@@ -419,11 +419,11 @@ Estudiamos ahora varios ejemplos del sistema completo distinguiendo según la fo
 \end{ejemplo}
 
 
-\begin{ejemplo}[Pulsos de Nyquist no ideales]
+\begin{ejemplo}[Pulsos de Nyquist no ideales]\label{ej:nyquist no ideal ruido}
     
     En este caso, el pulso tiene un exceso de ancho de banda $\alpha$ respecto a $f_s/2$. Se plantea entonces la disyuntiva: dejamos pasar el pulso intacto (controlando así la ISI) o elegimos un filtro más restrictivo. Analicemos por ahora el primer caso, es decir, tomemos $f_s$ tal que:
     \begin{equation*}
-        \frac{f_2}{2}(1+\alpha) = B,
+        \frac{f_s}{2}(1+\alpha) = B,
     \end{equation*}
     para que el pulso pase intacto, y utilicemos como antes un pasabajos ideal en recepción de ancho $B$. En particular ahora la potencia del ruido es mayor para la misma frecuencia de símbolo:
     \begin{equation*}
@@ -432,24 +432,30 @@ Estudiamos ahora varios ejemplos del sistema completo distinguiendo según la fo
 
     En este caso, la fórmula simple de energía de pulso $S=\bar{E}_p f_s$ no es válida, por lo que es difícil calcular la potencia media transmitida $S$ para cualquier alfabeto. En cambio, trabajaremos directamente con la energía media del pulso transmitido, que se calcula como:
     \begin{equation*}
-        \bar{E}_p := \E{a_k^2}||p||^2 = \E{a_k^2}T_s \underbrace{\left(f_s \int_{-\infty}^\infty |\hat{P}(f)|^2df\right)}_{\beta} = \beta \E{a_k^2} T_s,
+        \bar{E}_p := \E{a_k^2}\|p\|^2 = \E{a_k^2}T_s \underbrace{\left(f_s \int_{-\infty}^\infty |\hat{P}(f)|^2df\right)}_{\beta} = \beta \E{a_k^2} T_s,
     \end{equation*}
     siendo $\beta$ un parámetro que depende de la forma del pulso. En particular se tiene, utilizando la desigualdad de Cauchy-Schwarz:
     \begin{equation*}
         \underbrace{\left(\int_{-(1+\alpha)\frac{f_s}{2}}^{(1+\alpha)\frac{f_s}{2}} \hat{P}(f)df\right)^2}_{=p(0)^2=1} \leqslant \left(\int_{-(1+\alpha)\frac{f_s}{2}}^{(1+\alpha)\frac{f_s}{2}} |\hat{P}(f)|^2 df\right) \underbrace{\left(\int_{-(1+\alpha)\frac{f_s}{2}}^{(1+\alpha)\frac{f_s}{2}} 1 df\right)}_{=f_s(1+\alpha)}.
     \end{equation*}
-    De aquí deducimos que $\beta(1+\alpha)\geqslant 1$. Es fácil ver que además $\beta\leqslant 1$, con igualdad en ambos casos para el pulso de Nyquist ideal, $\alpha=0$.
+    De aquí deducimos que $\beta(1+\alpha)\geqslant 1$.
+
+    Supongamos además que $\hat{P}(f)$ es real y no negativo, como ocurre con todos los pulsos utilizados en la práctica. Por la simetría vestigial, en la zona de transición se cumple $\hat{P}(f) + \hat{P}(f-f_s) = T_s$, por lo que $0\leqslant\hat{P}(f)\leqslant T_s$ para todo $f$. Entonces:
+    \begin{equation*}
+        \int_{-\infty}^\infty |\hat{P}(f)|^2 df \leqslant T_s \int_{-\infty}^\infty \hat{P}(f) df = T_s\, p(0) = T_s \quad \Longrightarrow \quad \beta = f_s \int_{-\infty}^\infty |\hat{P}(f)|^2 df \leqslant 1.
+    \end{equation*}
+    En resumen, $\frac{1}{1+\alpha}\leqslant\beta\leqslant 1$, con igualdad en ambas cotas para el pulso de Nyquist ideal, $\alpha=0$.
 
     Tomemos entonces como ejemplo el caso polar binario, $\bar{E}_p = \beta A^2 T_s$, de donde podemos escribir $A=\sqrt{\frac{\bar{E}_p f_s}{\beta}}$. Utilizando nuevamente el umbral $0$ y la fórmula \eqref{eq:error binario gaussiano} queda:
     \begin{equation*}
         P_e = Q\left(\frac{A}{\sigma_N}\right) = Q\left(\sqrt{\frac{2\bar{E}_p}{\eta_0 (1+\alpha)\beta}}\right).
     \end{equation*}
-    Como el factor $\beta(1+\alpha)\geqslant 1$, se aumenta la probabilidad de error. La explicación intuitiva es que, para evitar la ISI, el pulso tiene simetría vestigial y por lo tanto menos potencia en la parte alta de la banda, lo que hace que el filtro de recepción ideal introduzca ruido en exceso. Se plantea entonces la pregunta de si no podemos hacer algo mejor, lo cual veremos en la Sección \ref{sec:filtro acoplado}. Algo análogo ocurre en el caso unipolar.
+    Como el factor $\beta(1+\alpha)\geqslant 1$, se aumenta la probabilidad de error. La explicación intuitiva es que, para evitar la ISI, el pulso tiene simetría vestigial y, por lo tanto, menos potencia en la parte alta de la banda, lo que hace que el filtro de recepción ideal introduzca ruido en exceso. Se plantea entonces la pregunta de si no podemos hacer algo mejor, lo cual veremos en la Sección \ref{sec:filtro acoplado}. Algo análogo ocurre en el caso unipolar.
 \end{ejemplo}
 
 
 \begin{ejemplo}[Pulsos rectangulares]
-    Supongamos ahora que el ancho de banda del canal no es un inconveniente, $B$ es suficientemente grande respecto a la frecuencia de símbolo $f_s$, por lo que podemos usar pulsos rectangulares. De todos formas, debemos agregar un filtro en recepción para reducir el ruido blanco Gaussiano. Se plantea entonces el siguiente dilema:
+    Supongamos ahora que el ancho de banda del canal no es un inconveniente, $B$ es suficientemente grande respecto a la frecuencia de símbolo $f_s$, por lo que podemos usar pulsos rectangulares. De todas formas, debemos agregar un filtro en recepción para reducir el ruido blanco Gaussiano. Se plantea entonces el siguiente dilema:
     \begin{itemize}
         \item Si el ancho de banda de $\hat{H}_R$ es muy ancho, los pulsos no se deforman, la ISI es menor, pero la etapa de detección tiene más ruido.
         \item Si el filtro $\hat{H}_R$ es angosto, se reduce el ruido pero los pulsos se deforman, introduciendo ISI no deseada.
@@ -460,7 +466,7 @@ Estudiamos ahora varios ejemplos del sistema completo distinguiendo según la fo
         \begin{center}
         \includegraphics[width=\textwidth]{figuras/pulso_NRZ_ruido_filtrado.png}
         \end{center}
-        \caption{Espectro y diagramas de ojo de pulsos NRZ polares afectados de ruido con diferentes filtros de recepción A medida que aumenta el ancho de banda, disminuye la ISI pero aumenta el ruido.}\label{fig:nrz ruido}
+        \caption{Espectro y diagramas de ojo de pulsos NRZ polares afectados de ruido con diferentes filtros de recepción. A medida que aumenta el ancho de banda, disminuye la ISI pero aumenta el ruido.}\label{fig:nrz ruido}
     \end{figure}
     
 \end{ejemplo}
@@ -471,7 +477,7 @@ La observación crucial es la siguiente: \emph{el filtro de recepción no tiene 
 
 Replanteamos el problema del diseño del filtro de recepción $H_R$ (denotado aquí por $H$ por simplicidad) buscando la mínima probabilidad de error debida al ruido, ignorando por ahora la ISI. En vez de ``dejar pasar'' la señal, permitimos que el pulso se distorsione en el filtro de recepción, pero con el objetivo de que \emph{en el momento de muestreo el pulso de salida tenga amplitud máxima en relación al ruido}.
 
-Para analizar esto, inevitablemente debemos analizar cómo afecta el filtro al pulso transmitido: concentrémonos en un único símbolo en $t=0$, donde se transmite $a_0 p(t)$ siendo $p(t)$ un pulso arbitrario, pero conocido y de energía finita. Dicho pulso se contamina con ruido blanco Gaussiano de densidad espectral $\eta_0/2$. Por ahora $a_0$ es cualquier símbolo (polar, unipolar, $M$-ario, etc.).
+Para analizar esto, inevitablemente debemos analizar cómo afecta el filtro al pulso transmitido: concentrémonos en un único símbolo en $t=0$, donde se transmite $a_0 p(t)$ siendo $p(t)$ un pulso arbitrario, pero conocido y de energía finita. Dicho pulso se contamina con ruido blanco Gaussiano de densidad espectral $\eta_0/2$. Por ahora $a_0$ es cualquier símbolo (polar, unipolar, $M-$ario, etc.).
 
 Sea entonces $\hat{H}(f)$ la respuesta en frecuencia del filtro de recepción a diseñar, y $h(t)$ su respuesta impulsiva. La señal observada a la salida de $\hat{H}$ será entonces:
 \begin{equation*}
@@ -483,11 +489,11 @@ donde $n(t)$ es un ruido de media $0$ y varianza dada por \eqref{eq:varianza rui
 \end{equation*}
 La señal $y(t)$ se muestrea en un cierto tiempo $\tau$ a definir, obteniendo:
 \begin{equation*}
-    y_k = A' + n(\tau) = a_0 (p*h) (\tau) + n(\tau),
+    y_k = a_0 (p*h) (\tau) + n(\tau),
 \end{equation*}
-donde el valor $A'$ depende tanto de $a_0$ (ej: $\pm A$) como de la deformación del pulso. Como vimos, la probabilidad de error en detección es mínima cuanto mayor sea el cociente $A'/\sigma_N$, que por lo anterior verifica:
+donde la amplitud de la muestra, $a_0 (p*h)(\tau)$, depende tanto del símbolo $a_0$ (ej: $\pm A$) como de la deformación del pulso en el filtro. Como vimos, la probabilidad de error en detección es menor cuanto mayor sea el cociente entre esta amplitud y $\sigma_N$, que por lo anterior verifica:
 \begin{equation}\label{eq:filtro acoplado 1}
-    \left(\frac{A'}{\sigma_N}\right)^2 = \frac{2 a_0^2}{\eta_0}\frac{|(p*h)(\tau)|^2}{\int_{-\infty}^{+\infty} |\hat{H}(f)|^2 df}.
+    \left(\frac{a_0 (p*h)(\tau)}{\sigma_N}\right)^2 = \frac{2 a_0^2}{\eta_0}\frac{|(p*h)(\tau)|^2}{\int_{-\infty}^{+\infty} |\hat{H}(f)|^2 df}.
 \end{equation}
 
 Buscamos entonces $h \fourier \hat{H}$ para maximizar lo anterior, de modo de minimizar la probabilidad de error. Sin embargo, esto no es inmediato ya que el filtro $H$ aparece en el numerador (en forma de su respuesta impulsiva) y denominador (a través de su respuesta en frecuencia). Para simplificar en algo la expresión anterior conviene pasar primero a frecuencia
@@ -497,7 +503,7 @@ Buscamos entonces $h \fourier \hat{H}$ para maximizar lo anterior, de modo de mi
 \end{equation*}
 donde en la segunda parte usamos la transformada inversa de Fourier.
 
-El objetivo del problema puede escribirse entonces, sustituyendo en la ecuación \eqref{eq:filtro acoplado 1}, cómo:
+El objetivo del problema puede escribirse entonces, sustituyendo en la ecuación \eqref{eq:filtro acoplado 1}, como:
 \begin{equation}\label{eq:filtro acoplado 2}
     \max_{\hat{H}(f)} \frac{\left|\int_{-\infty}^{+\infty}
 \hat{P}(f) \hat{H}(f) \e^{j2\pi f \tau}df\right|^2}{\int_{-\infty}^{+\infty} |\hat{H}(f)|^2 df}.
@@ -515,7 +521,7 @@ Tomemos entonces $\hat{V}(f) = \hat{H}(f)$ y $\overline{\hat{W}(f)} = \hat{P}(f)
 \end{equation*}
 de donde:
 \begin{equation*}
-    \frac{\left|\int_{-\infty}^{+\infty} \hat{P}(f) \hat{H}(f) \e^{j2\pi f \tau}  df\right|^2}{\int_{-\infty}^{+\infty} |\hat{H}(f)|^2 df} \leqslant \int_{-\infty}^{+\infty} |\hat{P}(f)|^2 df = ||p||^2.
+    \frac{\left|\int_{-\infty}^{+\infty} \hat{P}(f) \hat{H}(f) \e^{j2\pi f \tau}  df\right|^2}{\int_{-\infty}^{+\infty} |\hat{H}(f)|^2 df} \leqslant \int_{-\infty}^{+\infty} |\hat{P}(f)|^2 df = \|p\|^2.
 \end{equation*}
 
 Por lo tanto, el máximo en \eqref{eq:filtro acoplado 2} es acotado, y la igualdad se alcanza si y sólo si:
@@ -541,7 +547,7 @@ p\left(-(t-\tau)\right)\Rightarrow \col{h(t) = K p(\tau-t)}.
     \caption{Filtro acoplado para un pulso genérico $p(t)$.}\label{fig:filtro acoplado}
 \end{figure}
 
-Concluimos que la respuesta impulsiva del filtro óptimo tiene la exactamente la forma del pulso incidente, invertido en el tiempo: se dice que el filtro óptimo está \emph{acoplado (o apareado, matched)}  al pulso.
+Concluimos que la respuesta impulsiva del filtro óptimo tiene exactamente la forma del pulso incidente, invertido en el tiempo: se dice que el filtro óptimo está \emph{acoplado (o apareado, matched)}  al pulso.
 
 Para interpretar el resultado en el dominio del tiempo, conviene escribir el pulso de salida $p_R =h* p$ para el filtro óptimo:
 \begin{align*}
@@ -552,38 +558,85 @@ Aquí $r_p(\cdot)$ es la autocorrelación del pulso como señal de cuadrado inte
 
 Algunas observaciones:
 \begin{enumerate}
-    \item La constante $K$ es arbitraria, escalar el filtro no cambia el cociente de \eqref{eq:filtro acoplado 2}, ya que amplifica tanto la señal como el ruido. Una elección cómoda es $K=\frac{1}{||p||^2}=\frac{1}{r_p(0)}$: de ese modo el pulso de salida $p_R(t)$ tiene valor máximo igual a $1$, alcanzado en $t=\tau$. En ese caso la amplitud $A'$ de muestreo coincide con la amplitud $a_0$ del símbolo de entrada.
+    \item La constante $K$ es arbitraria: escalar el filtro no cambia el cociente de \eqref{eq:filtro acoplado 2}, ya que amplifica tanto la señal como el ruido (ver Nota \ref{rem:margen ruido}).
     \item El retardo $\tau$ sería idealmente arbitrario, pero se trata de elegir lo menor posible. La limitante es que, en la práctica queremos $h(t)$ causal, cuando en general $p(-t)$ no lo es. Si el pulso es de duración acotada, se toma $\tau$ igual a la duración del pulso $p(t)$. Si es de duración no acotada (ej: pulso de Nyquist $p(t)=\sinc(\pi f_s t)$), hay que truncarlo.
 \end{enumerate}
 
-Volviendo a la ecuación \eqref{eq:filtro acoplado 1}, el máximo de nuestro problema de optimización es $\|p\|^2$. Por lo tanto tenemos:
+\begin{remark}[Margen de ruido normalizado]\label{rem:margen ruido}
+    La amplitud absoluta de la muestra no es relevante para la detección: escalar el filtro (o el canal) multiplica por el mismo factor la amplitud del pulso muestreado y el desvío del ruido. Lo único que importa es el \emph{margen de ruido normalizado} $d/\sigma_N$, donde $d$ es la distancia de la muestra al umbral de decisión, y la probabilidad de error es siempre de la forma $Q(d/\sigma_N)$. Por lo tanto podemos elegir, sin pérdida de generalidad, $K=\frac{1}{\|p\|^2}=\frac{1}{r_p(0)}$, de modo que el pulso de salida $p_R(t)$ valga $1$ en $t=\tau$ y la muestra sea exactamente $a_0 + n(\tau)$. Con esta normalización valen directamente las fórmulas de las secciones anteriores en términos de $A/\sigma_N$. Observar además que la atenuación del canal no aparece en la amplitud sino en la energía $\|p\|^2$ del pulso recibido.
+\end{remark}
+
+Volviendo a la ecuación \eqref{eq:filtro acoplado 1}, el máximo de nuestro problema de optimización es $\|p\|^2$. Por lo tanto, con la normalización anterior, tenemos:
 \begin{equation}\label{eq:snr filtro acoplado}
-\col{\left(\frac{A'}{\sigma_N}\right)^2_{\text{max}} = 2 \frac{a_0^2}{\eta_0} ||p||^2.}
+\col{\left(\frac{a_0}{\sigma_N}\right)^2_{\max} = 2 \frac{a_0^2}{\eta_0} \|p\|^2.}
 \end{equation}
 
-A partir de esta fórmula podemos escribir la probabilidad de error en términos de la energía media del pulso recibido, $\bar{E}_p = E[a_k^2] ||p||^2$, en los distintos casos:
+A partir de esta fórmula podemos escribir la probabilidad de error en términos de la energía media del pulso recibido, $\bar{E}_p = \E{a_k^2} \|p\|^2$, en los distintos casos:
 \begin{description}
     \item[Polar binario]
     \begin{equation*}
-       \bar{E}_p = A^2 ||p||^2 \Rightarrow \left(\frac{A'}{\sigma_N}\right)_\text{max} = \sqrt{\frac{2\bar{E}_p}{\eta_0}} \Rightarrow P_e^\text{opt} = Q\left(\sqrt{\frac{2\bar{E}_p}{\eta_0}}\right).
+       \bar{E}_p = A^2 \|p\|^2 \Rightarrow \left(\frac{A}{\sigma_N}\right)_{\max} = \sqrt{\frac{2\bar{E}_p}{\eta_0}} \Rightarrow P_e^\text{opt} = Q\left(\sqrt{\frac{2\bar{E}_p}{\eta_0}}\right).
     \end{equation*}
     \item[Unipolar binario]
     \begin{equation*}
-       \bar{E}_p = \frac{A^2}{2} ||p||^2 \Rightarrow \left(\frac{A'}{\sigma_N}\right)_\text{max} = 2\sqrt{\frac{\bar{E}_p}{\eta_0}} \Rightarrow P_e^\text{opt} = Q\left(\sqrt{\frac{\bar{E}_p}{\eta_0}}\right),
+       \bar{E}_p = \frac{A^2}{2} \|p\|^2 \Rightarrow \left(\frac{A}{\sigma_N}\right)_{\max} = 2\sqrt{\frac{\bar{E}_p}{\eta_0}} \Rightarrow P_e^\text{opt} = Q\left(\sqrt{\frac{\bar{E}_p}{\eta_0}}\right),
     \end{equation*}
-    donde en este caso se usó que el umbral óptimo es $\frac{A}{2\sigma_N}$.
+    donde en este caso se usó que el umbral óptimo es $A/2$, por lo que el margen normalizado es $\frac{A}{2\sigma_N}$.
 \end{description}
 
 Estas fórmulas son iguales a las que obtuvimos para la detección cuando se utilizan pulsos de Nyquist ideales. Esto no es casualidad, precisamente el filtro acoplado al pulso de Nyquist es el filtro pasabajos ideal. Es decir que en ese caso, filtrar el ruido fuera de banda es lo óptimo. Pero las fórmulas anteriores valen para cualquier forma de pulso con su detector apareado.
 
 \begin{description}
-\item[Caso M-ario polar:] Como ya vimos, $P_e=2\frac{M-1}{M} Q\left(\frac{A}{\sigma_N}\right)$. O sea que también aquí debemos maximizar $\frac{A}{\sigma_N}$ en recepción por lo que debemos usar el mismo filtro acoplado. Escribimos la expresión en términos de $\bar{E}_p$ para este caso:
+\item[Caso $M-$ario polar:] Como ya vimos, $P_e=2\frac{M-1}{M} Q\left(\frac{A}{\sigma_N}\right)$. O sea que también aquí debemos maximizar $\frac{A}{\sigma_N}$ en recepción por lo que debemos usar el mismo filtro acoplado. Escribimos la expresión en términos de $\bar{E}_p$ para este caso:
 \begin{gather*}
- \E{a_k}^2 = \frac{A^2 (M^2-1)}{3} \Rightarrow \bar{E}_p = A^2 \frac{(M^2-1)}{3}||p||^2 \Rightarrow \left(\frac{A'}{\sigma_N}\right)^2_{\max} = \frac{6 \bar{E}_p}{\eta_0 (M^2-1)}\\
-\Rightarrow {P_e^{\textrm{opt}} = 2\frac{M-1}{M}
+ \E{a_k^2} = \frac{A^2 (M^2-1)}{3} \Rightarrow \bar{E}_p = A^2 \frac{(M^2-1)}{3}\|p\|^2 \Rightarrow \left(\frac{A}{\sigma_N}\right)^2_{\max} = \frac{6 \bar{E}_p}{\eta_0 (M^2-1)}\\
+\Rightarrow {P_e^{\mathrm{opt}} = 2\frac{M-1}{M}
 Q\left(\sqrt{\frac{6\bar{E}_p}{\eta_0(M^2-1)}}\right)}
 \end{gather*}
 \end{description}
+
+Para comparar alfabetos de distinto tamaño conviene expresar las fórmulas anteriores en términos de la energía por \emph{bit} y no por símbolo. Como cada pulso transporta $\log_2 M$ bits, la \emph{energía media de bit} es $\bar{E}_b = \bar{E}_p/\log_2 M$, y definimos:
+\begin{equation}\label{eq:def gamma}
+    \gamma := \frac{\bar{E}_b}{\eta_0},
+\end{equation}
+generalmente medido en $\unit{\deci\bel}$. Esta es la medida normalizada que utilizaremos para comparar esquemas de modulación. En términos de $\gamma$, las probabilidades de error con filtro acoplado quedan:
+\begin{align*}
+    P_e^{\mathrm{opt}} &= Q\left(\sqrt{2\gamma}\right) & &\text{Polar binario},\\
+    P_e^{\mathrm{opt}} &= Q\left(\sqrt{\gamma}\right) & &\text{Unipolar binario},\\
+    P_{e,\text{símbolo}}^{\mathrm{opt}} &= 2\frac{M-1}{M}Q\left(\sqrt{\frac{6\log_2 M}{M^2-1}\gamma}\right) & &\text{Polar $M-$ario}.
+\end{align*}
+En particular, el caso unipolar requiere el doble de energía de bit ($3\unit{\deci\bel}$ más) que el polar para la misma probabilidad de error. En el caso $M-$ario, utilizando codificación de Gray, la tasa de error de bit es $\mathrm{BER}\approx P_{e,\text{símbolo}}/\log_2 M$. La Figura \ref{fig:ber banda base} compara estos esquemas: cada duplicación del tamaño del alfabeto aumenta la $\vti$ para el mismo ancho de banda, pero requiere mayor $\gamma$ para lograr la misma BER.
+
+\begin{remark}[$\bar{E}_b/\eta_0$ como figura de mérito]\label{rem:figura de merito}
+    La relación $S/N$ depende del receptor: la potencia de ruido $N$ está determinada por el ancho de banda del filtro de recepción, por lo que dos receptores distintos asignan a la misma señal transmitida valores diferentes de $S/N$. En cambio, $\gamma=\bar{E}_b/\eta_0$ depende solo de la señal transmitida (su energía por bit) y del canal (la densidad espectral del ruido), y no del receptor ni de la frecuencia de señalización. Por eso es la figura de mérito adecuada para comparar esquemas de transmisión. El filtro acoplado logra la menor probabilidad de error posible para cada valor de $\gamma$; con cualquier otro receptor la probabilidad de error también puede escribirse en función de $\gamma$, pero con una penalización, como el factor $(1+\alpha)\beta\geqslant 1$ del Ejemplo \ref{ej:nyquist no ideal ruido}.
+\end{remark}
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+        \begin{semilogyaxis}[
+            width=0.8\textwidth, height=0.55\textwidth,
+            xmin=0, xmax=20, ymin=1e-7, ymax=1,
+            xlabel={$\gamma=\bar{E}_b/\eta_0$ [$\unit{\deci\bel}$]},
+            ylabel={BER},
+            grid=both,
+            legend pos=south west,
+            legend cell align=left,
+            ]
+            \addplot[teal, very thick] coordinates {(0,7.8650e-02) (0.5,6.7065e-02) (1,5.6282e-02) (1.5,4.6401e-02) (2,3.7506e-02) (2.5,2.9655e-02) (3,2.2878e-02) (3.5,1.7173e-02) (4,1.2501e-02) (4.5,8.7938e-03) (5,5.9539e-03) (5.5,3.8622e-03) (6,2.3883e-03) (6.5,1.3998e-03) (7,7.7267e-04) (7.5,3.9880e-04) (8,1.9091e-04) (8.5,8.4000e-05) (9,3.3627e-05) (9.5,1.2109e-05) (10,3.8721e-06) (10.5,1.0838e-06) (11,2.6131e-07) (11.5,5.3287e-08) (12,9.0060e-09)};
+            \addlegendentry{Polar}
+            \addplot[teal, very thick, dashed] coordinates {(0,1.5866e-01) (0.5,1.4474e-01) (1,1.3093e-01) (1.5,1.1732e-01) (2,1.0403e-01) (2.5,9.1180e-02) (3,7.8896e-02) (3.5,6.7296e-02) (4,5.6495e-02) (4.5,4.6595e-02) (5,3.7679e-02) (5.5,2.9806e-02) (6,2.3007e-02) (6.5,1.7279e-02) (7,1.2587e-02) (7.5,8.8611e-03) (8,6.0044e-03) (8.5,3.8986e-03) (9,2.4133e-03) (9.5,1.4161e-03) (10,7.8270e-04) (10.5,4.0456e-04) (11,1.9399e-04) (11.5,8.5511e-05) (12,3.4303e-05) (12.5,1.2381e-05) (13,3.9692e-06) (13.5,1.1143e-06) (14,2.6951e-07) (14.5,5.5161e-08) (15,9.3610e-09)};
+            \addlegendentry{Unipolar}
+            \addplot[blue, thick] coordinates {(0,1.3916e-01) (0.5,1.2878e-01) (1,1.1835e-01) (1.5,1.0791e-01) (2,9.7559e-02) (2.5,8.7365e-02) (3,7.7415e-02) (3.5,6.7803e-02) (4,5.8618e-02) (4.5,4.9953e-02) (5,4.1892e-02) (5.5,3.4511e-02) (6,2.7871e-02) (6.5,2.2016e-02) (7,1.6967e-02) (7.5,1.2720e-02) (8,9.2472e-03) (8.5,6.4953e-03) (9,4.3903e-03) (9.5,2.8427e-03) (10,1.7542e-03) (10.5,1.0257e-03) (11,5.6471e-04) (11.5,2.9060e-04) (12,1.3866e-04) (12.5,6.0786e-05) (13,2.4234e-05) (13.5,8.6861e-06) (14,2.7632e-06) (14.5,7.6897e-07) (15,1.8419e-07) (15.5,3.7286e-08) (16,6.2502e-09)};
+            \addlegendentry{$4-$PAM}
+            \addplot[red, thick] coordinates {(0,1.7295e-01) (0.5,1.6662e-01) (1,1.6003e-01) (1.5,1.5320e-01) (2,1.4612e-01) (2.5,1.3882e-01) (3,1.3132e-01) (3.5,1.2362e-01) (4,1.1576e-01) (4.5,1.0778e-01) (5,9.9704e-02) (5.5,9.1585e-02) (6,8.3473e-02) (6.5,7.5425e-02) (7,6.7505e-02) (7.5,5.9779e-02) (8,5.2320e-02) (8.5,4.5198e-02) (9,3.8483e-02) (9.5,3.2242e-02) (10,2.6533e-02) (10.5,2.1402e-02) (11,1.6884e-02) (11.5,1.2992e-02) (12,9.7240e-03) (12.5,7.0561e-03) (13,4.9460e-03) (13.5,3.3354e-03) (14,2.1540e-03) (14.5,1.3253e-03) (15,7.7247e-04) (15.5,4.2374e-04) (16,2.1717e-04) (16.5,1.0315e-04) (17,4.4989e-05) (17.5,1.7834e-05) (18,6.3511e-06) (18.5,2.0059e-06) (19,5.5374e-07) (19.5,1.3144e-07) (20,2.6339e-08)};
+            \addlegendentry{$8-$PAM}
+            \draw[<->] (axis cs:10.5,1e-6) -- node[above]{\scriptsize 3 dB} (axis cs:13.5,1e-6);
+        \end{semilogyaxis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Tasa de error de bit en función de $\gamma=\bar{E}_b/\eta_0$ para señalización polar, unipolar y $M-$aria polar (con codificación de Gray), utilizando filtro acoplado.}\label{fig:ber banda base}
+\end{figure}
 
 Analicemos ahora dos casos de particular importancia: los pulsos rectangulares y los pulsos de Nyquist no ideales.
 
@@ -593,7 +646,7 @@ Tomemos por ejemplo los pulsos NRZ, $p(t) = p_{[0,T_s]}(t)$. El
 filtro acoplado tendrá la respuesta impulsiva (tomando
 $\tau=T_s$):
 \begin{equation*}
-h(t) = \frac{1}{||p||^2} p(T_s-t) = \frac{1}{T_s}p(t).
+h(t) = \frac{1}{\|p\|^2} p(T_s-t) = \frac{1}{T_s}p(t).
 \end{equation*}
 
 Por lo tanto, para un pulso $p(t)$, a la salida del filtro de recepción tenemos un pulso triangular $p_R(t)=(h*p)(t)$:
@@ -620,7 +673,7 @@ El detector acoplado tiene respuesta en frecuencia
 \begin{gather*}
  \hat{H}(f) = K \overline{\hat{P}(f)} \e^{-j2\pi f\tau} \Rightarrow \hat{P}_R = \hat{H}\hat{P} = K |\hat{P}(f)|^2 \e^{-j2\pi f \tau}.
 \end{gather*}
-El último término es un retardo que afecta sólo el instante de muestreo. A efectos de estudiar la ISI podemos tomar $|P_R(f)| = K|\hat{P}(f)|^2$.
+El último término es un retardo que afecta sólo el instante de muestreo. A efectos de estudiar la ISI podemos tomar $|\hat{P}_R(f)| = K|\hat{P}(f)|^2$.
 
  \begin{center}
   \begin{tikzpicture}
@@ -643,7 +696,7 @@ El último término es un retardo que afecta sólo el instante de muestreo. A ef
 
 Al elevar al cuadrado, $|\hat{P}(f)|^2$ ya no tiene simetría vestigial, por lo tanto el resultado neto de usar pulsos de Nyquist en transmisión y luego su filtro acoplado en recepción maximiza la relación al ruido en el instante de muestreo, pero introduce ISI.
 
-¿Cuál es la alternativa viable? Una posibilidad es la que ya estudió antes: en vez de usar el filtro acoplado óptimo, utilizar un pasabajos de frecuencia de corte $(1+\alpha)\frac{f_s}{2}$. Sacrificamos algo de error en $P_e$ a cambio de no introducir ISI que puede ser más grave.
+¿Cuál es la alternativa viable? Una posibilidad es la que ya estudiamos antes: en vez de usar el filtro acoplado óptimo, utilizar un pasabajos de frecuencia de corte $(1+\alpha)\frac{f_s}{2}$. Sacrificamos algo de $P_e$ a cambio de no introducir ISI que puede ser más grave.
 
 La segunda alternativa, muy utilizada en la práctica, es utilizar en transmisión un pulso tal que $\hat{P}(f)$ no tenga simetría vestigial, pero luego de pasar por el filtro apareado, el efecto neto $|\hat{P}(f)|^2$ sí la tenga. El pulso más común en este caso es el \emph{pulso de raíz de coseno alzado} (RRC: root-raised-cosine filter), que corresponde a tomar $\hat{P}(f)$ tal que $|\hat{P}(f)|^2$ sea un filtro de coseno alzado. Este filtro introduce ISI durante el pasaje por el canal, pero controla el ancho de banda. En recepción, el filtro acoplado elimina la ISI y maximiza la relación señal a ruido \emph{simultáneamente}. 
 \end{ejemplo}
@@ -667,11 +720,11 @@ Supongamos entonces que tenemos $m$ etapas, como se ilustra en la Figura \ref{fi
 
 Analizando por etapas se tiene:
 \begin{equation*}
-  y_1 = \frac{1}{L}{Lx + n_1} = x + \frac{n_1}{L}  \quad \Rightarrow \left(\frac{S}{N}\right)_1 = \frac{\langle x^2 \rangle}{\frac{\langle n_1^2\rangle}{L^2}} = L^2 \frac{\langle x^2\rangle}{\sigma_N^2}
+  y_1 = \frac{1}{L}\left(Lx + n_1\right) = x + \frac{n_1}{L}  \quad \Rightarrow \left(\frac{S}{N}\right)_1 = \frac{\langle x^2 \rangle}{\frac{\langle n_1^2\rangle}{L^2}} = L^2 \frac{\langle x^2\rangle}{\sigma_N^2}
 \end{equation*}
 Para la segunda etapa:
 \begin{equation*}
-  y_2 = \frac{1}{L}{Ly_1 + n_2} = y_1 + \frac{n_2}{L} = x+ \frac{n_1+n_2}{L}.
+  y_2 = \frac{1}{L}\left(Ly_1 + n_2\right) = y_1 + \frac{n_2}{L} = x+ \frac{n_1+n_2}{L}.
 \end{equation*}
 Continuando el razonamiento, luego de $m$ etapas la onda recibida satisface:
 \begin{equation*}
@@ -687,38 +740,6 @@ Por lo tanto:
 \end{equation*}
 
 Concluimos entonces que la relación señal a ruido se degrada \emph{linealmente} en $m$. Si bien esto es mejor que no repetir (en general la atenuación cae más rápido que lineal), de todos modos la $P_e$ se degrada fuertemente, como muestra el siguiente ejemplo.
-
-\begin{ejemplo}[Repetición no regenerativa]\label{ejemplo:repeticion no regenerativa}
-    Consideremos una señal polar en la situación ideal que utilizamos filtros acoplados. En ese caso $P_e=Q\left(\sqrt{S/N}\right)$. Supongamos que, en una única etapa se logra una relación $S/N$ de $20 \unit{\deci\bel}$, es decir $S/N = 100$. En ese caso, al cabo de $m=20$ repetidores tenemos:
-    \begin{equation*}
-        \left(\frac{S}{N}\right)_m = \frac{1}{20} \left(\frac{S}{N}\right)_1 = 5 \Rightarrow P_{e,m} = Q\left(\sqrt{5}\right) \approx 1.20\times 10^{-2},
-    \end{equation*}
-    una tasa de error altísima. Por comparación, la $P_e$ de una única etapa es $P_{e,1} = Q(10) = 7.6\times 10^{-24}$.
- \end{ejemplo}
-
-Aquí es donde la transmisión digital muestra su potencial: en lugar de simplemente amplificar la señal, podemos \emph{regenerarla} colocando un detector de símbolos en la recepción de cada etapa (con su correspondiente filtro de recepción, por ejemplo un filtro acoplado). Luego se regenera una nueva señal PAM $y_i(t) = \sum_k \hat{a}_k p(t-kT_s)$ en cada etapa usando los símbolos decodificados $\hat{a}_k$, que con alta probabilidad serán iguales a los $a_k$ originales. 
-
-Estudiemos este caso, que se ilustra en la Figura \ref{fig:repetidor regenerativo}. Sea $p$ la probabilidad de error de una etapa, $p:=P_{e,1} = Q\left(\sqrt{\left(\frac{S}{N}\right)_1}\right)$ (para el caso polar).
-
-Si la etapa está bien diseñada, podemos suponer que $p\ll 1$ y que los errores de símbolo son independientes en cada una de las etapas de regeneración. Calculamos entonces la probabilidad de error luego de $m$ etapas. Observemos que:
-\begin{equation*}
-1 - P_{e,m}  = (1-P_{e,1})^m = (1-p)^m \mathop{\approx}_{p \ll 1} 1-mp,
-\end{equation*}
-es decir, para no tener errores en un símbolo exijo no tenerlos en ninguna de las $m$ detecciones independientes. Como $p\ll 1$ vale la segunda aproximación. Por lo tanto en este caso:
-\begin{equation*}
-P_{e,m} \approx m P_{e,1}.
-\end{equation*}
-Con este método, es $P_{e,m}$ la que se deteriora linealmente con $m$ y no la relación señal a ruido.
-
-\begin{ejemplo}[Repetidor regenerativo]\label{ejemplo:repetidor regenerativo}
-Retomando el ejemplo anterior, $(S/N)_1=100$ ($20 \unit{\deci\bel}$) por lo que $p=Q(10) = 7.6 \times 10^{-24}$ como ya vimos para una etapa. Luego de $m=20$ repetidores tendremos entonces:
-\begin{equation*}
-    P_{e,m} \approx m P_{e,1} = 20 p \approx 1.5 \times 10^{-22},
-\end{equation*}
-una tasa de error muchísimo más baja que en el caso en que no regeneramos.
-\end{ejemplo}
-
-Precisamente esta es una de las mayores ventajas de la comunicación digital por sobre la analógica: podemos lograr tasas de error increíblemente bajas en un sistema bien diseñado. Incluso para una señal analógica, en la transmisión a grandes distancias es conveniente muestrearla y pasarla a digital, transmitirla de este modo y luego reconstruirla a partir de muestras, ya que el ruido introducido por la cuantificación (más los escasos errores de transmisión) es mucho más bajo que lo que introducirían repetidores no regenerativos en el camino.
 
 \begin{figure}
  \begin{center}
@@ -773,5 +794,37 @@ Precisamente esta es una de las mayores ventajas de la comunicación digital por
         \end{scope}            
     \end{blockdiagram}
  \end{center}
- \caption{Repetidor no regenerativo (arriba) y repetidor regenerativo (abajo)}\label{fig:repetidor regenerativo}
+ \caption{Repetidor no regenerativo (arriba) y repetidor regenerativo (abajo).}\label{fig:repetidor regenerativo}
 \end{figure}
+
+\begin{ejemplo}[Repetición no regenerativa]\label{ejemplo:repeticion no regenerativa}
+    Consideremos una señal polar en la situación ideal que utilizamos filtros acoplados. En ese caso $P_e=Q\left(\sqrt{S/N}\right)$. Supongamos que en una única etapa se logra una relación $S/N$ de $20 \unit{\deci\bel}$, es decir $S/N = 100$. En ese caso, al cabo de $m=20$ repetidores tenemos:
+    \begin{equation*}
+        \left(\frac{S}{N}\right)_m = \frac{1}{20} \left(\frac{S}{N}\right)_1 = 5 \Rightarrow P_{e,m} = Q\left(\sqrt{5}\right) \approx 1.27\times 10^{-2},
+    \end{equation*}
+    una tasa de error altísima. Por comparación, la $P_e$ de una única etapa es $P_{e,1} = Q(10) = 7.6\times 10^{-24}$.
+ \end{ejemplo}
+
+Aquí es donde la transmisión digital muestra su potencial: en lugar de simplemente amplificar la señal, podemos \emph{regenerarla} colocando un detector de símbolos en la recepción de cada etapa (con su correspondiente filtro de recepción, por ejemplo un filtro acoplado). Luego se regenera una nueva señal PAM $y_i(t) = \sum_k \hat{a}_k p(t-kT_s)$ en cada etapa usando los símbolos decodificados $\hat{a}_k$, que con alta probabilidad serán iguales a los $a_k$ originales. 
+
+Estudiemos este caso, que se ilustra en la Figura \ref{fig:repetidor regenerativo}. Sea $p$ la probabilidad de error de una etapa, $p:=P_{e,1} = Q\left(\sqrt{\left(\frac{S}{N}\right)_1}\right)$ (para el caso polar).
+
+Si la etapa está bien diseñada, podemos suponer que $p\ll 1$ y que los errores de símbolo son independientes en cada una de las etapas de regeneración. Calculamos entonces la probabilidad de error luego de $m$ etapas. Observemos que:
+\begin{equation*}
+1 - P_{e,m}  = (1-P_{e,1})^m = (1-p)^m \mathop{\approx}_{p \ll 1} 1-mp,
+\end{equation*}
+es decir, para no tener errores en un símbolo exijo no tenerlos en ninguna de las $m$ detecciones independientes. Como $p\ll 1$ vale la segunda aproximación. Por lo tanto en este caso:
+\begin{equation*}
+P_{e,m} \approx m P_{e,1}.
+\end{equation*}
+Con este método, es $P_{e,m}$ la que se deteriora linealmente con $m$ y no la relación señal a ruido.
+
+\begin{ejemplo}[Repetidor regenerativo]\label{ejemplo:repetidor regenerativo}
+Retomando el ejemplo anterior, $(S/N)_1=100$ ($20 \unit{\deci\bel}$) por lo que $p=Q(10) = 7.6 \times 10^{-24}$ como ya vimos para una etapa. Luego de $m=20$ repetidores tendremos entonces:
+\begin{equation*}
+    P_{e,m} \approx m P_{e,1} = 20 p \approx 1.5 \times 10^{-22},
+\end{equation*}
+una tasa de error muchísimo más baja que en el caso en que no regeneramos.
+\end{ejemplo}
+
+Precisamente esta es una de las mayores ventajas de la comunicación digital por sobre la analógica: podemos lograr tasas de error increíblemente bajas en un sistema bien diseñado. Incluso para una señal analógica, en la transmisión a grandes distancias es conveniente muestrearla y pasarla a digital, transmitirla de este modo y luego reconstruirla a partir de muestras, ya que el ruido introducido por la cuantificación (más los escasos errores de transmisión) es mucho más bajo que lo que introducirían repetidores no regenerativos en el camino.
