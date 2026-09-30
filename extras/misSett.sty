@@ -1,18 +1,12 @@
-%\NeedsTeXFormat{Latex2e}[1996/06/01]
-\ProvidesPackage{misSett}[2007/12/28 v1.0 (PWD)]
-
-\usepackage{amsmath}
+%%%BIBLIOTECAS Y CONFIGURACION
+\usepackage{amsmath, amssymb}
 \usepackage{array}
-\usepackage{amssymb}
 \usepackage{amsthm}
-%\usepackage{mathtools}
 \usepackage{ifthen}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 %\usepackage[adobe-utopia]{mathdesign}
-%\usepackage{lmodern}
 \usepackage{fourier}
-%\usepackage{roboto}
 \usepackage{graphicx}
 \usepackage[top=2.5cm,bottom=2.5cm,left=2cm,right=2cm]{geometry}
 %\setlength{\parskip}{0.7\baselineskip}
@@ -24,11 +18,9 @@
         colorlinks,
         linkcolor=black,urlcolor=blue]{hyperref}
 
-\graphicspath{Imagenes/}
 \usepackage[usenames,dvipsnames]{xcolor}
 
 \usepackage[font={footnotesize},format=plain,labelfont={bf},labelsep=period]{caption}
-%\usepackage[font+=scriptsize,skip=-0.5pt]{subcaption}
 
 \usepackage{indentfirst}
 \usepackage{placeins}
@@ -44,9 +36,6 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 \usepackage{circuitikz}
-%\usepackage{rotating}
-%\usepackage{lscape}
-%\usepackage{pifont}
 \usepackage{siunitx}
 \DeclareSIUnit\bps{bps}
 
@@ -105,12 +94,9 @@
 \newcommand{\col}[1]{\protect\color{Red}
 {\boxed{\normalcolor #1}}\normalcolor\normalfont}
 
-%\renewcommand\descriptionlabel[1]{\textbf{\textsf{#1:}}}
-
 \newcommand{\refer}[1]{{\itshape ver \hyperref[#1]{sección~\ref{#1}~- \nameref{#1}, en la página~\pageref{#1}}}}
 \newcommand{\refFigura}[1]{{(\itshape ver \hyperref[#1]{\normalsize Figura~\ref{#1}})}}
 \newcommand{\myref}[1]{sección~\ref{#1}~- \nameref{#1}, en la página~\pageref{#1}}
-
 
 \newtheorem{teorema}{Teorema}[chapter]
 \newtheorem{corolario}[teorema]{Corolario}
@@ -119,20 +105,10 @@
 \newtheorem{definicion}{Definición}[chapter]
 \newtheorem{condicion}{Condición}[chapter]
 
-%\theoremstyle{remark}
-\newtheorem{remark}{Nota}[chapter]
+\theoremstyle{definition}
+\newtheorem{remark}{Observación}[chapter]
 \newtheorem{problema}{Problema}[chapter]
 \newtheorem{ejemplo}{Ejemplo}[chapter]
-
-\newtheorem*{corolarioSN}{Corolario}
-\newtheorem*{lemaSN}{Lema}
-\newtheorem*{proposicionSN}{Proposición}
-\newtheorem*{definicion*}{Definición}
-\newtheorem*{remarkSN}{Nota}
-\newtheorem*{remarksSN}{Notas}
-\newtheorem*{condicionSN}{Condición}
-\newtheorem*{conclusionSN}{Conclusion}
-\newtheorem*{propiedadesSN}{Propiedades}
 
 %%%%COMANDOS PARA TIKZ
 
@@ -152,11 +128,9 @@
 \draw [domain=#1:#1+0.4-0.001, samples=50] (#1,0) -- plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});
 \draw [domain=#1+0.4+0.001:#1+0.95, samples=50] plot (\x,{sin(pi*(2*(\x-#1)-0.8) r)/(pi*(2*(\x-#1)-0.8))+sin(pi*(2*(\x-#1)+0.8) r)/(pi*(2*(\x-#1)+0.8))});}
 
-
 \newcommand{\specfull}[1]{\specleft{#1}\specright{#1}}
 
-\newenvironment{blockdiagram}[1][]{%
-\begin{tikzpicture}[
+\tikzset{blockdiagram/.style={
      block/.style={
     % The shape:
     rectangle,
@@ -172,8 +146,7 @@
     thick},
     punto/.style={coordinate},auto,
     etiqueta/.style={rectangle,inner sep=0mm},
-    multD/.style={isosceles triangle,draw,isosceles triangle apex angle=50,shape border rotate =-90,thick},#1]
-}{\end{tikzpicture}}
+    multD/.style={isosceles triangle,draw,isosceles triangle apex angle=50,shape border rotate =-90,thick}}}
 
 
-\newcommand{\bpgf}[1]{\beginpgfgraphicnamed{#1}}
+%%%%%%%%%%%%%%%%%%%%%%

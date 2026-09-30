@@ -23,7 +23,6 @@ Para que la onda sea continua, este cambio debe ser igual (a menos de $2\pi m$)
     \frac{f_s}{2}.\]
 
         \begin{center}\begin{minipage}{\textwidth}
-        \bpgf{Imagenes/DDPasa/DDPasa-15}
         \begin{tikzpicture}
             \draw [-stealth] (-0.5,0) -- (10,0);
             \draw [-stealth] (0,-1.5) -- (0,1.5);
@@ -39,7 +38,7 @@ Para que la onda sea continua, este cambio debe ser igual (a menos de $2\pi m$)
             \path (1.5,1.5) node {$1$} -- (4.5,1.5) node {$0$} -- (7.5,1.5) node {$1$};
             \path (4.5,-1.5) node {Punteado: símbolo no transmitido};
         \end{tikzpicture}
-        \endpgfgraphicnamed\end{minipage}
+        \end{minipage}
         \end{center}
 
     \begin{remarkSN}
@@ -72,8 +71,7 @@ interno de los dos pulsos ($+$ y $-$),
  \begin{figure}[htb]
     \centering
     \resizebox{\textwidth}{!}{
-    \bpgf{Imagenes/DDPasa/DDPasa-16}
-    \begin{blockdiagram}
+    \begin{tikzpicture}[blockdiagram]
         \matrix[row sep=5mm, column sep=10mm,ampersand replacement=\&]{
             \& \& \& \& \& \&\node[operator] (mult1) {$\times$}; \& \node[block] (int1) {$\frac{1}{T_s}\int_{t-T_s}^t$};\\
             \node[punto] (inicio) {}; \& \& \& \& \& \node [punto] (p) {}; \& \node[etiqueta] (osc1) {$2\cos\left((\omega_c+\omega_\Delta)t\right)$}; \& \& \&\node[operator] (sum) {} node [anchor=north east] {$-$} node [anchor=south east] {$+$}; \& \node [block] (comp) {COMP.};\\
@@ -90,8 +88,8 @@ interno de los dos pulsos ($+$ y $-$),
         \draw [-stealth] (mult2) -- (int2);
         \draw [-stealth] (int2) -| node [anchor=west] {$z^-$} (sum);
         \draw [-stealth] (sum) -- (comp);
-    \end{blockdiagram}
-    \endpgfgraphicnamed}
+    \end{tikzpicture}
+    }
  \end{figure}
  \FloatBarrier
 
@@ -164,7 +162,6 @@ función de $\frac{\overline{E_p}}{\eta}$ en dB.
 
 \begin{figure}[htb]
     \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/DDPasa/DDPasa-17}
     \begin{tikzpicture}
         \draw [-stealth] (-0.5,0) -- (3,0) node [anchor=north] {$\frac{\overline{E_p}}{\eta}\,(dB)$};
         \draw [-stealth] (0,-0.5) -- (0,3) node [anchor=east] {$\log P_e$};
@@ -184,5 +181,5 @@ función de $\frac{\overline{E_p}}{\eta}$ en dB.
             \draw [-stealth] (1.2,1) [out=45,in=180] to (3,2) node [anchor=west] {$M$};
         \end{scope}
     \end{tikzpicture}
-    \endpgfgraphicnamed\end{minipage}
+    \end{minipage}
 \end{figure}

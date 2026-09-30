@@ -7,7 +7,7 @@ En este capítulo analizaremos la llamada \emph{modulación en banda base}, dond
 \begin{figure}[b]
     \begin{center}
         
-        \begin{blockdiagram}[node distance=4em]
+        \begin{tikzpicture}[blockdiagram,node distance=4em]
         \node [block,align=center] (fuente) {Fuente \\ digital};
         \node [block, right = of fuente] (tx) {Transmisor};
         \node [block, right= of tx] (ch) {Canal};
@@ -22,7 +22,7 @@ En este capítulo analizaremos la llamada \emph{modulación en banda base}, dond
         \node [block, below = 2em of ch] (sinc) {Sincronismo};
         \draw[thick, -] (tx) |- (sinc);
         \draw[thick, ->] (sinc) -| (rx);
-        \end{blockdiagram}
+        \end{tikzpicture}
 
         \caption{Esquema de un sistema de modulación digital.}\label{fig:mod_digital_bb}
     \end{center}
@@ -553,7 +553,7 @@ Cualitativamente, en los sistemas digitales esto puede visualizarse mediante el 
 
 \begin{figure}
     \begin{center}
-    \begin{blockdiagram}
+    \begin{tikzpicture}[blockdiagram]
         \draw[->] (-0.5,0) -- (4,0);
         \draw[thick,teal] (-0.5,0) -- (0,0) -- (0,1) -- (1,1) -- (1,0) -- (2,0) -- (2,-1) -- (3,-1) -- (3,0) -- (3.5,0);
         \path (2,1) node {$x(t)$};
@@ -573,7 +573,7 @@ Cualitativamente, en los sistemas digitales esto puede visualizarse mediante el 
             \draw[thick,teal] plot[smooth, tension=.3] coordinates {(0,0) (.3,1) (1,1) (1.3,0) (2,0) (2.3,-1) (3,-1) (3.3,0) (4,0)};
             \path (2,1) node {$y(t)$};
         \end{scope}
-    \end{blockdiagram}
+    \end{tikzpicture}
     \caption{Deformación de pulsos debido a un canal de ancho de banda limitado.}\label{fig:distorsion canal}
     \end{center}
 \end{figure}
@@ -995,7 +995,7 @@ donde $\hat{p}(t) =\sum_{n=-N}^N c_n \tilde{p}(t-nT_s) \Longrightarrow y(t)$ es 
 
     \bigskip
 
-    \begin{blockdiagram}
+    \begin{tikzpicture}[blockdiagram]
         \matrix[row sep=5 mm, column sep=5mm]{
             \node [etiqueta] (inicio) {$x_R(t)$}; & \node [punto] (p1) {}; & \node [block] (T1) {$T_s$}; & \node [punto] (p2) {}; & \node [block] (T2) {$T_s$}; & \node[punto] (p3) {}; & & \node [etiqueta]  {$\cdots$}; &  & \node [punto] (p4) {}; & \node [block] (T3) {$T_s$};\\
             & \node [multD] (m1) {$c_{-N}$}; & & \node[multD] (m2) {$c_{-N+1}$}; & & & &  & & & & \node [multD] (m3) {$c_{N}$};\\
@@ -1017,7 +1017,7 @@ donde $\hat{p}(t) =\sum_{n=-N}^N c_n \tilde{p}(t-nT_s) \Longrightarrow y(t)$ es 
         \draw [->] (p6) -- (sum3);
         \draw [->] (m3) -- (sum3);
         \draw [->] (sum3) -- (salida);
-    \end{blockdiagram}
+    \end{tikzpicture}
     \end{center}
     \caption{Filtro ecualizador de cero forzado. Se mide la respuesta a un pulso $\tilde{p}(t)$ del canal y se calculan los coeficientes para forzar la condición de ISI nula en los $N$ símbolos adyacentes.}\label{fig:filtro eq}
 \end{figure}

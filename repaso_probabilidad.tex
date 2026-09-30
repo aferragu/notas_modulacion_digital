@@ -48,22 +48,18 @@ Variable aleatoria discreta.\\
     Variable aleatoria absolutamente continua, $\exists\, f_X(x)=\frac{\d{}}{\d{} x}F_X(x)$ densidad.
     \begin{figure}[htb]
         \hfil
-        \bpgf{Imagenes/prob/prob-3}
         \begin{tikzpicture}[xscale=0.7]
             \draw [-stealth] (-5,0) -- (5,0) node [anchor=north] {$x$};
             \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$F_X(x)$};
             \draw [dotted] (-5,1) -- (0,1) node [anchor=south east] {$1$} -- (5,1);
             \draw [samples=2000,domain=-4.5:4.5] plot (\x,{rad(atan(\x))/(pi)+0.5});
         \end{tikzpicture}
-        \endpgfgraphicnamed
         \hfill
-        \bpgf{Imagenes/prob/prob-4}
         \begin{tikzpicture}[xscale=0.7]
             \draw [-stealth] (-5,0) -- (5,0) node [anchor=north] {$x$};
             \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$f_X(x)$};
             \draw [samples=2000,domain=-4.5:4.5] plot (\x,{1/(1+(\x)^2)});
         \end{tikzpicture}
-        \endpgfgraphicnamed
         \hfil
     \end{figure}
     \FloatBarrier

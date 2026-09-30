@@ -6,7 +6,7 @@ Supongamos además que conocemos (mediante algún mecanismo de sincronización),
 
 \begin{figure}
     \begin{center}
-        \begin{blockdiagram}
+        \begin{tikzpicture}[blockdiagram]
             \node at (0,0) (input) {\small $x(t) = \sum_k a_k p(t-kT_s) + n(t)$};
             \node[coordinate, right=2cm of input] (space) {};
             \node[block, right=of space, align=center, inner sep=4pt] (sample) {\begin{circuitikz}\draw (0,0) to[switch] node[ocirc]{} (.8,0);\end{circuitikz}};
@@ -19,7 +19,7 @@ Supongamos además que conocemos (mediante algún mecanismo de sincronización),
             \node[coordinate, left=1cm of sincr] (input_sincr) {};
             \draw[thick,->] (sincr) -| (sample);
             \draw[thick,dashed,->] (input_sincr) -- (sincr);
-        \end{blockdiagram}
+        \end{tikzpicture}
     \end{center}
     \caption{Onda PAM afectada por ruido y sistema de detección.}\label{fig:deteccion ruido}
 \end{figure}
@@ -310,7 +310,7 @@ Apliquemos ahora lo visto anteriormente al caso práctico en que la señal digit
 
 \begin{figure}
     \begin{center}
-        \begin{blockdiagram}
+        \begin{tikzpicture}[blockdiagram]
             \node at (0,0) (input) {\small $x_T(t)$};
             \node[block, right =of input, align=center] (canal) {\pasabajos{B}{.5}};
             \draw[thick, ->] (input) -- (canal);
@@ -337,7 +337,7 @@ Apliquemos ahora lo visto anteriormente al caso práctico en que la señal digit
             \begin{scope}[on background layer]
                 \node[draw, rectangle, dashed, fill=gray!15!white, fit=(rx) (sincr_input) (sincr) (sample) (detector) (top), inner sep=10pt,label=above:Receptor digital] {};
             \end{scope}            
-        \end{blockdiagram}
+        \end{tikzpicture}
     \end{center}
     \caption{Transmisión digital sobre un canal ideal de ancho $B$ con ruido aditivo blanco y Gaussiano.}\label{fig:deteccion canal ruido}
 \end{figure}
@@ -607,8 +607,8 @@ generalmente medido en $\unit{\deci\bel}$. Esta es la medida normalizada que uti
 \end{align*}
 En particular, el caso unipolar requiere el doble de energía de bit ($3\unit{\deci\bel}$ más) que el polar para la misma probabilidad de error. En el caso $M-$ario, utilizando codificación de Gray, la tasa de error de bit es $\mathrm{BER}\approx P_{e,\text{símbolo}}/\log_2 M$. La Figura \ref{fig:ber banda base} compara estos esquemas: cada duplicación del tamaño del alfabeto aumenta la $\vti$ para el mismo ancho de banda, pero requiere mayor $\gamma$ para lograr la misma BER.
 
-\begin{remark}[$\bar{E}_b/\eta_0$ como figura de mérito]\label{rem:figura de merito}
-    La relación $S/N$ depende del receptor: la potencia de ruido $N$ está determinada por el ancho de banda del filtro de recepción, por lo que dos receptores distintos asignan a la misma señal transmitida valores diferentes de $S/N$. En cambio, $\gamma=\bar{E}_b/\eta_0$ depende solo de la señal transmitida (su energía por bit) y del canal (la densidad espectral del ruido), y no del receptor ni de la frecuencia de señalización. Por eso es la figura de mérito adecuada para comparar esquemas de transmisión. El filtro acoplado logra la menor probabilidad de error posible para cada valor de $\gamma$; con cualquier otro receptor la probabilidad de error también puede escribirse en función de $\gamma$, pero con una penalización, como el factor $(1+\alpha)\beta\geqslant 1$ del Ejemplo \ref{ej:nyquist no ideal ruido}.
+\begin{remark}\label{rem:figura de merito}
+    La relación $S/N$ depende del receptor: la potencia de ruido $N$ está determinada por el ancho de banda del filtro de recepción, por lo que dos receptores distintos asignan a la misma señal transmitida valores diferentes de $S/N$. En cambio, $\gamma=\bar{E}_b/\eta_0$ depende solo de la señal transmitida (su energía por bit) y del canal (la densidad espectral del ruido), y no del receptor ni de la frecuencia de señalización. Por eso es la figura de mérito adecuada para comparar esquemas de transmisión.
 \end{remark}
 
 \begin{figure}
@@ -743,7 +743,7 @@ Concluimos entonces que la relación señal a ruido se degrada \emph{linealmente
 
 \begin{figure}
  \begin{center}
-    \begin{blockdiagram}
+    \begin{tikzpicture}[blockdiagram]
         \node at (0,0) (input) {$y_{i-1}(t)$};
         \node[right=of input, label=above:{\footnotesize Atenuación $L$}] (att1) {\begin{circuitikz} \node[tlineshape] at (0,0) {};\end{circuitikz}};
         \node[circle, draw, right=of att1] (sum1) {$+$};
@@ -758,11 +758,11 @@ Concluimos entonces que la relación señal a ruido se degrada \emph{linealmente
         \begin{scope}[on background layer]
             \node[draw, rectangle, dashed, fill=gray!15!white, fit=(att1) (n1) (sum1), inner sep=12pt,label=above:Etapa $i$] {};
         \end{scope}
-    \end{blockdiagram}
+    \end{tikzpicture}
 
     \bigskip
 
-    \begin{blockdiagram}
+    \begin{tikzpicture}[blockdiagram]
         \node at (0,0) (input) {$y_{i-1}(t)$};
         \node[right=of input, label=above:{\footnotesize Atenuación $L$}] (att1) {\begin{circuitikz} \node[tlineshape] at (0,0) {};\end{circuitikz}};
         \node[circle, draw, right=of att1] (sum1) {$+$};
@@ -792,7 +792,7 @@ Concluimos entonces que la relación señal a ruido se degrada \emph{linealmente
         \begin{scope}[on background layer]
             \node[draw, rectangle, dashed, fill=gray!15!white, fit=(rx) (sincr_input) (sincr) (sample) (detector) (top) (mod), inner sep=5pt,label=above:Regenerador] {};
         \end{scope}            
-    \end{blockdiagram}
+    \end{tikzpicture}
  \end{center}
  \caption{Repetidor no regenerativo (arriba) y repetidor regenerativo (abajo).}\label{fig:repetidor regenerativo}
 \end{figure}

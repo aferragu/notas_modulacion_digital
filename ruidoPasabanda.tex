@@ -93,8 +93,7 @@ trasladamos hacia atrás $f_c$ en frecuencia. Un diagrama de
 bloques es:
 \begin{figure}[htb]
     \centering\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/ruidoPasa/ruidoPasa-2}
-    \begin{blockdiagram}
+    \begin{tikzpicture}[blockdiagram]
         \matrix[row sep=5mm, column sep=10mm]{
         \node [etiqueta] (inicio) {$x_c(t)\quad $}; &  \node[block] (filtro) {$2u(f)$}; & \node [operator] (mult) {$\times$}; & \node[etiqueta] (salida) {$\quad x_{ce}(t)$};\\
         & & \node[etiqueta] (mod) {$\mepi$};&\\
@@ -103,8 +102,8 @@ bloques es:
         \draw [-stealth] (filtro) -- (mult);
         \draw [-stealth] (mult) -- (salida);
         \draw [-stealth] (mod) -- (mult);
-    \end{blockdiagram}
-    \endpgfgraphicnamed\end{minipage}
+    \end{tikzpicture}
+    \end{minipage}
 \end{figure}
 \FloatBarrier
 
@@ -113,8 +112,7 @@ $\hat{H}(f)=-j\sgn(f)$ el filtro de Hilbert:
 
 \begin{figure}[htb]
     \centering \begin{minipage}{\textwidth}
-    \bpgf{Imagenes/ruidoPasa/ruidoPasa-3}
-    \begin{blockdiagram}
+    \begin{tikzpicture}[blockdiagram]
         \matrix[row sep=5mm, column sep=10mm]{
         \node [etiqueta] (inicio) {$x_c(t)\quad $}; &  \node [punto] (p) {}; & & & \node[operator] (sum) {$+$};& \node [operator] (mult) {$\times$}; & \node[etiqueta] (salida) {$\quad x_{ce}(t)$};\\
         & & \node[block] (hil) {$\mathcal{H}$}; & \node[block] (j) {$j$}; & & \node[etiqueta] (mod) {$\mepi$};&\\
@@ -126,8 +124,7 @@ $\hat{H}(f)=-j\sgn(f)$ el filtro de Hilbert:
         \draw [-stealth] (sum) -- (mult);
         \draw [-stealth] (mult) -- (salida);
         \draw [-stealth] (mod) -- (mult);
-    \end{blockdiagram}
-    \endpgfgraphicnamed\end{minipage}
+    \end{tikzpicture}\end{minipage}
 \end{figure}
 \FloatBarrier
 

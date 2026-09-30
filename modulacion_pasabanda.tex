@@ -445,7 +445,7 @@ donde definimos el pulso de radiofrecuencia $\tilde{p}(t) = p(t)\cos(2\pi f_c t)
 
 \begin{figure}
     \begin{center}
-        \begin{blockdiagram}
+        \begin{tikzpicture}[blockdiagram]
             \node at (0,0) (input) {\small $x_c(t)+w(t)$};
             \node[block, right = of input, align=center, inner sep=14pt, label=above:{\small Filtro acoplado RF}] (rx) {$\hat{\tilde{H}}_{\mathrm{opt}}$};
             \draw[thick, ->] (input) -- (rx);
@@ -463,7 +463,7 @@ donde definimos el pulso de radiofrecuencia $\tilde{p}(t) = p(t)\cos(2\pi f_c t)
             \begin{scope}[on background layer]
                 \node[draw, rectangle, dashed, fill=gray!15!white, fit=(rx) (sincr_input) (sincr) (sample) (detector) (top), inner sep=20pt] {};
             \end{scope}
-        \end{blockdiagram}
+        \end{tikzpicture}
     \end{center}
     \caption{Filtro acoplado al pulso RF para detectar BPSK. Este filtro es poco práctico por requerir un grado alto de sincronismo en el instante de muestreo.}\label{fig:RF acoplado}
 \end{figure}
@@ -515,7 +515,7 @@ Se requiere entonces una alternativa que mantenga el desempeño sin requerir rea
 
 \begin{figure}
     \begin{center}
-        \begin{blockdiagram}
+        \begin{tikzpicture}[blockdiagram]
             \node at (0,0) (input) {$x_c(t)+n(t)$};
             \node[right=of input, coordinate] (split) {};
             \node[right=of split, coordinate] (demod) {};
@@ -553,7 +553,7 @@ Se requiere entonces una alternativa que mantenga el desempeño sin requerir rea
             \begin{scope}[on background layer]
                 \node[draw, rectangle, dashed, fill=gray!15!white, fit=(split) (inphase) (quad) (top) (detectori) (detectorq), inner sep=10pt, label=above:Detector pasabanda coherente] {};
             \end{scope}
-        \end{blockdiagram}
+        \end{tikzpicture}
     \end{center}
     \caption{Detector pasabanda digital coherente, que permite recuperar la componente en fase y cuadratura de cada símbolo.}\label{fig:detector coherente}
 \end{figure}
@@ -641,7 +641,7 @@ En este caso, solo hace falta recuperar la componente en fase $x_i(t)$, ya que e
 \end{equation*}
 Observemos que el filtro corresponde a \emph{promediar la señal de banda base en un tiempo de símbolo}, por lo que el detector tiene la forma:
     \begin{center}
-        \begin{blockdiagram}
+        \begin{tikzpicture}[blockdiagram]
             \node at (0,0) (input) {$x_c(t)+n(t)$};
             \node[circle, draw, thick, right=2cm of input] (mult) {$\times$};
             \draw[thick,->] (input) -- (mult);
@@ -662,7 +662,7 @@ Observemos que el filtro corresponde a \emph{promediar la señal de banda base e
             
             \draw[thick,->] (detectori) -- ++(2,0) node[right] {$\hat{a}_k$};
 
-        \end{blockdiagram}
+        \end{tikzpicture}
     \end{center}
 
     Recordando que la energía del pulso NRZ es $\int_0^{T_s} p^2(t)dt = T_s$, se tiene que:
@@ -683,7 +683,7 @@ Observemos que el filtro corresponde a \emph{promediar la señal de banda base e
 En este caso, nuevamente solo se requiere la componente en fase, ya que el alfabeto es $\pm A + 0j$. Volvemos a realizar una demodulación y detección con filtro acoplado, colocando ahora $0$ como umbral de detección.
 
     \begin{center}
-        \begin{blockdiagram}
+        \begin{tikzpicture}[blockdiagram]
             \node at (0,0) (input) {$x_c(t)+n(t)$};
             \node[circle, draw, thick, right=2cm of input] (mult) {$\times$};
             \draw[thick,->] (input) -- (mult);
@@ -704,7 +704,7 @@ En este caso, nuevamente solo se requiere la componente en fase, ya que el alfab
             
             \draw[thick,->] (detectori) -- ++(2,0) node[right] {$\hat{a}_k$};
 
-        \end{blockdiagram}
+        \end{tikzpicture}
     \end{center}
 
 Se tiene entonces que:

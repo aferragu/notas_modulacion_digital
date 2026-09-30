@@ -56,13 +56,9 @@
         \end{tikzpicture}
 }
 
-%-------------------------------------------------------------------------------------------------------
-                                         %Para imágenes lindas
-\floatstyle{boxed}
-\newfloat{figura}{thpb}{fig}[section]
-\floatname{figura}{Figura}
-%-------------------------------------------------------------------------------------------------------
-
+%tikzexternalize
+\usetikzlibrary{external}
+\tikzexternalize[prefix=figuras/tikz/] % activate!
 
 \AtBeginDocument{\renewcommand{\contentsname}{Índice}\setcounter{tocdepth}{1}}
 \AtBeginDocument{\renewcommand{\proofname}{Demostración}}
@@ -132,8 +128,10 @@
 
 \newcommand{\specfull}[1]{\specleft{#1}\specright{#1}}
 
-\newenvironment{blockdiagram}[1][]{%
-\begin{tikzpicture}[
+\tikzset{blockdiagram/.style={
+        execute at end picture={%
+        \path (current bounding box.south west) +(-3mm,-3mm)
+              (current bounding box.north east) +(3mm,3mm);},
      block/.style={
     % The shape:
     rectangle,
@@ -149,11 +147,8 @@
     thick},
     punto/.style={coordinate},auto,
     etiqueta/.style={rectangle,inner sep=0mm},
-    multD/.style={isosceles triangle,draw,isosceles triangle apex angle=50,shape border rotate =-90,thick},#1]
-}{\end{tikzpicture}}
+    multD/.style={isosceles triangle,draw,isosceles triangle apex angle=50,shape border rotate =-90,thick}}}
 
-
-\newcommand{\bpgf}[1]{\beginpgfgraphicnamed{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%
 

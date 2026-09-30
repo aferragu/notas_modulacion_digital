@@ -45,7 +45,7 @@ En la transmisión digital, se transmiten símbolos $a_k$ construyendo una seña
 \begin{figure}
     \begin{center}
         
-        \begin{blockdiagram}
+        \begin{tikzpicture}[blockdiagram]
         \node [block] (fuente) {Fuente};
         \node [block, right = of fuente] (transducer) {Transductor};
         \node [block, right = 6em of transducer] (tx) {Transmisor};
@@ -63,7 +63,7 @@ En la transmisión digital, se transmiten símbolos $a_k$ construyendo una seña
             \node[draw, rectangle, dashed, fill=gray!25!white, fit=(tx) (ch) (rx), inner sep=10pt, label=below:Modulación analógica] (modulador) {};
         \end{scope}
 
-        \end{blockdiagram}
+        \end{tikzpicture}
         \caption{Diagrama general de un sistema de transmisión analógico.}\label{fig:analogico}
     \end{center}
 \end{figure}
@@ -81,13 +81,13 @@ Complementario a lo anterior existen dos fuertes razones para analizar la transm
 
 \begin{figure}
     \begin{center}        
-        \begin{blockdiagram}
+        \begin{tikzpicture}[blockdiagram]
         \node [block, align=center] (fuente) {Fuente \\ analógica};
         \node [block, right = 5em of fuente, align=center, label=below:{Frec: $f_s$, $N$ bits}] (ad) {Conversor \\ A/D};
         \node [right = 5em of ad] (salida) {$Nf_s \unit{\bps}$};
         \draw[thick, ->] (fuente)--node[midway,above] {$x(t)$} (ad);
         \draw[thick, ->] (ad)--node[midway, above] {$b_k$} (salida);
-        \end{blockdiagram}
+        \end{tikzpicture}
         \caption{Conversión analógica a digital.}\label{fig:a/d}
     \end{center}
 \end{figure}
@@ -101,7 +101,7 @@ El diagrama general de un sistema de transmisión digital se muestra en la Figur
 \begin{figure}
     \begin{center}
         
-        \begin{blockdiagram}[node distance=3em]
+        \begin{tikzpicture}[blockdiagram,node distance=3em]
         \node [block,align=center] (fuente) {Fuente \\ digital};
         \node [block, right = 5em of fuente, align=center] (codfuente) {Cod. de fuente};
         \node [block, right = of codfuente, align=center] (codcanal) {Cod. de canal};
@@ -131,7 +131,7 @@ El diagrama general de un sistema de transmisión digital se muestra en la Figur
             \node[draw, rectangle, dashed, fill=gray!25!white, fit=(decofuente) (decocanal), inner sep=10pt, label=below:Etapa de decodificación] (decod) {};
 
         \end{scope}
-        \end{blockdiagram}
+        \end{tikzpicture}
 
         \caption{Diagrama general de un sistema de transmisión digital.}\label{fig:digital}
     \end{center}
@@ -300,7 +300,7 @@ es decir $\bar{L}_2/2 = 1.165$ bits/símbolo. La brecha con la entropía se redu
 
 \begin{figure}[htbp]
     \centering
-    \begin{blockdiagram}
+    \begin{tikzpicture}[blockdiagram]
         % Nodos internos (probabilidad acumulada)
         \node[operator, font=\scriptsize] (root) at (3.92,0)     {$1$};
         \node[operator, font=\scriptsize] (N7)   at (7.83,-1.3)  {$0.51$};
@@ -339,7 +339,7 @@ es decir $\bar{L}_2/2 = 1.165$ bits/símbolo. La brecha con la entropía se redu
         \draw[thick] (N2)   -- node[sloped,above,font=\scriptsize] {1} (N1);
         \draw[thick] (N1)   -- node[sloped,above,font=\scriptsize] {0} (CC);
         \draw[thick] (N1)   -- node[sloped,above,font=\scriptsize] {1} (BC);
-    \end{blockdiagram}
+    \end{tikzpicture}
     \caption{Árbol de Huffman para los 9 pares de símbolos del Ejemplo \ref{ej:bloques huffman} ($N=2$). Los círculos son nodos internos con su probabilidad acumulada; los rectángulos, los pares terminales con su probabilidad.}
     \label{fig:huffman bloques}
 \end{figure}

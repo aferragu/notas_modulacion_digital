@@ -11,7 +11,6 @@ Si pongo un filtro apareado, a menos de $\theta$: $h(t) = \cos(\omega_ct)p(t)$ (
 %\begin{figure}[h]
 %    \centering
 \begin{center}\begin{minipage}{\textwidth}
-    \bpgf{Imagenes/DDPasa/DDPasa-18}
     \begin{tikzpicture}
         \draw [dotted] (0,0) node [anchor=north] {$0$} -- (3,1) -- (6,0) -- (3,-1) -- (0,0);
         \draw [samples=200,domain=0:3] plot (\x,{\x/3*sin(4*pi*\x r)});
@@ -19,7 +18,7 @@ Si pongo un filtro apareado, a menos de $\theta$: $h(t) = \cos(\omega_ct)p(t)$ (
         \draw (3,1.5) -- (3,-1.5) node [anchor=north] {$T_s$};
         \path (5,1) node [anchor=west] {\parbox[b]{2.8cm}{envolvente es $(p\ast p)(t)$, pulso triangular}};
     \end{tikzpicture}
-    \endpgfgraphicnamed\end{minipage}
+    \end{minipage}
 \end{center}
 %\end{figure}
 
@@ -29,8 +28,7 @@ Si el filtro tuviese la fase correcta, muestreando en $T_s$ tengo la detección 
 
 \begin{figure}[htb]
     \centering
-    \bpgf{Imagenes/DDPasa/DDPasa-19}
-    \begin{blockdiagram}
+    \begin{tikzpicture}[blockdiagram]
         \matrix[row sep=5mm,column sep=10mm]{
             & \node [punto] (p) {};\\
             \node [etiqueta] (inicio) {$a_k p(t-kT_s)\cos(\omega_c t+\theta)$}; & \node[operator] (sum) {$+$}; & \node[block] (filtro) {$h(t)$}; & \node [block] (det) {DET. ENV.};& \node [block] (delim) {COMP.};\\
@@ -40,8 +38,7 @@ Si el filtro tuviese la fase correcta, muestreando en $T_s$ tengo la detección 
         \draw [-stealth] (sum) -- (filtro);
         \draw [-stealth] (filtro) -- (det);
         \draw [-stealth] (det) -- (delim);
-    \end{blockdiagram}
-    \endpgfgraphicnamed
+    \end{tikzpicture}
 \end{figure}
 
 \begin{itemize}
@@ -50,8 +47,7 @@ Si el filtro tuviese la fase correcta, muestreando en $T_s$ tengo la detección 
 
     \begin{center}
         \resizebox{0.8\textwidth}{!}{
-        \bpgf{Imagenes/DDPasa/DDPasa-20}
-        \begin{blockdiagram}
+        \begin{tikzpicture}[blockdiagram]
             \matrix[row sep=5mm,column sep=10mm,ampersand replacement=\&]{
                 \& \& \node[block] (pasa1) {PASA: $[f_c,f_c+\frac{\Delta f}{2}]$}; \& \node [block] (det1) {DET. ENV.};\\
                 \node [etiqueta] (inicio) {$x_c(t)$}; \& \node [punto] (p) {}; \& \& \& \node [operator] (sum) {} node [anchor=north east] {$-$} node [anchor=south east] {$+$};\& \node [block] (comp) {COMP.};\\
@@ -65,8 +61,8 @@ Si el filtro tuviese la fase correcta, muestreando en $T_s$ tengo la detección 
             \draw [-stealth] (pasa2) -- (det2);
             \draw [-stealth]  (det2) -| (sum);
             \draw [-stealth] (sum) -- (comp);
-        \end{blockdiagram}
-        \endpgfgraphicnamed}
+        \end{tikzpicture}
+        }
     \end{center}
 
     Aunque las bandas no estén separadas del todo, da más fuerte la señal correcta.
@@ -81,8 +77,7 @@ diferencias de fase con el símbolo anterior.
 %    \centering
 \begin{center}
    \resizebox{\textwidth}{!}{
-    \bpgf{Imagenes/DDPasa/DDPasa-21}
-    \begin{blockdiagram}
+    \begin{tikzpicture}[blockdiagram]
         \matrix[row sep=5mm,column sep=10mm,ampersand replacement=\&]{
             \node [etiqueta] (inicio) {$x_c(t)$}; \& \node[block] (pasa1) {PASABANDA}; \& \node [punto] (p) {}; \& \&\node [operator] (mult) {$\times$}; \& \node [block] (pasa2) {PASABAJOS}; \& \node[block] (comp) {COMP};\\
             \& \& \& \node [block] (ret) {Retardo $T_s$};\\
@@ -93,8 +88,8 @@ diferencias de fase con el símbolo anterior.
         \draw [-stealth] (ret) -| (mult);
         \draw [-stealth] (mult) -- (pasa2);
         \draw [-stealth] (pasa2) -- (comp);
-    \end{blockdiagram}
-    \endpgfgraphicnamed}
+    \end{tikzpicture}
+    }
 \end{center}
 %\end{figure}
 

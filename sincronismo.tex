@@ -25,7 +25,7 @@ Un PLL es un sistema realimentado que ajusta la fase de un oscilador local hasta
 
 \begin{figure}
     \begin{center}
-    \begin{blockdiagram}
+    \begin{tikzpicture}[blockdiagram]
         \node [etiqueta] (inicio) {$\theta_{in}(t)$};
         \node [operator, right=1.3cm of inicio] (sum) {$+$};
         \node [block, right=2.6cm of sum, align=center] (fd) {Detector\\de fase};
@@ -36,7 +36,7 @@ Un PLL es un sistema realimentado que ajusta la fase de un oscilador local hasta
         \draw [->] (fd) -- node[midway,above] {\footnotesize $e(t)\approx K_d\theta_e(t)$} (vco);
         \draw [->] (vco) -- (salida);
         \draw [->] (vco.south) -- ++(0,-1.2) -| node[near start, below, xshift=-3.2cm]{\footnotesize $-\theta_{vco}(t)$} (sum.south);
-    \end{blockdiagram}
+    \end{tikzpicture}
     \end{center}
     \caption{Lazo de enganche de fase (PLL) genérico, de primer orden: el detector de fase compara la referencia entrante con la realimentación del propio VCO, y la diferencia corrige la frecuencia de este último hasta anular el error.}\label{fig:pll generico}
 \end{figure}
