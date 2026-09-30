@@ -15,13 +15,13 @@ $X:\Omega\rightarrow\R$, llamada \emph{variable aleatoria} (v.a.).
     \begin{equation*}
     F_X(x)=\p{X\leqslant x}
     \end{equation*}
-    y representa la probabilidad acumulada de obtener un resultado en $(-\infty,x)$ como función de $x$.
+    y representa la probabilidad acumulada de obtener un resultado en $(-\infty,x]$ como función de $x$.
 \end{definicion}
 
 La función $F_X(x)$ está entre $0$ y $1$, es monótona no decreciente y continua a la derecha. Distingamos dos casos mediante ejemplos:
 
 \begin{ejemplo}[Variable aleatoria discreta]
-    Tomemos primero el caso de que $X$ toma solo los valores $\{x_1, \ldots, x_N\}$ discretos. En ese caso, la función de distribución toma valores escalonados, donde cada salto ocurre en $x_j$ y es de altura $p_j=\p{X=x_j}$.
+    Tomemos primero el caso de que $X$ toma solo los valores $\{x_1, \ldots, x_N\}$ discretos. En ese caso, la función de distribución toma valores escalonados, donde cada salto ocurre en $x_i$ y es de altura $p_i=\p{X=x_i}$.
 
     \begin{center}
     \begin{tikzpicture}
@@ -35,9 +35,9 @@ La función $F_X(x)$ está entre $0$ y $1$, es monótona no decreciente y contin
 \end{ejemplo}
 
 \begin{ejemplo}[Variable aleatoria absolutamente continua]
-    Este es el caso en quye existe una \emph{densidad de probabilidad} $f_X(x)$ que verifica:
+    Este es el caso en que existe una \emph{densidad de probabilidad} $f_X(x)$ que verifica:
     \begin{equation*}
-    \p{a<X\leqslant b} = F_X(b)-F_X(a) = \int_a^b f_X(x)\d x.
+    \p{a<X\leqslant b} = F_X(b)-F_X(a) = \int_a^b f_X(x) dx.
     \end{equation*}
 
     Esto implica en particular que $F_X$ es continua y en todo punto donde es derivable se verifica:
