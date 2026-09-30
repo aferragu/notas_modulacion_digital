@@ -8,66 +8,62 @@ $A\subset\Omega$, llamados ``sucesos''.
 Si lo aleatorio es un número real, podríamos tomar $\Omega=\R$,
 pero en general se piensa en el sorteo como algo que está
 ``detrás'' y determina el valor $X(\omega)$ a través de una función
-$X:\Omega\rightarrow\R$, llamada \emph{variable aleatoria} (V.A.).
+$X:\Omega\rightarrow\R$, llamada \emph{variable aleatoria} (v.a.).
 
-\begin{minipage}{0.3\textwidth}La función de distribución de una V.A. se define como $F_X(x)=\p{X\leqslant x}$\end{minipage}\hfill
-\begin{minipage}{0.6\textwidth}
-    \resizebox{\textwidth}{!}{
-    \begin{tikzpicture}
-        \draw [-stealth] (-5,0) -- (5,0) node [anchor=north] {$x$};
-        \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$F_X(x)$};
-        \draw [very thin] (0,1) node [anchor=east] {$1$} -- (5,1);
-        \draw [very thick] (-5,0) -- (-3,0) -- (-3,0.3) -- (-0.5,0.3) -- (-0.5,0.5) -- (2,0.5) -- (2,0.7) -- (3,0.7) --  (3,1) -- (5,1);
-    \end{tikzpicture}}
-\end{minipage}
+\begin{definicion}
+    La función de distribución de una v.a. real $X$ se define como:
+    \begin{equation*}
+    F_X(x)=\p{X\leqslant x}
+    \end{equation*}
+    y representa la probabilidad acumulada de obtener un resultado en $(-\infty,x)$ como función de $x$.
+\end{definicion}
 
-$F_X(x)$ está entre $0$ y $1$, es monótona no decreciente y continua a
-la derecha.
+La función $F_X(x)$ está entre $0$ y $1$, es monótona no decreciente y continua a la derecha. Distingamos dos casos mediante ejemplos:
 
 \begin{ejemplo}[Variable aleatoria discreta]
-    \begin{minipage}{0.3\textwidth}
-        $X$ toma sólo los valores $\{x_1, \ldots, x_N\}$.
-    \end{minipage}\hfill
-    \begin{minipage}{0.6\textwidth}
-    \resizebox{\textwidth}{!}{
+    Tomemos primero el caso de que $X$ toma solo los valores $\{x_1, \ldots, x_N\}$ discretos. En ese caso, la función de distribución toma valores escalonados, donde cada salto ocurre en $x_j$ y es de altura $p_j=\p{X=x_j}$.
+
+    \begin{center}
     \begin{tikzpicture}
         \draw [-stealth] (-5,0) -- (5,0) node [anchor=north] {$x$};
         \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$F_X(x)$};
-        \draw [very thin] (0,1) node [anchor=east] {$1$} -- (5,1);
-        \draw [very thick] (-5,0) -- (-3,0) -- (-3,0.3) -- (-0.5,0.3) -- (-0.5,0.5) -- (2,0.5) -- (2,0.7) -- (3,0.7) --  (3,1) -- (5,1);
+        \draw [dashed] (0,1) node [anchor=east] {$1$} -- (5,1);
+        \draw [teal, very thick] (-5,0) -- (-3,0) -- (-3,0.3) -- (-0.5,0.3) -- (-0.5,0.5) -- (2,0.5) -- (2,0.7) -- (3,0.7) --  (3,1) -- (5,1);
         \path (-3,0) node [anchor=north] {$x_1$} -- (3,0) node [anchor=north] {$x_N$};
-    \end{tikzpicture}}
-
-    Cada salto es $p_i=\p{X=x_i}$.
-    \end{minipage}
+    \end{tikzpicture}
+    \end{center}
 \end{ejemplo}
 
 \begin{ejemplo}[Variable aleatoria absolutamente continua]
-    Existe una densidad $f_X(x)=\frac{\d{}}{\d{} x}F_X(x)$.
-    \begin{figure}[htb]
-        \hfil
-        \begin{tikzpicture}[xscale=0.7]
-            \draw [-stealth] (-5,0) -- (5,0) node [anchor=north] {$x$};
-            \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$F_X(x)$};
-            \draw [dotted] (-5,1) -- (0,1) node [anchor=south east] {$1$} -- (5,1);
-            \draw [samples=2000,domain=-4.5:4.5] plot (\x,{rad(atan(\x))/(pi)+0.5});
-        \end{tikzpicture}
-        \hfill
-        \begin{tikzpicture}[xscale=0.7]
-            \draw [-stealth] (-5,0) -- (5,0) node [anchor=north] {$x$};
-            \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$f_X(x)$};
-            \draw [samples=2000,domain=-4.5:4.5] plot (\x,{1/(1+(\x)^2)});
-        \end{tikzpicture}
-        \hfil
-    \end{figure}
-    \FloatBarrier
+    Este es el caso en quye existe una \emph{densidad de probabilidad} $f_X(x)$ que verifica:
+    \begin{equation*}
+    \p{a<X\leqslant b} = F_X(b)-F_X(a) = \int_a^b f_X(x)\d x.
+    \end{equation*}
 
-    \[\p{a<X\leqslant b} = F_X(b)-F_X(a) = \int_a^b f_X(x)\d x.\]
+    Esto implica en particular que $F_X$ es continua y en todo punto donde es derivable se verifica:
+    \begin{equation*}
+     f_X(x) = \frac{d}{dx}F_X(x)   
+    \end{equation*}
+
+    \begin{center}
+    \begin{tikzpicture}
+        \draw [-stealth] (-3,0) -- (3,0) node [anchor=north] {$x$};
+        \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$F_X(x)$};
+        \draw [dotted] (0,1) node [anchor=south east] {$1$} -- (3,1);
+        \draw [teal,samples=2000,domain=-2.5:2.5] plot (\x,{rad(atan(\x))/(pi)+0.5});
+    \end{tikzpicture}\hspace{1cm}
+    \begin{tikzpicture}
+        \draw [-stealth] (-3,0) -- (3,0) node [anchor=north] {$x$};
+        \draw [-stealth] (0,-0.5) -- (0,1.5) node [anchor=west] {$f_X(x)$};
+        \draw [teal,samples=2000,domain=-2.5:2.5] plot (\x,{1/(1+(\x)^2)});
+    \end{tikzpicture}
+    \end{center}
+    
 \end{ejemplo}
 
 \begin{remark}
-Se puede definir una densidad para las V.A. discretas si se
-aceptan en ella $\delta$'s de Dirac. Es decir, en este caso \[
+Se puede definir una densidad para las v.a. discretas si se
+aceptan en ella impulsos $\delta$ de Dirac. Es decir, en este caso \[
  f_X(x)=\sum_i p_i \delta(x-x_i).\]
  Esta convención se adopta en lo que sigue.
 \end{remark}
@@ -77,7 +73,7 @@ aceptan en ella $\delta$'s de Dirac. Es decir, en este caso \[
 \E{X} =\int_{-\infty}^\infty x f_X(x)\d x. \]
 
 Representa el promedio ponderado por la probabilidad. Notar que en
-el caso de las V.A. discretas, lo anterior equivale a
+el caso de las v.a. discretas, lo anterior equivale a
 $\E{X}=\sum_i x_ip_i$.
 
 \textbf{Momento de orden $k$:}
@@ -86,7 +82,7 @@ $\E{X}=\sum_i x_ip_i$.
 \textbf{Varianza:} $\var(X)=\E{X^2}-\E{X}^2$.
 
 \begin{ejemplo}[Variable aleatoria Gaussiana]
-    \[f_X(x)=\frac{1}{\sqrt{2\pi}\sigma}\e^{-\frac{(x-\mu)^2}{2\sigma^2}}; \quad  \E{X}=\mu, \qquad
+    \[f_X(x)=\frac{1}{\sqrt{2\pi}\sigma}\e^{-\frac{(x-\mu)^2}{2\sigma^2}}; \quad  \E{X}=\mu, \quad
     \var(X)=\sigma^2.\]
 \end{ejemplo}
 
@@ -101,7 +97,7 @@ Dados dos sucesos $A,B$ con $\p{B}>0$, la probabilidad de $A$ \emph{condicional}
 \[\p{A\mid B} = \frac{\p{A\cap B}}{\p{B}}.\]
 Si los sucesos $B_1,\ldots,B_n$ forman una partición de $\Omega$, vale la \emph{fórmula de probabilidad total}:
 \[\p{A} = \sum_{i=1}^n \p{A\mid B_i}\p{B_i}.\]
-Análogamente, si $A$ es una V.A. discreta que toma valores $a_i$, la \emph{densidad condicional} $f_{Y|A=a_i}(y)$ es la densidad de $Y$ cuando se sabe que ocurrió $\{A=a_i\}$, y se tiene
+Análogamente, si $A$ es una v.a. discreta que toma valores $a_i$, la \emph{densidad condicional} $f_{Y|A=a_i}(y)$ es la densidad de $Y$ cuando se sabe que ocurrió $\{A=a_i\}$, y se tiene
 \[f_Y(y) = \sum_i f_{Y|A=a_i}(y)\,\p{A=a_i}.\]
 
 \subsection*{Independencia}
@@ -109,7 +105,7 @@ Análogamente, si $A$ es una V.A. discreta que toma valores $a_i$, la \emph{dens
 \begin{itemize}
     \item 2 sucesos $A,B\subset\Omega$ son independientes si $\p{A\cap
     B}=\p{A}\p{B}$.
-    \item 2 V.A. $X$, $Y$, son independientes si los sucesos $\{X\leqslant x\}, \{Y\leqslant y\}$
+    \item 2 v.a. $X$, $Y$, son independientes si los sucesos $\{X\leqslant x\}, \{Y\leqslant y\}$
     son independientes para todo $x, y$, es decir
     \begin{align*}
                                            % \underbrace{)} & = P(X\leqslant x)P(Y\leqslant y)\\
@@ -124,13 +120,13 @@ Análogamente, si $A$ es una V.A. discreta que toma valores $a_i$, la \emph{dens
 
 Este valor esperado también es una forma de \emph{correlación}. Si
 $X(\omega)$ e $Y(\omega)$ se ``acompañan'', $\E{XY}$ da grande.
-$\langle X,Y\rangle=\E{XY}$ es un producto interno entre V.A. de
+$\langle X,Y\rangle=\E{XY}$ es un producto interno entre v.a. de
 $\E{X^2}$ finito.
 
-La \emph{covarianza} de 2 V.A. se define como
+La \emph{covarianza} de 2 v.a. se define como
 $\E{\left(X-\E{X}\right)\left(Y-\E{Y}\right)}=\E{XY}-\E{X}\E{Y}$.
 Si $X,Y$ son independientes, entonces $\mathrm{Cov}(X,Y)=0$. Cuando $\mathrm{Cov}(X,Y)=0$ se dice que las variables están \emph{no correlacionadas}. El recíproco no vale en general, aunque sí para variables \emph{conjuntamente} Gaussianas, como veremos a continuación.
 
 \subsection*{Vectores Gaussianos}
 
-Un vector aleatorio $(X_1,\ldots,X_n)$ es \emph{conjuntamente Gaussiano} si toda combinación lineal $\sum_i c_i X_i$ es una V.A. Gaussiana. En ese caso su distribución conjunta queda completamente determinada por las medias $\E{X_i}$ y las covarianzas $\mathrm{Cov}(X_i,X_j)$. En particular, si las componentes de un vector conjuntamente Gaussiano son no correlacionadas, entonces son independientes. Notar que no alcanza con que cada $X_i$ sea Gaussiana por separado: existen pares de V.A. Gaussianas no correlacionadas que no son independientes.
+Un vector aleatorio $(X_1,\ldots,X_n)$ es \emph{conjuntamente Gaussiano} si toda combinación lineal $\sum_i c_i X_i$ es una v.a. Gaussiana. En ese caso su distribución conjunta queda completamente determinada por las medias $\E{X_i}$ y las covarianzas $\mathrm{Cov}(X_i,X_j)$. En particular, si las componentes de un vector conjuntamente Gaussiano son no correlacionadas, entonces son independientes. Notar que no alcanza con que cada $X_i$ sea Gaussiana por separado: existen pares de v.a. Gaussianas no correlacionadas que no son independientes.
