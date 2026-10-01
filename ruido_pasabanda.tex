@@ -1,0 +1,51 @@
+\section{Ruido pasabanda demodulado}\label{app:ruido pasabanda}
+
+En este apéndice demostramos la Proposición \ref{prop:ruido demodulado}, que caracteriza las componentes en fase y cuadratura del ruido pasabanda al demodular. Para ello necesitamos extender algunas herramientas del Capítulo \ref{chapter:procesos estocasticos} al caso de dos procesos.
+
+\subsection*{Correlación cruzada}
+
+Dados dos procesos reales $x(t)$ e $y(t)$, decimos que son \emph{conjuntamente estacionarios} si ambos son WSS y además la \emph{correlación cruzada}
+\begin{equation*}
+    R_{xy}(\tau) = \E{x(t)y(t-\tau)}
+\end{equation*}
+no depende de $t$. Su transformada de Fourier $S_{xy}(f)$ se denomina \emph{densidad espectral cruzada}. A diferencia de la autocorrelación, $R_{xy}$ no es en general una función par: se cumple $R_{yx}(\tau)=R_{xy}(-\tau)$. Por lo tanto $S_{xy}(f)$ es en general compleja, y solo verifica $S_{xy}(-f)=\overline{S_{xy}(f)}$. Si $R_{xy}\equiv 0$ (o equivalentemente $S_{xy}\equiv 0$), los procesos son \emph{no correlacionados}.
+
+Si ambos procesos se filtran con un mismo sistema LTI de respuesta al impulso real $g(t)$, obteniendo $u=g*x$ y $v=g*y$, entonces:
+\begin{equation}\label{eq:espectro cruzado filtrado}
+    S_{uv}(f) = |\hat{G}(f)|^2 S_{xy}(f).
+\end{equation}
+En efecto, con la misma cuenta que lleva a \eqref{eq:espectro filtrado}:
+\begin{equation*}
+    R_{uv}(\tau) = \int\!\!\int g(a)g(b)\,\E{x(t-a)y(t-\tau-b)}\,da\,db = \int\!\!\int g(a)g(b)\,R_{xy}(\tau+b-a)\,da\,db,
+\end{equation*}
+cuya transformada es $\hat{G}(f)\overline{\hat{G}(f)}S_{xy}(f)$.
+
+\subsection*{Demostración de la Proposición \ref{prop:ruido demodulado}}
+
+\paragraph{Autocorrelación del ruido.} La densidad espectral de $n(t)$ es un pulso de altura $\eta_0/2$ y ancho $2B$ centrado en $\pm f_c$. Antitransformando el pulso de banda base y usando la propiedad de modulación de la transformada de Fourier:
+\begin{equation*}
+    R_n(\tau) = r(\tau)\cos(2\pi f_c\tau), \qquad r(\tau) = 2\eta_0 B\sinc(2\pi B\tau),
+\end{equation*}
+donde $r(\tau)$ tiene transformada $S_r(f)=\eta_0\, p_{[-B,B]}(f)$. Es aquí donde se usa que el espectro de $n(t)$ es simétrico respecto de $f_c$: si no lo fuera, aparecería además un término en $\sin(2\pi f_c\tau)$.
+
+\paragraph{Salidas de los multiplicadores.} Sean $y_i(t)=2n(t)\cos(2\pi f_c t)$ e $y_q(t)=-2n(t)\sin(2\pi f_c t)$. Con la fase aleatoria del oscilador, como en la Sección \ref{sec:modulacion wss}, y usando identidades trigonométricas:
+\begin{align*}
+    R_{y_i}(\tau) &= 4R_n(\tau)\,\tfrac{1}{2}\cos(2\pi f_c\tau) = r(\tau) + r(\tau)\cos(4\pi f_c\tau),\\
+    R_{y_q}(\tau) &= 4R_n(\tau)\,\tfrac{1}{2}\cos(2\pi f_c\tau) = r(\tau) + r(\tau)\cos(4\pi f_c\tau),\\
+    R_{y_iy_q}(\tau) &= -4R_n(\tau)\,\tfrac{1}{2}\sin(-2\pi f_c\tau) = r(\tau)\sin(4\pi f_c\tau).
+\end{align*}
+En frecuencia:
+\begin{align*}
+    S_{y_i}(f) = S_{y_q}(f) &= S_r(f) + \tfrac{1}{2}\left[S_r(f-2f_c)+S_r(f+2f_c)\right],\\
+    S_{y_iy_q}(f) &= \tfrac{1}{2j}\left[S_r(f-2f_c)-S_r(f+2f_c)\right].
+\end{align*}
+Observar que la densidad espectral cruzada es imaginaria pura, como corresponde a una correlación cruzada impar, y que está concentrada alrededor de $\pm 2f_c$.
+
+\paragraph{Relación con $n_i$ y $n_q$.} Por la identidad de demodulación, $y_i = n_i + (\text{términos en } 2f_c)$, donde $n_i$ ocupa la banda $[-B,B]$ y los términos restantes la banda $|f\mp 2f_c|\leqslant B$, que no se superponen si $f_c>B$. Por lo tanto, si $g$ es un filtro pasabajos ideal de banda $[-B,B]$, se tiene exactamente $n_i=g*y_i$, y análogamente $n_q=g*y_q$.
+
+\paragraph{Conclusión.} Por \eqref{eq:espectro filtrado} y \eqref{eq:espectro cruzado filtrado}:
+\begin{align*}
+    S_{n_i}(f) = S_{n_q}(f) &= |\hat{G}(f)|^2 S_{y_i}(f) = \eta_0\, p_{[-B,B]}(f),\\
+    S_{n_in_q}(f) &= |\hat{G}(f)|^2 S_{y_iy_q}(f) = 0,
+\end{align*}
+ya que los términos centrados en $\pm 2f_c$ quedan fuera de la banda del filtro. Es decir, $n_i$ y $n_q$ tienen densidad espectral $\eta_0$ en $[-B,B]$ y son no correlacionados. Finalmente, ambos se obtienen por operaciones lineales sobre el mismo proceso Gaussiano $n(t)$, por lo que son conjuntamente Gaussianos y, al ser no correlacionados, independientes (ver Sección \ref{app:probabilidad}). \qed

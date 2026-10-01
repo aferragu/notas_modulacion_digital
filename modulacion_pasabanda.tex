@@ -538,8 +538,8 @@ Se requiere entonces una alternativa que mantenga el desempeño sin requerir rea
             \node[right=3cm of mult1, block, inner sep=10pt, label=above:Filtro acoplado] (inphase) {$\hat{H}_r$};
             \node[right=3cm of mult2, block, inner sep=10pt, label=above:Filtro acoplado] (quad) {$\hat{H}_r$};
 
-            \draw[thick,->] (mult1) --node[midway, above] {$x_i(t)+n_i(t)$} (inphase);
-            \draw[thick,->] (mult2) --node[midway, above] {$x_q(t)+n_q(t)$} (quad);
+            \draw[thick,->] (mult1) --node[midway, above] {$x_i(t)+n_i(t)+e_i(t)$} (inphase);
+            \draw[thick,->] (mult2) --node[midway, above] {$x_q(t)+n_q(t)+e_q(t)$} (quad);
 
             \node[coordinate, above=.5cm of inphase] (top) {};
 
@@ -591,27 +591,17 @@ donde el proceso $n(t)$ tiene densidad espectral de potencia aproximadamente con
 \begin{equation*}
     n(t) = n_i(t)\cos(2\pi f_c t) - n_q(t)\sin(2\pi f_c t),
 \end{equation*}
-donde $n_i(t)$ y $n_q(t)$ son procesos de banda base. Al demodular, exactamente como para la señal, se obtiene:
-\begin{equation*}
-    2n(t)\cos(2\pi f_c t) = n_i(t) + \text{términos en } 2f_c, \qquad -2n(t)\sin(2\pi f_c t) = n_q(t) + \text{términos en } 2f_c.
-\end{equation*}
-Notar que el filtro de recepción es pasabajos: el filtro acoplado verifica $|\hat{H}_r(f)| = K|\hat{P}(f)|$, por lo que tiene la misma forma espectral que el pulso de banda base y es despreciable alrededor de $\pm 2f_c$ cuando $f_c\gg f_s$. Por lo tanto, los términos en $2f_c$ son eliminados por el filtro, y a su entrada el ruido equivale a las componentes $n_i(t)$ y $n_q(t)$, que verifican el siguiente resultado (ver Figura \ref{fig:ruido pasabanda}).
+donde $n_i(t)$ y $n_q(t)$ son procesos de banda base. Al demodular la señal recibida $x_c(t)+n(t)$, exactamente como hicimos para la señal, la salida de cada multiplicador es:
+\begin{align*}
+    2\left(x_c(t)+n(t)\right)\cos(2\pi f_c t) &= x_i(t) + n_i(t) + e_i(t), \\
+    -2\left(x_c(t)+n(t)\right)\sin(2\pi f_c t) &= x_q(t) + n_q(t) + e_q(t),
+\end{align*}
+donde $e_i(t)$ y $e_q(t)$ reúnen \emph{todos} los términos alrededor de $\pm 2f_c$, tanto de la señal como del ruido. Notar que el filtro de recepción es pasabajos: el filtro acoplado verifica $|\hat{H}_r(f)| = K|\hat{P}(f)|$, por lo que tiene la misma forma espectral que el pulso de banda base y es despreciable alrededor de $\pm 2f_c$ cuando $f_c\gg f_s$. Por lo tanto, $e_i(t)$ y $e_q(t)$ son eliminados por el filtro, y a su entrada el ruido equivale a las componentes $n_i(t)$ y $n_q(t)$, que verifican el siguiente resultado (ver Figura \ref{fig:ruido pasabanda}).
 
 \begin{proposicion}\label{prop:ruido demodulado}
     Si $n(t)$ es Gaussiano con densidad espectral $\eta_0/2$ constante en la banda $[f_c-B,f_c+B]$, entonces $n_i(t)$ y $n_q(t)$ son procesos Gaussianos independientes, ambos con densidad espectral $\eta_0$ constante en $[-B,B]$.
 \end{proposicion}
-\begin{proof}
-    La densidad espectral de $n(t)$ es un pulso pasabanda de altura $\eta_0/2$ y ancho $2B$ centrado en $\pm f_c$, por lo que su autocorrelación (la antitransformada) es:
-    \begin{equation*}
-        R_n(\tau) = r(\tau)\cos(2\pi f_c\tau), \qquad r(\tau) = 2\eta_0 B \sinc(2\pi B\tau).
-    \end{equation*}
-    Llamando $y_i(t)=2n(t)\cos(2\pi f_c t)$ e $y_q(t)=-2n(t)\sin(2\pi f_c t)$ a las salidas de los multiplicadores, y procediendo como en la Sección \ref{sec:modulacion wss}, se obtiene:
-    \begin{align*}
-        \E{y_i(t)y_i(t-\tau)} = \E{y_q(t)y_q(t-\tau)} &= r(\tau) + r(\tau)\cos(4\pi f_c\tau),\\
-        \E{y_i(t)y_q(t-\tau)} &= r(\tau)\sin(4\pi f_c\tau).
-    \end{align*}
-    La parte de banda base de estas correlaciones corresponde a $n_i$ y $n_q$, mientras que los términos en $4\pi f_c\tau$ corresponden a las componentes en $\pm 2f_c$. Por lo tanto, $n_i$ y $n_q$ tienen ambos autocorrelación $r(\tau)$, es decir, densidad espectral $\eta_0$ constante en $[-B,B]$, y su correlación cruzada es nula. Como además se obtienen por operaciones lineales del mismo proceso Gaussiano, son conjuntamente Gaussianos, y al ser no correlacionados son independientes.
-\end{proof}
+Este resultado no es inmediato: $n_i(t)$ y $n_q(t)$ se obtienen a partir del mismo ruido pasabanda $n(t)$, por lo que a priori no hay razón para que sean independientes. La igualdad de sus espectros y su no correlación son consecuencia de la simetría del espectro de $n(t)$ respecto de $f_c$. La demostración requiere cierto cuidado y se encuentra en el Apéndice \ref{app:ruido pasabanda}.
 
 
 \begin{figure}
@@ -639,7 +629,7 @@ Por lo tanto, tomando como ejemplo el demodulador de la componente en fase, a la
 \begin{itemize}
     \item $x_i(t) = \sum_k a_k p(t-kT_s)$ es una onda PAM de banda base con símbolos $a_k$ y pulso $p(t)$.
     \item $n_i(t)$ es ruido blanco de densidad espectral $\eta_0$ (el doble que el analizado en banda base).
-    \item $e_i(t)$ incluye todos los componentes de alta frecuencia (que serán eliminados por el filtro).
+    \item $e_i(t)$ son los términos alrededor de $\pm 2f_c$ (de señal y de ruido), que son eliminados por el filtro.
 \end{itemize}
 
 Tenemos entonces el mismo problema de la detección en banda base, donde se debe utilizar un filtro acoplado al pulso $p(t)$ para detectar. La única diferencia es que ahora la varianza del ruido es:
@@ -682,7 +672,7 @@ Observemos que el filtro corresponde a \emph{promediar la señal de banda base e
             \draw[thick,->] (oscillator) -- (demod) --node[midway,left] {$2\cos(2\pi f_c t)$} (mult);
 
             \node[right=3cm of mult, block] (inphase) {$\displaystyle{\frac{1}{T_s}\int_{t-T_s}^t}$};
-            \draw[thick,->] (mult) --node[midway]{$x_i(t)+n_i(t)$} (inphase);
+            \draw[thick,->] (mult) --node[midway]{$x_i(t)+n_i(t)+e_i(t)$} (inphase);
 
             \node[block, right =1.5cm of inphase, inner sep=4pt, label=below:{\footnotesize $\tau=kT_s$}] (samplei) {\begin{circuitikz}\draw (0,0) to[switch] node[ocirc]{} (.8,0);\end{circuitikz}};
             \draw[thick,->] (inphase) -- (samplei);
@@ -724,7 +714,7 @@ En este caso, nuevamente solo se requiere la componente en fase, ya que el alfab
             \draw[thick,->] (oscillator) -- (demod) --node[midway,left] {$2\cos(2\pi f_c t)$} (mult);
 
             \node[right=3cm of mult, block] (inphase) {$\displaystyle{\frac{1}{T_s}\int_{t-T_s}^t}$};
-            \draw[thick,->] (mult) --node[midway]{$x_i(t)+n_i(t)$} (inphase);
+            \draw[thick,->] (mult) --node[midway]{$x_i(t)+n_i(t)+e_i(t)$} (inphase);
 
             \node[block, right =1.5cm of inphase, inner sep=4pt, label=below:{\footnotesize $\tau=kT_s$}] (samplei) {\begin{circuitikz}\draw (0,0) to[switch] node[ocirc]{} (.8,0);\end{circuitikz}};
             \draw[thick,->] (inphase) -- (samplei);
