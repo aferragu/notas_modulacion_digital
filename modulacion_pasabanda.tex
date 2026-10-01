@@ -587,20 +587,31 @@ Modelemos ahora las componentes de ruido $n_i$ y $n_q$. Supongamos que en el can
 \begin{equation*}
     x_c(t) + n(t),
 \end{equation*}
-donde el proceso $n(t)$ tiene densidad espectral de potencia aproximadamente constante $\eta_0/2$ en la banda de interés. Analicemos qué ocurre con este ruido al demodular. A la salida de los multiplicadores tenemos:
+donde el proceso $n(t)$ tiene densidad espectral de potencia aproximadamente constante $\eta_0/2$ en la banda de interés. Como cualquier señal pasabanda, el ruido admite una envolvente compleja $n_{ce}(t)=n_i(t)+jn_q(t)$ según la Definición \ref{def:envolvemente compleja}, es decir:
 \begin{equation*}
-    y_i(t) = 2n(t)\cos(2\pi f_c t), \qquad y_q(t) = -2n(t)\sin(2\pi f_c t).
+    n(t) = n_i(t)\cos(2\pi f_c t) - n_q(t)\sin(2\pi f_c t),
 \end{equation*}
-Como la densidad espectral de $n(t)$ es un pulso pasabanda de altura $\eta_0/2$ y ancho $2B$ centrado en $\pm f_c$, su autocorrelación (la antitransformada) es:
+donde $n_i(t)$ y $n_q(t)$ son procesos de banda base. Al demodular, exactamente como para la señal, se obtiene:
 \begin{equation*}
-    R_n(\tau) = r(\tau)\cos(2\pi f_c\tau), \qquad r(\tau) = 2\eta_0 B \sinc(2\pi B\tau).
+    2n(t)\cos(2\pi f_c t) = n_i(t) + \text{términos en } 2f_c, \qquad -2n(t)\sin(2\pi f_c t) = n_q(t) + \text{términos en } 2f_c.
 \end{equation*}
-Procediendo como en la Sección \ref{sec:modulacion wss} se obtiene:
-\begin{align*}
-    \E{y_i(t)y_i(t-\tau)} = \E{y_q(t)y_q(t-\tau)} &= r(\tau) + r(\tau)\cos(4\pi f_c\tau),\\
-    \E{y_i(t)y_q(t-\tau)} &= r(\tau)\sin(4\pi f_c\tau).
-\end{align*}
-Los términos en $4\pi f_c\tau$ corresponden a componentes alrededor de $\pm 2f_c$. Notar que el filtro de recepción es pasabajos: el filtro acoplado verifica $|\hat{H}_r(f)| = K|\hat{P}(f)|$, por lo que tiene la misma forma espectral que el pulso de banda base y es despreciable alrededor de $\pm 2f_c$ cuando $f_c\gg f_s$. Por lo tanto, estos términos son eliminados por el filtro, y las componentes de ruido resultantes $n_i$ y $n_q$ tienen densidad espectral $\eta_0$ constante en la banda $[-B,B]$ (la antitransformada de $r(\tau)$), como se ilustra en la Figura \ref{fig:ruido pasabanda}, y son no correlacionadas. Como además se obtienen por operaciones lineales del mismo proceso Gaussiano, son independientes.
+Notar que el filtro de recepción es pasabajos: el filtro acoplado verifica $|\hat{H}_r(f)| = K|\hat{P}(f)|$, por lo que tiene la misma forma espectral que el pulso de banda base y es despreciable alrededor de $\pm 2f_c$ cuando $f_c\gg f_s$. Por lo tanto, los términos en $2f_c$ son eliminados por el filtro, y a su entrada el ruido equivale a las componentes $n_i(t)$ y $n_q(t)$, que verifican el siguiente resultado (ver Figura \ref{fig:ruido pasabanda}).
+
+\begin{proposicion}\label{prop:ruido demodulado}
+    Si $n(t)$ es Gaussiano con densidad espectral $\eta_0/2$ constante en la banda $[f_c-B,f_c+B]$, entonces $n_i(t)$ y $n_q(t)$ son procesos Gaussianos independientes, ambos con densidad espectral $\eta_0$ constante en $[-B,B]$.
+\end{proposicion}
+\begin{proof}
+    La densidad espectral de $n(t)$ es un pulso pasabanda de altura $\eta_0/2$ y ancho $2B$ centrado en $\pm f_c$, por lo que su autocorrelación (la antitransformada) es:
+    \begin{equation*}
+        R_n(\tau) = r(\tau)\cos(2\pi f_c\tau), \qquad r(\tau) = 2\eta_0 B \sinc(2\pi B\tau).
+    \end{equation*}
+    Llamando $y_i(t)=2n(t)\cos(2\pi f_c t)$ e $y_q(t)=-2n(t)\sin(2\pi f_c t)$ a las salidas de los multiplicadores, y procediendo como en la Sección \ref{sec:modulacion wss}, se obtiene:
+    \begin{align*}
+        \E{y_i(t)y_i(t-\tau)} = \E{y_q(t)y_q(t-\tau)} &= r(\tau) + r(\tau)\cos(4\pi f_c\tau),\\
+        \E{y_i(t)y_q(t-\tau)} &= r(\tau)\sin(4\pi f_c\tau).
+    \end{align*}
+    La parte de banda base de estas correlaciones corresponde a $n_i$ y $n_q$, mientras que los términos en $4\pi f_c\tau$ corresponden a las componentes en $\pm 2f_c$. Por lo tanto, $n_i$ y $n_q$ tienen ambos autocorrelación $r(\tau)$, es decir, densidad espectral $\eta_0$ constante en $[-B,B]$, y su correlación cruzada es nula. Como además se obtienen por operaciones lineales del mismo proceso Gaussiano, son conjuntamente Gaussianos, y al ser no correlacionados son independientes.
+\end{proof}
 
 
 \begin{figure}
