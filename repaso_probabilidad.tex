@@ -21,7 +21,7 @@ $X:\Omega\rightarrow\R$, llamada \emph{variable aleatoria} (v.a.).
 La función $F_X(x)$ está entre $0$ y $1$, es monótona no decreciente y continua a la derecha. Distingamos dos casos mediante ejemplos:
 
 \begin{ejemplo}[Variable aleatoria discreta]
-    Tomemos primero el caso de que $X$ toma solo los valores $\{x_1, \ldots, x_N\}$ discretos. En ese caso, la función de distribución toma valores escalonados, donde cada salto ocurre en $x_i$ y es de altura $p_i=\p{X=x_i}$.
+    Si $X$ toma únicamente valores $\{x_1, \ldots, x_N\}$ discretos, la función de distribución es a valores escalonados, donde cada salto ocurre en $x_i$ y es de altura $p_i=\p{X=x_i}$.
 
     \begin{center}
     \begin{tikzpicture}
@@ -69,21 +69,26 @@ aceptan en ella impulsos $\delta$ de Dirac. Es decir, en este caso \[
 \end{remark}
 
 \subsection*{Valor esperado de una variable aleatoria}
+
+Se define el \emph{valor esperado} de una v.a. $X$ como:
 \[
-\E{X} =\int_{-\infty}^\infty x f_X(x)\d x. \]
+\E{X} =\int_{-\infty}^\infty x f_X(x) dx. \]
 
 Representa el promedio ponderado por la probabilidad. Notar que en
 el caso de las v.a. discretas, lo anterior equivale a
 $\E{X}=\sum_i x_ip_i$.
 
-\textbf{Momento de orden $k$:}
-\[\E{X^k}=\int_{-\infty}^\infty x^kf_X(x)\d x. \]
-
-\textbf{Varianza:} $\var(X)=\E{X^2}-\E{X}^2$.
+Se definen también el \emph{momento de orden $k$}:
+\[\E{X^k}=\int_{-\infty}^\infty x^kf_X(x) dx, \]
+y la \emph{varianza} como:
+\[\var(X)=\E{(X-\E{X})^2} = \E{X^2}-\E{X}^2.\]
+La varianza en particular es una medida de cuán dispersos son los valores posibles de una v.a. respecto a su media $\E{X}$.
 
 \begin{ejemplo}[Variable aleatoria Gaussiana]
-    \[f_X(x)=\frac{1}{\sqrt{2\pi}\sigma}\e^{-\frac{(x-\mu)^2}{2\sigma^2}}; \quad  \E{X}=\mu, \quad
-    \var(X)=\sigma^2.\]
+    Es aquella cuya densidad verifica:
+    \[f_X(x)=\frac{1}{\sqrt{2\pi}\sigma}\e^{-\frac{(x-\mu)^2}{2\sigma^2}}\]
+    En este caso además se tiene en particular que los parámetros anteriores verifican respectivamente:
+    \[\E{X}=\mu, \quad \var(X)=\sigma^2.\]
 \end{ejemplo}
 
 Distribución \emph{conjunta} de $n$ variables aleatorias $X_1,

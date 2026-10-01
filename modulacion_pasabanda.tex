@@ -311,18 +311,25 @@ con $p(t)$ un pulso real, $T_s$ el tiempo de símbolo y $c_k = a_k+jb_k$ un sím
     
 \end{ejemplo}
 
-Analicemos ahora el espectro de la señal $x_c(t)$ dada por la ecuación \eqref{eq:transformada pasabanda}, cuando la señal es generada por una onda PAM aleatoria compleja de banda base dada por la ecuación \eqref{eq:onda pam compleja}. Se tiene el siguiente resultado:
+Analicemos ahora el espectro de la señal $x_c(t)$ dada por la ecuación \eqref{eq:transformada pasabanda}, cuando la señal es generada por una onda PAM aleatoria compleja de banda base dada por la ecuación \eqref{eq:onda pam compleja}.
+
+Para ello necesitamos extender el Teorema \ref{teorema:dep onda pam} a símbolos complejos $c_k$. La única modificación es definir la autocorrelación de los símbolos con conjugado:
+\begin{equation*}
+    R_c[l] = \E{c_{k+l}\overline{c_k}},
+\end{equation*}
+de modo que $R_c[0]=\E{|c_k|^2}$ sea la potencia media de símbolo. La prueba es idéntica a la del caso real, pero ahora $R_c[-l]=\overline{R_c[l]}$, por lo que la densidad espectral de la onda PAM compleja sigue siendo real y no negativa, aunque no necesariamente par. En particular, si los símbolos son independientes, idénticamente distribuidos y \emph{centrados} ($\mu_c=\E{c_k}=0$), se obtiene:
+\begin{equation}\label{eq:dep pam compleja}
+    S_{x_{ce}}(f) = \sigma_c^2 f_s |\hat{P}(f)|^2, \qquad \sigma_c^2=\E{|c_k|^2}.
+\end{equation}
+
+Se tiene entonces el siguiente resultado:
 
 \begin{teorema}\label{thm:espectro pasabanda}
     El espectro de la onda pasabanda aleatoria $x_c(t)$ está dado por:
     \begin{equation*}
         S_{x_c}(f) = \frac{1}{4}\left[S_{x_{ce}}(f-f_c) + S_{x_{ce}}(-f-f_c)\right],
     \end{equation*}
-    que es una generalización del resultado \eqref{eq:dep modulacion}. Aquí el espectro $S_{x_{ce}}$ es el espectro de banda base de la envolvente compleja. Cuando la señal de banda base es una onda PAM compleja como en \eqref{eq:onda pam compleja}, con símbolos \emph{centrados} ($\mu_c=\E{c_k}=0$), se tiene que:
-    \begin{equation*}
-        S_{x_{ce}}(f) = \sigma_c^2 f_s |\hat{P}(f)|^2,
-    \end{equation*}
-    siendo $\sigma_c^2 = \E{|c_k|^2} = \E{a_k^2 + b_k^2}$ la \emph{potencia media de símbolo} (coincide con la varianza del \emph{módulo} de los símbolos ya que $\mu_c=0$), y $\hat{P}(f)$ la transformada del pulso de banda base utilizado.
+    que es una generalización del resultado \eqref{eq:dep modulacion}. Aquí el espectro $S_{x_{ce}}$ es el espectro de banda base de la envolvente compleja. Cuando la señal de banda base es una onda PAM compleja como en \eqref{eq:onda pam compleja}, con símbolos i.i.d. centrados, $S_{x_{ce}}(f)$ está dado por \eqref{eq:dep pam compleja}, siendo $\sigma_c^2 = \E{|c_k|^2} = \E{a_k^2}+\E{b_k^2}$ la \emph{potencia media de símbolo} y $\hat{P}(f)$ la transformada del pulso de banda base utilizado.
 \end{teorema}
 
 Observemos que en particular, el ancho de banda utilizado por la señal alrededor de $f_c$ está controlado por la forma de los pulsos $p(t)$ utilizados, mientras que la potencia total es controlada por los niveles o amplitudes de los símbolos complejos $\E{|c_k|^2}$.
@@ -580,7 +587,20 @@ Modelemos ahora las componentes de ruido $n_i$ y $n_q$. Supongamos que en el can
 \begin{equation*}
     x_c(t) + n(t),
 \end{equation*}
-donde el proceso $n(t)$ tiene densidad espectral de potencia aproximadamente constante $\eta_0/2$ en la banda de interés. Al demodular este proceso utilizando el oscilador obtenemos dos componentes $n_i$ y $n_q$ no correlacionadas, y cuya densidad espectral de potencia es $\eta_0$ constante en la banda $[-B,B]$, como se ilustra en la Figura \ref{fig:ruido pasabanda}.
+donde el proceso $n(t)$ tiene densidad espectral de potencia aproximadamente constante $\eta_0/2$ en la banda de interés. Analicemos qué ocurre con este ruido al demodular. A la salida de los multiplicadores tenemos:
+\begin{equation*}
+    y_i(t) = 2n(t)\cos(2\pi f_c t), \qquad y_q(t) = -2n(t)\sin(2\pi f_c t).
+\end{equation*}
+Como la densidad espectral de $n(t)$ es un pulso pasabanda de altura $\eta_0/2$ y ancho $2B$ centrado en $\pm f_c$, su autocorrelación (la antitransformada) es:
+\begin{equation*}
+    R_n(\tau) = r(\tau)\cos(2\pi f_c\tau), \qquad r(\tau) = 2\eta_0 B \sinc(2\pi B\tau).
+\end{equation*}
+Procediendo como en la Sección \ref{sec:modulacion wss} se obtiene:
+\begin{align*}
+    \E{y_i(t)y_i(t-\tau)} = \E{y_q(t)y_q(t-\tau)} &= r(\tau) + r(\tau)\cos(4\pi f_c\tau),\\
+    \E{y_i(t)y_q(t-\tau)} &= r(\tau)\sin(4\pi f_c\tau).
+\end{align*}
+Los términos en $4\pi f_c\tau$ corresponden a componentes alrededor de $\pm 2f_c$. Notar que el filtro de recepción es pasabajos: el filtro acoplado verifica $|\hat{H}_r(f)| = K|\hat{P}(f)|$, por lo que tiene la misma forma espectral que el pulso de banda base y es despreciable alrededor de $\pm 2f_c$ cuando $f_c\gg f_s$. Por lo tanto, estos términos son eliminados por el filtro, y las componentes de ruido resultantes $n_i$ y $n_q$ tienen densidad espectral $\eta_0$ constante en la banda $[-B,B]$ (la antitransformada de $r(\tau)$), como se ilustra en la Figura \ref{fig:ruido pasabanda}, y son no correlacionadas. Como además se obtienen por operaciones lineales del mismo proceso Gaussiano, son independientes.
 
 
 \begin{figure}
