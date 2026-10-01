@@ -456,7 +456,7 @@ Veamos un ejemplo diferente, el pulso con retorno a cero.
         \end{tikzpicture}
     \end{center}
 
-    ¡Por lo tanto, en la señal resultante habrá frecuencias proporcionales a la frecuencia de símbolo que podemos detectar y utilizar para sincronizar el receptor! Esta es una de las ventajas de utilizar una onda RZ. Sin embargo, notemos que ahora el lóbulo central utiliza $2f_s$, el doble de ancho de banda.
+    Por lo tanto, en la señal resultante habrá frecuencias proporcionales a la frecuencia de símbolo que podemos detectar y utilizar para sincronizar el receptor. Esta es una de las ventajas de utilizar una onda RZ. Sin embargo, notemos que ahora el lóbulo central utiliza $2f_s$, el doble de ancho de banda.
 \end{ejemplo}
 
 El ejemplo anterior lleva a la siguiente pregunta: ¿Qué porcentaje de la energía de un pulso rectangular entra en las distintas bandas? Analicemos para el pulso de ancho $T$ genérico (por ejemplo, $T=T_s$ para NRZ y $T=T_s/2$ para RZ). Sea $p(t)$ el pulso de ancho $T$ y energía $1$, es decir:
@@ -485,8 +485,8 @@ pero podemos ver cuánta energía se encuentra en las distintas bandas. Esto se 
             \draw[dotted] (pi/3,0) node [anchor=north] {$\frac{1}{2T}$} -- (pi/3,{4*(sin(pi/2 r)/(pi/2))^2});
             \path (2*pi/3,0) node [anchor=north] {$\frac{1}{T}$} -- (4*pi/3,0) node [anchor=north] {$\frac{2}{T}$};
         \end{tikzpicture}
-    \end{minipage}\hspace{2cm}
-    \begin{minipage}{3cm}
+    \end{minipage}\hspace{1cm}
+    \begin{minipage}{4cm}
         \begin{tabular}{|c|c|}
             \hline 
             $T f$ & \% Potencia \\

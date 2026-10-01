@@ -75,7 +75,11 @@ Con este comportamiento genérico -- adquisición exponencial, con constante de 
 
 \subsection*{Sincronización de portadora: el lazo de Costas}
 
-Apliquemos el PLL genérico al problema de la Sección \ref{sec:deteccion coherente}. Sea, para BPSK, $x_c(t) = \sum_k a_k\, p(t-kT_s)\cos(2\pi f_c t+\theta)$, con $a_k\in\{-A,A\}$ y $\theta$ la fase (desconocida) del oscilador transmisor. El receptor genera localmente $2\cos(2\pi f_c t+\theta_{vco})$ y $-2\sin(2\pi f_c t+\theta_{vco})$, con $\theta_{vco}$ la fase de su propio VCO -- la estimación actual de $\theta$, y $\theta_e:=\theta-\theta_{vco}$ el error de fase que queremos anular.
+Apliquemos el PLL genérico al problema de la Sección \ref{sec:deteccion coherente}. Sea, para BPSK:
+\begin{equation*}
+x_c(t) = \sum_k a_k\, p(t-kT_s)\cos(2\pi f_c t+\theta),
+\end{equation*}
+con $a_k\in\{-A,A\}$ y $\theta$ la fase (desconocida) del oscilador transmisor. El receptor genera localmente las ramas $2\cos(2\pi f_c t+\theta_{vco})$ y $-2\sin(2\pi f_c t+\theta_{vco})$, con $\theta_{vco}$ la fase de su propio VCO, la estimación actual de $\theta$, y $\theta_e:=\theta-\theta_{vco}$ el error de fase que queremos anular.
 
 \begin{proposicion}[Señal de error del lazo de Costas]\label{prop:costas}
 Con $m(t):=\sum_k a_k\, p(t-kT_s)$, las salidas de los mezcladores del receptor son

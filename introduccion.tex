@@ -44,7 +44,6 @@ En la transmisión digital, se transmiten símbolos $a_k$ construyendo una seña
 
 \begin{figure}
     \begin{center}
-        
         \begin{tikzpicture}[blockdiagram]
         \node [block] (fuente) {Fuente};
         \node [block, right = of fuente] (transducer) {Transductor};
@@ -100,7 +99,6 @@ El diagrama general de un sistema de transmisión digital se muestra en la Figur
 
 \begin{figure}
     \begin{center}
-        
         \begin{tikzpicture}[blockdiagram,node distance=3em]
         \node [block,align=center] (fuente) {Fuente \\ digital};
         \node [block, right = 5em of fuente, align=center] (codfuente) {Cod. de fuente};
@@ -271,7 +269,7 @@ Su entropía es:
 \end{equation*}
 con largo medio $\bar{L}_1 = (0.7)(1)+(0.2)(2)+(0.1)(2) = 1.3$ bits/símbolo. Esta ya es la mejor codificación posible para $N=1$ (es el árbol de Huffman óptimo). Sin embargo, aún queda lejos de $H(X)$: $\bar{L}_1 - H(X)\approx 0.143$ bits/símbolo (un $12\%$ de \emph{overhead}). El problema es de granularidad: con solo tres símbolos, no hay forma de asignarle a $A$ (con $\p{A}=0.7$, muy por encima de $1/2$) menos de $1$ bit completo.
 
-\textbf{Codificación por pares ($N=2$).} Agrupemos los símbolos de a dos. Por independencia, $\p{b_k b_{k+1}=XY}=\p{b_k=X}\,\p{b_{k+1}=Y}$, lo que da $9$ pares posibles. Aplicando el algoritmo de Huffman a esas $9$ probabilidades (ver el árbol de la Figura \ref{fig:huffman bloques}) obtenemos por ejemplo el siguiente código:
+\textbf{Codificación por pares ($N=2$).} Agrupemos los símbolos de a dos. Por independencia, se tiene que $\p{b_k b_{k+1}=XY}=\p{b_k=X}\,\p{b_{k+1}=Y}$, lo que da $9$ pares posibles. Aplicando el algoritmo de Huffman a esas $9$ probabilidades (ver el árbol de la Figura \ref{fig:huffman bloques}) obtenemos por ejemplo el siguiente código:
 \begin{center}
     \begin{tabular}{|c|c|c|c|}
         \hline

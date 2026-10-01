@@ -224,7 +224,7 @@ con $\theta(d)=\angle\Gamma_L - 2\beta d$ barriendo todos los valores posibles a
     \mathrm{ROE} := \frac{|\hat V|_{\max}}{|\hat V|_{\min}} = \frac{1+|\Gamma_L(f)|}{1-|\Gamma_L(f)|} \in [1,\infty).
 \end{equation}
 
-\begin{remark}[ROE = VSWR]
+\begin{remark}
 La sigla ROE (Relación de Onda Estacionaria) es la traducción directa de VSWR (\emph{Voltage Standing Wave Ratio}), y ambas se usan indistintamente en la bibliografía, datasheets e instrumental -- muchos equipos muestran ``VSWR'' en pantalla aunque el manual esté en español. Históricamente, el ROE se medía físicamente deslizando una sonda a lo largo de una \emph{línea ranurada} y registrando los máximos y mínimos de tensión, de ahí el nombre.
 \end{remark}
 
@@ -333,9 +333,9 @@ El primer mecanismo es el que motivó la Condición de Heaviside: si $\beta(f)$ 
 Si $\tau_g(f)$ es constante dentro del ancho de banda de la señal, todas las componentes espectrales del pulso llegan juntas -- desplazadas en bloque, sin desarmarse. Si $\tau_g(f)$ varía apreciablemente dentro de ese ancho de banda, las componentes de baja y alta frecuencia del pulso llegan en instantes distintos: el pulso se \emph{dispersa}, ensanchándose en el tiempo. Esta es la dispersión en sentido estricto -- la misma palabra que van a reencontrar, con otro mecanismo físico de fondo, si cursan un curso de propagación inalámbrica o de fibra óptica.
 
 Para una línea de bajas pérdidas ($R\ll 2\pi f L$, $G\ll 2\pi f C$, el régimen usual en la práctica), podemos aproximar \eqref{eq:gamma} reteniendo el primer orden en $R/(2\pi f L)$ y $G/(2\pi f C)$:
-\begin{equation*}
-    \gamma(f) = \sqrt{(R+j2\pi f L)(G+j2\pi f C)} = j2\pi f\sqrt{LC}\sqrt{\left(1+\frac{R}{j2\pi f L}\right)\left(1+\frac{G}{j2\pi f C}\right)} \approx j2\pi f\sqrt{LC}\left(1+\frac{R}{j4\pi f L}+\frac{G}{j4\pi f C}\right),
-\end{equation*}
+\begin{align*}
+    \gamma(f) &= \sqrt{(R+j2\pi f L)(G+j2\pi f C)} = j2\pi f\sqrt{LC}\sqrt{\left(1+\frac{R}{j2\pi f L}\right)\left(1+\frac{G}{j2\pi f C}\right)} \\ &\approx j2\pi f\sqrt{LC}\left(1+\frac{R}{j4\pi f L}+\frac{G}{j4\pi f C}\right),
+\end{align*}
 usando $\sqrt{1+x}\approx 1+x/2$ para $|x|\ll 1$. Separando parte real e imaginaria:
 \begin{equation}\label{eq:beta aproximado}
     \beta(f) \approx 2\pi f\sqrt{LC}, \qquad\qquad \alpha(f) \approx \frac{1}{2}\left(R\sqrt{\frac{C}{L}}+G\sqrt{\frac{L}{C}}\right).
@@ -499,7 +499,11 @@ Sea $\{c_n\}$ una solución del sistema sin truncar, y $y_k:=\sum_n \tilde p_{k-
 \begin{equation*}
     \hat Y(f) = \sum_k y_k\, \e^{-j2\pi f kT_s} = \sum_n c_n \sum_m \tilde p_m\, \e^{-j2\pi f(m+n)T_s} = \left(\sum_n c_n\, \e^{-j2\pi fnT_s}\right)\left(\sum_m \tilde p_m\, \e^{-j2\pi fmT_s}\right) = \hat C(f)\,\hat P_d(f),
 \end{equation*}
-el \emph{teorema de convolución} discreto -- exactamente análogo al continuo ya conocido: la transformada de una convolución es el producto de las transformadas. Por otro lado, $y_k=\delta_{k,0}$ para todo $k$ da $\hat Y(f)=\sum_k \delta_{k,0}\e^{-j2\pi fkT_s}=1$. Combinando ambas expresiones para $\hat Y(f)$:
+el \emph{teorema de convolución} discreto -- exactamente análogo al continuo ya conocido: la transformada de una convolución es el producto de las transformadas. Por otro lado, $y_k=\delta_{k,0}$ para todo $k$ da:
+\begin{equation*}
+\hat Y(f)=\sum_k \delta_{k,0}\e^{-j2\pi fkT_s}=1.
+\end{equation*}
+Combinando ambas expresiones para $\hat Y(f)$:
 \begin{equation*}
     \hat C(f)\, \hat P_d(f) = 1 \quad\Longrightarrow\quad \hat C(f) = \frac{1}{\hat P_d(f)},
 \end{equation*}
