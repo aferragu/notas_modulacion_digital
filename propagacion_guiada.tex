@@ -106,7 +106,59 @@ La ecuación diferencial \eqref{eq:onda perdida fourier} es, para cada $f$, una 
 \end{equation}
 donde las constantes $\hat{V}^+(f)$ y $\hat{V}^-(f)$ pueden depender de $f$, y quedan determinadas por las condiciones de borde de la línea.
 
-Interpretemos cada uno de estos términos. El primero, $\hat{V}^+(f)\e^{-\alpha(f) z}\e^{-j\beta(f) z}$, se atenúa a medida que $z$ crece y acumula un atraso de fase creciente con $z$. Corresponde, al antitransformar, a una onda que se propaga en el sentido de $z$ creciente y llega retardada y atenuada, que llamamos \emph{onda incidente}. El segundo término, con $\e^{+\gamma(f) z}$, crece con $z$. No es físico para una línea semi-infinita, pero si la línea tiene longitud finita y termina en una carga que refleja parte de la energía (Sección \ref{sec:linea cargada}), representa la \emph{onda reflejada}, que se propaga en el sentido de $z$ decreciente y por lo tanto se atenúa a medida que $z$ decrece.
+Interpretemos cada uno de estos términos. El primero, $\hat{V}^+(f)\e^{-\alpha(f) z}\e^{-j\beta(f) z}$, se atenúa a medida que $z$ crece y acumula un atraso de fase creciente con $z$. Corresponde, al antitransformar, a una onda que se propaga en el sentido de $z$ creciente y llega retardada y atenuada, que llamamos \emph{onda incidente}. El segundo término, con $\e^{+\gamma(f) z}$, crece con $z$. No es físico para una línea semi-infinita, pero si la línea tiene longitud finita y termina en una carga que refleja parte de la energía (Sección \ref{sec:linea cargada}), representa la \emph{onda reflejada}, que se propaga en el sentido de $z$ decreciente y por lo tanto se atenúa a medida que $z$ decrece. La Figura \ref{fig:fasor 3d} muestra ambos términos para una frecuencia fija: al avanzar en $z$, el fasor de la onda incidente gira en sentido horario y su módulo decrece, mientras que el de la onda reflejada gira en sentido antihorario y su módulo crece.
+
+\begin{figure}
+    % \fasortresd{color}{signo}{amplitud(z)}{título}{sentido de giro}
+    % signo = -1: incidente (e^{-j beta z}); signo = +1: reflejada (e^{+j beta z}).
+    % Ejes de pgfplots: x = z (posición), y = Im (profundidad), z = Re (vertical).
+    \newcommand{\fasortresd}[5]{%
+    \begin{tikzpicture}
+      \def\L{3}
+      \def\al{0.25}
+      \def\be{2*pi}
+      \begin{axis}[
+          view={22}{22},
+          width=15cm, height=6cm,
+          xmin=0, xmax=\L+0.3, ymin=-1.25, ymax=1.25, zmin=-1.25, zmax=1.25,
+          axis lines=none,
+          clip=false,
+          declare function={amp(\t)=#3;},
+          samples=400, samples y=0, domain=0:\L,
+        ]
+        \draw[->, thick, gray!60!black] (axis cs:0,0,0) -- (axis cs:\L+0.35,0,0) node[right] {$z$};
+        \draw[->, gray!60!black] (axis cs:0,0,-1.2) -- (axis cs:0,0,1.3) node[above] {$\mathrm{Re}$};
+        \draw[->, gray!60!black] (axis cs:0,-1.1,0) -- (axis cs:0,1.15,0) node[above right=-2pt] {$\mathrm{Im}$};
+        \addplot3[gray!50, densely dashed, domain=0:360, samples=80] ({0},{amp(0)*sin(x)},{amp(0)*cos(x)});
+        \addplot3[#1!45, thick, dashed] ({x},{0},{amp(x)*cos(deg(\be*x))});
+        \addplot3[#1, very thick] ({x},{#2*amp(x)*sin(deg(\be*x))},{amp(x)*cos(deg(\be*x))});
+        \foreach \k in {0,...,24} {
+          \pgfmathsetmacro{\zz}{\k/8}
+          \pgfmathsetmacro{\A}{amp(\zz)}
+          \pgfmathsetmacro{\re}{\A*cos(deg(\be*\zz))}
+          \pgfmathsetmacro{\im}{#2*\A*sin(deg(\be*\zz))}
+          \edef\temp{\noexpand\draw[->, #1!80!black, semithick] (axis cs:\zz,0,0) -- (axis cs:\zz,\im,\re);
+                     \noexpand\draw[gray!50, densely dotted] (axis cs:\zz,\im,\re) -- (axis cs:\zz,0,\re);}
+          \temp
+        }
+        \addplot3[->, #1, thick, domain=20:110, samples=30] ({-0.02},{0.45*amp(0)*sin(#2*x)},{0.45*amp(0)*cos(#2*x)});
+        \node[#1!70!black, font=\small] at (axis cs:0,{#2*0.3},{amp(0)+0.3}) {#5};
+        \draw[|<->|, gray!60!black] (axis cs:1,0,-1.3) -- node[below, font=\small] {$\lambda = 2\pi/\beta$} (axis cs:2,0,-1.3);
+        \node[anchor=south west, font=\small, align=left] at (rel axis cs:0,1,1) {#4};
+      \end{axis}
+    \end{tikzpicture}}
+    \begin{center}
+        \fasortresd{teal}{-1}{exp(-\al*\t)}%
+          {Onda incidente: $\hat V^+ \e^{-\gamma z} = \hat V^+ \e^{-\alpha z}\, \e^{-j\beta z}$}%
+          {$\e^{-j\beta z}$}
+
+        \vspace{2mm}
+        \fasortresd{Red}{1}{0.6*exp(\al*(\t-\L))}%
+          {Onda reflejada: $\hat V^- \e^{+\gamma z} = \hat V^- \e^{+\alpha z}\, \e^{+j\beta z}$}%
+          {$\e^{+j\beta z}$}
+    \end{center}
+    \caption{Los dos términos de \eqref{eq:solucion V} para una frecuencia $f$ fija, como fasores a lo largo de la línea. El fasor incidente gira en sentido horario y su módulo decrece al avanzar en $z$. El reflejado gira en sentido antihorario y su módulo crece con $z$. Una vuelta completa corresponde a una longitud de onda $\lambda$. A trazos, la proyección sobre el eje real, es decir la onda en el instante $t=0$.}\label{fig:fasor 3d}
+\end{figure}
 
 Sustituyendo \eqref{eq:solucion V} en la primera ecuación de \eqref{eq:telegrafista fourier} se obtiene $\hat I(z,f)$:
 \begin{equation}\label{eq:solucion I}
@@ -140,6 +192,50 @@ siendo $\beta_i=\beta(f_i)$. La envolvente se desplaza a velocidad $2\pi(f_1-f_2
 \begin{equation*}
     v_g(f) := \frac{2\pi}{\beta'(f)}, \qquad \beta'(f) = \frac{d\beta}{df}.
 \end{equation*}
+La Figura \ref{fig:batido} ilustra la diferencia entre ambas velocidades: la portadora avanza a velocidad $v_p$ y la envolvente a velocidad $v_g$.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}[
+            declare function={
+                vp=1; vg=0.5;
+                env(\z,\t)=2*cos(90*(\z-1-vg*\t));
+                onda(\z,\t)=env(\z,\t)*cos(1440*(\z-1-vp*\t));
+            }]
+            \pgfplotsset{batido/.style={
+                width=14cm, height=3.6cm, scale only axis=false,
+                xmin=0, xmax=4.2, ymin=-2.6, ymax=2.6,
+                axis lines=middle, axis line style={->},
+                xtick=\empty, ytick=\empty,
+                xlabel={$z$}, x label style={anchor=west},
+                samples=800, domain=0:4, clip=false,
+            }}
+            \begin{axis}[batido, name=t0]
+                \addplot[gray, dashed, domain=0:4, samples=100] {env(x,0)};
+                \addplot[gray, dashed, domain=0:4, samples=100] {-env(x,0)};
+                \addplot[teal, thick] {onda(x,0)};
+                \fill[Red] (axis cs:1,2) circle (2pt);
+                \draw[gray!60!black, densely dotted] (axis cs:1,2) -- (axis cs:1,-2.6);
+                \node[anchor=west] at (axis cs:4.2,1.6) {$t=0$};
+                \coordinate (a) at (axis cs:1,-2.6);
+                \coordinate (g) at (axis cs:1.5,-2.6);
+                \coordinate (p) at (axis cs:2,-2.6);
+            \end{axis}
+            \begin{axis}[batido, name=t1, at={(t0.south west)}, anchor=north west, yshift=-1.1cm]
+                \addplot[gray, dashed, domain=0:4, samples=100] {env(x,1)};
+                \addplot[gray, dashed, domain=0:4, samples=100] {-env(x,1)};
+                \addplot[teal, thick] {onda(x,1)};
+                \fill[Red] (axis cs:2,{env(2,1)}) circle (2pt);
+                \node[anchor=west] at (axis cs:4.2,1.6) {$t=t_1$};
+                \draw[gray!60!black, densely dotted] (axis cs:1.5,2.6) -- (axis cs:1.5,2);
+                \draw[Red, densely dotted] (axis cs:2,2.6) -- (axis cs:2,{env(2,1)});
+            \end{axis}
+            \draw[->, gray!60!black] ($(a)+(0,-0.3)$) -- node[right, font=\small, pos=1] {$v_g t_1$} ($(g)+(0,-0.3)$);
+            \draw[->, Red] ($(a)+(0,-0.75)$) -- node[right, font=\small, pos=1] {$v_p t_1$} ($(p)+(0,-0.75)$);
+        \end{tikzpicture}
+    \end{center}
+    \caption{Suma de dos tonos de frecuencias cercanas a lo largo de la línea, en dos instantes. La envolvente (a trazos) avanza una distancia $v_g t_1$, mientras que un máximo de la portadora (marcado con un punto) avanza $v_p t_1$. En este ejemplo $v_g=v_p/2$.}\label{fig:batido}
+\end{figure}
 Si $\beta(f)$ es exactamente lineal en $f$, ambas velocidades coinciden y son independientes de $f$: todas las componentes espectrales del pulso viajan juntas, sin desarmarse. Si $\beta(f)$ no es lineal, distintas componentes de frecuencia viajan a distinta velocidad y el pulso se \emph{dispersa}, es decir, se ensancha en el tiempo. Como veremos en la Sección \ref{sec:dispersion pulsos}, este es uno de los mecanismos físicos que originan la ISI de la Sección \ref{sec:interferencia intersimbolica}.
 
 \begin{condicion}[Condición de Heaviside, línea sin distorsión]\label{cond:heaviside}
@@ -185,7 +281,7 @@ En la Sección \ref{sec:dispersion pulsos} retomamos este mismo cable, prestando
 
 Hasta ahora trabajamos con una línea infinita, donde solo existe la onda incidente ($\hat V^-\equiv 0$, ya que no hay nada más adelante que pueda generar una onda de regreso). En la práctica toda línea tiene longitud finita $\ell$ y termina conectada a una carga de impedancia $Z_L(f)$, por ejemplo la entrada del receptor. Vamos a ver que, salvo en un caso particular, la carga genera una \emph{onda reflejada} que viaja de regreso hacia el generador, con consecuencias muy concretas sobre la señal que se transmite.
 
-Ubiquemos el generador en $z=0$ y la carga en $z=\ell$. La condición de borde en la carga es la ley de Ohm generalizada: la tensión y la corriente en $z=\ell$ deben verificar $\hat V(\ell,f) = Z_L(f)\, \hat I(\ell,f)$. Sustituyendo \eqref{eq:solucion V} y \eqref{eq:solucion I}:
+Ubiquemos el generador en $z=0$ y la carga en $z=\ell$, como en la Figura \ref{fig:linea cargada}. La condición de borde en la carga es la ley de Ohm generalizada: la tensión y la corriente en $z=\ell$ deben verificar $\hat V(\ell,f) = Z_L(f)\, \hat I(\ell,f)$. Sustituyendo \eqref{eq:solucion V} y \eqref{eq:solucion I}:
 \begin{equation*}
     \hat{V}^+(f)\e^{-\gamma\ell} + \hat{V}^-(f)\e^{\gamma\ell} = \frac{Z_L(f)}{Z_0(f)}\left[\hat{V}^+(f)\e^{-\gamma\ell} - \hat{V}^-(f)\e^{\gamma\ell}\right],
 \end{equation*}
@@ -193,7 +289,71 @@ que reordenando da la relación entre la amplitud de la onda reflejada y la inci
 \begin{equation}\label{eq:gamma L}
     \Gamma_L(f) := \frac{\hat{V}^-(f)\e^{\gamma\ell}}{\hat{V}^+(f)\e^{-\gamma\ell}} = \frac{Z_L(f)-Z_0(f)}{Z_L(f)+Z_0(f)}.
 \end{equation}
-Llamamos a $\Gamma_L(f)$ el \emph{coeficiente de reflexión de carga}. Notemos el caso particular $Z_L=Z_0$: la carga es indistinguible, para la línea, de que ésta continuara infinitamente, y no hay onda reflejada ($\Gamma_L=0$). Decimos en ese caso que la línea está \emph{adaptada}. En cualquier otro caso, $\Gamma_L\neq 0$ y aparece una onda reflejada.
+Llamamos a $\Gamma_L(f)$ el \emph{coeficiente de reflexión de carga}. Notemos el caso particular $Z_L=Z_0$: la carga es indistinguible, para la línea, de que ésta continuara infinitamente, y no hay onda reflejada ($\Gamma_L=0$). Decimos en ese caso que la línea está \emph{adaptada}. En cualquier otro caso, $\Gamma_L\neq 0$ y aparece una onda reflejada. La Figura \ref{fig:pulso reflejado} muestra lo que esto significa en el dominio del tiempo, para un pulso enviado por una línea con pérdidas terminada en $Z_L=4Z_0$, es decir con $\Gamma_L=0.6$.
+
+\begin{figure}
+    \begin{center}
+        \begin{circuitikz}[american]
+            \fill[gray!12] (3,0) rectangle (10,2);
+            \draw (0,0) to[V, l=$v_G(t)$, invert] (0,2) to[generic, l=$Z_G$] (3,2);
+            \draw (0,0) -- (3,0);
+            \draw[very thick] (3,2) -- (10,2);
+            \draw[very thick] (3,0) -- (10,0);
+            \draw (10,2) -- (11.5,2) to[generic, l=$Z_L$] (11.5,0) -- (10,0);
+            \draw[->, teal, thick] (5.25,1.45) -- node[above] {$\hat V^+\e^{-\gamma z}$} (7.75,1.45);
+            \draw[<-, Red, thick] (5.25,0.55) -- node[below] {$\hat V^-\e^{\gamma z}$} (7.75,0.55);
+            \node at (6.5,1) {\small $Z_0(f)$, $\gamma(f)$};
+            \node[above] at (3,2) {$\Gamma_G$};
+            \node[above] at (10,2) {$\Gamma_L$};
+            \draw[->] (3,-0.7) -- (10.8,-0.7) node[right] {$z$};
+            \draw (3,-0.6) -- (3,-0.8) node[below] {$0$};
+            \draw (10,-0.6) -- (10,-0.8) node[below] {$\ell$};
+            \draw[->] (10,-1.7) -- (2.2,-1.7) node[left] {$d$};
+            \draw (10,-1.6) -- (10,-1.8) node[below] {$0$};
+            \draw (3,-1.6) -- (3,-1.8) node[below] {$\ell$};
+        \end{circuitikz}
+    \end{center}
+    \caption{Línea de longitud $\ell$ alimentada por un generador de impedancia interna $Z_G$ y terminada en una carga $Z_L$. La posición se mide con $z$ desde el generador, o con $d=\ell-z$ desde la carga. En cada extremo, la onda que llega se refleja con coeficiente $\Gamma_L$ o $\Gamma_G$.}\label{fig:linea cargada}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \pgfplotsset{instantanea/.style={
+                width=12cm, height=3.4cm,
+                xmin=0, xmax=3, ymin=-0.1, ymax=0.8,
+                ytick={0,0.5}, xtick={0,1,2,3}, xticklabels={},
+                axis x line=bottom, axis y line=left,
+                ylabel={$v(z,t)$},
+                every axis plot/.append style={mark=none},
+            }}
+            \begin{axis}[instantanea, name=a1,
+                legend style={at={(0.5,1.05)}, anchor=south, legend columns=3, draw=none, font=\small}]
+                \addplot[teal, thick, densely dashed] table[x=z, y=inc0] {figuras/propagacion/pulso_reflejado.dat};
+                \addlegendentry{incidente}
+                \addplot[Red, thick, densely dashed] table[x=z, y=ref0] {figuras/propagacion/pulso_reflejado.dat};
+                \addlegendentry{reflejada}
+                \addplot[black, very thick] table[x=z, y=tot0] {figuras/propagacion/pulso_reflejado.dat};
+                \addlegendentry{total}
+                \node[anchor=north east] at (rel axis cs:1,1) {$t=1.5\,T$};
+            \end{axis}
+            \begin{axis}[instantanea, name=a2, at={(a1.south west)}, anchor=north west, yshift=-0.4cm]
+                \addplot[teal, thick, densely dashed] table[x=z, y=inc1] {figuras/propagacion/pulso_reflejado.dat};
+                \addplot[Red, thick, densely dashed] table[x=z, y=ref1] {figuras/propagacion/pulso_reflejado.dat};
+                \addplot[black, very thick] table[x=z, y=tot1] {figuras/propagacion/pulso_reflejado.dat};
+                \node[anchor=north west] at (rel axis cs:0.02,1) {$t=3.5\,T$};
+            \end{axis}
+            \begin{axis}[instantanea, name=a3, at={(a2.south west)}, anchor=north west, yshift=-0.4cm,
+                xticklabels={$0$, $vT$, $2vT$, $\ell=3vT$}, xlabel={$z$}]
+                \addplot[teal, thick, densely dashed] table[x=z, y=inc2] {figuras/propagacion/pulso_reflejado.dat};
+                \addplot[Red, thick, densely dashed] table[x=z, y=ref2] {figuras/propagacion/pulso_reflejado.dat};
+                \addplot[black, very thick] table[x=z, y=tot2] {figuras/propagacion/pulso_reflejado.dat};
+                \node[anchor=north east] at (rel axis cs:1,1) {$t=4.5\,T$};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Instantáneas de la tensión a lo largo de una línea con pérdidas de longitud $\ell=3vT$, alimentada con un pulso de amplitud $1$ y duración $T$ por un generador adaptado ($Z_G=Z_0$) y terminada en $Z_L=4Z_0$ ($\Gamma_L=0.6$). La onda incidente transporta la mitad de la tensión del generador. Al llegar a la carga, la tensión total es la suma de la incidente y la reflejada. La onda reflejada vuelve hacia el generador, que la absorbe. En el camino ambas ondas se atenúan y se redondean.}\label{fig:pulso reflejado}
+\end{figure}
 
 Definimos, más generalmente, el coeficiente de reflexión en cualquier punto $z$ de la línea como el cociente entre onda reflejada e incidente evaluadas en ese punto, $\Gamma(z,f):=\hat V^-(f)\e^{\gamma z}/(\hat V^+(f)\e^{-\gamma z})$. Es más cómodo trabajar con la distancia a la carga, $d:=\ell - z$, que crece hacia el generador. De \eqref{eq:gamma L}:
 \begin{equation}\label{eq:gamma d}
@@ -227,10 +387,42 @@ Como consecuencia de la reflexión, la tensión a lo largo de la línea deja de 
 \begin{equation*}
     |\hat V(d,f)| = |\hat V^+(f)|\, \left|1+\Gamma(d,f)\right| = |\hat V^+(f)|\, \left|1+|\Gamma_L(f)|\,\e^{j\theta(d)}\right|,
 \end{equation*}
-con $\theta(d)=\angle\Gamma_L - 2\beta d$ barriendo todos los valores posibles a medida que $d$ varía, oscila entre un máximo $|\hat V^+|(1+|\Gamma_L|)$, cuando $\theta(d)=0$ y las dos ondas están en fase, y un mínimo $|\hat V^+|(1-|\Gamma_L|)$, cuando $\theta(d)=\pi$ y están en contrafase. Se forma así un patrón de \emph{onda estacionaria} a lo largo de la línea. Definimos la \emph{relación de onda estacionaria} como el cociente entre ambos:
+con $\theta(d)=\angle\Gamma_L - 2\beta d$ barriendo todos los valores posibles a medida que $d$ varía, oscila entre un máximo $|\hat V^+|(1+|\Gamma_L|)$, cuando $\theta(d)=0$ y las dos ondas están en fase, y un mínimo $|\hat V^+|(1-|\Gamma_L|)$, cuando $\theta(d)=\pi$ y están en contrafase. Se forma así un patrón de \emph{onda estacionaria} a lo largo de la línea (Figura \ref{fig:onda estacionaria}), con máximos y mínimos separados $\lambda/4$ que se repiten cada $\lambda/2$. Definimos la \emph{relación de onda estacionaria} como el cociente entre ambos:
 \begin{equation}\label{eq:roe}
     \mathrm{ROE} := \frac{|\hat V|_{\max}}{|\hat V|_{\min}} = \frac{1+|\Gamma_L(f)|}{1-|\Gamma_L(f)|} \in [1,\infty).
 \end{equation}
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=13cm, height=6cm,
+                x dir=reverse,
+                xmin=0, xmax=1, ymin=0, ymax=2.25,
+                xtick={0,0.25,0.5,0.75,1},
+                xticklabels={$0$, $\lambda/4$, $\lambda/2$, $3\lambda/4$, $\lambda$},
+                ytick={0,1,2},
+                xlabel={distancia a la carga, $d$},
+                ylabel={$|\hat V(d,f)|/|\hat V^+(f)|$},
+                axis x line=bottom, axis y line=left,
+                legend style={at={(0.5,1.03)}, anchor=south, legend columns=3, draw=none, font=\small},
+                samples=300, domain=0:1, clip=false,
+                ]
+                \addplot[gray, thick] {1};
+                \addlegendentry{$\Gamma_L=0$}
+                \addplot[teal, very thick] {sqrt(1.2 + 2*(-0.2*cos(720*x) + 0.4*sin(720*x)))};
+                \addlegendentry{$\Gamma_L=-0.2+j0.4$}
+                \addplot[Red, thick, dashed] {2*abs(sin(360*x))};
+                \addlegendentry{$\Gamma_L=-1$ (cortocircuito)}
+                \draw[teal, densely dotted] (axis cs:1,1.447) -- (axis cs:0,1.447) node[right, font=\small] {$1+|\Gamma_L|$};
+                \draw[teal, densely dotted] (axis cs:1,0.553) -- (axis cs:0,0.553) node[right, font=\small] {$1-|\Gamma_L|$};
+                \draw[|<->|, Red] (axis cs:0,2.12) -- node[above, font=\small] {$\lambda/2$} (axis cs:0.5,2.12);
+                \node[anchor=north, font=\small, yshift=-13pt] at (axis cs:0,0) {(carga)};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Patrón de onda estacionaria en una línea sin pérdidas, en función de la distancia $d$ a la carga (ubicada a la derecha). Con la línea adaptada la amplitud es la misma en todo punto. Para la carga del Ejemplo \ref{ejemplo:smith} ($|\Gamma_L|\approx 0.45$) la amplitud oscila entre $1\pm|\Gamma_L|$, y $\mathrm{ROE}\approx 2.6$. En cortocircuito la tensión se anula en la carga y cada $\lambda/2$, y la $\mathrm{ROE}$ es infinita.}\label{fig:onda estacionaria}
+\end{figure}
 
 \begin{remark}
 La sigla ROE es la traducción de VSWR (\emph{Voltage Standing Wave Ratio}), y ambas se usan indistintamente en la bibliografía, hojas de datos e instrumental. Históricamente, la ROE se medía deslizando una sonda a lo largo de una \emph{línea ranurada} y registrando los máximos y mínimos de tensión, de ahí el nombre.
@@ -240,11 +432,55 @@ Hay dos casos extremos. Si la línea está adaptada ($\Gamma_L=0$), resulta $\ma
 
 \subsection*{Reflexiones múltiples y ecos}
 
-Las reflexiones tienen además una consecuencia directa sobre la transmisión de pulsos. El generador también tiene una impedancia interna $Z_G$, por lo que la onda reflejada en la carga, al llegar a $z=0$, se refleja nuevamente con coeficiente $\Gamma_G=(Z_G-Z_0)/(Z_G+Z_0)$ y vuelve a viajar hacia la carga. Si ambos extremos están desadaptados, un pulso $p(t)$ enviado por la línea llega a la carga acompañado de copias que recorrieron la línea ida y vuelta una, dos o más veces. Suponiendo $\Gamma_L$ y $\Gamma_G$ reales (cargas resistivas) y despreciando la distorsión del pulso, la tensión recibida es proporcional a:
+Las reflexiones tienen además una consecuencia directa sobre la transmisión de pulsos. El generador también tiene una impedancia interna $Z_G$, por lo que la onda reflejada en la carga, al llegar a $z=0$, se refleja nuevamente con coeficiente $\Gamma_G=(Z_G-Z_0)/(Z_G+Z_0)$ y vuelve a viajar hacia la carga. Si ambos extremos están desadaptados, un pulso $p(t)$ enviado por la línea llega a la carga acompañado de copias que recorrieron la línea ida y vuelta una, dos o más veces (Figura \ref{fig:ecos}). Suponiendo $\Gamma_L$ y $\Gamma_G$ reales (cargas resistivas) y despreciando la distorsión del pulso, la tensión recibida es proporcional a:
 \begin{equation*}
     p(t-t_d) + \rho\, p(t-3t_d) + \rho^2 p(t-5t_d) + \cdots, \qquad \rho = \Gamma_L\Gamma_G\,\e^{-2\alpha\ell},
 \end{equation*}
 siendo $t_d=\ell/v_p$ el tiempo de propagación a lo largo de la línea. Cada copia es un \emph{eco} del pulso original, retardado $2t_d$ respecto del anterior. Si $2t_d$ es comparable o mayor que el tiempo de símbolo $T_s$, los ecos caen sobre los símbolos siguientes y producen interferencia intersimbólica. Se trata de una ISI de origen distinto a la de la Sección \ref{sec:interferencia intersimbolica}: no se debe a un ancho de banda limitado, sino a la geometría de la línea. Si en cambio $2t_d\ll T_s$, los ecos se superponen con el propio pulso y solo deforman levemente sus flancos. En frecuencia, la suma de ecos produce en $\hat H(f)$ una ondulación periódica, de período $1/(2t_d)$.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \def\u{1.1}
+            \def\w{3.2}
+            % tiempo
+            \draw[->] (-0.7,0) -- (-0.7,{-6.3*\u}) node[below] {$t$};
+            \foreach \k/\lab in {0/0, 1/t_d, 2/2t_d, 3/3t_d, 4/4t_d, 5/5t_d}{
+                \draw (-0.62,{-\k*\u}) -- (-0.78,{-\k*\u}) node[left, font=\small] {$\lab$};
+            }
+            % extremos de la línea
+            \draw[thick] (0,0) -- (0,{-6*\u}) node[below] {$\Gamma_G$};
+            \draw[thick] (\w,0) -- (\w,{-6*\u}) node[below] {$\Gamma_L$};
+            \node[above] at (0,0) {$z=0$};
+            \node[above] at (\w,0) {$z=\ell$};
+            % rebotes
+            \foreach \k/\lab in {0/\hat V^+, 2/\Gamma_G\Gamma_L\hat V^+, 4/\Gamma_G^2\Gamma_L^2\hat V^+}{
+                \draw[->, teal, thick] (0,{-\k*\u}) -- node[sloped, above, font=\scriptsize] {$\lab$} (\w,{-(\k+1)*\u});
+            }
+            \foreach \k/\lab in {1/\Gamma_L\hat V^+, 3/\Gamma_G\Gamma_L^2\hat V^+, 5/\Gamma_G^2\Gamma_L^3\hat V^+}{
+                \draw[->, Red, thick] (\w,{-\k*\u}) -- node[sloped, above, font=\scriptsize] {$\lab$} (0,{-(\k+1)*\u});
+            }
+            % llegadas a la carga
+            \foreach \k in {1,3,5}{
+                \draw[gray, densely dotted] (\w,{-\k*\u}) -- (4.6,{-\k*\u});
+            }
+            \begin{axis}[
+                at={(4.6cm,0)}, anchor=north west,
+                scale only axis, width=4.2cm, height=6.6cm,
+                y dir=reverse, ymin=0, ymax=6,
+                xmin=-0.5, xmax=1.4,
+                axis x line=top, axis y line=left,
+                ytick={1,3,5}, yticklabels={$t_d$, $3t_d$, $5t_d$},
+                xtick={0,1},
+                xlabel={$v(\ell,t)$},
+                ]
+                \draw[gray] (axis cs:0,0) -- (axis cs:0,6);
+                \addplot[black, thick, mark=none] table[x=v, y=t] {figuras/propagacion/ecos.dat};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Reflexiones múltiples con ambos extremos desadaptados. A la izquierda, el diagrama de rebotes: cada tramo es una onda que recorre la línea en un sentido, con su amplitud (se omite la atenuación). A la derecha, la tensión en la carga para un pulso de duración $T=t_d/3$, con $Z_G=Z_0/4$ ($\Gamma_G=-0.6$), $Z_L=4Z_0$ ($\Gamma_L=0.6$) y la misma línea con pérdidas de la Figura \ref{fig:pulso reflejado}. Cada eco llega $2t_d$ después del anterior, multiplicado por $\rho=\Gamma_L\Gamma_G\e^{-2\alpha\ell}$, que en este caso es negativo.}\label{fig:ecos}
+\end{figure}
 
 Para eliminar los ecos alcanza con adaptar uno de los dos extremos. Si $\Gamma_L=0$ no se genera onda reflejada, y si $\Gamma_G=0$ la onda reflejada es absorbida por el generador y no vuelve. Sin embargo, en un \emph{bus} donde varios dispositivos comparten la línea y cualquiera puede transmitir, la señal viaja en ambos sentidos y es necesario adaptar los dos extremos.
 
@@ -285,11 +521,16 @@ La \emph{Carta de Smith} (Figura \ref{fig:carta smith}) es un gráfico polar del
             % ejemplo: zeta_L = 0.5 + j0.5 (coincide con ejemplo del texto: Z_L=25+j25 sobre Z0=50)
             \coordinate (GammaL) at ({(-0.2)/1.4}, {1/1.4});
             \fill[Red] (GammaL) circle (0.014);
-            \node[Red, above right] at (GammaL) {\footnotesize $\Gamma_L$ ($\zeta_L=0.5+j0.5$)};
+            \node[Red, above right, fill=white, inner sep=1pt] at (GammaL) {\footnotesize $\Gamma_L$ ($\zeta_L=0.5+j0.5$)};
             \draw[Red, dashed] (0,0) circle ({sqrt(pow((-0.2)/1.4,2)+pow(1/1.4,2))});
+            % rotación de lambda/8 hacia el generador: zeta(lambda/8) = 2 + j1
+            \draw[->, Red, thick] (GammaL) arc[start angle=116.57, end angle=29, radius=0.4472];
+            \fill[Red] (0.4,0.2) circle (0.014);
+            \node[Red, right, fill=white, inner sep=1pt] at (0.42,0.2) {\footnotesize $\zeta(\lambda/8)=2+j1$};
+            \node[Red, fill=white, inner sep=1pt] at (0.24,0.53) {\footnotesize $\lambda/8$};
         \end{tikzpicture}
     \end{center}
-    \caption{Esquema de la Carta de Smith: disco $|\Gamma|\leqslant 1$ con la grilla de resistencia normalizada $r$ constante (circunferencias tangentes al punto $\Gamma=1$) y reactancia normalizada $x$ constante (arcos). Moverse a lo largo de la línea es rotar sobre la circunferencia punteada (ROE constante) que pasa por $\Gamma_L$.}\label{fig:carta smith}
+    \caption{Esquema de la Carta de Smith: disco $|\Gamma|\leqslant 1$ con la grilla de resistencia normalizada $r$ constante (circunferencias tangentes al punto $\Gamma=1$) y reactancia normalizada $x$ constante (arcos). Moverse a lo largo de la línea es rotar sobre la circunferencia a trazos (ROE constante) que pasa por $\Gamma_L$. La flecha corresponde a alejarse $\lambda/8$ de la carga del Ejemplo \ref{ejemplo:smith}, en sentido horario.}\label{fig:carta smith}
 \end{figure}
 
 \begin{ejemplo}[Uso de la Carta de Smith]\label{ejemplo:smith}
@@ -297,7 +538,7 @@ Sobre una línea de $Z_0=50\ \unit{\ohm}$ sin pérdidas se conecta una carga $Z_
 \begin{equation*}
     \Gamma_L = \frac{(0.5+j0.5)-1}{(0.5+j0.5)+1} = \frac{-0.5+j0.5}{1.5+j0.5} = -0.2+j0.4,
 \end{equation*}
-de donde $|\Gamma_L|\approx 0.447$ y, por \eqref{eq:roe}, $\mathrm{ROE}=\frac{1+0.447}{1-0.447}\approx 2.62$. Sobre la Carta de Smith (Figura \ref{fig:carta smith}), el punto $\zeta_L=0.5+j0.5$ se ubica en la intersección de la circunferencia $r=0.5$ con el arco $x=0.5$, y $\Gamma_L$ se lee directamente como el vector desde el origen hasta ese punto. La circunferencia de ROE constante que pasa por ese punto (marcada en la figura) es el lugar geométrico de todas las impedancias que se ven al recorrer la línea desde la carga. Para hallar, por ejemplo, la impedancia a $d=\lambda/8$ de la carga basta rotar $2\beta d = 2\cdot\frac{2\pi}{\lambda}\cdot\frac{\lambda}{8}=\frac{\pi}{2}$ ($90^\circ$) sobre esa circunferencia y leer $\zeta(d)$ en la grilla.
+de donde $|\Gamma_L|\approx 0.447$ y, por \eqref{eq:roe}, $\mathrm{ROE}=\frac{1+0.447}{1-0.447}\approx 2.62$. Sobre la Carta de Smith (Figura \ref{fig:carta smith}), el punto $\zeta_L=0.5+j0.5$ se ubica en la intersección de la circunferencia $r=0.5$ con el arco $x=0.5$, y $\Gamma_L$ se lee directamente como el vector desde el origen hasta ese punto. La circunferencia de ROE constante que pasa por ese punto (marcada en la figura) es el lugar geométrico de todas las impedancias que se ven al recorrer la línea desde la carga. Para hallar, por ejemplo, la impedancia a $d=\lambda/8$ de la carga basta rotar $2\beta d = 2\cdot\frac{2\pi}{\lambda}\cdot\frac{\lambda}{8}=\frac{\pi}{2}$ ($90^\circ$) sobre esa circunferencia en sentido horario y leer $\zeta(d)$ en la grilla. Se llega a la intersección de la circunferencia $r=2$ con el arco $x=1$, es decir $\zeta(\lambda/8)=2+j1$, lo que puede verificarse con \eqref{eq:transformacion impedancia sin perdidas}.
 \end{ejemplo}
 
 \subsection*{Adaptación de impedancias}
@@ -329,12 +570,44 @@ Retomemos la carga $\zeta_L=0.5+j0.5$ ($\Gamma_L=-0.2+j0.4$) del Ejemplo \ref{ej
 \begin{equation*}
     y_L = \frac{1}{\zeta_L} = \frac{1}{0.5+j0.5} = 1-j1,
 \end{equation*}
-que en este caso particular ya tiene parte real $1$: la carga está exactamente sobre la circunferencia $g=1$ (sobre la Carta de Smith, esto se ve tomando el punto diametralmente opuesto a $\Gamma_L$, sobre el mismo círculo de ROE de la Figura \ref{fig:carta smith}). Esto simplifica el ejemplo, ya que alcanza con un stub colocado en la carga misma, $d=0$, y solo resta el paso 2. Necesitamos cancelar $b=-1$, es decir un stub con $y_{cc}(\ell_s)=+j1 \Leftrightarrow -\cot(\beta\ell_s)=1 \Leftrightarrow \beta\ell_s = \frac{3\pi}{4}$, de donde:
+que en este caso particular ya tiene parte real $1$: la carga está exactamente sobre la circunferencia $g=1$ (sobre la Carta de Smith, esto se ve tomando el punto diametralmente opuesto a $\Gamma_L$, sobre el mismo círculo de ROE, como muestra la Figura \ref{fig:smith stub}). Esto simplifica el ejemplo, ya que alcanza con un stub colocado en la carga misma, $d=0$, y solo resta el paso 2. Necesitamos cancelar $b=-1$, es decir un stub con $y_{cc}(\ell_s)=+j1 \Leftrightarrow -\cot(\beta\ell_s)=1 \Leftrightarrow \beta\ell_s = \frac{3\pi}{4}$, de donde:
 \begin{equation*}
     \ell_s = \frac{3}{4}\cdot\frac{\pi}{\beta} = \frac{3}{4}\cdot\frac{\lambda}{2} = \frac{3\lambda}{8}.
 \end{equation*}
 Un stub cortocircuitado de longitud $\frac{3\lambda}{8}$, conectado en paralelo con la línea en la carga, adapta completamente este caso. En general (cuando $g_L\neq 1$) hace falta además el paso 1, buscando el $d\neq 0$ adecuado antes de calcular el largo del stub.
 \end{ejemplo}
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}[scale=3.1]
+            \begin{scope}
+                \clip (0,0) circle (1.01);
+                \foreach \r in {0.3,0.5,1,2,4}{
+                    \draw[thin, gray] ({\r/(\r+1)},0) circle ({1/(\r+1)});
+                }
+                \foreach \x in {0.5,1,2}{
+                    \draw[thin, gray] (1,{1/\x}) circle ({1/\x});
+                    \draw[thin, gray] (1,{-1/\x}) circle ({1/\x});
+                }
+            \end{scope}
+            \draw[thick] (0,0) circle (1);
+            \draw[thick] (-1,0) -- (1,0);
+            \draw[teal, very thick] (0.5,0) circle (0.5);
+            \node[teal, fill=white, inner sep=1pt] at (0.62,0.6) {\footnotesize $g=1$};
+            \draw[Red, dashed] (0,0) circle (0.4472);
+            \fill[Red] (-0.2,0.4) circle (0.014);
+            \node[Red, above left, fill=white, inner sep=1pt] at (-0.2,0.4) {\footnotesize $\Gamma_L$};
+            \draw[gray, densely dotted] (-0.2,0.4) -- (0.2,-0.4);
+            \fill[teal] (0.2,-0.4) circle (0.014);
+            \node[teal, below right, fill=white, inner sep=1pt] at (0.2,-0.42) {\footnotesize $y_L=1-j1$};
+            \draw[->, teal, thick] (0.2,-0.4) arc[start angle=233.13, end angle=184, radius=0.5];
+            \fill[black] (0,0) circle (0.014);
+            \node[left, fill=white, inner sep=1pt] at (-0.02,-0.2) {\footnotesize stub: $+j1$};
+            \node[above right, fill=white, inner sep=1pt] at (0,0.02) {\footnotesize $y=1$};
+        \end{tikzpicture}
+    \end{center}
+    \caption{Adaptación con stub de la carga del Ejemplo \ref{ejemplo:smith}, leyendo la carta como carta de admitancias. El punto diametralmente opuesto a $\Gamma_L$ da la admitancia normalizada $y_L=1-j1$, que ya está sobre la circunferencia $g=1$. El stub en paralelo suma una susceptancia $+j1$, que desplaza el punto sobre esa circunferencia hasta el centro de la carta, donde la línea queda adaptada.}\label{fig:smith stub}
+\end{figure}
 
 \section{Dispersión y su efecto sobre los pulsos}\label{sec:dispersion pulsos}
 
@@ -378,7 +651,46 @@ que es una \emph{ecuación de difusión} para el campo eléctrico dentro del con
 \begin{equation}\label{eq:campo skin}
     \hat E(x) = \hat E(0)\, \e^{-(1+j)x/\delta(f)}, \qquad \delta(f) := \sqrt{\frac{1}{\pi f \mu\sigma}}.
 \end{equation}
-La densidad de corriente $J=\sigma E$ sigue la misma ley: decae exponencialmente con la profundidad, con una constante característica $\delta(f)$ denominada \emph{profundidad de penetración} o \emph{profundidad pelicular}. A mayor frecuencia, menor $\delta(f)$, y la corriente queda confinada a una capa cada vez más delgada junto a la superficie.
+La densidad de corriente $J=\sigma E$ sigue la misma ley: decae exponencialmente con la profundidad, con una constante característica $\delta(f)$ denominada \emph{profundidad de penetración} o \emph{profundidad pelicular}. A mayor frecuencia, menor $\delta(f)$, y la corriente queda confinada a una capa cada vez más delgada junto a la superficie (Figura \ref{fig:efecto pelicular}).
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \pgfdeclareradialshading{pelicular}{\pgfpoint{0bp}{0bp}}{color(0bp)=(white); color(16bp)=(white); color(21bp)=(teal!30); color(25bp)=(teal)}
+            \fill[teal!45] (0,0) circle (1);
+            \draw[thick] (0,0) circle (1);
+            \node[below] at (0,-1.1) {\small baja frecuencia};
+            \shade[shading=pelicular] (2.6,0) circle (1);
+            \draw[thick] (2.6,0) circle (1);
+            \draw[<->] (2.6,1.0) -- node[right, font=\small] {$\delta$} (2.6,0.8);
+            \node[below] at (2.6,-1.1) {\small alta frecuencia};
+            \begin{axis}[
+                at={(5.5cm,-1.6cm)}, anchor=south west,
+                width=8.5cm, height=5.2cm,
+                xmin=0, xmax=150, ymin=0, ymax=1.05,
+                xlabel={profundidad $x$ ($\unit{\micro\meter}$)},
+                ylabel={$|J(x)|/|J(0)|$},
+                axis x line=bottom, axis y line=left,
+                ytick={0,0.37,1}, yticklabels={$0$, $\e^{-1}$, $1$},
+                legend style={draw=none, font=\small}, legend cell align=left,
+                domain=0:150, samples=150,
+                ]
+                \addplot[teal, very thick] {exp(-x/65.2)};
+                \addlegendentry{$1\ \unit{\mega\hertz}$}
+                \addplot[Red, very thick, dashed] {exp(-x/20.6)};
+                \addlegendentry{$10\ \unit{\mega\hertz}$}
+                \addplot[black, thick, densely dotted] {exp(-x/6.52)};
+                \addlegendentry{$100\ \unit{\mega\hertz}$}
+                \draw[gray] (axis cs:0,0.368) -- (axis cs:65.2,0.368);
+                \draw[gray] (axis cs:20.6,0) -- (axis cs:20.6,0.368);
+                \draw[gray] (axis cs:65.2,0) -- (axis cs:65.2,0.368);
+                \node[below, font=\scriptsize, gray!50!black] at (axis cs:20.6,0) {$21$};
+                \node[below, font=\scriptsize, gray!50!black] at (axis cs:65.2,0) {$65$};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Efecto pelicular. A la izquierda, sección de un conductor cilíndrico: a baja frecuencia la corriente ocupa toda la sección, y a alta frecuencia se concentra en una capa de espesor del orden de $\delta(f)$ junto a la superficie. A la derecha, módulo de la densidad de corriente en función de la profundidad para cobre, según \eqref{eq:campo skin}. Las líneas verticales marcan la profundidad de penetración a $1\ \unit{\mega\hertz}$ y a $10\ \unit{\mega\hertz}$.}\label{fig:efecto pelicular}
+\end{figure}
 
 Este resultado permite calcular la impedancia serie del conductor. La corriente total por unidad de ancho de superficie es
 \begin{equation*}
@@ -411,9 +723,57 @@ Para $f<0$ el valor se obtiene por simetría hermítica, $\hat H(-f)=\overline{\
 \begin{itemize}
     \item Un retardo puro $t_d$, que no distorsiona.
     \item Una atenuación $\e^{-k\ell\sqrt f}$ que crece con la frecuencia: un filtrado pasabajos suave, sin frecuencia de corte abrupta, que redondea los flancos del pulso.
-    \item Una fase adicional $k\ell\sqrt f$, no lineal en $f$. Su retardo de grupo asociado es $\tau_g(f)=t_d + \frac{k\ell}{4\pi\sqrt f}$, mayor para las frecuencias bajas. Las componentes lentas del pulso llegan más tarde, y el pulso recibido presenta una subida rápida seguida de una cola larga y asimétrica, que se extiende sobre los símbolos siguientes.
+    \item Una fase adicional $k\ell\sqrt f$, no lineal en $f$. Su retardo de grupo asociado es $\tau_g(f)=t_d + \frac{k\ell}{4\pi\sqrt f}$, mayor para las frecuencias bajas. Las componentes lentas del pulso llegan más tarde, y el pulso recibido presenta una subida rápida seguida de una cola larga y asimétrica, que se extiende sobre los símbolos siguientes (Figura \ref{fig:pulso cable}).
 \end{itemize}
-Ambos efectos de distorsión son del mismo orden y crecen con el producto $k\ell$, es decir, con la longitud de la línea. Además, lo que importa para la ISI es la extensión de la cola en relación con el tiempo de símbolo: un mismo cable puede ser prácticamente transparente a una velocidad de señalización baja y producir una ISI severa a una velocidad alta.
+Ambos efectos de distorsión son del mismo orden y crecen con el producto $k\ell$, es decir, con la longitud de la línea. Además, lo que importa para la ISI es la extensión de la cola en relación con el tiempo de símbolo: un mismo cable puede ser prácticamente transparente a una velocidad de señalización baja y producir una ISI severa a una velocidad alta. La Figura \ref{fig:ojo cable} muestra el diagrama de ojo de una señal PAM binaria a la salida de dos tramos de cable, uno cuatro veces más largo que el otro.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=12cm, height=5.5cm,
+                xmin=-1, xmax=6, ymin=-0.05, ymax=1.1,
+                xtick={0,1,2,3,4,5,6},
+                xticklabels={$0$, $T$, $2T$, $3T$, $4T$, $5T$, $6T$},
+                ytick={0,0.5,1},
+                xlabel={$t-t_d$},
+                axis x line=bottom, axis y line=left,
+                legend style={draw=none, font=\small}, legend cell align=left,
+                every axis plot/.append style={mark=none},
+                ]
+                \addplot[gray, thick] table[x=t, y=tx] {figuras/propagacion/pulso_cable.dat};
+                \addlegendentry{pulso transmitido (línea de Heaviside)}
+                \addplot[teal, very thick, dashed] table[x=t, y=aten] {figuras/propagacion/pulso_cable.dat};
+                \addlegendentry{solo atenuación $\e^{-k\ell\sqrt{f}}$}
+                \addplot[Red, very thick] table[x=t, y=completo] {figuras/propagacion/pulso_cable.dat};
+                \addlegendentry{canal completo $\e^{-(1+j)k\ell\sqrt{f}}$}
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Respuesta del cable \eqref{eq:H coaxil} a un pulso rectangular de duración $T$, con $k\ell=\sqrt{T}$ (atenuación de unos $6\ \unit{\deci\bel}$ a $f=1/(2T)$), descontando el retardo $t_d$. Si solo se tuviera la atenuación, el pulso se redondearía de forma simétrica. La fase no lineal retrasa las componentes de baja frecuencia y produce la cola larga que se extiende sobre los símbolos siguientes.}\label{fig:pulso cable}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \pgfplotsset{ojo/.style={
+                width=7.5cm, height=5.5cm,
+                xmin=-1, xmax=1, ymin=-1.3, ymax=1.3,
+                xtick={-1,0,1}, xticklabels={$-T_s$, $0$, $T_s$},
+                ytick={-1,0,1},
+                unbounded coords=jump,
+                title style={font=\small},
+            }}
+            \begin{axis}[ojo, name=o1, title={$3\ \unit{\deci\bel}$ de atenuación a $f_s/2$}]
+                \addplot[teal, thin, mark=none] table[x=t, y=v] {figuras/propagacion/ojo_corto.dat};
+            \end{axis}
+            \begin{axis}[ojo, at={(o1.east)}, anchor=west, xshift=1cm, yticklabels={}, title={$12\ \unit{\deci\bel}$ de atenuación a $f_s/2$}]
+                \addplot[Red, thin, mark=none] table[x=t, y=v] {figuras/propagacion/ojo_largo.dat};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Diagramas de ojo de una señal PAM binaria con pulsos rectangulares de duración $T_s$, a la salida del cable \eqref{eq:H coaxil}, para dos tramos, uno cuatro veces más largo que el otro. Las trazas están centradas en el instante de muestreo. Con el tramo corto el ojo está abierto. Con el tramo largo, la cola de cada pulso se suma sobre los símbolos siguientes y el ojo está prácticamente cerrado.}\label{fig:ojo cable}
+\end{figure}
 
 Las pérdidas dieléctricas que despreciamos agregan a $\alpha(f)$ el término $GZ_0/2$ de \eqref{eq:beta aproximado}, con $G(f)=2\pi f C\tan\theta_{\text{d}}$, donde $\tan\theta_{\text{d}}$ es la tangente de pérdidas del dieléctrico. Este término crece linealmente con $f$, pero para dieléctricos de buena calidad como el polietileno ($\tan\theta_{\text{d}}\sim 10^{-4}$) su aporte en el rango de frecuencias de interés es típicamente uno o dos órdenes de magnitud menor que el del efecto pelicular. Por encima de las centenas de $\unit{\mega\hertz}$, o con dieléctricos de peores características, pasa a ser importante.
 
@@ -426,20 +786,22 @@ Retomemos el coaxil del Ejemplo \ref{ejemplo:coaxil parametros} ($L=250\ \unit{\
     Par trenzado ($\unit{\deci\bel}/100\unit{\meter}$) & $0.38$ & $1.21$ & $3.81$ & $12.06$
 \end{tabular}
 \end{center}
-donde el par trenzado corresponde a dos conductores AWG24 ($a=0.26\ \unit{\milli\meter}$, sin pantalla, $R_{dc}\approx 0.16\ \unit{\ohm\per\meter}$ en lazo), con $L=600\ \unit{\nano\henry\per\meter}$ y $C=45\ \unit{\pico\farad\per\meter}$ (valores típicos, $Z_0\approx 115\ \unit{\ohm}$). La Figura \ref{fig:atenuacion comparada} muestra la atenuación de ambos cables en todo el rango. El par trenzado atenúa más que el coaxil a igual frecuencia, principalmente por sus conductores más delgados. Esto explica en parte por qué el cable coaxil fue históricamente preferido para enlaces más largos o de mayor frecuencia (por ejemplo, la televisión por cable), mientras que el par trenzado se reserva para tramos más cortos (telefonía, Ethernet).
+donde el par trenzado corresponde a dos conductores AWG24 ($a=0.26\ \unit{\milli\meter}$, sin pantalla, $R_{dc}\approx 0.16\ \unit{\ohm\per\meter}$ en lazo), con $L=600\ \unit{\nano\henry\per\meter}$ y $C=45\ \unit{\pico\farad\per\meter}$ (valores típicos, $Z_0\approx 115\ \unit{\ohm}$). La Figura \ref{fig:atenuacion comparada} muestra la atenuación de ambos cables en todo el rango, junto con el retardo de grupo adicional $\tau_g(f)-t_d=k\ell/(4\pi\sqrt f)$. El par trenzado atenúa más que el coaxil a igual frecuencia, principalmente por sus conductores más delgados. Esto explica en parte por qué el cable coaxil fue históricamente preferido para enlaces más largos o de mayor frecuencia (por ejemplo, la televisión por cable), mientras que el par trenzado se reserva para tramos más cortos (telefonía, Ethernet).
 \end{ejemplo}
 
 \begin{figure}
     \begin{center}
         \begin{tikzpicture}
             \begin{axis}[
-                width=11cm, height=7cm,
+                name=aten,
+                width=8.2cm, height=6.5cm,
                 xmode=log,
                 xlabel={$f$ (MHz)},
                 ylabel={$\alpha(f)\,\ell$ (dB), $\ell=100\ \text{m}$},
                 xmin=0.1, xmax=100,
                 ymin=0, ymax=13,
                 legend pos=north west,
+                legend style={font=\small},
                 grid=major,
                 ]
                 \addplot[teal, very thick, mark=none] coordinates {
@@ -451,9 +813,23 @@ donde el par trenzado corresponde a dos conductores AWG24 ($a=0.26\ \unit{\milli
                 };
                 \addlegendentry{Par trenzado AWG24}
             \end{axis}
+            \begin{axis}[
+                at={(aten.outer east)}, anchor=outer west,
+                width=8.2cm, height=6.5cm,
+                xmode=log,
+                xlabel={$f$ (MHz)},
+                ylabel={$\tau_g(f)-t_d$ (ns), $\ell=100\ \text{m}$},
+                xmin=0.1, xmax=100,
+                ymin=0, ymax=36,
+                grid=major,
+                domain=0.1:100, samples=60,
+                ]
+                \addplot[teal, very thick, mark=none] {9.319/sqrt(x)};
+                \addplot[red, very thick, dashed, mark=none] {11.049/sqrt(x)};
+            \end{axis}
         \end{tikzpicture}
     \end{center}
-    \caption{Atenuación $\alpha(f)\ell$ en función de la frecuencia, para $100\ \unit{\meter}$ de los dos cables del Ejemplo \ref{ejemplo:H canal}. La curva crece como $\sqrt f$ (efecto pelicular): es la versión física del bloque pasabajos $\hat H(f)$ de la Figura \ref{fig:distorsion canal}.}\label{fig:atenuacion comparada}
+    \caption{Atenuación $\alpha(f)\ell$ (izquierda) y retardo de grupo adicional $\tau_g(f)-t_d$ (derecha) en función de la frecuencia, para $100\ \unit{\meter}$ de los dos cables del Ejemplo \ref{ejemplo:H canal}. La atenuación crece como $\sqrt f$ (efecto pelicular): es la versión física del bloque pasabajos $\hat H(f)$ de la Figura \ref{fig:distorsion canal}. El retardo adicional, que decrece como $1/\sqrt f$, es pequeño frente a $t_d\approx 500\ \unit{\nano\second}$, pero es esta diferencia de retardo entre las componentes de baja y alta frecuencia la que produce la cola de la Figura \ref{fig:pulso cable}.}\label{fig:atenuacion comparada}
 \end{figure}
 
 \subsection*{Presupuesto de pérdidas}
@@ -512,8 +888,43 @@ Por la simetría de $\tilde p$, la solución también es simétrica, $c_{-1}=c_1
 \begin{equation*}
     c_0 \approx 1.0825, \qquad c_{-1}=c_1\approx -0.2062.
 \end{equation*}
-Verificando, $\hat p(0)=1$ y $\hat p(\pm T_s)=0$, como se pidió. Pero $\hat p(\pm 2T_s)\approx 0.0129$, que no es cero: el ZFE con $N=1$ solo garantiza los ceros dentro del rango pedido. Veremos a continuación de dónde proviene este residuo.
+Verificando, $\hat p(0)=1$ y $\hat p(\pm T_s)=0$, como se pidió. Pero $\hat p(\pm 2T_s)\approx 0.0129$, que no es cero: el ZFE con $N=1$ solo garantiza los ceros dentro del rango pedido (Figura \ref{fig:zfe ejemplo}). Veremos a continuación de dónde proviene este residuo.
 \end{ejemplo}
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \pgfplotsset{bastones/.style={
+                width=7.5cm, height=5cm,
+                xmin=-3.6, xmax=3.6, ymin=-0.1, ymax=1.15,
+                xtick={-3,...,3}, ytick={0,0.2,1},
+                axis x line=middle, axis y line=none,
+                xlabel={$k$}, x label style={anchor=west},
+                title style={font=\small},
+                clip=false,
+            }}
+            \begin{axis}[bastones, name=b1, title={muestras del pulso recibido, $\tilde p_k$}]
+                \addplot[teal, thick, ycomb, mark=*, mark options={fill=teal}] coordinates {
+                    (-3,0) (-2,0.05) (-1,0.2) (0,1) (1,0.2) (2,0.05) (3,0)};
+                \node[above, font=\scriptsize] at (axis cs:-1,0.2) {$0.2$};
+                \node[above, font=\scriptsize] at (axis cs:1,0.2) {$0.2$};
+                \node[above, font=\scriptsize] at (axis cs:-2,0.05) {$0.05$};
+                \node[above, font=\scriptsize] at (axis cs:2,0.05) {$0.05$};
+            \end{axis}
+            \begin{axis}[bastones, at={(b1.east)}, anchor=west, xshift=0.8cm, title={después del ecualizador, $\hat p(kT_s)$}]
+                \fill[gray!15] (axis cs:-1.45,-0.08) rectangle (axis cs:1.45,1.12);
+                \node[below, font=\scriptsize, gray!50!black] at (axis cs:0,-0.08) {$|k|\leqslant N$};
+                \addplot[Red, thick, ycomb, mark=*, mark options={fill=Red}] coordinates {
+                    (-3,-0.0103) (-2,0.0129) (-1,0) (0,1) (1,0) (2,0.0129) (3,-0.0103)};
+                \node[above, font=\scriptsize] at (axis cs:-2,0.02) {$0.013$};
+                \node[above, font=\scriptsize] at (axis cs:2,0.02) {$0.013$};
+                \node[above, font=\scriptsize] at (axis cs:-3,0.02) {$-0.010$};
+                \node[above, font=\scriptsize] at (axis cs:3,0.02) {$-0.010$};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{ZFE de tres coeficientes del Ejemplo \ref{ejemplo:zfe n1}. El ecualizador anula las muestras en $k=\pm 1$ (zona sombreada) y deja residuos pequeños fuera de ella, en $k=\pm 2$ y $k=\pm 3$.}\label{fig:zfe ejemplo}
+\end{figure}
 
 Para ajustar el filtro es necesario conocer las muestras $\tilde p_m$, lo que se hace transmitiendo un pulso o una secuencia de entrenamiento conocida y midiendo la respuesta. En la práctica no siempre se calcula $\mathbf c=\mathbf P^{-1}\mathbf e_0$ de una sola vez: si el canal varía o no se conoce con precisión de antemano, es más robusto \emph{adaptar} los $c_n$ iterativamente a partir del error observado, mediante algoritmos como LMS (\emph{Least Mean Squares}). No desarrollaremos los ecualizadores adaptativos en este curso. Notemos de todos modos que el canal guiado es esencialmente invariante en el tiempo una vez instalado, por lo que el ajuste puede hacerse lentamente, a diferencia de un canal inalámbrico.
 
@@ -555,7 +966,34 @@ Si el pulso recibido ya es de Nyquist ($\tilde p_m=\delta_{m,0}$, sin ISI), ento
 
 \subsection*{El costo de invertir en banda ancha}
 
-La expresión $\hat C(f)=1/\hat P_d(f)$ esconde un problema, que ya se mencionó cualitativamente en la Sección \ref{sec:ecualizacion canal zfe}: si algunas ganancias son muy altas, el ruido puede verse amplificado. En cualquier frecuencia donde $|\hat P_d(f)|$ sea pequeño, el ecualizador necesita una ganancia $|\hat C(f)|=1/|\hat P_d(f)|$ muy grande. Y $\hat P_d(f)$ hereda la forma de la respuesta del canal $\hat H(f)$ que obtuvimos en la Sección \ref{sec:dispersion pulsos}: decrece con la frecuencia, por lo que corregirlo cerca del borde de la banda exige ganancias cada vez mayores. Pero el ruido a la entrada del ecualizador (Capítulo \ref{chapter:deteccion ruido}) tiene potencia en todas las frecuencias, y esa misma ganancia lo amplifica en la misma proporción en que reconstruye la señal. En el límite, si $\hat P_d(f)\to 0$ en alguna banda, $\hat C(f)\to\infty$: el ZFE intenta reconstruir información que, en esa banda, ya quedó por debajo del ruido.
+La expresión $\hat C(f)=1/\hat P_d(f)$ esconde un problema, que ya se mencionó cualitativamente en la Sección \ref{sec:ecualizacion canal zfe}: si algunas ganancias son muy altas, el ruido puede verse amplificado. En cualquier frecuencia donde $|\hat P_d(f)|$ sea pequeño, el ecualizador necesita una ganancia $|\hat C(f)|=1/|\hat P_d(f)|$ muy grande. Y $\hat P_d(f)$ hereda la forma de la respuesta del canal $\hat H(f)$ que obtuvimos en la Sección \ref{sec:dispersion pulsos}: decrece con la frecuencia, por lo que corregirlo cerca del borde de la banda exige ganancias cada vez mayores (Figura \ref{fig:amplificacion ruido}). Pero el ruido a la entrada del ecualizador (Capítulo \ref{chapter:deteccion ruido}) tiene potencia en todas las frecuencias, y esa misma ganancia lo amplifica en la misma proporción en que reconstruye la señal. En el límite, si $\hat P_d(f)\to 0$ en alguna banda, $\hat C(f)\to\infty$: el ZFE intenta reconstruir información que, en esa banda, ya quedó por debajo del ruido.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=11cm, height=6.5cm,
+                xmin=0, xmax=0.5, ymin=-25, ymax=25,
+                xtick={0,0.1,0.2,0.3,0.4,0.5},
+                xticklabels={$0$, $0.1f_s$, $0.2f_s$, $0.3f_s$, $0.4f_s$, $f_s/2$},
+                xlabel={$f$}, ylabel={dB},
+                grid=major,
+                legend style={at={(0.5,1.03)}, anchor=south, legend columns=2, draw=none, font=\small},
+                every axis plot/.append style={mark=none},
+                ]
+                \addplot[teal, very thick] table[x=f, y=P0] {figuras/propagacion/amplificacion_ruido.dat};
+                \addlegendentry{$|\hat P_d(f)|$, longitud $\ell_1$}
+                \addplot[teal, very thick, dashed] table[x=f, y=C0] {figuras/propagacion/amplificacion_ruido.dat};
+                \addlegendentry{$|\hat C(f)|$, longitud $\ell_1$}
+                \addplot[Red, very thick] table[x=f, y=P1] {figuras/propagacion/amplificacion_ruido.dat};
+                \addlegendentry{$|\hat P_d(f)|$, longitud $2\ell_1$}
+                \addplot[Red, very thick, dashed] table[x=f, y=C1] {figuras/propagacion/amplificacion_ruido.dat};
+                \addlegendentry{$|\hat C(f)|$, longitud $2\ell_1$}
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Módulo de $\hat P_d(f)$, calculado a partir de las muestras del pulso rectangular a la salida del cable \eqref{eq:H coaxil}, y ganancia $|\hat C(f)|=1/|\hat P_d(f)|$ del ZFE de infinitos coeficientes, para dos longitudes del cable, $\ell_1$ (el tramo largo de la Figura \ref{fig:ojo cable}) y $2\ell_1$. Las curvas son simétricas respecto de $0\ \unit{\deci\bel}$: todo lo que el canal atenúa en una frecuencia, el ecualizador lo amplifica, incluido el ruido. Al duplicar la longitud, la ganancia necesaria en el borde de la banda pasa de unos $9\ \unit{\deci\bel}$ a unos $23\ \unit{\deci\bel}$.}\label{fig:amplificacion ruido}
+\end{figure}
 
 Esto sugiere una idea distinta, que desarrollamos en el Capítulo \ref{chapter:ofdm}: en lugar de invertir $\hat P_d(f)$ de una sola vez sobre todo el ancho de banda, \emph{partir} la banda en tramos angostos, cada uno lo suficientemente chico como para que $\hat P_d(f)$ sea aproximadamente constante dentro de él. En cada tramo, ecualizar se reduce a dividir por un único número complejo, y en los tramos donde el canal atenúa demasiado se puede simplemente transmitir menos información, en lugar de amplificar el ruido. Esta es la idea de OFDM, y es la solución utilizada, por ejemplo, en ADSL y VDSL sobre el par telefónico, cuya atenuación crece rápidamente con la frecuencia y con la distancia a la central: la banda se divide en cientos de subportadoras, y cada una se modula con una constelación de tamaño acorde a la relación señal a ruido que el par ofrece en esa frecuencia.
 
