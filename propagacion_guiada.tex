@@ -887,21 +887,74 @@ Las normas de cableado estructurado especifican la atenuación máxima de cada c
 Las normas Ethernet sobre par trenzado (por ejemplo, 100BASE-TX y 1000BASE-T) fijan en consecuencia una longitud máxima de $100\ \unit{\meter}$ por tramo: es el presupuesto de pérdidas que los transceptores están diseñados para compensar. Notar que el par AWG24 del Ejemplo \ref{ejemplo:H canal}, modelado solo con efecto pelicular, da unos $12\ \unit{\deci\bel}$ a esa frecuencia. La diferencia se debe a efectos que nuestro modelo simplificado ignora, principalmente las pérdidas dieléctricas del aislante y el efecto de proximidad entre los dos conductores del par.
 \end{ejemplo}
 
-Con esto completamos el recorrido de este capítulo hasta $\hat H(f)$: de los parámetros $R,L,G,C$ (Sección \ref{sec:parametros distribuidos}), a través de la constante de propagación (Sección \ref{sec:ecuacion de onda}), hasta la atenuación y la fase dependientes de la frecuencia que limitan el ancho de banda del canal y producen ISI (Sección \ref{sec:dispersion pulsos}). Queda pendiente una pregunta que la Sección \ref{sec:ecualizacion canal zfe} dejó planteada: conociendo $\hat H(f)$, ¿podemos deshacer su efecto? Cerramos este capítulo respondiendo esa pregunta.
+Con esto completamos el recorrido de este capítulo hasta $\hat H(f)$: de los parámetros $R,L,G,C$ (Sección \ref{sec:parametros distribuidos}), a través de la constante de propagación (Sección \ref{sec:ecuacion de onda}), hasta la atenuación y la fase dependientes de la frecuencia que limitan el ancho de banda del canal y producen ISI (Sección \ref{sec:dispersion pulsos}). Queda una pregunta: conociendo $\hat H(f)$, ¿podemos deshacer su efecto en el receptor? Cerramos este capítulo respondiendo esa pregunta.
 
 \section{Ecualización de canal}\label{sec:ecualizacion}
 
-\subsection*{Resolución explícita del filtro de cero forzado}
+Como vimos en la Sección \ref{sec:dispersion pulsos}, un tramo de cable produce una ISI que no puede evitarse con la elección del pulso transmitido: la cola de cada pulso recibido se extiende sobre los símbolos siguientes (Figuras \ref{fig:pulso cable} y \ref{fig:ojo cable}). Se recibe entonces una onda $x_R(t) = \sum_k a_k \tilde{p}(t-kT_s)$, donde el pulso recibido $\tilde{p}(t)$ introduce ISI. Una posible solución es compensar en el receptor con un \emph{filtro ecualizador}, que esencialmente invierte el canal en la banda de interés.
 
-Recordemos el planteo de la Sección \ref{sec:ecualizacion canal zfe} (Figura \ref{fig:filtro eq}): se recibe una onda con ISI, $x_R(t) = \sum_k a_k \tilde p(t-kT_s)$, y se la pasa por un filtro transversal de $2N+1$ ganancias $\{c_n\}_{n=-N}^N$, obteniendo una nueva onda PAM con pulso
+\subsection*{El ecualizador transversal}
+
+Una forma habitual de implementar el ecualizador es mediante un \emph{filtro transversal}, como el de la Figura \ref{fig:filtro eq}: una cadena de $2N$ retardos de duración $T_s$, cuyas salidas se multiplican por ganancias $c_{-N},\ldots,c_N$ y se suman. Su salida verifica
+\begin{equation*}
+    y(t+NT_s) = \sum_{n=-N}^N c_n\, x_R(t-nT_s) = \sum_{n=-N}^N c_n \sum_k a_k\, \tilde{p}\big(t-(k+n)T_s\big) = \sum_k a_k\, \hat{p}(t - kT_s),
+\end{equation*}
+donde
 \begin{equation*}
     \hat p(t) = \sum_{n=-N}^N c_n\, \tilde p(t-nT_s).
 \end{equation*}
-El criterio de \emph{cero forzado} (ZFE) pide $\hat p(kT_s)=0$ para $k=\pm 1,\ldots,\pm N$, junto con $\hat p(0)=1$ para no perder la ganancia de la muestra útil. Escribamos esto explícitamente. Evaluando $\hat p$ en $t=kT_s$:
+Es decir, $y(t)$ es una onda PAM con pulso $\hat{p}(t)$, retardada $NT_s$.
+
+\begin{figure}
+    \begin{center}
+    \begin{tikzpicture}[scale=2]
+        \draw[->] (-1.5,0) -- (3.5,0) node [below right] {$t$};
+        \draw [->] (0,-0.2) -- (0,1.2);
+        \draw [teal,very thick,domain=-1:3,samples=200] plot (\x,{sin(pi*\x r)/(pi*\x)});
+        \node[teal] at (.6,1) {$\tilde{p}(t)$};
+        \draw[dotted] (0.7,{sin(pi*0.7 r)/(pi*0.7)}) -- (0.7,0) node [anchor=north] {$T_s$};
+        \draw[dotted] (-0.7,{sin(pi*(-0.7) r)/(-pi*0.7)}) -- (-0.7,0) node [anchor=north] {$-T_s$};
+        \draw[dotted] (1.4,{sin(pi*1.4 r)/(pi*1.4)}) -- (1.4,0) node [anchor=south] {$2T_s$};
+    \end{tikzpicture}
+
+    \bigskip
+
+    \begin{tikzpicture}[blockdiagram]
+        \matrix[row sep=5 mm, column sep=5mm]{
+            \node [etiqueta] (inicio) {$x_R(t)$}; & \node [punto] (p1) {}; & \node [block] (T1) {$T_s$}; & \node [punto] (p2) {}; & \node [block] (T2) {$T_s$}; & \node[punto] (p3) {}; & & \node [etiqueta]  {$\cdots$}; &  & \node [punto] (p4) {}; & \node [block] (T3) {$T_s$};\\
+            & \node [multD] (m1) {$c_{-N}$}; & & \node[multD] (m2) {$c_{-N+1}$}; & & & &  & & & & \node [multD] (m3) {$c_{N}$};\\
+            & & & \node [operator] (sum1) {$+$}; & & \node [operator] (sum2) {$+$}; & \node [punto] (p5) {};& &\node [etiqueta]  {$\cdots$}; & & \node [punto] (p6) {};&\node [operator] (sum3) {$+$}; & \node [etiqueta] (salida) {$y(t)$};\\
+        };
+        \draw (inicio) -- (p1);
+        \draw [->] (p1) -- (T1);
+        \draw (T1) -- (p2);
+        \draw [->] (p2) -- (T2);
+        \draw [->] (T2) -- (p3);
+        \draw [->] (p4) -- (T3);
+        \draw [->] (p1) -- (m1);
+        \draw [->] (p2) -- (m2);
+        \draw [->] (T3) -|  (m3);
+        \draw [->] (m1) |- (sum1);
+        \draw [->] (m2) -- (sum1);
+        \draw [->] (sum1) -- (sum2);
+        \draw [->] (sum2) -- (p5);
+        \draw [->] (p6) -- (sum3);
+        \draw [->] (m3) -- (sum3);
+        \draw [->] (sum3) -- (salida);
+    \end{tikzpicture}
+    \end{center}
+    \caption{Filtro ecualizador de cero forzado. Se mide la respuesta a un pulso $\tilde{p}(t)$ del canal y se calculan los coeficientes para forzar la condición de ISI nula en los $N$ símbolos adyacentes.}\label{fig:filtro eq}
+\end{figure}
+
+La idea es elegir los $\{c_n\}$ de modo de \emph{forzar los ceros} $\hat{p}(kT_s) = 0$ para $k=\pm 1, \pm 2,\ldots,\pm N$, lo que asegura que no hay ISI con los $N$ símbolos adyacentes. Junto con $\hat p(0)=1$, para no perder la ganancia de la muestra útil, estas condiciones dan $2N+1$ ecuaciones para determinar las $2N+1$ ganancias $c_n$. Este criterio se denomina de \emph{cero forzado}, y el filtro resultante, ecualizador de cero forzado (ZFE, por \emph{Zero Forcing Equalizer}).
+
+\subsection*{Resolución explícita del filtro de cero forzado}
+
+Escribamos explícitamente estas condiciones. Evaluando $\hat p$ en $t=kT_s$:
 \begin{equation*}
     \hat p(kT_s) = \sum_{n=-N}^N c_n\, \tilde p\big((k-n)T_s\big) = \sum_{n=-N}^N c_n\, \tilde p_{k-n},
 \end{equation*}
-donde abreviamos $\tilde p_m := \tilde p(mT_s)$, las muestras del pulso recibido, que se obtienen experimentalmente como se mencionó en la Sección \ref{sec:ecualizacion canal zfe}. La condición $\hat p(kT_s)=\delta_{k,0}$ para $k=-N,\ldots,N$ es entonces un sistema \emph{lineal} de $2N+1$ ecuaciones en las $2N+1$ incógnitas $c_n$:
+donde abreviamos $\tilde p_m := \tilde p(mT_s)$, las muestras del pulso recibido, que pueden obtenerse experimentalmente, como veremos más adelante. La condición $\hat p(kT_s)=\delta_{k,0}$ para $k=-N,\ldots,N$ es entonces un sistema \emph{lineal} de $2N+1$ ecuaciones en las $2N+1$ incógnitas $c_n$:
 \begin{equation}\label{eq:sistema zfe}
     \sum_{n=-N}^N \tilde p_{k-n}\, c_n = \delta_{k,0}, \qquad k=-N,\ldots,N.
 \end{equation}
@@ -1000,7 +1053,7 @@ Si el pulso recibido ya es de Nyquist ($\tilde p_m=\delta_{m,0}$, sin ISI), ento
 
 \subsection*{El costo de invertir en banda ancha}
 
-La expresión $\hat C(f)=1/\hat P_d(f)$ esconde un problema, que ya se mencionó cualitativamente en la Sección \ref{sec:ecualizacion canal zfe}: si algunas ganancias son muy altas, el ruido puede verse amplificado. En cualquier frecuencia donde $|\hat P_d(f)|$ sea pequeño, el ecualizador necesita una ganancia $|\hat C(f)|=1/|\hat P_d(f)|$ muy grande. Y $\hat P_d(f)$ hereda la forma de la respuesta del canal $\hat H(f)$ que obtuvimos en la Sección \ref{sec:dispersion pulsos}: decrece con la frecuencia, por lo que corregirlo cerca del borde de la banda exige ganancias cada vez mayores (Figura \ref{fig:amplificacion ruido}). Pero el ruido a la entrada del ecualizador (Capítulo \ref{chapter:deteccion ruido}) tiene potencia en todas las frecuencias, y esa misma ganancia lo amplifica en la misma proporción en que reconstruye la señal. En el límite, si $\hat P_d(f)\to 0$ en alguna banda, $\hat C(f)\to\infty$: el ZFE intenta reconstruir información que, en esa banda, ya quedó por debajo del ruido.
+La expresión $\hat C(f)=1/\hat P_d(f)$ esconde un problema: si algunas ganancias son muy altas, el ruido puede verse amplificado. En cualquier frecuencia donde $|\hat P_d(f)|$ sea pequeño, el ecualizador necesita una ganancia $|\hat C(f)|=1/|\hat P_d(f)|$ muy grande. Y $\hat P_d(f)$ hereda la forma de la respuesta del canal $\hat H(f)$ que obtuvimos en la Sección \ref{sec:dispersion pulsos}: decrece con la frecuencia, por lo que corregirlo cerca del borde de la banda exige ganancias cada vez mayores (Figura \ref{fig:amplificacion ruido}). Pero el ruido a la entrada del ecualizador (Capítulo \ref{chapter:deteccion ruido}) tiene potencia en todas las frecuencias, y esa misma ganancia lo amplifica en la misma proporción en que reconstruye la señal. En el límite, si $\hat P_d(f)\to 0$ en alguna banda, $\hat C(f)\to\infty$: el ZFE intenta reconstruir información que, en esa banda, ya quedó por debajo del ruido.
 
 \begin{figure}
     \begin{center}
