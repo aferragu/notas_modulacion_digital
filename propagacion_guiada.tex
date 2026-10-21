@@ -500,37 +500,57 @@ Como toda carga pasiva tiene $\mathrm{Re}(Z_L)\geqslant 0$, la transformación \
 
 La \emph{Carta de Smith} (Figura \ref{fig:carta smith}) es un gráfico polar del disco $|\Gamma|\leqslant 1$ con esta grilla de circunferencias de $r$ y $x$ constante superpuesta, que permite pasar de $\zeta_L$ a $\Gamma_L$ y viceversa gráficamente, sin calcular \eqref{eq:gamma normalizado} a mano. Su mayor utilidad práctica está en lo que sucede al recorrer la línea. De \eqref{eq:gamma d}, moverse una distancia $d$ hacia el generador equivale, en el plano $\Gamma$, a \emph{rotar} un ángulo $2\beta d$ en sentido horario manteniendo el módulo $|\Gamma_L|$ constante, es decir, a moverse sobre una circunferencia centrada en el origen. Por \eqref{eq:roe}, esa circunferencia es además una curva de ROE constante. Encontrar $Z(d)$ para cualquier $d$ se reduce entonces a girar con un compás, sobre la circunferencia de ROE constante que pasa por $\zeta_L$, el ángulo correspondiente, y leer la impedancia normalizada en la grilla, sin evaluar la tangente compleja de \eqref{eq:transformacion impedancia sin perdidas}.
 
+% Grilla de la Carta de Smith, con escala exterior en longitudes de onda hacia el generador.
+\newcommand{\cartasmith}{%
+    \begin{scope}
+        \clip (0,0) circle (1);
+        \foreach \r in {0.2,0.5,1,2,5}{
+            \draw[thin, gray!70] ({\r/(\r+1)},0) circle ({1/(\r+1)});
+        }
+        \foreach \x in {0.2,0.5,1,2,5}{
+            \draw[thin, gray!70] (1,{1/\x}) circle ({1/\x});
+            \draw[thin, gray!70] (1,{-1/\x}) circle ({1/\x});
+        }
+    \end{scope}
+    \draw[thick] (0,0) circle (1);
+    \draw[thin, gray!70] (-1,0) -- (1,0);
+    \foreach \r in {0.2,0.5,1,2,5}{
+        \node[above right, font=\scriptsize, inner sep=1pt, gray!50!black] at ({(\r-1)/(\r+1)},0) {$\r$};
+    }
+    \foreach \x in {0.2,0.5,1,2,5}{
+        \pgfmathsetmacro{\ang}{atan2(2*\x, \x*\x-1)}
+        \node[font=\scriptsize, gray!50!black] at (\ang:0.935) {$\x$};
+        \node[font=\scriptsize, gray!50!black] at (-\ang:0.935) {$-\x$};
+    }
+    \foreach \k in {0,...,19}{
+        \draw ({180-18*\k}:1) -- ({180-18*\k}:1.03);
+    }
+    \foreach \k/\lab in {0/0, 1/0.05, 2/0.10, 3/0.15, 4/0.20, 5/0.25, 6/0.30, 7/0.35, 8/0.40, 9/0.45}{
+        \node[font=\scriptsize] at ({180-36*\k}:1.1) {$\lab$};
+    }
+    \draw[->, gray!60!black] (152:1.2) arc[start angle=152, end angle=118, radius=1.2];
+    \node[font=\scriptsize, gray!60!black, anchor=south east] at (140:1.22) {hacia el generador};
+    \node[font=\scriptsize, anchor=north west, inner sep=2pt] at (-1,0) {c.c.};
+    \node[font=\scriptsize, anchor=north east, inner sep=2pt] at (1,0) {c.a.};
+}
+
 \begin{figure}
     \begin{center}
-        \begin{tikzpicture}[scale=3.1]
-            \begin{scope}
-                \clip (0,0) circle (1.01);
-                \foreach \r in {0.3,0.5,1,2,4}{
-                    \draw[thin, gray] ({\r/(\r+1)},0) circle ({1/(\r+1)});
-                }
-                \foreach \x in {0.5,1,2}{
-                    \draw[thin, gray] (1,{1/\x}) circle ({1/\x});
-                    \draw[thin, gray] (1,{-1/\x}) circle ({1/\x});
-                }
-            \end{scope}
-            \draw[thick] (0,0) circle (1);
-            \draw[thick] (-1,0) -- (1,0);
-            \node[below] at (-1,0) {\footnotesize $\Gamma=-1$ (c.c., $\zeta=0$)};
-            \node[below] at (1,0) {\footnotesize $\Gamma=+1$ (c.a., $\zeta=\infty$)};
-            \node[below] at (0,-0.03) {\footnotesize $\zeta=1$};
-            % ejemplo: zeta_L = 0.5 + j0.5 (coincide con ejemplo del texto: Z_L=25+j25 sobre Z0=50)
-            \coordinate (GammaL) at ({(-0.2)/1.4}, {1/1.4});
-            \fill[Red] (GammaL) circle (0.014);
-            \node[Red, above right, fill=white, inner sep=1pt] at (GammaL) {\footnotesize $\Gamma_L$ ($\zeta_L=0.5+j0.5$)};
-            \draw[Red, dashed] (0,0) circle ({sqrt(pow((-0.2)/1.4,2)+pow(1/1.4,2))});
-            % rotación de lambda/8 hacia el generador: zeta(lambda/8) = 2 + j1
-            \draw[->, Red, thick] (GammaL) arc[start angle=116.57, end angle=29, radius=0.4472];
-            \fill[Red] (0.4,0.2) circle (0.014);
-            \node[Red, right, fill=white, inner sep=1pt] at (0.42,0.2) {\footnotesize $\zeta(\lambda/8)=2+j1$};
-            \node[Red, fill=white, inner sep=1pt] at (0.24,0.53) {\footnotesize $\lambda/8$};
+        \begin{tikzpicture}[scale=4.2]
+            \cartasmith
+            % carga del Ejemplo smith: zeta_L = 0.5 + j0.5, Gamma_L = -0.2 + j0.4
+            \draw[Red, dashed] (0,0) circle (0.4472);
+            \draw[Red, densely dotted] (0,0) -- (116.57:1);
+            \draw[Red, densely dotted] (0,0) -- (26.57:1);
+            \draw[->, Red, thick] (-0.2,0.4) arc[start angle=116.57, end angle=29, radius=0.4472];
+            \fill[Red] (-0.2,0.4) circle (0.012);
+            \node[Red, above left, fill=white, inner sep=1pt] at (-0.21,0.4) {\footnotesize $\zeta_L=0.5+j0.5$};
+            \fill[Red] (0.4,0.2) circle (0.012);
+            \node[Red, below right, fill=white, inner sep=1pt] at (0.41,0.19) {\footnotesize $\zeta(\lambda/8)=2+j1$};
+            \node[Red, fill=white, inner sep=1pt] at (72:0.53) {\footnotesize $\lambda/8$};
         \end{tikzpicture}
     \end{center}
-    \caption{Esquema de la Carta de Smith: disco $|\Gamma|\leqslant 1$ con la grilla de resistencia normalizada $r$ constante (circunferencias tangentes al punto $\Gamma=1$) y reactancia normalizada $x$ constante (arcos). Moverse a lo largo de la línea es rotar sobre la circunferencia a trazos (ROE constante) que pasa por $\Gamma_L$. La flecha corresponde a alejarse $\lambda/8$ de la carga del Ejemplo \ref{ejemplo:smith}, en sentido horario.}\label{fig:carta smith}
+    \caption{Carta de Smith: disco $|\Gamma|\leqslant 1$ con la grilla de resistencia normalizada $r$ constante (circunferencias tangentes al punto $\Gamma=1$, rotuladas sobre el eje real) y reactancia normalizada $x$ constante (arcos, rotulados junto al borde). El punto $\Gamma=-1$ corresponde a un cortocircuito y $\Gamma=1$ a un circuito abierto. La escala exterior mide, en longitudes de onda, el desplazamiento hacia el generador, y da una vuelta completa cada $\lambda/2$. La flecha corresponde a alejarse $\lambda/8$ de la carga del Ejemplo \ref{ejemplo:smith}, en sentido horario sobre la circunferencia de ROE constante (a trazos).}\label{fig:carta smith}
 \end{figure}
 
 \begin{ejemplo}[Uso de la Carta de Smith]\label{ejemplo:smith}
@@ -538,7 +558,7 @@ Sobre una línea de $Z_0=50\ \unit{\ohm}$ sin pérdidas se conecta una carga $Z_
 \begin{equation*}
     \Gamma_L = \frac{(0.5+j0.5)-1}{(0.5+j0.5)+1} = \frac{-0.5+j0.5}{1.5+j0.5} = -0.2+j0.4,
 \end{equation*}
-de donde $|\Gamma_L|\approx 0.447$ y, por \eqref{eq:roe}, $\mathrm{ROE}=\frac{1+0.447}{1-0.447}\approx 2.62$. Sobre la Carta de Smith (Figura \ref{fig:carta smith}), el punto $\zeta_L=0.5+j0.5$ se ubica en la intersección de la circunferencia $r=0.5$ con el arco $x=0.5$, y $\Gamma_L$ se lee directamente como el vector desde el origen hasta ese punto. La circunferencia de ROE constante que pasa por ese punto (marcada en la figura) es el lugar geométrico de todas las impedancias que se ven al recorrer la línea desde la carga. Para hallar, por ejemplo, la impedancia a $d=\lambda/8$ de la carga basta rotar $2\beta d = 2\cdot\frac{2\pi}{\lambda}\cdot\frac{\lambda}{8}=\frac{\pi}{2}$ ($90^\circ$) sobre esa circunferencia en sentido horario y leer $\zeta(d)$ en la grilla. Se llega a la intersección de la circunferencia $r=2$ con el arco $x=1$, es decir $\zeta(\lambda/8)=2+j1$, lo que puede verificarse con \eqref{eq:transformacion impedancia sin perdidas}.
+de donde $|\Gamma_L|\approx 0.447$ y, por \eqref{eq:roe}, $\mathrm{ROE}=\frac{1+0.447}{1-0.447}\approx 2.62$. Sobre la Carta de Smith (Figura \ref{fig:carta smith}), el punto $\zeta_L=0.5+j0.5$ se ubica en la intersección de la circunferencia $r=0.5$ con el arco $x=0.5$, y $\Gamma_L$ se lee directamente como el vector desde el origen hasta ese punto. La circunferencia de ROE constante que pasa por ese punto (marcada en la figura) es el lugar geométrico de todas las impedancias que se ven al recorrer la línea desde la carga. Para hallar, por ejemplo, la impedancia a $d=\lambda/8$ de la carga basta rotar $2\beta d = 2\cdot\frac{2\pi}{\lambda}\cdot\frac{\lambda}{8}=\frac{\pi}{2}$ ($90^\circ$) sobre esa circunferencia en sentido horario y leer $\zeta(d)$ en la grilla. Se llega a la intersección de la circunferencia $r=2$ con el arco $x=1$, es decir $\zeta(\lambda/8)=2+j1$, lo que puede verificarse con \eqref{eq:transformacion impedancia sin perdidas}. El giro también puede medirse en la escala exterior de la carta: la carga se lee en $0.088\lambda$ y el punto buscado en $0.088\lambda+0.125\lambda=0.213\lambda$.
 \end{ejemplo}
 
 \subsection*{Adaptación de impedancias}
@@ -553,60 +573,74 @@ la impedancia vista desde el generador es $Z_0'^2/R_L = Z_0$, y la línea queda 
 
 \paragraph{Adaptación con stub en paralelo.} Para una carga con parte reactiva, $Z_L=R_L+jX_L$, hace falta una técnica más general. La más común es el \emph{stub} en paralelo: un tramo adicional de línea, del mismo $Z_0$, conectado en paralelo con la línea principal a una distancia $d$ de la carga, y terminado en circuito abierto o en cortocircuito en su extremo libre. Como una línea sin pérdidas terminada en una reactancia pura ($Z_L=0$ o $Z_L=\infty$) presenta en su entrada una impedancia puramente reactiva, el stub actúa como un elemento reactivo variable, cuyo valor se ajusta con su longitud $\ell_s$.
 
-De \eqref{eq:transformacion impedancia sin perdidas}, tomando $Z_L=0$ (cortocircuito) se obtiene la impedancia de entrada de un stub cortocircuitado de longitud $\ell_s$, $Z_{cc}(\ell_s) = jZ_0\tan(\beta \ell_s)$, y tomando el límite $Z_L\to\infty$ (circuito abierto), $Z_{ca}(\ell_s) = -jZ_0\cot(\beta\ell_s)$. En admitancia normalizada ($y:=Y/Y_0$, con $Y_0=1/Z_0$):
+De \eqref{eq:transformacion impedancia sin perdidas}, tomando $Z_L=0$ (cortocircuito) se obtiene la impedancia de entrada de un stub cortocircuitado de longitud $\ell_s$, $Z_{cc}(\ell_s) = jZ_0\tan(\beta \ell_s)$, y tomando el límite $Z_L\to\infty$ (circuito abierto), $Z_{ca}(\ell_s) = -jZ_0\cot(\beta\ell_s)$. En términos de la admitancia normalizada $y:=Y/Y_0=1/\zeta$, con $Y_0=1/Z_0$, que escribimos $y=g+jb$, siendo $g$ la \emph{conductancia normalizada} y $b$ la \emph{susceptancia normalizada}:
 \begin{equation}\label{eq:stub susceptancias}
     y_{cc}(\ell_s) = -j\cot(\beta \ell_s), \qquad\qquad y_{ca}(\ell_s) = j\tan(\beta \ell_s).
 \end{equation}
 Cada una permite sintetizar cualquier susceptancia normalizada con solo variar $\ell_s$ entre $0$ y $\lambda/2$. En la práctica se prefiere el stub cortocircuitado, ya que el extremo abierto radia y es más sensible a efectos de borde, mientras que el cortocircuito es mecánicamente robusto y bien definido.
 
-El procedimiento de adaptación con un stub en paralelo tiene dos pasos, y ambos se resuelven sobre la Carta de Smith:
-\begin{enumerate}
-    \item \emph{Buscar $d$:} avanzar desde la carga hacia el generador, rotando sobre la circunferencia de ROE constante que pasa por $\zeta_L$, hasta encontrar el punto donde la parte real de la admitancia normalizada vale $1$, es decir $y(d) = 1+jb$. Como trabajamos en paralelo, conviene pensar directamente en admitancias. Por la simetría de \eqref{eq:gamma normalizado}, la admitancia normalizada correspondiente a un punto $\Gamma$ es exactamente la impedancia normalizada que se lee en la grilla en el punto \emph{diametralmente opuesto}, $-\Gamma$, que está sobre el mismo círculo de ROE rotado $180^\circ$. Esto permite usar la misma Carta de Smith de impedancias para leer admitancias.
-    \item \emph{Buscar $\ell_s$:} elegir la longitud del stub que cancela la parte imaginaria $b$ encontrada en el paso anterior, es decir tal que $y_{cc}(\ell_s) = -jb$, usando \eqref{eq:stub susceptancias}. Con esto, la admitancia total en el punto de conexión es $1+jb-jb=1$, y la línea queda adaptada.
-\end{enumerate}
+Según su longitud, un stub cortocircuitado se comporta de manera distinta. Un tramo muy corto ($\ell_s\ll\lambda/4$) es prácticamente un cable que une los dos conductores, y presenta una reactancia inductiva pequeña. A medida que $\ell_s$ crece hasta $\lambda/4$ la reactancia inductiva aumenta, y en $\ell_s=\lambda/4$ el cortocircuito se ve como un circuito abierto. Entre $\lambda/4$ y $\lambda/2$ el stub es capacitivo, y en $\ell_s=\lambda/2$ vuelve a verse el cortocircuito. En la Carta de Smith esto corresponde a recorrer el borde del disco, la circunferencia $r=0$, partiendo de $\Gamma=-1$: como la línea no disipa potencia y el cortocircuito tampoco, toda la potencia incidente se refleja, $|\Gamma|=1$, y la impedancia de entrada es una reactancia pura.
 
-\begin{ejemplo}[Adaptación con stub, continuación del Ejemplo \ref{ejemplo:smith}]
-Retomemos la carga $\zeta_L=0.5+j0.5$ ($\Gamma_L=-0.2+j0.4$) del Ejemplo \ref{ejemplo:smith}. Su admitancia normalizada es:
+La adaptación con stub es así el análogo, en una línea de transmisión, de la corrección del factor de potencia en una instalación eléctrica. Un motor es una carga inductiva, que además de la corriente activa toma corriente reactiva de la red. Conectando un capacitor en paralelo, esa corriente reactiva circula solo entre el capacitor y el motor, y desde la red se ve una carga puramente resistiva. El stub cumple el mismo papel: cancela la susceptancia en el punto de conexión, y desde allí hacia el generador la línea ve una carga real. La diferencia es que en la línea, además, la parte real debe valer exactamente $Y_0$. Eso es lo que se logra eligiendo la distancia $d$ a la carga.
+
+Como el stub es una susceptancia pura, solo puede modificar la parte imaginaria $b$ de la admitancia en el punto donde se conecta, y no su parte real $g$. Por lo tanto, el stub debe conectarse en un punto de la línea donde la admitancia vista hacia la carga ya tenga $g=1$. El procedimiento tiene entonces dos pasos, y ambos se resuelven sobre la Carta de Smith:
+\begin{enumerate}
+    \item \emph{Buscar $d$:} avanzar desde la carga hacia el generador hasta encontrar un punto donde $y(d) = 1+jb$. Como trabajamos en paralelo, conviene leer la carta directamente en admitancias. Por la simetría de \eqref{eq:gamma normalizado}, la admitancia normalizada correspondiente a un punto $\Gamma$ es exactamente la impedancia normalizada que se lee en la grilla en el punto \emph{diametralmente opuesto}, $-\Gamma$. Basta entonces con reemplazar el punto de la carga por su opuesto, que está sobre el mismo círculo de ROE, y a partir de allí leer la grilla como $g$ (en lugar de $r$) y $b$ (en lugar de $x$). Avanzar hacia el generador sigue siendo girar en sentido horario sobre el círculo de ROE, hasta cortar la circunferencia $g=1$, que es la que en la grilla de impedancias corresponde a $r=1$. En general hay dos cortes, y por lo tanto dos soluciones.
+    \item \emph{Buscar $\ell_s$:} elegir la longitud del stub que cancela la susceptancia $b$ encontrada en el paso anterior, es decir tal que $y_{cc}(\ell_s) = -jb$, usando \eqref{eq:stub susceptancias}. Con esto, la admitancia total en el punto de conexión es $1+jb-jb=1$, y la línea queda adaptada desde ese punto hacia el generador. Sobre la carta, el stub desplaza el punto a lo largo de la circunferencia $g=1$ hasta el centro.
+\end{enumerate}
+Entre la carga y el stub sigue habiendo onda estacionaria, pero queda confinada a ese tramo de longitud $d$.
+
+\begin{ejemplo}[Adaptación con stub]\label{ejemplo:stub}
+Sobre la misma línea de $Z_0=50\ \unit{\ohm}$ del Ejemplo \ref{ejemplo:smith}, se conecta ahora una carga $Z_L=100+j50\ \unit{\ohm}$, es decir $\zeta_L=2+j1$. Es la impedancia que se ve a $\lambda/8$ de la carga de aquel ejemplo, por lo que está sobre el mismo círculo de ROE, con $\Gamma_L=0.4+j0.2$ y $|\Gamma_L|^2=0.2$. Su admitancia normalizada es
 \begin{equation*}
-    y_L = \frac{1}{\zeta_L} = \frac{1}{0.5+j0.5} = 1-j1,
+    y_L = \frac{1}{2+j1} = \frac{2-j1}{5} = 0.4-j0.2,
 \end{equation*}
-que en este caso particular ya tiene parte real $1$: la carga está exactamente sobre la circunferencia $g=1$ (sobre la Carta de Smith, esto se ve tomando el punto diametralmente opuesto a $\Gamma_L$, sobre el mismo círculo de ROE, como muestra la Figura \ref{fig:smith stub}). Esto simplifica el ejemplo, ya que alcanza con un stub colocado en la carga misma, $d=0$, y solo resta el paso 2. Necesitamos cancelar $b=-1$, es decir un stub con $y_{cc}(\ell_s)=+j1 \Leftrightarrow -\cot(\beta\ell_s)=1 \Leftrightarrow \beta\ell_s = \frac{3\pi}{4}$, de donde:
+con $g_L=0.4\neq 1$, por lo que no podemos conectar el stub en la carga misma.
+
+\emph{Paso 1.} Sobre la carta (Figura \ref{fig:smith stub}), $y_L$ se ubica en el punto opuesto a $\Gamma_L$, que en la escala exterior se lee en $0.463\lambda$. Girando en sentido horario sobre el círculo de ROE, el primer corte con la circunferencia $g=1$ está en $0.162\lambda$, es decir a una distancia $d=0.162\lambda+0.5\lambda-0.463\lambda\approx 0.199\lambda$ de la carga, donde se lee $y(d)=1+j1$. Analíticamente, la condición $\mathrm{Re}\,y=1$, con $y=(1-\Gamma)/(1+\Gamma)$, equivale a
 \begin{equation*}
-    \ell_s = \frac{3}{4}\cdot\frac{\pi}{\beta} = \frac{3}{4}\cdot\frac{\lambda}{2} = \frac{3\lambda}{8}.
+    \mathrm{Re}\,\frac{1-\Gamma}{1+\Gamma} = \frac{1-|\Gamma|^2}{|1+\Gamma|^2} = 1 \quad\Longleftrightarrow\quad \mathrm{Re}\,\Gamma = -|\Gamma|^2 = -0.2,
 \end{equation*}
-Un stub cortocircuitado de longitud $\frac{3\lambda}{8}$, conectado en paralelo con la línea en la carga, adapta completamente este caso. En general (cuando $g_L\neq 1$) hace falta además el paso 1, buscando el $d\neq 0$ adecuado antes de calcular el largo del stub.
+de donde $\Gamma(d)=-0.2\pm j0.4$. Como $\Gamma(d)=\Gamma_L\e^{-j2\beta d}$ y $\Gamma_L$ tiene fase $26.6^\circ$, el primer corte, $\Gamma(d)=-0.2-j0.4$ (fase $-116.6^\circ$), se alcanza con $2\beta d=143.1^\circ$, es decir $d=\frac{143.1}{720}\lambda\approx 0.199\lambda$. Allí
+\begin{equation*}
+    y(d) = \frac{1-\Gamma(d)}{1+\Gamma(d)} = \frac{1.2+j0.4}{0.8-j0.4} = 1+j1.
+\end{equation*}
+
+\emph{Paso 2.} Hay que cancelar $b=1$, es decir un stub con $y_{cc}(\ell_s)=-j1 \Leftrightarrow \cot(\beta\ell_s)=1 \Leftrightarrow \beta\ell_s = \frac{\pi}{4}$, de donde $\ell_s=\frac{\lambda}{8}$. En el punto de conexión la susceptancia es capacitiva ($b=+1$), por lo que el stub debe ser inductivo, lo que es consistente con $\ell_s=\lambda/8<\lambda/4$.
+
+Un stub cortocircuitado de longitud $\lambda/8$, conectado en paralelo a $0.199\lambda$ de la carga, adapta la línea. La segunda solución corresponde al otro corte, $\Gamma(d)=-0.2+j0.4$, que se alcanza girando $270^\circ$, es decir a $d=3\lambda/8$ de la carga. Allí $y(d)=1-j1$, es decir $\zeta(d)=0.5+j0.5$, que es la carga del Ejemplo \ref{ejemplo:smith}, como era de esperar ya que $\lambda/8+3\lambda/8=\lambda/2$ es una vuelta completa. Hay que cancelar $b=-1$, con un stub tal que $-\cot(\beta\ell_s)=1$, es decir $\beta\ell_s=3\pi/4$ y $\ell_s=3\lambda/8$. En este caso ocurre lo contrario: $y(d)=1-j1$ es inductiva y el stub de $3\lambda/8$ es capacitivo. En la práctica se prefiere la solución más cercana a la carga, porque la adaptación resulta menos sensible a variaciones de la frecuencia.
 \end{ejemplo}
 
 \begin{figure}
     \begin{center}
-        \begin{tikzpicture}[scale=3.1]
-            \begin{scope}
-                \clip (0,0) circle (1.01);
-                \foreach \r in {0.3,0.5,1,2,4}{
-                    \draw[thin, gray] ({\r/(\r+1)},0) circle ({1/(\r+1)});
-                }
-                \foreach \x in {0.5,1,2}{
-                    \draw[thin, gray] (1,{1/\x}) circle ({1/\x});
-                    \draw[thin, gray] (1,{-1/\x}) circle ({1/\x});
-                }
-            \end{scope}
-            \draw[thick] (0,0) circle (1);
-            \draw[thick] (-1,0) -- (1,0);
+        \begin{tikzpicture}[scale=4.2]
+            \cartasmith
             \draw[teal, very thick] (0.5,0) circle (0.5);
             \node[teal, fill=white, inner sep=1pt] at (0.62,0.6) {\footnotesize $g=1$};
             \draw[Red, dashed] (0,0) circle (0.4472);
-            \fill[Red] (-0.2,0.4) circle (0.014);
-            \node[Red, above left, fill=white, inner sep=1pt] at (-0.2,0.4) {\footnotesize $\Gamma_L$};
-            \draw[gray, densely dotted] (-0.2,0.4) -- (0.2,-0.4);
-            \fill[teal] (0.2,-0.4) circle (0.014);
-            \node[teal, below right, fill=white, inner sep=1pt] at (0.2,-0.42) {\footnotesize $y_L=1-j1$};
-            \draw[->, teal, thick] (0.2,-0.4) arc[start angle=233.13, end angle=184, radius=0.5];
-            \fill[black] (0,0) circle (0.014);
-            \node[left, fill=white, inner sep=1pt] at (-0.02,-0.2) {\footnotesize stub: $+j1$};
-            \node[above right, fill=white, inner sep=1pt] at (0,0.02) {\footnotesize $y=1$};
+            % carga zeta_L = 2 + j1 y su admitancia (punto opuesto)
+            \draw[gray, densely dotted] (0.4,0.2) -- (-0.4,-0.2);
+            \fill[Red] (0.4,0.2) circle (0.012);
+            \node[Red, right, fill=white, inner sep=1pt] at (0.42,0.2) {\footnotesize $\zeta_L=2+j1$};
+            \draw[teal, densely dotted] (0,0) -- (206.57:1);
+            \draw[teal, densely dotted] (0,0) -- (63.43:1);
+            \fill[teal] (-0.4,-0.2) circle (0.012);
+            \node[teal, below left, fill=white, inner sep=1pt] at (-0.41,-0.21) {\footnotesize $y_L=0.4-j0.2$};
+            % paso 1: giro hasta g = 1
+            \draw[->, teal, thick] (-0.4,-0.2) arc[start angle=206.57, end angle=66, radius=0.4472];
+            \node[teal, fill=white, inner sep=1pt] at (150:0.56) {\footnotesize $d\approx 0.199\lambda$};
+            \fill[teal] (0.2,0.4) circle (0.012);
+            \node[teal, above, fill=white, inner sep=1pt] at (0.2,0.42) {\footnotesize $1+j1$};
+            % paso 2: stub -j1, sobre g = 1 hasta el centro
+            \draw[->, black, thick] (0.2,0.4) arc[start angle=126.87, end angle=176, radius=0.5];
+            \node[left, fill=white, inner sep=1pt] at (0.02,0.24) {\footnotesize stub: $-j1$};
+            \fill[black] (0,0) circle (0.012);
+            % segunda solución
+            \draw[teal, thick, fill=white] (0.2,-0.4) circle (0.014);
+            \node[teal, below right, fill=white, inner sep=1pt] at (0.21,-0.41) {\footnotesize $1-j1$};
         \end{tikzpicture}
     \end{center}
-    \caption{Adaptación con stub de la carga del Ejemplo \ref{ejemplo:smith}, leyendo la carta como carta de admitancias. El punto diametralmente opuesto a $\Gamma_L$ da la admitancia normalizada $y_L=1-j1$, que ya está sobre la circunferencia $g=1$. El stub en paralelo suma una susceptancia $+j1$, que desplaza el punto sobre esa circunferencia hasta el centro de la carta, donde la línea queda adaptada.}\label{fig:smith stub}
+    \caption{Adaptación con stub del Ejemplo \ref{ejemplo:stub}, leyendo la carta como carta de admitancias. El punto opuesto a la carga $\zeta_L=2+j1$ da su admitancia $y_L=0.4-j0.2$. Al alejarse de la carga se gira en sentido horario sobre el círculo de ROE (a trazos) hasta cortar la circunferencia $g=1$ en $y=1+j1$, a $d\approx 0.199\lambda$ según la escala exterior. El stub suma una susceptancia $-j1$, que lleva el punto por la circunferencia $g=1$ hasta el centro, donde la línea queda adaptada. El círculo vacío marca el segundo corte, $y=1-j1$, que corresponde a la otra solución.}\label{fig:smith stub}
 \end{figure}
 
 \section{Dispersión y su efecto sobre los pulsos}\label{sec:dispersion pulsos}
