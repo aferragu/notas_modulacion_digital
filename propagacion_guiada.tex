@@ -1,37 +1,37 @@
-A lo largo de los capítulos anteriores modelamos el canal de transmisión simplemente como un sistema lineal e invariante en el tiempo, caracterizado por su respuesta en frecuencia $\hat{H}(f)$ (Figura \ref{fig:distorsion canal}), sin preguntarnos de dónde surgía dicha respuesta, ni por qué introducía atenuación, ancho de banda limitado o interferencia intersimbólica. En este capítulo le damos contenido físico a ese bloque gris, para el caso de un canal \emph{guiado}: un par de conductores paralelos, un par trenzado o un cable coaxial, que conducen la señal eléctrica de un extremo a otro. El objetivo es llegar, a partir de primeros principios, a la respuesta en frecuencia $\hat{H}(f)$ de un tramo de línea, que es exactamente el objeto que el resto de estas notas ya utiliza.
+A lo largo de los capítulos anteriores modelamos el canal de transmisión simplemente como un sistema lineal e invariante en el tiempo, caracterizado por su respuesta en frecuencia $\hat{H}(f)$ (Figura \ref{fig:distorsion canal}), sin preguntarnos de dónde surgía dicha respuesta, ni por qué introducía atenuación, ancho de banda limitado o interferencia intersimbólica. En este capítulo estudiamos la propagación de señales en un canal \emph{guiado}: un par de conductores paralelos, un par trenzado o un cable coaxial, que conducen la señal eléctrica de un extremo a otro. Además de los fenómenos propios de las líneas de transmisión (reflexión, onda estacionaria, adaptación de impedancias), el objetivo es llegar, a partir de primeros principios, a la respuesta en frecuencia $\hat{H}(f)$ de un tramo de línea, que es el objeto que el resto de estas notas utiliza.
 
 \section{Modelo de parámetros distribuidos}\label{sec:parametros distribuidos}
 
-Cuando trabajamos con circuitos a bajas frecuencias, es habitual despreciar el tiempo que tardan las señales en propagarse dentro de los componentes: se supone que la tensión y la corriente son las mismas en todo punto de un cable, en cualquier instante. Esta aproximación de \emph{parámetros concentrados} es válida cuando la longitud física del circuito es mucho menor que la longitud de onda $\lambda = v/f$ de las señales involucradas, siendo $v$ la velocidad de propagación en el medio. En comunicaciones esto deja de ser cierto: a $f=100\ \unit{\mega\hertz}$, con una velocidad de propagación típica en un cable de $v\approx 2\times 10^8\ \unit{\meter\per\second}$, la longitud de onda es de apenas $\lambda = 2\ \unit{\meter}$, comparable o menor a la longitud de un cable de conexión típico. En este régimen ya no podemos ignorar el tiempo de tránsito de la señal a lo largo de la línea: la tensión y la corriente pasan a depender tanto del tiempo $t$ como de la posición $z$ a lo largo del cable. Este es el modelo de \emph{parámetros distribuidos} que desarrollamos a continuación.
+Cuando trabajamos con circuitos a bajas frecuencias, es habitual despreciar el tiempo que tardan las señales en propagarse dentro de los componentes: se supone que la tensión y la corriente son las mismas en todo punto de un cable, en cualquier instante. Esta aproximación de \emph{parámetros concentrados} es válida cuando la longitud física del circuito es mucho menor que la longitud de onda $\lambda = v/f$ de las señales involucradas, siendo $v$ la velocidad de propagación en el medio. En comunicaciones esto deja de ser cierto: a $f=100\ \unit{\mega\hertz}$, con una velocidad de propagación típica en un cable de $v\approx 2\times 10^8\ \unit{\meter\per\second}$, la longitud de onda es de apenas $\lambda = 2\ \unit{\meter}$, comparable o menor a la longitud de un cable de conexión típico. En este régimen ya no podemos ignorar el tiempo de tránsito de la señal a lo largo de la línea, y la tensión y la corriente pasan a depender tanto del tiempo $t$ como de la posición $z$ a lo largo del cable. Este es el modelo de \emph{parámetros distribuidos} que desarrollamos a continuación.
 
 La idea central es discretizar la línea en segmentos infinitesimales de longitud $\Delta z$ y modelar cada uno como un circuito de parámetros concentrados equivalente. Cuatro parámetros, definidos \emph{por unidad de longitud}, alcanzan para caracterizar el comportamiento eléctrico de la línea.
 
 \begin{definicion}[Parámetros primarios de la línea]\label{def:parametros primarios}
 Una línea de transmisión de dos conductores queda caracterizada por cuatro parámetros por unidad de longitud, en general dependientes de la frecuencia:
 \begin{itemize}
-    \item $R$ ($\unit{\ohm/\meter}$): resistencia serie de los conductores, debida a su conductividad finita.
-    \item $L$ [$\unit{\henry}/\unit{\meter}$]: inductancia serie, asociada al campo magnético que rodea a los conductores cuando circula corriente por ellos.
-    \item $G$ [$\unit{\siemens}/\unit{\meter}$]: conductancia paralelo, debida a las pérdidas (corrientes de fuga) en el dieléctrico que separa los conductores.
-    \item $C$ [$\unit{\farad}/\unit{\meter}$]: capacidad paralelo, asociada al campo eléctrico entre los conductores.
+    \item $R$ ($\unit{\ohm\per\meter}$): resistencia serie de los conductores, debida a su conductividad finita.
+    \item $L$ ($\unit{\henry\per\meter}$): inductancia serie, asociada al campo magnético que rodea a los conductores cuando circula corriente por ellos.
+    \item $G$ ($\unit{\siemens\per\meter}$): conductancia paralelo, debida a las pérdidas (corrientes de fuga) en el dieléctrico que separa los conductores.
+    \item $C$ ($\unit{\farad\per\meter}$): capacidad paralelo, asociada al campo eléctrico entre los conductores.
 \end{itemize}
 \end{definicion}
 
-Los cuatro parámetros dependen de la geometría de la línea (diámetro y separación de los conductores, material dieléctrico, etc.). Por ahora los tratamos como constantes conocidas, con la salvedad de que $R$ y $G$ dependen en realidad de la frecuencia; retomamos este punto con detalle en la Sección \ref{sec:dispersion pulsos}, donde esa dependencia resulta ser la causante de buena parte de la distorsión que sufren los pulsos.
+Los cuatro parámetros dependen de la geometría de la línea (diámetro y separación de los conductores, material dieléctrico, etc.). Por ahora los tratamos como constantes conocidas, con la salvedad de que $R$ y $G$ dependen en realidad de la frecuencia. Retomamos este punto en la Sección \ref{sec:dispersion pulsos}, donde esa dependencia resulta ser la causante de buena parte de la distorsión que sufren los pulsos.
 
 Un segmento de línea de longitud $\Delta z$ se modela mediante el circuito de parámetros concentrados de la Figura \ref{fig:segmento linea}: una resistencia $R\Delta z$ en serie con una inductancia $L\Delta z$, seguida de una conductancia $G\Delta z$ en paralelo con una capacidad $C\Delta z$, ambas conectando el conductor de señal con el de retorno.
 
 \begin{figure}
     \begin{center}
         \begin{circuitikz}[scale=1.5, american]
-            \draw (0,0) to[R=$R\Delta z$] (1.9,0) to[L=$L\Delta z$] (4,0);
-            \draw (4,0) -- (4.4,0);
-            \draw (4,0) to[R=$1/G\Delta z$] (4,-1.1) to[C=$C\Delta z$] (4,-2.2);
-            \draw (0,-2.2) -- (4,-2.2);
-            \draw (4,-2.2) -- (4.4,-2.2);
+            \draw (0,0) to[R=$R\Delta z$] (1.9,0) to[L=$L\Delta z$] (3.5,0);
+            \draw (3.5,0) -- (5,0);
+            \draw (3.8,-2.2) to[R=$1/G\Delta z$] (3.8,0);
+            \draw (4.5,0) to[C=$C\Delta z$] (4.5,-2.2);
+            \draw (0,-2.2) -- (5,-2.2);
             \draw[-latex, thick] (0,-1.85) -- (0,-0.35) node[midway,left] {$v(z,t)$};
-            \draw[-latex, thick] (1.6,0.5) -- (2.4,0.5) node[midway,above] {$i(z,t)$};
+            \draw[-latex, thick] (1.45,0.5) -- (2.25,0.5) node[midway,above] {$i(z,t)$};
             \node[below left] at (0,-2.2) {$z$};
-            \node[below right] at (4.4,-2.2) {$z+\Delta z$};
+            \node[below right] at (5,-2.2) {$z+\Delta z$};
         \end{circuitikz}
     \end{center}
     \caption{Circuito de parámetros concentrados equivalente a un segmento de línea de longitud $\Delta z$. La línea completa es la cascada de infinitos segmentos de este tipo.}\label{fig:segmento linea}
@@ -55,11 +55,11 @@ que en el mismo límite $\Delta z \to 0$ da $-\partial i(z,t)/\partial z$ en el 
 \begin{subequations}\label{eq:telegrafista}
 \begin{align}
     \frac{\partial v(z,t)}{\partial z} &= -R\, i(z,t) - L\, \frac{\partial i(z,t)}{\partial t}, \\
-    \nonumber \\ 
+    \nonumber \\
     \frac{\partial i(z,t)}{\partial z} &= -G\, v(z,t) - C\, \frac{\partial v(z,t)}{\partial t}.
-\end{align}    
+\end{align}
 \end{subequations}
-Estas ecuaciones, planteadas por Kelvin y luego completadas por Heaviside en el contexto del cable telegráfico transatlántico, son el punto de partida de todo el análisis de líneas de transmisión: relacionan cómo cambia la tensión en el espacio con cómo cambia la corriente en el tiempo y viceversa, acoplando así la dimensión espacial que el modelo de parámetros concentrados ignoraba.
+Estas ecuaciones, planteadas por Kelvin y luego completadas por Heaviside en el contexto del cable telegráfico transatlántico, son el punto de partida del análisis de líneas de transmisión. Relacionan cómo cambia la tensión en el espacio con cómo cambia la corriente en el tiempo y viceversa, acoplando así la dimensión espacial que el modelo de parámetros concentrados ignoraba.
 
 \section{Ecuación de onda y propagación en la línea}\label{sec:ecuacion de onda}
 
@@ -68,17 +68,17 @@ Derivando la primera ecuación de \eqref{eq:telegrafista} respecto de $z$ y sust
     \frac{\partial^2 v(z,t)}{\partial z^2} = LC\, \frac{\partial^2 v(z,t)}{\partial t^2} + (RC+LG)\, \frac{\partial v(z,t)}{\partial t} + RG\, v(z,t).
 \end{equation}
 
-Esta ecuación se denomina \emph{ecuación de onda de la línea con pérdidas}. 
+Esta ecuación se denomina \emph{ecuación de onda de la línea con pérdidas}.
 
 \begin{ejemplo}[Línea sin pérdidas]
     Supongamos un caso ideal de línea sin pérdidas, es decir $R=G=0$. En este caso la ecuación \eqref{eq:onda con perdidas} se reduce a:
     \begin{equation*}
         \frac{\partial^2 v}{\partial z^2} = LC\, \frac{\partial^2 v}{\partial t^2}.
     \end{equation*}
-Esta es la ecuación de onda clásica, cuya solución general es $v(z,t) = f(t-z/v_0) + g(t+z/v_0)$ con $v_0=1/\sqrt{LC}$, denominada velocidad de propagación. Se trata entonces de dos formas de onda $f$ y $g$ genéricas viajando sin distorsión, una en cada sentido. 
+Esta es la ecuación de onda clásica, cuya solución general es $v(z,t) = f(t-z/v_p) + g(t+z/v_p)$ con $v_p=1/\sqrt{LC}$, denominada velocidad de propagación. Se trata entonces de dos formas de onda $f$ y $g$ genéricas viajando sin distorsión, una en cada sentido.
 \end{ejemplo}
 
-Con pérdidas, sin embargo, esta ecuación no tiene en general una solución tan simple en el dominio temporal. Sin embargo, como el sistema \eqref{eq:telegrafista} es lineal e invariante en el tiempo (para $z$ fijo, $R,L,G,C$ no dependen de $t$), conviene resolverlo trabajando en frecuencia, tal como en la teoría general de sistemas LTI. Tomando transformada de Fourier en $t$ a ambos miembros de \eqref{eq:telegrafista}, definimos:
+Con pérdidas, en cambio, esta ecuación no tiene en general una solución tan simple en el dominio temporal. Sin embargo, como el sistema \eqref{eq:telegrafista} es lineal e invariante en el tiempo ($R,L,G,C$ no dependen de $t$), conviene resolverlo trabajando en frecuencia, tal como en la teoría general de sistemas LTI. Tomando transformada de Fourier en $t$ a ambos miembros de \eqref{eq:telegrafista}, definimos:
 \begin{equation*}
 v(z,t) \fourier \hat{V}(z,f), \quad \quad i(z,t) \fourier \hat{I}(z,f).
 \end{equation*}
@@ -93,62 +93,61 @@ Derivando la primera ecuación respecto de $z$ y sustituyendo la segunda:
 \begin{equation}\label{eq:onda perdida fourier}
     \frac{d^2\hat{V}(z,f)}{dz^2} = \left(R+j2\pi f L\right)\left(G+j2\pi f C\right) \hat{V}(z,f) = \gamma(f)^2\, \hat{V}(z,f),
 \end{equation}
-donde definimos la \emph{constante de propagación}:
+donde definimos la \emph{constante de propagación}\footnote{Usamos la notación habitual en la teoría de líneas de transmisión. No debe confundirse $\gamma(f)$ con la relación $\gamma=\bar E_b/\eta_0$ del Capítulo \ref{chapter:deteccion ruido}, ni $\alpha(f)$ y $\beta(f)$ con el exceso de ancho de banda $\alpha$ de los pulsos de Nyquist o el factor $\beta$ del Capítulo \ref{chapter:deteccion ruido}. En este capítulo las escribimos siempre con su argumento $(f)$.}:
 \begin{equation}\label{eq:gamma}
     \gamma(f) := \alpha(f) + j\beta(f) = \sqrt{\left(R+j2\pi f L\right)\left(G+j2\pi f C\right)}.
 \end{equation}
 
-Notar que $\gamma(f)$ es en principio la raíz cuadrada de un número complejo: elegimos aquella raíz que posee $\alpha(f)\geqslant 0$. Esto corresponde a una elección física: las ondas se atenúan al propagarse (en la dirección $z$ creciente). De este modo, $\alpha(f)$ se denomina la \emph{constante de atenuación} y posee unidades de $\unit{\per\meter}$, aunque es común expresarla en $\unit{\deci\bel\per\meter}$. A $\beta(f)$ se le denomina \emph{constante de fase} y su unidad es $\unit{\radian/\meter}$.
+Notar que $\gamma(f)$ es en principio la raíz cuadrada de un número complejo. Elegimos aquella raíz que posee $\alpha(f)\geqslant 0$, lo que corresponde a una elección física: las ondas se atenúan al propagarse. De este modo, $\alpha(f)$ se denomina la \emph{constante de atenuación} y posee unidades de $\unit{\neper\per\meter}$, aunque es común expresarla en $\unit{\deci\bel\per\meter}$ (multiplicando por $20\log_{10}\e\approx 8.686$). A $\beta(f)$ se le denomina \emph{constante de fase} y su unidad es $\unit{\radian\per\meter}$.
 
 La ecuación diferencial \eqref{eq:onda perdida fourier} es, para cada $f$, una ecuación de segundo orden en $z$ que posee como solución general:
 \begin{equation}\label{eq:solucion V}
-    \hat{V}(z,f) = \hat{V}^+(f)\, e^{-\gamma(f) z} + \hat{V}^-(f)\, e^{\gamma(f) z},
+    \hat{V}(z,f) = \hat{V}^+(f)\, \e^{-\gamma(f) z} + \hat{V}^-(f)\, \e^{\gamma(f) z},
 \end{equation}
-donde las constantes $\hat{V}^+(f)$, $\hat{V}^-(f)$ precisamente pueden depender de $f$, así como de las condiciones de borde de la línea.
+donde las constantes $\hat{V}^+(f)$ y $\hat{V}^-(f)$ pueden depender de $f$, y quedan determinadas por las condiciones de borde de la línea.
 
-Interpretemos entonces cada uno de estos términos:
-\begin{itemize}
-    \item $\hat{V}^+(f)\, e^{-\gamma(f) z} = \hat{V}^+(f)e^{-\alpha(f) z}e^{-j\beta(f) z}$
-\end{itemize}
-
-el primer término, $\hat{V}^+(f)\e^{-\alpha(f) z}\e^{-j\beta(f) z}$, se atenúa a medida que $z$ crece y acumula un atraso de fase creciente con $z$: corresponde, al antitransformar, a una onda que se propaga en el sentido de $z$ creciente y llega retardada y atenuada -- la llamamos \emph{onda incidente}. El segundo término, con $\e^{+\gamma(f) z}$, crece con $z$: no es físico para una línea semi-infinita, pero si la línea tiene longitud finita y termina en una carga que refleja parte de la energía (Sección \ref{sec:linea cargada}), representa la \emph{onda reflejada}, que se propaga en el sentido de $z$ decreciente y por lo tanto se atenúa a medida que $z$ decrece.
+Interpretemos cada uno de estos términos. El primero, $\hat{V}^+(f)\e^{-\alpha(f) z}\e^{-j\beta(f) z}$, se atenúa a medida que $z$ crece y acumula un atraso de fase creciente con $z$. Corresponde, al antitransformar, a una onda que se propaga en el sentido de $z$ creciente y llega retardada y atenuada, que llamamos \emph{onda incidente}. El segundo término, con $\e^{+\gamma(f) z}$, crece con $z$. No es físico para una línea semi-infinita, pero si la línea tiene longitud finita y termina en una carga que refleja parte de la energía (Sección \ref{sec:linea cargada}), representa la \emph{onda reflejada}, que se propaga en el sentido de $z$ decreciente y por lo tanto se atenúa a medida que $z$ decrece.
 
 Sustituyendo \eqref{eq:solucion V} en la primera ecuación de \eqref{eq:telegrafista fourier} se obtiene $\hat I(z,f)$:
-\begin{equation*}
+\begin{equation}\label{eq:solucion I}
     \hat{I}(z,f) = \frac{\gamma(f)}{R+j2\pi f L}\left[\hat{V}^+(f)\, \e^{-\gamma(f) z} - \hat{V}^-(f)\, \e^{\gamma(f) z}\right] = \frac{1}{Z_0(f)}\left[\hat{V}^+(f)\, \e^{-\gamma(f) z} - \hat{V}^-(f)\, \e^{\gamma(f) z}\right],
-\end{equation*}
+\end{equation}
 donde definimos la \emph{impedancia característica} de la línea:
 \begin{equation}\label{eq:Z0}
     Z_0(f) := \frac{R+j2\pi f L}{\gamma(f)} = \sqrt{\frac{R+j2\pi f L}{G+j2\pi f C}}.
 \end{equation}
-$Z_0(f)$ es la relación entre tensión y corriente de \emph{cada onda por separado} ($\hat V^+/\hat I^+ = Z_0$, y $\hat V^-/\hat I^- = -Z_0$, el signo por viajar en sentido contrario): es la impedancia que ``ve'' una onda viajera en una línea infinita, y depende únicamente de los parámetros primarios de la línea, no de su longitud ni de lo que haya conectado en los extremos. En general $Z_0(f)$ es compleja.
+$Z_0(f)$ es la relación entre tensión y corriente de \emph{cada onda por separado} ($\hat V^+/\hat I^+ = Z_0$, y $\hat V^-/\hat I^- = -Z_0$, con signo opuesto por viajar en sentido contrario). Es la impedancia que ``ve'' una onda viajera en una línea infinita, y depende únicamente de los parámetros primarios de la línea, no de su longitud ni de lo que haya conectado en los extremos. En general $Z_0(f)$ es compleja.
 
 \begin{remark}[Casos particulares importantes]
-Dos casos especiales de \eqref{eq:gamma}--\eqref{eq:Z0} van a aparecer repetidamente:
+Dos casos especiales de \eqref{eq:gamma} y \eqref{eq:Z0} van a aparecer repetidamente:
 \begin{itemize}
-    \item \emph{Línea sin pérdidas} ($R=G=0$, una idealización razonable para cables de buena calidad en un rango moderado de frecuencias): $\gamma(f)=j2\pi f\sqrt{LC}$ es puramente imaginaria ($\alpha=0$, no hay atenuación) y $Z_0=\sqrt{L/C}$ es real y constante, independiente de la frecuencia.
-    \item \emph{Línea con pérdidas pequeñas} ($R\ll 2\pi f L$, $G \ll 2\pi f C$): es la situación típica en RF, y da lugar a las aproximaciones que usamos en la Sección \ref{sec:dispersion pulsos}.
+    \item \emph{Línea sin pérdidas} ($R=G=0$, una idealización razonable para cables de buena calidad en un rango moderado de frecuencias): $\gamma(f)=j2\pi f\sqrt{LC}$ es puramente imaginaria ($\alpha(f)=0$, no hay atenuación) y $Z_0=\sqrt{L/C}$ es real y constante, independiente de la frecuencia.
+    \item \emph{Línea con pérdidas pequeñas} ($R\ll 2\pi f L$, $G \ll 2\pi f C$): es la situación típica en las frecuencias de interés, y da lugar a las aproximaciones que usamos en la Sección \ref{sec:dispersion pulsos}.
 \end{itemize}
 \end{remark}
 
 \subsection*{Velocidad de fase y velocidad de grupo}
 
-De \eqref{eq:solucion V}, cada componente de frecuencia $f$ de la onda incidente acumula, al recorrer una distancia $z$, un atraso de fase $\beta(f) z$ radianes. Definimos la \emph{velocidad de fase}:
+De \eqref{eq:solucion V}, cada componente de frecuencia $f$ de la onda incidente acumula, al recorrer una distancia $z$, un atraso de fase de $\beta(f) z$ radianes. Definimos la \emph{velocidad de fase}:
 \begin{equation*}
     v_p(f) := \frac{2\pi f}{\beta(f)},
 \end{equation*}
-la velocidad a la que se desplaza un punto de fase constante (por ejemplo, un máximo) de la sinusoide de frecuencia $f$. Si transmitimos una señal de banda ancha -- como un pulso -- cada componente espectral viaja, en principio, a su propia $v_p(f)$. Lo que le interesa a un observador que sigue la \emph{envolvente} del pulso (el paquete de energía) es la \emph{velocidad de grupo}:
+que es la velocidad a la que se desplaza un punto de fase constante (por ejemplo, un máximo) de la sinusoide de frecuencia $f$. Un tono puro, sin embargo, no transporta información. Si transmitimos un pulso, lo que interesa es a qué velocidad viaja su \emph{envolvente}. Para verlo, consideremos dos tonos de frecuencias cercanas $f_1$ y $f_2$. Su suma puede escribirse como el producto de una sinusoide rápida, de frecuencia $(f_1+f_2)/2$, por una envolvente lenta:
 \begin{equation*}
-    v_g(f) := \left.\left(\frac{d\beta}{d\omega}\right)^{-1}\right|_{\omega=2\pi f} = \left.\frac{2\pi}{d\beta/df}\right|_{f}.
+    \cos(2\pi f_1 t - \beta_1 z) + \cos(2\pi f_2 t - \beta_2 z) = 2\cos\left(\pi(f_1-f_2) t - \frac{\beta_1-\beta_2}{2} z\right)\cos\left(\pi(f_1+f_2) t - \frac{\beta_1+\beta_2}{2} z\right),
 \end{equation*}
-Si $\beta(f)$ es exactamente lineal en $f$, ambas velocidades coinciden y son independientes de $f$: todas las componentes espectrales del pulso viajan juntas, sin desarmarse. Si $\beta(f)$ no es lineal, distintas componentes de frecuencia viajan a distinta velocidad de fase y el pulso se \emph{dispersa} -- se ensancha en el tiempo. Este es, adelantando lo que viene en la Sección \ref{sec:dispersion pulsos}, uno de los dos mecanismos físicos que originan la ISI de la Sección \ref{sec:interferencia intersimbolica}.
+siendo $\beta_i=\beta(f_i)$. La envolvente se desplaza a velocidad $2\pi(f_1-f_2)/(\beta_1-\beta_2)$, que en el límite de tonos muy cercanos define la \emph{velocidad de grupo}:
+\begin{equation*}
+    v_g(f) := \frac{2\pi}{\beta'(f)}, \qquad \beta'(f) = \frac{d\beta}{df}.
+\end{equation*}
+Si $\beta(f)$ es exactamente lineal en $f$, ambas velocidades coinciden y son independientes de $f$: todas las componentes espectrales del pulso viajan juntas, sin desarmarse. Si $\beta(f)$ no es lineal, distintas componentes de frecuencia viajan a distinta velocidad y el pulso se \emph{dispersa}, es decir, se ensancha en el tiempo. Como veremos en la Sección \ref{sec:dispersion pulsos}, este es uno de los mecanismos físicos que originan la ISI de la Sección \ref{sec:interferencia intersimbolica}.
 
-\begin{condicion}[Condición de Heaviside -- línea sin distorsión]\label{cond:heaviside}
+\begin{condicion}[Condición de Heaviside, línea sin distorsión]\label{cond:heaviside}
 Si los parámetros primarios de la línea satisfacen
 \begin{equation*}
     \frac{R}{L} = \frac{G}{C},
 \end{equation*}
-entonces $\alpha(f)$ es constante (no depende de $f$) y $\beta(f)$ es exactamente lineal en $f$, por lo que $v_p(f)=v_g(f)$ es también constante. Además, $Z_0(f)$ resulta real y constante. Una línea que verifica esta condición transmite cualquier forma de onda sin distorsión de fase: la señal recibida es una copia atenuada y retardada de la transmitida.
+entonces $\alpha(f)$ es constante (no depende de $f$) y $\beta(f)$ es exactamente lineal en $f$, por lo que $v_p(f)=v_g(f)$ es también constante. Además, $Z_0(f)$ resulta real y constante. Una línea que verifica esta condición transmite cualquier forma de onda sin distorsión: la señal recibida es una copia atenuada y retardada de la transmitida.
 \end{condicion}
 
 \begin{proof}
@@ -163,47 +162,56 @@ de donde $v_p(f)=v_g(f)=1/\sqrt{LC}$, constante. Para $Z_0$:
 real y constante, independiente de $f$.
 \end{proof}
 
-La Condición de Heaviside es, en la práctica, difícil de lograr exactamente (típicamente requeriría aumentar $G$ artificialmente, lo cual es indeseable porque incrementa las pérdidas), pero cumple un rol importante como \emph{caso de referencia ideal}: es la situación en la que un cable se comporta, para cualquier señal, como un simple atenuador con retardo -- sin ISI de origen físico en la línea. Las líneas reales no verifican esta condición, y es precisamente esa desviación la que estudiamos en la Sección \ref{sec:dispersion pulsos}.
+En las líneas reales habitualmente $R/L$ es mucho mayor que $G/C$, ya que los dieléctricos usados tienen pérdidas muy bajas. Acercarse a la Condición de Heaviside requeriría entonces aumentar $G$, lo que agrega pérdidas, o bien aumentar $L$. Esta última fue la solución adoptada en la telefonía, como muestra el siguiente ejemplo. En cualquier caso, la condición cumple un rol importante como \emph{caso de referencia}: es la situación en la que un cable se comporta, para cualquier señal, como un simple atenuador con retardo, sin ISI de origen físico en la línea. Las líneas reales no verifican esta condición, y es precisamente esa desviación la que estudiamos en la Sección \ref{sec:dispersion pulsos}.
+
+\begin{ejemplo}[Bobinas de carga en telefonía]\label{ejemplo:bobinas de carga}
+En un par telefónico los conductores son delgados (resistencia alta), la inductancia del par es pequeña y la conductancia del aislante es despreciable, por lo que $R/L\gg G/C$. A comienzos del siglo XX se introdujeron las \emph{bobinas de carga} (propuestas por Pupin): inductores intercalados en serie a intervalos regulares a lo largo del par, que aumentan la inductancia efectiva por unidad de longitud y acercan la línea a la Condición de Heaviside. Una configuración clásica en la telefonía norteamericana utilizaba bobinas de $88\ \unit{\milli\henry}$ cada $1830\ \unit{\meter}$ aproximadamente.
+Con ellas la respuesta del par resulta casi plana en la banda de voz, lo que permitía enlaces mucho más largos sin distorsión apreciable. El costo es que la cadena de inductores concentrados y la capacidad del par se comportan como un filtro pasabajos $LC$, con un corte abrupto apenas por encima de la banda de voz, del orden de $3\ \unit{\kilo\hertz}$. Ese corte resultó un obstáculo décadas más tarde: para ofrecer servicios de datos de banda ancha sobre el mismo par, como ADSL, que utiliza frecuencias de hasta aproximadamente $1\ \unit{\mega\hertz}$, fue necesario retirar las bobinas de carga.
+\end{ejemplo}
 
 \begin{ejemplo}[Parámetros típicos de un cable coaxil]\label{ejemplo:coaxil parametros}
-Consideremos un cable coaxil con parámetros (de orden de magnitud típico para un coaxil de $50\ \Omega$) $L=250\ \unit{\nano\henry\per\meter}$, $C=100\ \unit{\pico\farad\per\meter}$, $R=0.1\ \Omega/\unit{\meter}$ y $G\approx 0$ (dieléctrico de muy baja pérdida). Notemos primero que, sin pérdidas, $Z_0=\sqrt{L/C}=\sqrt{250\times 10^{-9}/100\times 10^{-12}}=50\ \Omega$, el valor nominal esperado.
+Consideremos un cable coaxil con parámetros (de orden de magnitud típico para un coaxil de $50\ \unit{\ohm}$) $L=250\ \unit{\nano\henry\per\meter}$, $C=100\ \unit{\pico\farad\per\meter}$, $R=0.1\ \unit{\ohm\per\meter}$ y $G\approx 0$ (dieléctrico de muy baja pérdida). Notemos primero que, sin pérdidas, $Z_0=\sqrt{L/C}=\sqrt{250\times 10^{-9}/100\times 10^{-12}}=50\ \unit{\ohm}$, el valor nominal esperado.
 
-A $f=10\ \unit{\mega\hertz}$: $2\pi f L \approx 15.7\ \Omega/\unit{\meter}$, mucho mayor que $R=0.1\ \Omega/\unit{\meter}$, y $2\pi f C \approx 6.28\times 10^{-3}\ \unit{\siemens}/\unit{\meter}$, mucho mayor que $G\approx 0$: estamos en el régimen de pérdidas pequeñas. Calculando \eqref{eq:gamma} numéricamente:
+A $f=10\ \unit{\mega\hertz}$ se tiene $2\pi f L \approx 15.7\ \unit{\ohm\per\meter}$, mucho mayor que $R=0.1\ \unit{\ohm\per\meter}$, y $2\pi f C \approx 6.28\times 10^{-3}\ \unit{\siemens\per\meter}$, mucho mayor que $G\approx 0$, por lo que estamos en el régimen de pérdidas pequeñas. Calculando \eqref{eq:gamma} numéricamente:
 \begin{equation*}
     \gamma(10\ \unit{\mega\hertz}) = \sqrt{(0.1+j15.7)(0+j6.28\times 10^{-3})} \approx 1.0\times 10^{-3} + j\, 0.314\ \unit{\per\meter},
 \end{equation*}
-es decir $\alpha \approx 1.0\times 10^{-3}\ \unit{\neper\per\meter} \approx 8.7\times 10^{-3}\ \unit{\deci\bel\per\meter}$ (que en $100\ \unit{\meter}$ da $0.87\ \unit{\deci\bel}$, una atenuación moderada), y $\beta\approx 0.314\ \unit{\radian\per\meter}$, de donde $v_p = 2\pi f/\beta \approx 2\times 10^8\ \unit{\meter\per\second}$, es decir, aproximadamente $\frac{2}{3}$ de la velocidad de la luz en el vacío -- un valor típico para el factor de velocidad de un cable coaxil real.
+es decir $\alpha \approx 1.0\times 10^{-3}\ \unit{\neper\per\meter} \approx 8.7\times 10^{-3}\ \unit{\deci\bel\per\meter}$ (que en $100\ \unit{\meter}$ da $0.87\ \unit{\deci\bel}$, una atenuación moderada), y $\beta\approx 0.314\ \unit{\radian\per\meter}$, de donde $v_p = 2\pi f/\beta \approx 2\times 10^8\ \unit{\meter\per\second}$. Esto es aproximadamente $2/3$ de la velocidad de la luz en el vacío, un valor típico para el factor de velocidad de un cable coaxil real.
 \end{ejemplo}
 
-En la Sección \ref{sec:dispersion pulsos} retomamos este mismo cable, pero prestando atención a lo que sucede cuando $R$ y $G$ dejan de ser tratables como constantes y empiezan a crecer con la frecuencia -- que es, en definitiva, el origen físico de la limitación de ancho de banda del canal guiado.
+En la Sección \ref{sec:dispersion pulsos} retomamos este mismo cable, prestando atención a lo que sucede cuando $R$ deja de ser constante y crece con la frecuencia, que es el origen físico de la limitación de ancho de banda del canal guiado.
 
 \section{Línea cargada: reflexión y adaptación}\label{sec:linea cargada}
 
-Hasta ahora trabajamos con una línea infinita, donde solo existe la onda incidente ($\hat V^-\equiv 0$, nada hay más adelante que pueda generar una onda de regreso). En la práctica toda línea tiene longitud finita $\ell$ y termina conectada a una carga de impedancia $Z_L(f)$ -- por ejemplo, la entrada del receptor. Vamos a ver que, salvo en un caso particular, la carga genera una \emph{onda reflejada} que viaja de regreso hacia el generador, con consecuencias muy concretas sobre la señal que se transmite.
+Hasta ahora trabajamos con una línea infinita, donde solo existe la onda incidente ($\hat V^-\equiv 0$, ya que no hay nada más adelante que pueda generar una onda de regreso). En la práctica toda línea tiene longitud finita $\ell$ y termina conectada a una carga de impedancia $Z_L(f)$, por ejemplo la entrada del receptor. Vamos a ver que, salvo en un caso particular, la carga genera una \emph{onda reflejada} que viaja de regreso hacia el generador, con consecuencias muy concretas sobre la señal que se transmite.
 
-Ubiquemos el generador en $z=0$ y la carga en $z=\ell$. La condición de borde en la carga es simplemente la ley de Ohm generalizada: la tensión y la corriente en $z=\ell$ deben verificar $\hat V(\ell,f) = Z_L(f)\, \hat I(\ell,f)$. Sustituyendo \eqref{eq:solucion V} y la expresión de $\hat I(z,f)$ de la Sección \ref{sec:ecuacion de onda}:
+Ubiquemos el generador en $z=0$ y la carga en $z=\ell$. La condición de borde en la carga es la ley de Ohm generalizada: la tensión y la corriente en $z=\ell$ deben verificar $\hat V(\ell,f) = Z_L(f)\, \hat I(\ell,f)$. Sustituyendo \eqref{eq:solucion V} y \eqref{eq:solucion I}:
 \begin{equation*}
-    \hat{V}^+(f)\e^{-\gamma\ell} + \hat{V}^-(f)\e^{\gamma\ell} = Z_L(f)\left[\hat{V}^+(f)\e^{-\gamma\ell} - \hat{V}^-(f)\e^{\gamma\ell}\right]\Big/ Z_0(f)\cdot Z_0(f),
+    \hat{V}^+(f)\e^{-\gamma\ell} + \hat{V}^-(f)\e^{\gamma\ell} = \frac{Z_L(f)}{Z_0(f)}\left[\hat{V}^+(f)\e^{-\gamma\ell} - \hat{V}^-(f)\e^{\gamma\ell}\right],
 \end{equation*}
 que reordenando da la relación entre la amplitud de la onda reflejada y la incidente, \emph{evaluadas en la carga}:
 \begin{equation}\label{eq:gamma L}
     \Gamma_L(f) := \frac{\hat{V}^-(f)\e^{\gamma\ell}}{\hat{V}^+(f)\e^{-\gamma\ell}} = \frac{Z_L(f)-Z_0(f)}{Z_L(f)+Z_0(f)}.
 \end{equation}
-Llamamos a $\Gamma_L(f)$ el \emph{coeficiente de reflexión de carga}. Notemos el caso particular $Z_L=Z_0$: la carga es indistinguible, para la línea, de que ésta continuara infinitamente -- no hay onda reflejada ($\Gamma_L=0$). Decimos que la línea está \emph{adaptada}. En cualquier otro caso, $\Gamma_L\neq 0$ y aparece una onda reflejada.
+Llamamos a $\Gamma_L(f)$ el \emph{coeficiente de reflexión de carga}. Notemos el caso particular $Z_L=Z_0$: la carga es indistinguible, para la línea, de que ésta continuara infinitamente, y no hay onda reflejada ($\Gamma_L=0$). Decimos en ese caso que la línea está \emph{adaptada}. En cualquier otro caso, $\Gamma_L\neq 0$ y aparece una onda reflejada.
 
-Definimos, más generalmente, el coeficiente de reflexión en cualquier punto $z$ de la línea como el cociente entre onda reflejada e incidente evaluadas en ese punto, $\Gamma(z,f):=\hat V^-(f)\e^{\gamma z}/(\hat V^+(f)\e^{-\gamma z})$. Es más cómodo trabajar con la distancia a la carga, $d:=\ell - z$ (que crece hacia el generador). De \eqref{eq:gamma L}:
+Definimos, más generalmente, el coeficiente de reflexión en cualquier punto $z$ de la línea como el cociente entre onda reflejada e incidente evaluadas en ese punto, $\Gamma(z,f):=\hat V^-(f)\e^{\gamma z}/(\hat V^+(f)\e^{-\gamma z})$. Es más cómodo trabajar con la distancia a la carga, $d:=\ell - z$, que crece hacia el generador. De \eqref{eq:gamma L}:
 \begin{equation}\label{eq:gamma d}
     \Gamma(d,f) = \Gamma_L(f)\, \e^{-2\gamma(f) d},
 \end{equation}
-es decir, el coeficiente de reflexión visto a una distancia $d$ de la carga es el de la carga, atenuado y rotado en fase por el recorrido de ida y vuelta (de ahí el factor $2$) hasta ese punto.
+es decir, el coeficiente de reflexión visto a una distancia $d$ de la carga es el de la carga, atenuado y rotado en fase por el recorrido de ida y vuelta hasta ese punto (de ahí el factor $2$).
 
 \subsection*{Impedancia vista a distancia $d$ de la carga}
 
-Un resultado central en la práctica es que \emph{la impedancia que ve el generador no es $Z_L$, sino la que resulta de ``transformar'' $Z_L$ a través del tramo de línea}. Definiendo $Z(d,f):=\hat V(d,f)/\hat I(d,f)$ (con el mismo abuso de notación, usando $d$ como argumento), y repitiendo el cálculo que llevó a \eqref{eq:gamma L} pero ahora despejando $Z(d,f)$ en términos de $\Gamma(d,f)=\Gamma_L\e^{-2\gamma d}$:
+Un resultado central en la práctica es que \emph{la impedancia que ve el generador no es $Z_L$, sino la que resulta de ``transformar'' $Z_L$ a través del tramo de línea}. Definiendo $Z(d,f):=\hat V(d,f)/\hat I(d,f)$ (con el mismo abuso de notación, usando $d$ como argumento), de \eqref{eq:solucion V} y \eqref{eq:solucion I} se tiene:
 \begin{equation*}
-    Z(d,f) = Z_0(f)\, \frac{1+\Gamma(d,f)}{1-\Gamma(d,f)}.
+    Z(d,f) = Z_0(f)\, \frac{1+\Gamma(d,f)}{1-\Gamma(d,f)} = Z_0(f)\, \frac{1+\Gamma_L\e^{-2\gamma d}}{1-\Gamma_L\e^{-2\gamma d}}.
 \end{equation*}
-Sustituyendo \eqref{eq:gamma d} y \eqref{eq:gamma L}, y operando (multiplicando numerador y denominador por $\e^{\gamma d}$, agrupando en $\cosh$ y $\sinh$, ver detalle en el Apéndice), se llega a la \emph{fórmula de transformación de impedancia}:
+Sustituyendo \eqref{eq:gamma L} y multiplicando numerador y denominador por $(Z_L+Z_0)\e^{\gamma d}$:
+\begin{equation*}
+    Z(d,f) = Z_0\, \frac{(Z_L+Z_0)\e^{\gamma d} + (Z_L-Z_0)\e^{-\gamma d}}{(Z_L+Z_0)\e^{\gamma d} - (Z_L-Z_0)\e^{-\gamma d}} = Z_0\, \frac{Z_L\cosh(\gamma d) + Z_0\sinh(\gamma d)}{Z_0\cosh(\gamma d) + Z_L\sinh(\gamma d)},
+\end{equation*}
+y dividiendo entre $\cosh(\gamma d)$ se llega a la \emph{fórmula de transformación de impedancia}:
 \begin{equation}\label{eq:transformacion impedancia}
     Z(d,f) = Z_0(f)\, \frac{Z_L(f) + Z_0(f)\tanh\left(\gamma(f) d\right)}{Z_0(f) + Z_L(f)\tanh\left(\gamma(f) d\right)}.
 \end{equation}
@@ -211,24 +219,40 @@ En el caso usual de línea de bajas pérdidas, $\gamma(f)\approx j\beta(f)$, y u
 \begin{equation}\label{eq:transformacion impedancia sin perdidas}
     Z(d,f) = Z_0(f)\, \frac{Z_L(f) + jZ_0(f)\tan(\beta(f) d)}{Z_0(f) + jZ_L(f)\tan(\beta(f) d)} \qquad (\text{línea sin pérdidas}).
 \end{equation}
-Esta fórmula es periódica en $d$ con período $\lambda/2$ (ya que $\tan(\beta d)$ lo es), lo que da lugar a una propiedad notable: \emph{una línea de longitud media longitud de onda repite, en su entrada, la impedancia de la carga}; y una línea de un cuarto de longitud de onda \emph{invierte} la carga: $Z(\lambda/4) = Z_0^2/Z_L$, un resultado que se usa mucho como transformador de impedancia (el ``transformador de cuarto de onda'').
+Esta fórmula es periódica en $d$ con período $\lambda/2$ (ya que $\tan(\beta d)$ lo es), lo que da lugar a dos propiedades notables. Una línea de media longitud de onda \emph{repite} en su entrada la impedancia de la carga, mientras que una línea de un cuarto de longitud de onda la \emph{invierte}: $Z(\lambda/4) = Z_0^2/Z_L$. Este último resultado se utiliza como transformador de impedancia, como veremos más adelante.
 
 \subsection*{Onda estacionaria y ROE}
 
-Como consecuencia de la reflexión, la tensión a lo largo de la línea deja de ser una simple onda viajera y pasa a ser la superposición de la incidente y la reflejada. Para una línea de bajas pérdidas ($\alpha\approx 0$), $|\Gamma(d,f)|=|\Gamma_L(f)|$ no depende de $d$ (de \eqref{eq:gamma d}, con $\gamma\approx j\beta$ puramente imaginaria, $|\e^{-2j\beta d}|=1$): el módulo del coeficiente de reflexión es el mismo en todo punto de la línea, solo cambia su fase. La magnitud de la tensión total,
+Como consecuencia de la reflexión, la tensión a lo largo de la línea deja de ser una simple onda viajera y pasa a ser la superposición de la incidente y la reflejada. Para una línea de bajas pérdidas ($\alpha\approx 0$), de \eqref{eq:gamma d} con $\gamma\approx j\beta$ se tiene $|\Gamma(d,f)|=|\Gamma_L(f)|$, que no depende de $d$: el módulo del coeficiente de reflexión es el mismo en todo punto de la línea, y solo cambia su fase. La magnitud de la tensión total,
 \begin{equation*}
     |\hat V(d,f)| = |\hat V^+(f)|\, \left|1+\Gamma(d,f)\right| = |\hat V^+(f)|\, \left|1+|\Gamma_L(f)|\,\e^{j\theta(d)}\right|,
 \end{equation*}
-con $\theta(d)=\angle\Gamma_L - 2\beta d$ barriendo todos los valores posibles a medida que $d$ varía, oscila entre un máximo $|\hat V^+|(1+|\Gamma_L|)$ (cuando $\theta(d)=0$, las dos ondas en fase) y un mínimo $|\hat V^+|(1-|\Gamma_L|)$ (cuando $\theta(d)=\pi$, en contrafase): un patrón de \emph{onda estacionaria} a lo largo de la línea. Definimos la \emph{Relación de Onda Estacionaria} como el cociente entre ambos:
+con $\theta(d)=\angle\Gamma_L - 2\beta d$ barriendo todos los valores posibles a medida que $d$ varía, oscila entre un máximo $|\hat V^+|(1+|\Gamma_L|)$, cuando $\theta(d)=0$ y las dos ondas están en fase, y un mínimo $|\hat V^+|(1-|\Gamma_L|)$, cuando $\theta(d)=\pi$ y están en contrafase. Se forma así un patrón de \emph{onda estacionaria} a lo largo de la línea. Definimos la \emph{relación de onda estacionaria} como el cociente entre ambos:
 \begin{equation}\label{eq:roe}
     \mathrm{ROE} := \frac{|\hat V|_{\max}}{|\hat V|_{\min}} = \frac{1+|\Gamma_L(f)|}{1-|\Gamma_L(f)|} \in [1,\infty).
 \end{equation}
 
 \begin{remark}
-La sigla ROE (Relación de Onda Estacionaria) es la traducción directa de VSWR (\emph{Voltage Standing Wave Ratio}), y ambas se usan indistintamente en la bibliografía, datasheets e instrumental -- muchos equipos muestran ``VSWR'' en pantalla aunque el manual esté en español. Históricamente, el ROE se medía físicamente deslizando una sonda a lo largo de una \emph{línea ranurada} y registrando los máximos y mínimos de tensión, de ahí el nombre.
+La sigla ROE es la traducción de VSWR (\emph{Voltage Standing Wave Ratio}), y ambas se usan indistintamente en la bibliografía, hojas de datos e instrumental. Históricamente, la ROE se medía deslizando una sonda a lo largo de una \emph{línea ranurada} y registrando los máximos y mínimos de tensión, de ahí el nombre.
 \end{remark}
 
-Dos casos extremos: si la línea está adaptada ($\Gamma_L=0$), $\mathrm{ROE}=1$ -- no hay onda estacionaria, toda la potencia incidente llega a la carga. Si la carga es un circuito abierto o un cortocircuito ($\Gamma_L=\pm 1$, reflexión total), $\mathrm{ROE}\to\infty$. El ROE es, en la práctica, la magnitud que se mide directamente con un instrumento (un ``medidor de ROE'' o \emph{VSWR meter}) conectado en la línea, ya que no requiere acceso a la fase de $\Gamma_L$, solo a los extremos del patrón de tensión.
+Hay dos casos extremos. Si la línea está adaptada ($\Gamma_L=0$), resulta $\mathrm{ROE}=1$: no hay onda estacionaria y toda la potencia incidente llega a la carga. Si la carga es un circuito abierto o un cortocircuito ($\Gamma_L=\pm 1$, reflexión total), $\mathrm{ROE}\to\infty$. En la práctica la ROE es la magnitud que se mide directamente con un instrumento (un \emph{medidor de ROE}) conectado en la línea, ya que no requiere conocer la fase de $\Gamma_L$, sino solo los extremos del patrón de tensión.
+
+\subsection*{Reflexiones múltiples y ecos}
+
+Las reflexiones tienen además una consecuencia directa sobre la transmisión de pulsos. El generador también tiene una impedancia interna $Z_G$, por lo que la onda reflejada en la carga, al llegar a $z=0$, se refleja nuevamente con coeficiente $\Gamma_G=(Z_G-Z_0)/(Z_G+Z_0)$ y vuelve a viajar hacia la carga. Si ambos extremos están desadaptados, un pulso $p(t)$ enviado por la línea llega a la carga acompañado de copias que recorrieron la línea ida y vuelta una, dos o más veces. Suponiendo $\Gamma_L$ y $\Gamma_G$ reales (cargas resistivas) y despreciando la distorsión del pulso, la tensión recibida es proporcional a:
+\begin{equation*}
+    p(t-t_d) + \rho\, p(t-3t_d) + \rho^2 p(t-5t_d) + \cdots, \qquad \rho = \Gamma_L\Gamma_G\,\e^{-2\alpha\ell},
+\end{equation*}
+siendo $t_d=\ell/v_p$ el tiempo de propagación a lo largo de la línea. Cada copia es un \emph{eco} del pulso original, retardado $2t_d$ respecto del anterior. Si $2t_d$ es comparable o mayor que el tiempo de símbolo $T_s$, los ecos caen sobre los símbolos siguientes y producen interferencia intersimbólica. Se trata de una ISI de origen distinto a la de la Sección \ref{sec:interferencia intersimbolica}: no se debe a un ancho de banda limitado, sino a la geometría de la línea. Si en cambio $2t_d\ll T_s$, los ecos se superponen con el propio pulso y solo deforman levemente sus flancos. En frecuencia, la suma de ecos produce en $\hat H(f)$ una ondulación periódica, de período $1/(2t_d)$.
+
+Para eliminar los ecos alcanza con adaptar uno de los dos extremos. Si $\Gamma_L=0$ no se genera onda reflejada, y si $\Gamma_G=0$ la onda reflejada es absorbida por el generador y no vuelve. Sin embargo, en un \emph{bus} donde varios dispositivos comparten la línea y cualquiera puede transmitir, la señal viaja en ambos sentidos y es necesario adaptar los dos extremos.
+
+\begin{ejemplo}[RS-232 y RS-485]\label{ejemplo:rs485}
+Dos normas de transmisión serie muy difundidas ilustran los dos regímenes anteriores. En RS-232 (el ``puerto serie'' clásico) la señal se transmite referida a tierra por un cable sin terminar, de hasta unos $15\ \unit{\meter}$. A las velocidades usuales, por ejemplo $115200$ baudios ($T_s\approx 8.7\ \unit{\micro\second}$), el tiempo de ida y vuelta por el cable es $2t_d\approx 150\ \unit{\nano\second}$, despreciable frente a $T_s$: los ecos se extinguen dentro del mismo símbolo y no es necesario adaptar la línea.
+
+En RS-485, en cambio, la señal es diferencial y se transmite sobre un par trenzado de impedancia característica cercana a $120\ \unit{\ohm}$, al cual se conectan varios dispositivos formando un bus. La línea se termina con una resistencia de $120\ \unit{\ohm}$ en cada extremo: como cualquier nodo puede transmitir, cada extremo debe absorber la onda que le llega. Además, las derivaciones desde el bus hacia cada nodo deben ser cortas, ya que un tramo largo conectado en paralelo y sin terminar se comporta como un \emph{stub} (ver más adelante) y genera reflexiones. Con estas precauciones, RS-485 alcanza unos $1200\ \unit{\meter}$ a $100\ \unit{\kilo\bps}$, mientras que a su velocidad máxima de $10\ \unit{\mega\bps}$ la distancia se reduce a unos pocos metros. Este compromiso entre velocidad y distancia se debe a la atenuación que estudiamos en la Sección \ref{sec:dispersion pulsos}.
+\end{ejemplo}
 
 \subsection*{La Carta de Smith}
 
@@ -236,9 +260,9 @@ La relación \eqref{eq:gamma L} es una transformación (de Möbius) entre la imp
 \begin{equation}\label{eq:gamma normalizado}
     \Gamma_L = \frac{\zeta_L - 1}{\zeta_L + 1} \qquad\Longleftrightarrow\qquad \zeta_L = \frac{1+\Gamma_L}{1-\Gamma_L}.
 \end{equation}
-Como toda carga físicamente realizable (pasiva) tiene $\mathrm{Re}(Z_L)\geqslant 0$, la transformación \eqref{eq:gamma normalizado} lleva todo el semiplano derecho $\mathrm{Re}(\zeta)\geqslant 0$ al disco unitario $|\Gamma_L|\leqslant 1$ -- consistente con que $\mathrm{ROE}\geqslant 1$ siempre. Una propiedad notable de las transformaciones de Möbius es que llevan rectas y circunferencias en rectas o circunferencias. En particular (ver Apéndice para el cálculo completo), las rectas de \emph{resistencia normalizada constante} $\mathrm{Re}(\zeta)=r$ se transforman en circunferencias en el plano $\Gamma$, centradas en $\left(\frac{r}{r+1},0\right)$ y de radio $\frac{1}{r+1}$; y las rectas de \emph{reactancia normalizada constante} $\mathrm{Im}(\zeta)=x$ se transforman en arcos de circunferencia centrados en $\left(1,\frac{1}{x}\right)$ y de radio $\frac{1}{|x|}$.
+Como toda carga pasiva tiene $\mathrm{Re}(Z_L)\geqslant 0$, la transformación \eqref{eq:gamma normalizado} lleva el semiplano derecho $\mathrm{Re}(\zeta)\geqslant 0$ al disco unitario $|\Gamma_L|\leqslant 1$, lo cual es consistente con que siempre $\mathrm{ROE}\geqslant 1$. Una propiedad de las transformaciones de Möbius es que llevan rectas y circunferencias en rectas o circunferencias. En particular, un cálculo directo muestra que las rectas de \emph{resistencia normalizada constante} $\mathrm{Re}(\zeta)=r$ se transforman en circunferencias en el plano $\Gamma$, centradas en $\left(\frac{r}{r+1},0\right)$ y de radio $\frac{1}{r+1}$, y que las rectas de \emph{reactancia normalizada constante} $\mathrm{Im}(\zeta)=x$ se transforman en arcos de circunferencia centrados en $\left(1,\frac{1}{x}\right)$ y de radio $\frac{1}{|x|}$.
 
-La \emph{Carta de Smith} (Figura \ref{fig:carta smith}) es, precisamente, un gráfico polar del disco $|\Gamma|\leqslant 1$ con esta grilla de circunferencias de $r$ y $x$ constante superpuesta, que permite pasar de $\zeta_L$ a $\Gamma_L$ y viceversa gráficamente, sin calcular \eqref{eq:gamma normalizado} a mano. Su verdadero valor práctico, sin embargo, está en lo que sucede al recorrer la línea: de \eqref{eq:gamma d}, moverse una distancia $d$ hacia el generador equivale, en el plano $\Gamma$, a \textbf{rotar} un ángulo $2\beta d$ (en sentido horario, alejándose de la carga) manteniendo el módulo $|\Gamma_L|$ constante -- es decir, \emph{moverse sobre una circunferencia centrada en el origen}. Y esa misma circunferencia, por \eqref{eq:roe}, es una curva de \textbf{ROE constante}. Encontrar $Z(d)$ para cualquier $d$ se reduce entonces a girar sobre un compás (la circunferencia de ROE constante que pasa por $\zeta_L$) el ángulo correspondiente y leer la impedancia normalizada en la grilla -- sin evaluar la tangente compleja de \eqref{eq:transformacion impedancia sin perdidas}.
+La \emph{Carta de Smith} (Figura \ref{fig:carta smith}) es un gráfico polar del disco $|\Gamma|\leqslant 1$ con esta grilla de circunferencias de $r$ y $x$ constante superpuesta, que permite pasar de $\zeta_L$ a $\Gamma_L$ y viceversa gráficamente, sin calcular \eqref{eq:gamma normalizado} a mano. Su mayor utilidad práctica está en lo que sucede al recorrer la línea. De \eqref{eq:gamma d}, moverse una distancia $d$ hacia el generador equivale, en el plano $\Gamma$, a \emph{rotar} un ángulo $2\beta d$ en sentido horario manteniendo el módulo $|\Gamma_L|$ constante, es decir, a moverse sobre una circunferencia centrada en el origen. Por \eqref{eq:roe}, esa circunferencia es además una curva de ROE constante. Encontrar $Z(d)$ para cualquier $d$ se reduce entonces a girar con un compás, sobre la circunferencia de ROE constante que pasa por $\zeta_L$, el ángulo correspondiente, y leer la impedancia normalizada en la grilla, sin evaluar la tangente compleja de \eqref{eq:transformacion impedancia sin perdidas}.
 
 \begin{figure}
     \begin{center}
@@ -269,35 +293,35 @@ La \emph{Carta de Smith} (Figura \ref{fig:carta smith}) es, precisamente, un gr�
 \end{figure}
 
 \begin{ejemplo}[Uso de la Carta de Smith]\label{ejemplo:smith}
-Sobre una línea de $Z_0=50\ \Omega$ sin pérdidas se conecta una carga $Z_L=25+j25\ \Omega$, es decir $\zeta_L=0.5+j0.5$. Analíticamente, de \eqref{eq:gamma normalizado}:
+Sobre una línea de $Z_0=50\ \unit{\ohm}$ sin pérdidas se conecta una carga $Z_L=25+j25\ \unit{\ohm}$, es decir $\zeta_L=0.5+j0.5$. Analíticamente, de \eqref{eq:gamma normalizado}:
 \begin{equation*}
     \Gamma_L = \frac{(0.5+j0.5)-1}{(0.5+j0.5)+1} = \frac{-0.5+j0.5}{1.5+j0.5} = -0.2+j0.4,
 \end{equation*}
-de donde $|\Gamma_L|\approx 0.447$ y, por \eqref{eq:roe}, $\mathrm{ROE}=\frac{1+0.447}{1-0.447}\approx 2.62$. Sobre la Carta de Smith (Figura \ref{fig:carta smith}), el punto $\zeta_L=0.5+j0.5$ se ubica en la intersección de la circunferencia $r=0.5$ con el arco $x=0.5$, y se lee directamente $\Gamma_L$ como el vector desde el origen hasta ese punto -- sin necesidad de la cuenta algebraica anterior. La circunferencia de ROE constante que pasa por ese punto (marcada en la figura) es el lugar geométrico de todas las impedancias que se ven al recorrer la línea desde la carga: para hallar, por ejemplo, la impedancia a $d=\lambda/8$ del generador basta rotar $2\beta d = 2\cdot\frac{2\pi}{\lambda}\cdot\frac{\lambda}{8}=\frac{\pi}{2}$ ($90^\circ$) sobre esa circunferencia y leer $\zeta(d)$ en la grilla.
+de donde $|\Gamma_L|\approx 0.447$ y, por \eqref{eq:roe}, $\mathrm{ROE}=\frac{1+0.447}{1-0.447}\approx 2.62$. Sobre la Carta de Smith (Figura \ref{fig:carta smith}), el punto $\zeta_L=0.5+j0.5$ se ubica en la intersección de la circunferencia $r=0.5$ con el arco $x=0.5$, y $\Gamma_L$ se lee directamente como el vector desde el origen hasta ese punto. La circunferencia de ROE constante que pasa por ese punto (marcada en la figura) es el lugar geométrico de todas las impedancias que se ven al recorrer la línea desde la carga. Para hallar, por ejemplo, la impedancia a $d=\lambda/8$ de la carga basta rotar $2\beta d = 2\cdot\frac{2\pi}{\lambda}\cdot\frac{\lambda}{8}=\frac{\pi}{2}$ ($90^\circ$) sobre esa circunferencia y leer $\zeta(d)$ en la grilla.
 \end{ejemplo}
 
 \subsection*{Adaptación de impedancias}
 
-Un ROE alto no es solo un número: significa que buena parte de la potencia incidente no llega a la carga, sino que vuelve hacia el generador. En el mejor de los casos esto es ineficiente; en el peor, la onda reflejada puede dañar la fuente (por ejemplo, un amplificador de potencia mal protegido). Además, como veremos en la Sección \ref{sec:dispersion pulsos}, en una línea con pérdidas no despreciables un ROE alto empeora la atenuación efectiva total. Por todo esto, es habitual diseñar una red de \emph{adaptación} entre la línea y la carga, de manera que el generador vea $Z_0$ y $\Gamma=0$.
+Una ROE alta significa que buena parte de la potencia incidente no llega a la carga, sino que vuelve hacia el generador. Esto es ineficiente y, en transmisores de potencia, la onda reflejada puede incluso dañar el amplificador de salida. Además, como vimos, las reflexiones generan ecos que producen ISI. Por todo esto, es habitual diseñar una red de \emph{adaptación} entre la línea y la carga, de manera que el generador vea $Z_0$ y $\Gamma=0$.
 
-\paragraph{Transformador de cuarto de onda.} Cuando la carga es puramente resistiva, $Z_L=R_L$ (real), la Ecuación \eqref{eq:transformacion impedancia sin perdidas} ya nos da la herramienta: intercalando un tramo de longitud $\lambda/4$ de una línea auxiliar de impedancia característica
+\paragraph{Transformador de cuarto de onda.} Cuando la carga es puramente resistiva, $Z_L=R_L$, la Ecuación \eqref{eq:transformacion impedancia sin perdidas} ya nos da la herramienta: intercalando un tramo de longitud $\lambda/4$ de una línea auxiliar de impedancia característica
 \begin{equation*}
     Z_0' = \sqrt{Z_0\, R_L},
 \end{equation*}
-la impedancia vista desde el generador es $Z_0'^2/R_L = Z_0$: adaptada. Este es, históricamente, el método usado para conectar una antena de $300\ \Omega$ (un dipolo doblado, alimentado por línea plana de dos conductores o \emph{twin-lead}, común en la recepción de TV analógica) a un cable coaxial estándar de $75\ \Omega$: se intercala un tramo de $\lambda/4$ de impedancia $Z_0'=\sqrt{75\cdot 300}=150\ \Omega$. El método es simple pero tiene una limitación importante: solo sirve para cargas reales, y además es angosto en banda (la condición $Z(\lambda/4)=Z_0'^2/Z_L$ solo vale exactamente a la frecuencia para la cual el tramo mide $\lambda/4$).
+la impedancia vista desde el generador es $Z_0'^2/R_L = Z_0$, y la línea queda adaptada. Este es, históricamente, el método usado para conectar una antena de $300\ \unit{\ohm}$ (un dipolo doblado, alimentado por una línea plana de dos conductores o \emph{twin-lead}, común en la recepción de TV analógica) a un cable coaxil de $75\ \unit{\ohm}$: se intercala un tramo de $\lambda/4$ de impedancia $Z_0'=\sqrt{75\cdot 300}=150\ \unit{\ohm}$. El método es simple pero tiene dos limitaciones importantes: solo sirve para cargas reales, y es de banda angosta, ya que la condición $Z(\lambda/4)=Z_0'^2/Z_L$ solo vale exactamente a la frecuencia para la cual el tramo mide $\lambda/4$.
 
-\paragraph{Adaptación con stub en paralelo.} Para una carga con parte reactiva, $Z_L=R_L+jX_L$, hace falta una técnica más general. La más común es el \emph{stub} (cabo) en paralelo: un tramo adicional de línea, del mismo $Z_0$, conectado en paralelo con la línea principal a una distancia $d$ de la carga, y terminado en circuito abierto o cortocircuito en su extremo libre. Como una línea sin pérdidas terminada en una reactancia pura ($Z_L=0$ o $Z_L=\infty$) presenta, en su entrada, una impedancia puramente reactiva (no disipa potencia), el stub actúa como un elemento reactivo variable, cuyo valor se ajusta con su longitud.
+\paragraph{Adaptación con stub en paralelo.} Para una carga con parte reactiva, $Z_L=R_L+jX_L$, hace falta una técnica más general. La más común es el \emph{stub} en paralelo: un tramo adicional de línea, del mismo $Z_0$, conectado en paralelo con la línea principal a una distancia $d$ de la carga, y terminado en circuito abierto o en cortocircuito en su extremo libre. Como una línea sin pérdidas terminada en una reactancia pura ($Z_L=0$ o $Z_L=\infty$) presenta en su entrada una impedancia puramente reactiva, el stub actúa como un elemento reactivo variable, cuyo valor se ajusta con su longitud $\ell_s$.
 
-De \eqref{eq:transformacion impedancia sin perdidas}, tomando $Z_L=0$ (cortocircuito) se obtiene la impedancia de entrada de un stub cortocircuitado de longitud $\ell$: $Z_{cc}(\ell) = jZ_0\tan(\beta \ell)$; y tomando el límite $Z_L\to\infty$ (circuito abierto), $Z_{ca}(\ell) = -jZ_0\cot(\beta\ell)$. En admitancia normalizada ($y:=Y/Y_0$, $Y_0=1/Z_0$):
+De \eqref{eq:transformacion impedancia sin perdidas}, tomando $Z_L=0$ (cortocircuito) se obtiene la impedancia de entrada de un stub cortocircuitado de longitud $\ell_s$, $Z_{cc}(\ell_s) = jZ_0\tan(\beta \ell_s)$, y tomando el límite $Z_L\to\infty$ (circuito abierto), $Z_{ca}(\ell_s) = -jZ_0\cot(\beta\ell_s)$. En admitancia normalizada ($y:=Y/Y_0$, con $Y_0=1/Z_0$):
 \begin{equation}\label{eq:stub susceptancias}
-    y_{cc}(\ell) = -j\cot(\beta \ell), \qquad\qquad y_{ca}(\ell) = j\tan(\beta \ell),
+    y_{cc}(\ell_s) = -j\cot(\beta \ell_s), \qquad\qquad y_{ca}(\ell_s) = j\tan(\beta \ell_s).
 \end{equation}
-cada una capaz de sintetizar \emph{cualquier} susceptancia normalizada real con solo variar $\ell$ entre $0$ y $\lambda/2$. En la práctica se prefiere el stub cortocircuitado: el circuito abierto radia un poco por el extremo y es más sensible a efectos de borde, mientras que el cortocircuito es mecánicamente robusto y bien definido.
+Cada una permite sintetizar cualquier susceptancia normalizada con solo variar $\ell_s$ entre $0$ y $\lambda/2$. En la práctica se prefiere el stub cortocircuitado, ya que el extremo abierto radia y es más sensible a efectos de borde, mientras que el cortocircuito es mecánicamente robusto y bien definido.
 
-El procedimiento de adaptación con un stub en paralelo tiene dos pasos, y ambos se resuelven directamente sobre la Carta de Smith:
+El procedimiento de adaptación con un stub en paralelo tiene dos pasos, y ambos se resuelven sobre la Carta de Smith:
 \begin{enumerate}
-    \item \textbf{Buscar $d$:} avanzar desde la carga hacia el generador (rotando sobre la circunferencia de ROE constante que pasa por $\zeta_L$) hasta encontrar el punto donde la parte real de la admitancia normalizada vale $1$, es decir $y(d) = 1+jb$. Como trabajamos en paralelo, conviene pensar directamente en admitancias: por la simetría de \eqref{eq:gamma normalizado}, la admitancia normalizada correspondiente a un punto $\Gamma$ es exactamente la impedancia normalizada que se lee en la grilla en el punto \emph{diametralmente opuesto}, $-\Gamma$ -- mismo módulo, mismo círculo de ROE, rotado $180^\circ$. Esto permite usar la misma Carta de Smith de impedancias para leer admitancias, sin necesitar una grilla nueva.
-    \item \textbf{Buscar $\ell$:} elegir la longitud del stub que cancela la parte imaginaria $b$ encontrada en el paso anterior, es decir tal que $y_{cc}(\ell) = -jb$ (usando \eqref{eq:stub susceptancias}). Con esto, la admitancia total en el punto de conexión es $1+jb-jb=1$: adaptado.
+    \item \emph{Buscar $d$:} avanzar desde la carga hacia el generador, rotando sobre la circunferencia de ROE constante que pasa por $\zeta_L$, hasta encontrar el punto donde la parte real de la admitancia normalizada vale $1$, es decir $y(d) = 1+jb$. Como trabajamos en paralelo, conviene pensar directamente en admitancias. Por la simetría de \eqref{eq:gamma normalizado}, la admitancia normalizada correspondiente a un punto $\Gamma$ es exactamente la impedancia normalizada que se lee en la grilla en el punto \emph{diametralmente opuesto}, $-\Gamma$, que está sobre el mismo círculo de ROE rotado $180^\circ$. Esto permite usar la misma Carta de Smith de impedancias para leer admitancias.
+    \item \emph{Buscar $\ell_s$:} elegir la longitud del stub que cancela la parte imaginaria $b$ encontrada en el paso anterior, es decir tal que $y_{cc}(\ell_s) = -jb$, usando \eqref{eq:stub susceptancias}. Con esto, la admitancia total en el punto de conexión es $1+jb-jb=1$, y la línea queda adaptada.
 \end{enumerate}
 
 \begin{ejemplo}[Adaptación con stub, continuación del Ejemplo \ref{ejemplo:smith}]
@@ -305,96 +329,104 @@ Retomemos la carga $\zeta_L=0.5+j0.5$ ($\Gamma_L=-0.2+j0.4$) del Ejemplo \ref{ej
 \begin{equation*}
     y_L = \frac{1}{\zeta_L} = \frac{1}{0.5+j0.5} = 1-j1,
 \end{equation*}
-que en este caso particular ya tiene parte real $1$: la carga está, casualmente, exactamente sobre la circunferencia $g=1$ (sobre la Carta de Smith, esto se ve tomando el punto diametralmente opuesto a $\Gamma_L$, mismo círculo de ROE de la Figura \ref{fig:carta smith}). Esto simplifica el ejemplo: alcanza con un stub colocado \emph{en la carga misma}, $d=0$, así que solo resta el paso 2. Necesitamos cancelar $b=-1$, es decir un stub con $y_{cc}(\ell)=+j1 \Leftrightarrow -\cot(\beta\ell)=1 \Leftrightarrow \beta\ell = \frac{3\pi}{4}$, de donde:
+que en este caso particular ya tiene parte real $1$: la carga está exactamente sobre la circunferencia $g=1$ (sobre la Carta de Smith, esto se ve tomando el punto diametralmente opuesto a $\Gamma_L$, sobre el mismo círculo de ROE de la Figura \ref{fig:carta smith}). Esto simplifica el ejemplo, ya que alcanza con un stub colocado en la carga misma, $d=0$, y solo resta el paso 2. Necesitamos cancelar $b=-1$, es decir un stub con $y_{cc}(\ell_s)=+j1 \Leftrightarrow -\cot(\beta\ell_s)=1 \Leftrightarrow \beta\ell_s = \frac{3\pi}{4}$, de donde:
 \begin{equation*}
-    \ell = \frac{3}{4}\cdot\frac{\pi}{\beta} = \frac{3}{4}\cdot\frac{\lambda}{2} = \frac{3\lambda}{8}.
+    \ell_s = \frac{3}{4}\cdot\frac{\pi}{\beta} = \frac{3}{4}\cdot\frac{\lambda}{2} = \frac{3\lambda}{8}.
 \end{equation*}
-Un stub cortocircuitado de longitud $\frac{3\lambda}{8}$, conectado en paralelo con la línea exactamente en la carga, adapta completamente este caso. En general (cuando $g_L\neq 1$) hace falta además el paso 1, buscando el $d\neq 0$ adecuado antes de calcular el largo del stub.
+Un stub cortocircuitado de longitud $\frac{3\lambda}{8}$, conectado en paralelo con la línea en la carga, adapta completamente este caso. En general (cuando $g_L\neq 1$) hace falta además el paso 1, buscando el $d\neq 0$ adecuado antes de calcular el largo del stub.
 \end{ejemplo}
 
 \section{Dispersión y su efecto sobre los pulsos}\label{sec:dispersion pulsos}
 
-Ya tenemos todas las piezas para responder la pregunta que abrió este capítulo: ¿de dónde sale la respuesta en frecuencia $\hat H(f)$ que el resto de estas notas atribuye, sin más justificación, al canal (Figura \ref{fig:distorsion canal})? Consideremos una línea de longitud $\ell$ \emph{adaptada} en la carga ($Z_L=Z_0$, $\Gamma_L=0$, la situación deseable, que además evita las complicaciones de reflexión de la Sección \ref{sec:linea cargada}). En ese caso no hay onda reflejada, $\hat V(z,f)=\hat V^+(f)\,\e^{-\gamma(f) z}$ para todo $z$, y la tensión en la carga es simplemente la tensión de entrada, retardada y filtrada por el tramo de línea:
+Estamos ahora en condiciones de responder la pregunta que abrió este capítulo: ¿de dónde sale la respuesta en frecuencia $\hat H(f)$ que el resto de estas notas atribuye al canal (Figura \ref{fig:distorsion canal})? Consideremos una línea de longitud $\ell$ \emph{adaptada} en la carga ($Z_L=Z_0$, $\Gamma_L=0$), que es la situación deseable y además evita los ecos de la Sección \ref{sec:linea cargada}. En ese caso no hay onda reflejada, $\hat V(z,f)=\hat V^+(f)\,\e^{-\gamma(f) z}$ para todo $z$, y la tensión en la carga es la tensión de entrada, retardada y filtrada por el tramo de línea:
 \begin{equation*}
     \hat V(\ell,f) = \hat V(0,f)\, \e^{-\gamma(f)\ell}.
 \end{equation*}
-Es decir, la línea se comporta exactamente como veníamos suponiendo desde el Capítulo \ref{chapter:modulacion banda base}: un sistema LTI, de respuesta en frecuencia
+Es decir, la línea se comporta como veníamos suponiendo desde el Capítulo \ref{chapter:modulacion banda base}: un sistema LTI, de respuesta en frecuencia
 \begin{equation}\label{eq:H canal}
     \hat H(f) := \frac{\hat V(\ell,f)}{\hat V(0,f)} = \e^{-\gamma(f)\ell} = \underbrace{\e^{-\alpha(f)\ell}}_{\text{módulo}}\;\underbrace{\e^{-j\beta(f)\ell}}_{\text{fase}}.
 \end{equation}
-Esta es, en definitiva, la ecuación central del capítulo: le da contenido físico al bloque gris de la Figura \ref{fig:distorsion canal}. Si la línea verificara la Condición de Heaviside (Condición \ref{cond:heaviside}) -- $\alpha(f)$ constante y $\beta(f)$ exactamente lineal en $f$ -- \eqref{eq:H canal} sería, salvo una atenuación y un retardo constantes (ninguno de los dos un problema real para la detección: el primero se compensa con ganancia, el segundo con el instante de muestreo), un filtro ``todo pasa'': no distorsionaría la \emph{forma} de ningún pulso. La ISI de la Sección \ref{sec:interferencia intersimbolica} aparece precisamente porque las líneas reales \emph{no} verifican esa condición: tanto $\alpha(f)$ como $\beta(f)$ se apartan del caso ideal, por dos mecanismos físicos distintos, que estudiamos por separado antes de combinarlos.
+Esta es la ecuación central del capítulo, que le da contenido físico al bloque de canal de la Figura \ref{fig:distorsion canal}. Si la línea verificara la Condición de Heaviside, con $\alpha(f)$ constante y $\beta(f)$ lineal en $f$, \eqref{eq:H canal} sería, salvo una atenuación y un retardo constantes, un filtro ``pasatodo'' que no distorsiona la forma de ningún pulso. Ni la atenuación ni el retardo son un problema para la detección: la primera se compensa con ganancia y el segundo con el instante de muestreo. La ISI aparece porque las líneas reales no verifican esa condición. Veamos de qué manera se apartan de ella.
 
-\subsection*{Distorsión de fase}
+\subsection*{Línea de bajas pérdidas}
 
-El primer mecanismo es el que motivó la Condición de Heaviside: si $\beta(f)$ no es exactamente lineal en $f$, distintas componentes espectrales del pulso viajan a distinta velocidad de fase y, más precisamente, a distinta \emph{velocidad de grupo} $v_g(f)$ (Sección \ref{sec:ecuacion de onda}). El tiempo que tarda cada componente de frecuencia $f$ en atravesar la línea es el \emph{retardo de grupo}:
+Comencemos por el caso de $R$ y $G$ constantes. El tiempo que tardan las componentes de frecuencia cercanas a $f$ en atravesar la línea es el \emph{retardo de grupo}:
 \begin{equation*}
-    \tau_g(f) := \frac{\ell}{v_g(f)} = \ell\left.\frac{d\beta}{d\omega}\right|_{\omega=2\pi f}.
+    \tau_g(f) := \frac{\ell}{v_g(f)} = \frac{\ell}{2\pi}\,\beta'(f).
 \end{equation*}
-Si $\tau_g(f)$ es constante dentro del ancho de banda de la señal, todas las componentes espectrales del pulso llegan juntas -- desplazadas en bloque, sin desarmarse. Si $\tau_g(f)$ varía apreciablemente dentro de ese ancho de banda, las componentes de baja y alta frecuencia del pulso llegan en instantes distintos: el pulso se \emph{dispersa}, ensanchándose en el tiempo. Esta es la dispersión en sentido estricto -- la misma palabra que van a reencontrar, con otro mecanismo físico de fondo, si cursan un curso de propagación inalámbrica o de fibra óptica.
+Si $\tau_g(f)$ es constante dentro del ancho de banda de la señal, todas las componentes espectrales del pulso llegan juntas. Si varía apreciablemente, las componentes de baja y alta frecuencia llegan en instantes distintos y el pulso se dispersa.
 
-Para una línea de bajas pérdidas ($R\ll 2\pi f L$, $G\ll 2\pi f C$, el régimen usual en la práctica), podemos aproximar \eqref{eq:gamma} reteniendo el primer orden en $R/(2\pi f L)$ y $G/(2\pi f C)$:
+Para una línea de bajas pérdidas ($R\ll 2\pi f L$, $G\ll 2\pi f C$), podemos aproximar \eqref{eq:gamma} reteniendo el primer orden en $R/(2\pi f L)$ y $G/(2\pi f C)$:
 \begin{align*}
     \gamma(f) &= \sqrt{(R+j2\pi f L)(G+j2\pi f C)} = j2\pi f\sqrt{LC}\sqrt{\left(1+\frac{R}{j2\pi f L}\right)\left(1+\frac{G}{j2\pi f C}\right)} \\ &\approx j2\pi f\sqrt{LC}\left(1+\frac{R}{j4\pi f L}+\frac{G}{j4\pi f C}\right),
 \end{align*}
 usando $\sqrt{1+x}\approx 1+x/2$ para $|x|\ll 1$. Separando parte real e imaginaria:
 \begin{equation}\label{eq:beta aproximado}
-    \beta(f) \approx 2\pi f\sqrt{LC}, \qquad\qquad \alpha(f) \approx \frac{1}{2}\left(R\sqrt{\frac{C}{L}}+G\sqrt{\frac{L}{C}}\right).
+    \beta(f) \approx 2\pi f\sqrt{LC}, \qquad\qquad \alpha(f) \approx \frac{1}{2}\left(R\sqrt{\frac{C}{L}}+G\sqrt{\frac{L}{C}}\right) = \frac{R}{2Z_0}+\frac{G Z_0}{2},
 \end{equation}
-Notablemente, en esta aproximación de primer orden $\beta(f)$ \emph{sigue siendo lineal} en $f$ (igual que en el caso sin pérdidas) y $\alpha(f)$ \emph{sigue siendo constante}: para una línea de bajas pérdidas, la distorsión de fase es un efecto de \emph{segundo orden}, generalmente pequeño frente al segundo mecanismo que estudiamos a continuación. La razón física es que $L$ y $C$ -- que dominan $\beta(f)$ -- dependen únicamente de la geometría de la línea y son, con muy buena aproximación, independientes de la frecuencia; la verdadera dependencia en $f$ entra por $R$ (y, en menor medida, $G$), que es precisamente donde aparece el segundo mecanismo.
+con $Z_0=\sqrt{L/C}$. En esta aproximación $\beta(f)$ sigue siendo lineal en $f$ y $\alpha(f)$ sigue siendo constante: una línea de bajas pérdidas con parámetros constantes casi no distorsiona. Esto se debe a que $L$ y $C$ dependen únicamente de la geometría de la línea y son, con muy buena aproximación, independientes de la frecuencia. La dependencia con $f$ entra por $R$, como veremos a continuación.
 
-\subsection*{Atenuación creciente con la frecuencia: efecto pelicular}
+\subsection*{Efecto pelicular}
 
-El segundo mecanismo es, en la mayoría de los cables de cobre reales en las frecuencias de interés de este curso, el \textbf{dominante} -- un dato que conviene decir explícitamente, porque es contraintuitivo para quien viene pensando en ``dispersión'' como sinónimo de todo lo que ensancha un pulso en un cable. Se trata de que $R$, que tratamos hasta ahora como una constante, en realidad \emph{crece} con la frecuencia.
+En los cables de cobre, en las frecuencias de interés, $R$ no es constante sino que \emph{crece} con la frecuencia. La causa es el \emph{efecto pelicular} (\emph{skin effect}). A baja frecuencia, la corriente se distribuye uniformemente en toda la sección del conductor. A alta frecuencia, el campo magnético variable generado por la propia corriente induce corrientes de Foucault que se oponen a la circulación de corriente en el interior del conductor, y la corriente se concentra en una capa delgada cerca de la superficie. Al reducirse la sección efectivamente conductora, la resistencia por unidad de longitud aumenta.
 
-La causa es el \emph{efecto pelicular} (\emph{skin effect}): a baja frecuencia, la corriente se distribuye uniformemente en toda la sección del conductor. A alta frecuencia, el campo magnético variable generado por la propia corriente induce corrientes de Foucault que se oponen a la circulación de corriente en el interior del conductor, empujando la corriente a concentrarse en una capa delgada cerca de la superficie. Al reducirse la sección efectivamente conductora, la resistencia por unidad de longitud aumenta.
-
-Formalicemos esto. Dentro de un buen conductor (donde la corriente de conducción domina ampliamente a la de desplazamiento, $\sigma\gg 2\pi f\varepsilon$), las ecuaciones de Maxwell se reducen a $\nabla\times \vec H = \sigma \vec E$ (Ampère) y $\nabla\times \vec E = -\mu\,\partial \vec H/\partial t$ (Faraday), con $\sigma$ la conductividad y $\mu$ la permeabilidad del conductor. Tomando rotor de la segunda y sustituyendo la primera, y usando que $\nabla\cdot \vec E\approx 0$ dentro de un buen conductor (no se acumula carga libre):
+Formalicemos esto. Dentro de un buen conductor, donde la corriente de conducción domina ampliamente a la de desplazamiento ($\sigma\gg 2\pi f\varepsilon$), las ecuaciones de Maxwell se reducen a $\nabla\times \vec H = \sigma \vec E$ (Ampère) y $\nabla\times \vec E = -\mu\,\partial \vec H/\partial t$ (Faraday), con $\sigma$ la conductividad y $\mu$ la permeabilidad del conductor. Tomando rotor de la segunda, sustituyendo la primera y usando que $\nabla\cdot \vec E\approx 0$ dentro de un buen conductor (no se acumula carga libre):
 \begin{equation*}
     \nabla^2 \vec E = \mu\sigma\, \frac{\partial \vec E}{\partial t},
 \end{equation*}
-una \emph{ecuación de difusión} para el campo eléctrico dentro del conductor -- misma forma matemática que la ecuación del calor. Para una excitación sinusoidal de frecuencia $f$, y aproximando la superficie del conductor como localmente plana (válido cuando la capa conductora es delgada frente al radio del conductor, la situación de interés aquí), el campo dentro del conductor solo depende de la profundidad $x$ medida desde la superficie hacia adentro, y la ecuación de difusión se reduce a $d^2\hat E/dx^2 = j2\pi f \mu\sigma\, \hat E(x)$, con solución (la que decae hacia el interior, $x\to\infty$):
+que es una \emph{ecuación de difusión} para el campo eléctrico dentro del conductor, con la misma forma que la ecuación del calor. Para una excitación sinusoidal de frecuencia $f$, y aproximando la superficie del conductor como localmente plana (válido cuando la capa conductora es delgada frente al radio del conductor), el campo solo depende de la profundidad $x$ medida desde la superficie hacia adentro, y la ecuación se reduce a $d^2\hat E/dx^2 = j2\pi f \mu\sigma\, \hat E(x)$. Su solución que decae hacia el interior es:
 \begin{equation}\label{eq:campo skin}
-    \hat E(x) = \hat E(0)\, \e^{-x/\delta(f)}\, \e^{-jx/\delta(f)}, \qquad \delta(f) := \sqrt{\frac{1}{\pi f \mu\sigma}}.
+    \hat E(x) = \hat E(0)\, \e^{-(1+j)x/\delta(f)}, \qquad \delta(f) := \sqrt{\frac{1}{\pi f \mu\sigma}}.
 \end{equation}
-La densidad de corriente $J=\sigma E$ sigue la misma ley: decae exponencialmente con la profundidad, con una constante característica $\delta(f)$, la \emph{profundidad de penetración} o \emph{profundidad pelicular}. A mayor frecuencia, menor $\delta(f)$: la corriente queda confinada a una capa cada vez más delgada junto a la superficie.
+La densidad de corriente $J=\sigma E$ sigue la misma ley: decae exponencialmente con la profundidad, con una constante característica $\delta(f)$ denominada \emph{profundidad de penetración} o \emph{profundidad pelicular}. A mayor frecuencia, menor $\delta(f)$, y la corriente queda confinada a una capa cada vez más delgada junto a la superficie.
 
-Este resultado permite estimar la resistencia efectiva del conductor: en vez de distribuirse en toda la sección, la corriente ocupa efectivamente una capa de espesor $\delta(f)$ junto al perímetro. Para un conductor de perímetro $p$ (por ejemplo, $p=2\pi a$ para un hilo cilíndrico de radio $a$, si $\delta(f)\ll a$), la sección efectiva es $\approx p\,\delta(f)$, y por lo tanto:
-\begin{equation}\label{eq:R skin}
-    R(f) \approx \frac{1}{\sigma\, p\, \delta(f)} = \frac{1}{p}\sqrt{\frac{\pi f \mu}{\sigma}} \ \propto\ \sqrt{f}.
+Este resultado permite calcular la impedancia serie del conductor. La corriente total por unidad de ancho de superficie es
+\begin{equation*}
+    \int_0^\infty \sigma \hat E(0)\,\e^{-(1+j)x/\delta}\,dx = \frac{\sigma\delta\,\hat E(0)}{1+j},
+\end{equation*}
+por lo que, para un conductor de perímetro $p$ (por ejemplo, $p=2\pi a$ para un hilo cilíndrico de radio $a$, si $\delta(f)\ll a$), la impedancia serie por unidad de longitud es el cociente entre el campo en la superficie y la corriente total:
+\begin{equation}\label{eq:Z skin}
+    Z_{\text{cond}}(f) = \frac{1+j}{\sigma\, p\, \delta(f)} = (1+j)\,R(f), \qquad R(f) = \frac{1}{p}\sqrt{\frac{\pi f \mu}{\sigma}} \ \propto\ \sqrt{f}.
 \end{equation}
-A diferencia de $\beta(f)$, que en la Ecuación \eqref{eq:beta aproximado} resultaba lineal en $f$ (buen comportamiento), $R(f)$ crece sin cota como $\sqrt f$: es este crecimiento el que, por \eqref{eq:beta aproximado}, hace que $\alpha(f)$ deje de ser constante y crezca también, aproximadamente, como $\sqrt f$ -- un filtrado pasabajos ``liso'', que recorta las componentes de alta frecuencia del pulso sin desalinearlas en el tiempo (a diferencia de la distorsión de fase de la sección anterior). Para un cable coaxil, con conductor interior de radio $a$ y conductor exterior (pantalla) de radio interior $b$, ambos contribuyen en serie a la resistencia total (llevan la misma corriente):
+Se obtienen así dos conclusiones. La primera es que la resistencia crece como $\sqrt f$, y es la misma que se obtendría suponiendo que la corriente ocupa uniformemente una capa de espesor $\delta(f)$. La segunda es que el conductor presenta además una reactancia inductiva interna, $2\pi f L_{\text{int}}(f)$, \emph{de igual valor} que $R(f)$, y por lo tanto también proporcional a $\sqrt f$. Para un cable coaxil, con conductor interior de radio $a$ y conductor exterior (pantalla) de radio interior $b$, ambos conductores llevan la misma corriente y contribuyen en serie:
 \begin{equation}\label{eq:R skin coaxil}
     R(f) \approx \sqrt{\frac{\pi f \mu}{\sigma}}\, \left(\frac{1}{2\pi a} + \frac{1}{2\pi b}\right).
 \end{equation}
 
 \begin{remark}
-La derivación anterior aproxima la superficie del conductor como plana y desprecia la curvatura -- válida en el régimen $\delta(f)\ll a$, ampliamente satisfecho en las frecuencias de interés de este curso (por ejemplo, para cobre, $\delta(10\ \unit{\mega\hertz})\approx 21\ \unit{\micro\meter}$, muy por debajo del radio típico de un conductor de cable coaxil). Un tratamiento exacto para un conductor cilíndrico requiere resolver la ecuación de difusión en coordenadas cilíndricas (funciones de Bessel), fuera del alcance de este curso. A frecuencias muy bajas, donde $\delta(f)$ deja de ser chica frente a $a$, la corriente vuelve a ocupar toda la sección y $R(f)$ satura al valor de continua $R_{dc}=1/(\sigma \pi a^2)$ en vez de seguir cayendo -- un detalle que no afecta las conclusiones de esta sección, centradas en el rango de frecuencias (cientos de $\unit{\kilo\hertz}$ a cientos de $\unit{\mega\hertz}$) relevante para las señales de este curso.
+La derivación anterior aproxima la superficie del conductor como plana, lo cual es válido en el régimen $\delta(f)\ll a$. Este régimen se cumple ampliamente en las frecuencias de interés: por ejemplo, para cobre, $\delta(10\ \unit{\mega\hertz})\approx 21\ \unit{\micro\meter}$, muy por debajo del radio típico de un conductor. Un tratamiento exacto para un conductor cilíndrico requiere resolver la ecuación de difusión en coordenadas cilíndricas (funciones de Bessel), y está fuera del alcance de este curso. A frecuencias muy bajas, donde $\delta(f)$ deja de ser pequeña frente a $a$, la corriente vuelve a ocupar toda la sección y $R(f)$ tiende al valor de continua $R_{dc}=1/(\sigma \pi a^2)$.
 \end{remark}
 
-\subsection*{Efecto combinado: hacia $\hat H(f)$}
+\subsection*{La respuesta en frecuencia del cable}
 
-Combinando \eqref{eq:beta aproximado} con \eqref{eq:R skin} (o \eqref{eq:R skin coaxil} para un coaxil), el mecanismo dominante en la práctica es claro:
+Incorporemos el efecto pelicular al análisis de bajas pérdidas. La impedancia serie por unidad de longitud pasa a ser $(1+j)R(f) + j2\pi f L$, y despreciando las pérdidas dieléctricas ($G\approx 0$), la misma aproximación que llevó a \eqref{eq:beta aproximado} da:
 \begin{equation}\label{eq:alpha combinado}
-    \alpha(f) \approx \frac{1}{2} R(f)\sqrt{\frac{C}{L}}, \qquad R(f)\propto\sqrt f,
+    \alpha(f) \approx \frac{R(f)}{2Z_0}, \qquad \beta(f) \approx 2\pi f\sqrt{LC} + \frac{R(f)}{2Z_0}.
 \end{equation}
-donde despreciamos el aporte de $G(f)$ (pérdidas dieléctricas) frente al de $R(f)$: para dieléctricos de buena calidad como el polietileno, usado en la mayoría de los cables coaxiles y pares trenzados de comunicaciones, $G(f)=2\pi f C\tan\delta_{\text{diel}}$ crece linealmente con $f$ (con $\tan\delta_{\text{diel}}\sim 10^{-4}$, la tangente de pérdidas del dieléctrico), pero en el rango de frecuencias de interés de este curso su aporte a $\alpha(f)$ es, típicamente, uno o dos órdenes de magnitud menor que el de $R(f)$.
+Es decir, el término debido al efecto pelicular aparece \emph{con el mismo valor} en la atenuación y en la fase. Escribiendo $\alpha(f)=k\sqrt f$, con $k$ una constante que depende de la geometría y del material, y llamando $t_d=\ell\sqrt{LC}$ al tiempo de propagación, la respuesta en frecuencia \eqref{eq:H canal} de un tramo de línea adaptada de longitud $\ell$ resulta, para $f>0$:
+\begin{equation}\label{eq:H coaxil}
+    \hat H(f) \approx \e^{-j2\pi f t_d}\;\e^{-(1+j)k\ell\sqrt{f}}.
+\end{equation}
+Para $f<0$ el valor se obtiene por simetría hermítica, $\hat H(-f)=\overline{\hat H(f)}$, ya que la respuesta al impulso es real. La respuesta \eqref{eq:H coaxil} tiene tres efectos:
+\begin{itemize}
+    \item Un retardo puro $t_d$, que no distorsiona.
+    \item Una atenuación $\e^{-k\ell\sqrt f}$ que crece con la frecuencia: un filtrado pasabajos suave, sin frecuencia de corte abrupta, que redondea los flancos del pulso.
+    \item Una fase adicional $k\ell\sqrt f$, no lineal en $f$. Su retardo de grupo asociado es $\tau_g(f)=t_d + \frac{k\ell}{4\pi\sqrt f}$, mayor para las frecuencias bajas. Las componentes lentas del pulso llegan más tarde, y el pulso recibido presenta una subida rápida seguida de una cola larga y asimétrica, que se extiende sobre los símbolos siguientes.
+\end{itemize}
+Ambos efectos de distorsión son del mismo orden y crecen con el producto $k\ell$, es decir, con la longitud de la línea. Además, lo que importa para la ISI es la extensión de la cola en relación con el tiempo de símbolo: un mismo cable puede ser prácticamente transparente a una velocidad de señalización baja y producir una ISI severa a una velocidad alta.
 
-De \eqref{eq:H canal} y \eqref{eq:alpha combinado}, la respuesta en frecuencia de un tramo de línea adaptada de longitud $\ell$ es, entonces:
-\begin{equation*}
-    |\hat H(f)| = \e^{-\alpha(f)\ell} \approx \exp\left(-\frac{\ell}{2}\sqrt{\frac{C}{L}}\, R(f)\right),
-\end{equation*}
-una curva suavemente decreciente con $f$ (ya que $R(f)\propto\sqrt f$ crece sin cota) -- \textbf{este es, precisamente, el filtro pasabajos ``liso'' que el resto de estas notas postula sin más} (Figura \ref{fig:distorsion canal}). No hay una frecuencia de corte abrupta como en un filtro ideal; la atenuación crece gradualmente, y es la razón profunda por la que, en la práctica, los sistemas de comunicación sobre cable tienen un ancho de banda \emph{efectivo} determinado por la relación señal a ruido tolerable (a mayor $f$, más atenuación, hasta que la señal se pierde en el ruido), tal como veníamos suponiendo desde el Capítulo \ref{chapter:modulacion banda base} sin justificarlo.
+Las pérdidas dieléctricas que despreciamos agregan a $\alpha(f)$ el término $GZ_0/2$ de \eqref{eq:beta aproximado}, con $G(f)=2\pi f C\tan\theta_{\text{d}}$, donde $\tan\theta_{\text{d}}$ es la tangente de pérdidas del dieléctrico. Este término crece linealmente con $f$, pero para dieléctricos de buena calidad como el polietileno ($\tan\theta_{\text{d}}\sim 10^{-4}$) su aporte en el rango de frecuencias de interés es típicamente uno o dos órdenes de magnitud menor que el del efecto pelicular. Por encima de las centenas de $\unit{\mega\hertz}$, o con dieléctricos de peores características, pasa a ser importante.
 
-\begin{ejemplo}[$\hat H(f)$ de un coaxil y de un par trenzado]\label{ejemplo:H canal}
-Retomemos el coaxil del Ejemplo \ref{ejemplo:coaxil parametros} ($L=250\ \unit{\nano\henry\per\meter}$, $C=100\ \unit{\pico\farad\per\meter}$, $Z_0=50\ \Omega$), con conductores de cobre ($\sigma\approx 5{,}96\times 10^7\ \unit{\siemens\per\meter}$) de radios $a=0{,}45\ \unit{\milli\meter}$ (interior) y $b=1{,}57\ \unit{\milli\meter}$ (pantalla) -- geometría consistente con los $L,C$ dados. Usando \eqref{eq:R skin coaxil} y \eqref{eq:alpha combinado}, la atenuación en $\unit{\deci\bel}$ para un tramo de $\ell=100\ \unit{\meter}$ resulta:
+\begin{ejemplo}[Atenuación de un coaxil y de un par trenzado]\label{ejemplo:H canal}
+Retomemos el coaxil del Ejemplo \ref{ejemplo:coaxil parametros} ($L=250\ \unit{\nano\henry\per\meter}$, $C=100\ \unit{\pico\farad\per\meter}$, $Z_0=50\ \unit{\ohm}$), con conductores de cobre ($\sigma\approx 5.96\times 10^7\ \unit{\siemens\per\meter}$) de radios $a=0.45\ \unit{\milli\meter}$ (interior) y $b=1.57\ \unit{\milli\meter}$ (pantalla), geometría consistente con los valores de $L$ y $C$ dados. Usando \eqref{eq:R skin coaxil} y \eqref{eq:alpha combinado}, la atenuación para un tramo de $\ell=100\ \unit{\meter}$ resulta:
 \begin{center}
 \begin{tabular}{c|cccc}
     $f$ & $100\ \unit{\kilo\hertz}$ & $1\ \unit{\mega\hertz}$ & $10\ \unit{\mega\hertz}$ & $100\ \unit{\mega\hertz}$ \\ \hline
-    Coaxil ($\unit{\deci\bel}/100\unit{\meter}$) & $0{,}32$ & $1{,}02$ & $3{,}22$ & $10{,}17$ \\
-    Par trenzado ($\unit{\deci\bel}/100\unit{\meter}$) & $0{,}38$ & $1{,}21$ & $3{,}81$ & $12{,}06$
+    Coaxil ($\unit{\deci\bel}/100\unit{\meter}$) & $0.32$ & $1.02$ & $3.22$ & $10.17$ \\
+    Par trenzado ($\unit{\deci\bel}/100\unit{\meter}$) & $0.38$ & $1.21$ & $3.81$ & $12.06$
 \end{tabular}
 \end{center}
-donde el par trenzado corresponde a dos conductores AWG24 ($a=0{,}26\ \unit{\milli\meter}$, sin pantalla, $R_{dc}\approx 0{,}16\ \Omega/\unit{\meter}$ en lazo), con $L=600\ \unit{\nano\henry\per\meter}$ y $C=45\ \unit{\pico\farad\per\meter}$ (típicos, $Z_0\approx 115\ \Omega$). La Figura \ref{fig:atenuacion comparada} muestra $\alpha(f)\ell$ en $\unit{\deci\bel}$ para ambos cables en todo el rango. El par trenzado atenúa más que el coaxil a igual frecuencia -- principalmente por sus conductores más delgados ($R(f)$ mayor) -- lo que explica, en parte, por qué el cable coaxil fue históricamente preferido para enlaces más largos o de mayor frecuencia (por ejemplo, televisión por cable), mientras que el par trenzado se reserva para tramos más cortos (telefonía, Ethernet de par trenzado).
+donde el par trenzado corresponde a dos conductores AWG24 ($a=0.26\ \unit{\milli\meter}$, sin pantalla, $R_{dc}\approx 0.16\ \unit{\ohm\per\meter}$ en lazo), con $L=600\ \unit{\nano\henry\per\meter}$ y $C=45\ \unit{\pico\farad\per\meter}$ (valores típicos, $Z_0\approx 115\ \unit{\ohm}$). La Figura \ref{fig:atenuacion comparada} muestra la atenuación de ambos cables en todo el rango. El par trenzado atenúa más que el coaxil a igual frecuencia, principalmente por sus conductores más delgados. Esto explica en parte por qué el cable coaxil fue históricamente preferido para enlaces más largos o de mayor frecuencia (por ejemplo, la televisión por cable), mientras que el par trenzado se reserva para tramos más cortos (telefonía, Ethernet).
 \end{ejemplo}
 
 \begin{figure}
@@ -413,8 +445,8 @@ donde el par trenzado corresponde a dos conductores AWG24 ($a=0{,}26\ \unit{\mil
                 \addplot[teal, very thick, mark=none] coordinates {
                     (0.1000,0.3217) (0.1585,0.4049) (0.2512,0.5098) (0.3981,0.6418) (0.6310,0.8080) (1.0000,1.0172) (1.5849,1.2805) (2.5119,1.6121) (3.9811,2.0295) (6.3096,2.5550) (10.0000,3.2165) (15.8489,4.0494) (25.1189,5.0979) (39.8107,6.4179) (63.0957,8.0796) (100.0000,10.1716)
                 };
-                \addlegendentry{Coaxil ($Z_0=50\,\Omega$)}
-                \addplot[Red, very thick, dashed, mark=none] coordinates {
+                \addlegendentry{Coaxil}
+                \addplot[red, very thick, dashed, mark=none] coordinates {
                     (0.1000,0.3814) (0.1585,0.4801) (0.2512,0.6044) (0.3981,0.7609) (0.6310,0.9579) (1.0000,1.2060) (1.5849,1.5182) (2.5119,1.9113) (3.9811,2.4062) (6.3096,3.0292) (10.0000,3.8136) (15.8489,4.8010) (25.1189,6.0441) (39.8107,7.6091) (63.0957,9.5792) (100.0000,12.0595)
                 };
                 \addlegendentry{Par trenzado AWG24}
@@ -426,21 +458,26 @@ donde el par trenzado corresponde a dos conductores AWG24 ($a=0{,}26\ \unit{\mil
 
 \subsection*{Presupuesto de pérdidas}
 
-Con $\alpha(f)$ en mano, podemos finalmente ponerle un número concreto a la atenuación $L$ que el Capítulo \ref{chapter:deteccion ruido} usó de forma genérica al analizar la cadena de repetidores (Ejemplos \ref{ejemplo:repeticion no regenerativa} y \ref{ejemplo:repetidor regenerativo}, Figura \ref{fig:repetidor regenerativo}): para un tramo de cable de longitud $\ell$, transmitiendo con velocidad de señalización $f_s$,
+Con $\alpha(f)$ en mano podemos ponerle un número concreto a la atenuación de cada tramo de una cadena de repetidores, como la analizada en el Capítulo \ref{chapter:deteccion ruido} (Ejemplos \ref{ejemplo:repeticion no regenerativa} y \ref{ejemplo:repetidor regenerativo}, Figura \ref{fig:repetidor regenerativo}). Para un tramo de cable de longitud $\ell$, transmitiendo con velocidad de señalización $f_s$, la atenuación en decibeles es aproximadamente
 \begin{equation*}
-    L\ (\text{en } \unit{\deci\bel}) = \alpha(f_s)\,\ell\cdot 8{,}686,
+    A_{\mathrm{dB}} = 8.686\,\alpha(f_s)\,\ell,
 \end{equation*}
-evaluando $\alpha$ (Ecuación \eqref{eq:alpha combinado}) a la frecuencia de señalización de interés. Este es, en definitiva, el \emph{presupuesto de pérdidas} (\emph{link budget}) del enlace guiado: dado un requerimiento de $S/N$ en recepción y la potencia de transmisión disponible, determina la máxima distancia entre repetidores (o entre transmisor y receptor, sin repetición).
+evaluando $\alpha$ (Ecuación \eqref{eq:alpha combinado}) en una frecuencia representativa del espectro de la señal. Este es el \emph{presupuesto de pérdidas} (\emph{link budget}) del enlace guiado: dado un requerimiento de $S/N$ en recepción, la potencia de transmisión disponible y el ruido del receptor, se determina la atenuación máxima tolerable y, a partir de ella, la máxima distancia entre repetidores (o entre transmisor y receptor, si no hay repetición).
 
 \begin{ejemplo}[Espaciado de repetidores]
-El Ejemplo \ref{ejemplo:repetidor regenerativo} del Capítulo \ref{chapter:deteccion ruido} suponía, sin justificarlo, una atenuación de $L=20\ \unit{\deci\bel}$ por etapa. Usando el cable coaxil del Ejemplo \ref{ejemplo:H canal} con una velocidad de señalización $f_s=10\ \unit{\mega\hertz}$ (donde, de la Figura \ref{fig:atenuacion comparada}, $\alpha(f_s)\ell$ vale $3{,}22\ \unit{\deci\bel}$ cada $100\ \unit{\meter}$), esos $20\ \unit{\deci\bel}$ se alcanzan a:
+En el Ejemplo \ref{ejemplo:repetidor regenerativo} del Capítulo \ref{chapter:deteccion ruido} se supuso una relación $S/N$ de $20\ \unit{\deci\bel}$ en cada etapa. Supongamos que, con la potencia de transmisión y el ruido del receptor disponibles, lograr esa relación permite tolerar una atenuación de $A_{\mathrm{dB}}=20\ \unit{\deci\bel}$ por tramo. Usando el cable coaxil del Ejemplo \ref{ejemplo:H canal} con una velocidad de señalización $f_s=10\ \unit{\mega\hertz}$, donde la atenuación es de $3.22\ \unit{\deci\bel}$ cada $100\ \unit{\meter}$, esos $20\ \unit{\deci\bel}$ se alcanzan a:
 \begin{equation*}
-    \ell = \frac{20\ \unit{\deci\bel}}{3{,}22\ \unit{\deci\bel}/100\ \unit{\meter}} \approx 620\ \unit{\meter}.
+    \ell = \frac{20\ \unit{\deci\bel}}{3.22\ \unit{\deci\bel}/100\ \unit{\meter}} \approx 620\ \unit{\meter}.
 \end{equation*}
-Es decir, para no exceder el presupuesto de pérdidas que aquel ejemplo asumía, un repetidor cada $620\ \unit{\meter}$ aproximadamente -- el número concreto que la Sección \ref{sec:dispersion pulsos} le debía al Capítulo \ref{chapter:deteccion ruido}.
+Es decir, se necesita un repetidor cada $620\ \unit{\meter}$ aproximadamente.
 \end{ejemplo}
 
-Con esto entendimos, de punta a punta, de dónde sale $\hat H(f)$: de los parámetros $R,L,G,C$ (Sección \ref{sec:parametros distribuidos}), a través de la constante de propagación (Sección \ref{sec:ecuacion de onda}), hasta la atenuación creciente con la frecuencia que efectivamente limita el ancho de banda del canal (Sección \ref{sec:dispersion pulsos}). Queda una pregunta que la Sección \ref{sec:ecualizacion canal zfe} dejó pendiente al esbozar el filtro ecualizador sin resolverlo del todo: ahora que conocemos a $\hat H(f)$ con precisión, ¿podemos deshacer su efecto? Cerramos este capítulo respondiendo esa pregunta.
+\begin{ejemplo}[Ethernet sobre par trenzado]\label{ejemplo:ethernet}
+Las normas de cableado estructurado especifican la atenuación máxima de cada categoría de cable. Para un cable categoría 5e, la atenuación máxima a $100\ \unit{\mega\hertz}$ es de $22\ \unit{\deci\bel}$ cada $100\ \unit{\meter}$.
+Las normas Ethernet sobre par trenzado (por ejemplo, 100BASE-TX y 1000BASE-T) fijan en consecuencia una longitud máxima de $100\ \unit{\meter}$ por tramo: es el presupuesto de pérdidas que los transceptores están diseñados para compensar. Notar que el par AWG24 del Ejemplo \ref{ejemplo:H canal}, modelado solo con efecto pelicular, da unos $12\ \unit{\deci\bel}$ a esa frecuencia. La diferencia se debe a efectos que nuestro modelo simplificado ignora, principalmente las pérdidas dieléctricas del aislante y el efecto de proximidad entre los dos conductores del par.
+\end{ejemplo}
+
+Con esto completamos el recorrido de este capítulo hasta $\hat H(f)$: de los parámetros $R,L,G,C$ (Sección \ref{sec:parametros distribuidos}), a través de la constante de propagación (Sección \ref{sec:ecuacion de onda}), hasta la atenuación y la fase dependientes de la frecuencia que limitan el ancho de banda del canal y producen ISI (Sección \ref{sec:dispersion pulsos}). Queda pendiente una pregunta que la Sección \ref{sec:ecualizacion canal zfe} dejó planteada: conociendo $\hat H(f)$, ¿podemos deshacer su efecto? Cerramos este capítulo respondiendo esa pregunta.
 
 \section{Ecualización de canal}\label{sec:ecualizacion}
 
@@ -450,56 +487,56 @@ Recordemos el planteo de la Sección \ref{sec:ecualizacion canal zfe} (Figura \r
 \begin{equation*}
     \hat p(t) = \sum_{n=-N}^N c_n\, \tilde p(t-nT_s).
 \end{equation*}
-El criterio de \emph{cero forzado} (ZFE) pide $\hat p(kT_s)=0$ para $k=\pm 1,\ldots,\pm N$, junto con $\hat p(0)=1$ (para no perder la ganancia de la muestra útil). Escribamos esto explícitamente: evaluando $\hat p$ en $t=kT_s$,
+El criterio de \emph{cero forzado} (ZFE) pide $\hat p(kT_s)=0$ para $k=\pm 1,\ldots,\pm N$, junto con $\hat p(0)=1$ para no perder la ganancia de la muestra útil. Escribamos esto explícitamente. Evaluando $\hat p$ en $t=kT_s$:
 \begin{equation*}
     \hat p(kT_s) = \sum_{n=-N}^N c_n\, \tilde p\big((k-n)T_s\big) = \sum_{n=-N}^N c_n\, \tilde p_{k-n},
 \end{equation*}
-donde abreviamos $\tilde p_m := \tilde p(mT_s)$ (las muestras del pulso recibido, el ``dato experimental'' que menciona la Sección \ref{sec:ecualizacion canal zfe}). La condición $\hat p(kT_s)=\delta_{k,0}$ para $k=-N,\ldots,N$ es entonces un sistema \emph{lineal} de $2N+1$ ecuaciones en las $2N+1$ incógnitas $c_n$:
+donde abreviamos $\tilde p_m := \tilde p(mT_s)$, las muestras del pulso recibido, que se obtienen experimentalmente como se mencionó en la Sección \ref{sec:ecualizacion canal zfe}. La condición $\hat p(kT_s)=\delta_{k,0}$ para $k=-N,\ldots,N$ es entonces un sistema \emph{lineal} de $2N+1$ ecuaciones en las $2N+1$ incógnitas $c_n$:
 \begin{equation}\label{eq:sistema zfe}
     \sum_{n=-N}^N \tilde p_{k-n}\, c_n = \delta_{k,0}, \qquad k=-N,\ldots,N.
 \end{equation}
-En forma matricial, $\mathbf P\,\mathbf c = \mathbf e_0$, donde $\mathbf c=(c_{-N},\ldots,c_N)^\top$, $\mathbf e_0$ es el vector con un $1$ en la posición central y ceros en el resto, y $\mathbf P$ es la matriz $(2N+1)\times(2N+1)$ de entradas $P_{k,n}=\tilde p_{k-n}$. Como $P_{k,n}$ depende solo de $k-n$, $\mathbf P$ es una \emph{matriz de Toeplitz} (constante en cada diagonal). La solución formal es $\mathbf c = \mathbf P^{-1}\mathbf e_0$, que existe siempre que $\mathbf P$ sea inversible -- lo es en la generalidad de los casos de interés práctico.
+En forma matricial, $\mathbf P\,\mathbf c = \mathbf e_0$, donde $\mathbf c=(c_{-N},\ldots,c_N)^\top$, $\mathbf e_0$ es el vector con un $1$ en la posición central y ceros en el resto, y $\mathbf P$ es la matriz $(2N+1)\times(2N+1)$ de entradas $P_{k,n}=\tilde p_{k-n}$. Como $P_{k,n}$ depende solo de $k-n$, $\mathbf P$ es una \emph{matriz de Toeplitz} (constante en cada diagonal). La solución es $\mathbf c = \mathbf P^{-1}\mathbf e_0$, que existe siempre que $\mathbf P$ sea invertible, lo que ocurre en los casos de interés práctico.
 
 \begin{ejemplo}[ZFE de tres ganancias, $N=1$]\label{ejemplo:zfe n1}
-Supongamos que, al medir el canal, obtenemos las muestras del pulso recibido (simétricas, un caso frecuente en la práctica): $\tilde p_0=1$, $\tilde p_{\pm 1}=0{,}2$, $\tilde p_{\pm 2}=0{,}05$ (y $\tilde p_m\approx 0$ para $|m|>2$). Con $N=1$, el sistema \eqref{eq:sistema zfe} tiene tres ecuaciones ($k=-1,0,1$) en las incógnitas $c_{-1},c_0,c_1$:
+Supongamos que, al medir el canal, obtenemos las siguientes muestras del pulso recibido, simétricas: $\tilde p_0=1$, $\tilde p_{\pm 1}=0.2$, $\tilde p_{\pm 2}=0.05$, y $\tilde p_m\approx 0$ para $|m|>2$. Con $N=1$, el sistema \eqref{eq:sistema zfe} tiene tres ecuaciones ($k=-1,0,1$) en las incógnitas $c_{-1},c_0,c_1$:
 \begin{equation*}
     \begin{pmatrix} \tilde p_0 & \tilde p_{-1} & \tilde p_{-2} \\ \tilde p_1 & \tilde p_0 & \tilde p_{-1} \\ \tilde p_2 & \tilde p_1 & \tilde p_0 \end{pmatrix}
     \begin{pmatrix} c_{-1} \\ c_0 \\ c_1 \end{pmatrix}
     =
-    \begin{pmatrix} 1 & 0{,}2 & 0{,}05 \\ 0{,}2 & 1 & 0{,}2 \\ 0{,}05 & 0{,}2 & 1 \end{pmatrix}
+    \begin{pmatrix} 1 & 0.2 & 0.05 \\ 0.2 & 1 & 0.2 \\ 0.05 & 0.2 & 1 \end{pmatrix}
     \begin{pmatrix} c_{-1} \\ c_0 \\ c_1 \end{pmatrix}
     =
     \begin{pmatrix} 0 \\ 1 \\ 0 \end{pmatrix}.
 \end{equation*}
-Por la simetría de $\tilde p$, la solución también es simétrica, $c_{-1}=c_1$: de la primera ecuación, $c_{-1}(1{,}05) + 0{,}2\, c_0 = 0 \Rightarrow c_{-1}=-0{,}1905\, c_0$; sustituyendo en la segunda, $0{,}4\,c_{-1}+c_0=1 \Rightarrow 0{,}9238\, c_0 = 1$. Resolviendo:
+Por la simetría de $\tilde p$, la solución también es simétrica, $c_{-1}=c_1$. De la primera ecuación, $1.05\,c_{-1} + 0.2\, c_0 = 0$, de donde $c_{-1}=-0.1905\, c_0$. Sustituyendo en la segunda, $0.4\,c_{-1}+c_0=1$, es decir $0.9238\, c_0 = 1$. Resolviendo:
 \begin{equation*}
-    c_0 \approx 1{,}0825, \qquad c_{-1}=c_1\approx -0{,}2062.
+    c_0 \approx 1.0825, \qquad c_{-1}=c_1\approx -0.2062.
 \end{equation*}
-Verificando: $\hat p(0)=1$, $\hat p(\pm T_s)=0$ exactamente, como se pidió. Pero $\hat p(\pm 2T_s)\approx 0{,}0129$: \emph{no} es cero -- el ZFE con $N=1$ solo garantiza los ceros dentro del rango pedido, no más allá. Vamos a ver en breve, con precisión, por qué aparece este residuo y de qué depende.
+Verificando, $\hat p(0)=1$ y $\hat p(\pm T_s)=0$, como se pidió. Pero $\hat p(\pm 2T_s)\approx 0.0129$, que no es cero: el ZFE con $N=1$ solo garantiza los ceros dentro del rango pedido. Veremos a continuación de dónde proviene este residuo.
 \end{ejemplo}
 
-Como ya anticipaba la Sección \ref{sec:ecualizacion canal zfe}, ajustar el filtro requiere conocer $\tilde p_m$, lo que se obtiene experimentalmente (transmitiendo un pulso o secuencia de entrenamiento conocida y midiendo la respuesta). En la práctica rara vez se calcula $\mathbf c=\mathbf P^{-1}\mathbf e_0$ de una sola vez: el canal puede variar levemente, o no conocerse con precisión de antemano, y es más robusto \emph{adaptar} los $c_n$ iterativamente a partir del error observado (algoritmos como LMS, \emph{Least Mean Squares}). No desarrollamos el algoritmo adaptativo en este curso -- el canal guiado es, a diferencia de uno inalámbrico, esencialmente \emph{invariante en el tiempo} una vez instalado, por lo que un ecualizador fijo, calibrado una vez, alcanza en la gran mayoría de los casos.
+Para ajustar el filtro es necesario conocer las muestras $\tilde p_m$, lo que se hace transmitiendo un pulso o una secuencia de entrenamiento conocida y midiendo la respuesta. En la práctica no siempre se calcula $\mathbf c=\mathbf P^{-1}\mathbf e_0$ de una sola vez: si el canal varía o no se conoce con precisión de antemano, es más robusto \emph{adaptar} los $c_n$ iterativamente a partir del error observado, mediante algoritmos como LMS (\emph{Least Mean Squares}). No desarrollaremos los ecualizadores adaptativos en este curso. Notemos de todos modos que el canal guiado es esencialmente invariante en el tiempo una vez instalado, por lo que el ajuste puede hacerse lentamente, a diferencia de un canal inalámbrico.
 
 \subsection*{Equivalencia con la inversión del canal}
 
-El residuo que quedó en el Ejemplo \ref{ejemplo:zfe n1} sugiere que el ZFE de $2N+1$ términos es una aproximación de algo más grande. Formalicémoslo. Para una sucesión genérica $\{x_n\}_{n\in\mathbb Z}$, definamos su \emph{transformada}
+El residuo del Ejemplo \ref{ejemplo:zfe n1} sugiere que el ZFE de $2N+1$ términos es una aproximación de un filtro de infinitos términos. Para formalizarlo, dada una sucesión $\{x_n\}_{n\in\mathbb Z}$, definamos su \emph{transformada}
 \begin{equation*}
     \hat X(f) := \sum_{n=-\infty}^{\infty} x_n\, \e^{-j2\pi f nT_s},
 \end{equation*}
-una función de $f$, periódica de período $f_s=1/T_s$ (los $x_n$ son, precisamente, sus coeficientes de Fourier). Aplicada a las muestras del pulso recibido, $\hat P_d(f):=\sum_m \tilde p_m\,\e^{-j2\pi fmT_s}$, es el análogo, en el dominio discreto de las muestras, del $\hat P(f)$ continuo que dedujimos en la Sección \ref{sec:dispersion pulsos}.
+que es una función periódica de $f$, de período $f_s=1/T_s$, cuyos coeficientes de Fourier son los $x_n$. Aplicada a las muestras del pulso recibido, $\hat P_d(f):=\sum_m \tilde p_m\,\e^{-j2\pi fmT_s}$ es el análogo, en el dominio discreto de las muestras, de la transformada $\hat P(f)$ del pulso continuo.
 
-\begin{teorema}[ZFE de infinitos términos = inversión en frecuencia]\label{teorema:zfe inversion}
+\begin{teorema}[ZFE de infinitos términos e inversión en frecuencia]\label{teorema:zfe inversion}
 Si $\hat P_d(f)\neq 0$ para todo $f$, existe una única sucesión $\{c_n\}_{n\in\mathbb Z}$ que resuelve el sistema \eqref{eq:sistema zfe} \emph{sin truncar} ($k\in\mathbb Z$ en vez de $k=-N,\ldots,N$), y está dada por los coeficientes de Fourier de $1/\hat P_d(f)$:
 \begin{equation*}
-    c_n = f_s\int_{-f_s/2}^{f_s/2} \frac{\e^{j2\pi f nT_s}}{\hat P_d(f)}\; df.
+    c_n = \frac{1}{f_s}\int_{-f_s/2}^{f_s/2} \frac{\e^{j2\pi f nT_s}}{\hat P_d(f)}\; df.
 \end{equation*}
 \end{teorema}
 \begin{proof}
-Sea $\{c_n\}$ una solución del sistema sin truncar, y $y_k:=\sum_n \tilde p_{k-n}c_n$ (que por hipótesis vale $\delta_{k,0}$). Calculemos la transformada de $\{y_k\}$, sustituyendo $m:=k-n$:
+Sea $\{c_n\}$ una solución del sistema sin truncar, y $y_k:=\sum_n \tilde p_{k-n}c_n$, que por hipótesis vale $\delta_{k,0}$. Calculemos la transformada de $\{y_k\}$, sustituyendo $m:=k-n$:
 \begin{equation*}
-    \hat Y(f) = \sum_k y_k\, \e^{-j2\pi f kT_s} = \sum_n c_n \sum_m \tilde p_m\, \e^{-j2\pi f(m+n)T_s} = \left(\sum_n c_n\, \e^{-j2\pi fnT_s}\right)\left(\sum_m \tilde p_m\, \e^{-j2\pi fmT_s}\right) = \hat C(f)\,\hat P_d(f),
+    \hat Y(f) = \sum_k y_k\, \e^{-j2\pi f kT_s} = \sum_n c_n \sum_m \tilde p_m\, \e^{-j2\pi f(m+n)T_s} = \left(\sum_n c_n\, \e^{-j2\pi fnT_s}\right)\left(\sum_m \tilde p_m\, \e^{-j2\pi fmT_s}\right) = \hat C(f)\,\hat P_d(f).
 \end{equation*}
-el \emph{teorema de convolución} discreto -- exactamente análogo al continuo ya conocido: la transformada de una convolución es el producto de las transformadas. Por otro lado, $y_k=\delta_{k,0}$ para todo $k$ da:
+Este es el \emph{teorema de convolución} discreto, análogo al continuo: la transformada de una convolución es el producto de las transformadas. Por otro lado, como $y_k=\delta_{k,0}$ para todo $k$:
 \begin{equation*}
 \hat Y(f)=\sum_k \delta_{k,0}\e^{-j2\pi fkT_s}=1.
 \end{equation*}
@@ -507,25 +544,19 @@ Combinando ambas expresiones para $\hat Y(f)$:
 \begin{equation*}
     \hat C(f)\, \hat P_d(f) = 1 \quad\Longrightarrow\quad \hat C(f) = \frac{1}{\hat P_d(f)},
 \end{equation*}
-bien definida en todo $f$ porque $\hat P_d(f)\neq 0$ por hipótesis. Como $\{c_n\}$ son, por construcción, los coeficientes de Fourier de $\hat C(f)$, la fórmula de inversión de Fourier los determina de manera única.
+bien definida en todo $f$ porque $\hat P_d(f)\neq 0$ por hipótesis. Como los $c_n$ son los coeficientes de Fourier de $\hat C(f)$, la fórmula de inversión de Fourier los determina de manera única.
 \end{proof}
 
-Esto es exacto, no una analogía: el ZFE de infinitos coeficientes \emph{es}, literalmente, la inversión de $\hat P_d(f)$ -- el mismo cociente ideal que uno esperaría escribir directamente en frecuencia, ahora obtenido a partir del sistema de ecuaciones que ya conocíamos, sin agregar ninguna herramienta nueva más que la transformada de una sucesión. El filtro finito de $2N+1$ términos del Ejemplo \ref{ejemplo:zfe n1} es, entonces, precisamente lo que sugiere su nombre: los $2N+1$ coeficientes centrales de esta serie de Fourier infinita, truncada -- y el residuo $\hat p(\pm 2T_s)\approx 0{,}0129$ que encontramos ahí es, ni más ni menos, el error de truncar una serie de Fourier a pocos términos.
+Es decir, el ZFE de infinitos coeficientes es la inversión de $\hat P_d(f)$, el cociente que uno esperaría escribir directamente en frecuencia, obtenido aquí a partir del sistema de ecuaciones \eqref{eq:sistema zfe}. El filtro de $2N+1$ términos del Ejemplo \ref{ejemplo:zfe n1} corresponde a tomar los $2N+1$ coeficientes centrales de esta serie de Fourier, y el residuo $\hat p(\pm 2T_s)\approx 0.0129$ que encontramos es el error de truncar la serie a pocos términos.
 
 \begin{remark}[Verificación en el caso trivial]
-Si el pulso recibido ya es de Nyquist ($\tilde p_m=\delta_{m,0}$, sin ISI), entonces $\hat P_d(f)\equiv 1$ y el Teorema \ref{teorema:zfe inversion} da $c_0=1$, $c_n=0$ para $n\neq 0$: el ecualizador resulta el filtro identidad. No hay nada que corregir, como debe ser.
+Si el pulso recibido ya es de Nyquist ($\tilde p_m=\delta_{m,0}$, sin ISI), entonces $\hat P_d(f)\equiv 1$ y el Teorema \ref{teorema:zfe inversion} da $c_0=1$ y $c_n=0$ para $n\neq 0$: el ecualizador resulta el filtro identidad, como debe ser.
 \end{remark}
 
 \subsection*{El costo de invertir en banda ancha}
 
-La simplicidad de $\hat C(f)=1/\hat P_d(f)$ esconde un problema serio, que ya el texto original de la Sección \ref{sec:ecualizacion canal zfe} anticipaba cualitativamente (``si algunas ganancias son muy altas, el ruido puede verse amplificado''): en cualquier frecuencia donde $\hat P_d(f)$ sea chico, el ecualizador necesita una ganancia $|\hat C(f)|=1/|\hat P_d(f)|$ enorme. Y $\hat P_d(f)$ hereda, en cada punto, la forma de $\hat H(f)$ que dedujimos en la Sección \ref{sec:dispersion pulsos} (Figura \ref{fig:atenuacion comparada}): decrece con la frecuencia, así que corregirlo cerca del borde de la banda pedida exige ganancias cada vez mayores. El problema es que el ruido a la entrada del ecualizador (Capítulo \ref{chapter:deteccion ruido}) tiene energía en todas las frecuencias, y esa misma ganancia enorme amplifica el ruido en esa banda exactamente tanto como reconstruye la señal. En el límite, si $\hat P_d(f)\to 0$ en alguna banda (un cero real del canal, no solo una atenuación fuerte), $\hat C(f)\to\infty$ ahí: el ZFE intenta reconstruir información que, en esa banda, ya se perdió irremediablemente en ruido.
+La expresión $\hat C(f)=1/\hat P_d(f)$ esconde un problema, que ya se mencionó cualitativamente en la Sección \ref{sec:ecualizacion canal zfe}: si algunas ganancias son muy altas, el ruido puede verse amplificado. En cualquier frecuencia donde $|\hat P_d(f)|$ sea pequeño, el ecualizador necesita una ganancia $|\hat C(f)|=1/|\hat P_d(f)|$ muy grande. Y $\hat P_d(f)$ hereda la forma de la respuesta del canal $\hat H(f)$ que obtuvimos en la Sección \ref{sec:dispersion pulsos}: decrece con la frecuencia, por lo que corregirlo cerca del borde de la banda exige ganancias cada vez mayores. Pero el ruido a la entrada del ecualizador (Capítulo \ref{chapter:deteccion ruido}) tiene potencia en todas las frecuencias, y esa misma ganancia lo amplifica en la misma proporción en que reconstruye la señal. En el límite, si $\hat P_d(f)\to 0$ en alguna banda, $\hat C(f)\to\infty$: el ZFE intenta reconstruir información que, en esa banda, ya quedó por debajo del ruido.
 
-Esto sugiere una idea distinta, que retomamos con toda su fuerza en el Capítulo \ref{chapter:ofdm}: en vez de invertir $\hat P_d(f)$ de una sola vez sobre todo el ancho de banda, \emph{partir} la banda en tramos angostos, cada uno lo suficientemente chico como para que $\hat P_d(f)$ sea aproximadamente \emph{plano} dentro de él. En cada tramo, invertir $\hat P_d(f)$ ya no requiere una ganancia extrema -- es, esencialmente, dividir por una constante (un único número complejo por tramo) en vez de por una función que varía mucho. La idea completa -- banda ancha partida en muchos subcanales angostos, cada uno ecualizado trivialmente -- es exactamente lo que hace OFDM, y es el motivo por el cual, adelantándolo aquí, ese capítulo empieza a tener sentido: \textbf{OFDM es, en el fondo, una forma práctica de resolver el problema de ecualización que acabamos de plantear}, evitando el costo de invertir en banda ancha.
+Esto sugiere una idea distinta, que desarrollamos en el Capítulo \ref{chapter:ofdm}: en lugar de invertir $\hat P_d(f)$ de una sola vez sobre todo el ancho de banda, \emph{partir} la banda en tramos angostos, cada uno lo suficientemente chico como para que $\hat P_d(f)$ sea aproximadamente constante dentro de él. En cada tramo, ecualizar se reduce a dividir por un único número complejo, y en los tramos donde el canal atenúa demasiado se puede simplemente transmitir menos información, en lugar de amplificar el ruido. Esta es la idea de OFDM, y es la solución utilizada, por ejemplo, en ADSL y VDSL sobre el par telefónico, cuya atenuación crece rápidamente con la frecuencia y con la distancia a la central: la banda se divide en cientos de subportadoras, y cada una se modula con una constelación de tamaño acorde a la relación señal a ruido que el par ofrece en esa frecuencia.
 
-Con esto se cierra el círculo completo de este capítulo: de los parámetros físicos de la línea llegamos a $\hat H(f)$, entendimos por qué distorsiona la señal, y mostramos cómo deshacer exactamente esa distorsión -- incluso cuantificando el costo de hacerlo en banda ancha, la motivación última de OFDM. En el próximo capítulo atacamos el segundo problema que todo sistema de comunicaciones real debe resolver y que hasta ahora dimos por sentado: el sincronismo entre transmisor y receptor.
-
-
-
-
-
-
+Con esto cerramos el capítulo: a partir de los parámetros físicos de la línea obtuvimos $\hat H(f)$, entendimos por qué distorsiona la señal y cómo puede compensarse esa distorsión, incluyendo el costo de hacerlo en banda ancha, que es la motivación de OFDM. En el próximo capítulo abordamos otro problema que todo sistema de comunicaciones real debe resolver y que hasta ahora dimos por sentado: el sincronismo entre transmisor y receptor.
