@@ -51,11 +51,9 @@ Para entender cómo engancha el lazo, consideremos el caso más simple, en el qu
 \begin{equation}\label{eq:pll no lineal}
     \frac{d\theta_e}{dt} = \frac{d\theta_{in}}{dt} - K\sin\theta_e.
 \end{equation}
-Si la entrada tiene un desvío de frecuencia constante $\Delta f$ respecto de $f_0$, entonces $d\theta_{in}/dt=2\pi\Delta f$, y el miembro derecho depende solo de $\theta_e$. La Figura \ref{fig:pll fase} grafica $d\theta_e/dt$ en función de $\theta_e$. Donde la curva es positiva el error crece, y donde es negativa decrece, como indican las flechas. Los puntos de equilibrio son los ceros de la curva.
+Supongamos primero que la entrada tiene la misma frecuencia $f_0$ que el VCO cuando su tensión de control es nula, de modo que $d\theta_{in}/dt=0$ y el lazo solo debe corregir la fase. El miembro derecho de \eqref{eq:pll no lineal} es entonces $-K\sin\theta_e$, que depende solo de $\theta_e$. La Figura \ref{fig:pll fase} grafica $d\theta_e/dt$ en función de $\theta_e$. Donde la curva es positiva el error crece, y donde es negativa decrece, como indican las flechas. Los puntos de equilibrio son los ceros de la curva.
 
-Con $\Delta f=0$ los equilibrios son $\theta_e=k\pi$. Los de la forma $\theta_e=2k\pi$ son estables: a su izquierda el error crece y a su derecha decrece, por lo que converge a ellos. Los de la forma $\theta_e=(2k+1)\pi$ son inestables, y cualquier perturbación aleja el error de ellos. El lazo engancha entonces en alguno de los equilibrios $\theta_e=2k\pi$, según la condición inicial. Todos corresponden a la misma fase física del VCO, ya que la fase está definida módulo $2\pi$, por lo que esta multiplicidad es inofensiva. Veremos en la Sección \ref{sec:ambiguedad fase} que no ocurre lo mismo cuando el detector tiene período $\pi$.
-
-Con $\Delta f\neq 0$ la curva se desplaza verticalmente en $2\pi\Delta f/K$, y los equilibrios estables pasan a $\theta_e=\arcsin(2\pi\Delta f/K)$: el lazo engancha, pero con un error de fase residual. Si $|\Delta f|>K/(2\pi)$ la curva no corta el eje, no hay equilibrios, y el error de fase crece indefinidamente: el VCO no logra seguir la frecuencia de la entrada. Este es el \emph{rango de enganche} del lazo.
+Los equilibrios son $\theta_e=k\pi$. Los de la forma $\theta_e=2k\pi$ son estables: a su izquierda el error crece y a su derecha decrece, por lo que converge a ellos. Los de la forma $\theta_e=(2k+1)\pi$ son inestables, y cualquier perturbación aleja el error de ellos. El lazo engancha entonces en alguno de los equilibrios $\theta_e=2k\pi$, según la condición inicial. Todos corresponden a la misma fase física del VCO, ya que la fase está definida módulo $2\pi$, por lo que esta multiplicidad es inofensiva. Veremos en la Sección \ref{sec:ambiguedad fase} que no ocurre lo mismo cuando el detector tiene período $\pi$.
 
 \begin{figure}
     \begin{center}
@@ -65,19 +63,15 @@ Con $\Delta f\neq 0$ la curva se desplaza verticalmente en $2\pi\Delta f/K$, y l
                 xmin=-380, xmax=380, ymin=-1.7, ymax=1.7,
                 xtick={-360,-180,0,180,360},
                 xticklabels={$-2\pi$, $-\pi$, $0$, $\pi$, $2\pi$},
-                ytick={-1,0,0.5,1},
+                ytick={-1,0,1},
                 axis x line=bottom, axis y line=left,
                 xlabel={$\theta_e$},
                 ylabel={$\dfrac{1}{K}\dfrac{d\theta_e}{dt}$},
-                legend style={at={(0.5,1.03)}, anchor=south, legend columns=2, draw=none, font=\small},
                 domain=-380:380, samples=200,
                 clip=false,
                 ]
                 \draw[gray] (axis cs:-380,0) -- (axis cs:380,0);
                 \addplot[teal, very thick] {-sin(x)};
-                \addlegendentry{$\Delta f=0$}
-                \addplot[Red, thick, dashed] {0.5-sin(x)};
-                \addlegendentry{$2\pi\Delta f/K=0.5$}
                 % flujo sobre el eje para Delta f = 0
                 \foreach \a/\b in {-200/-340, -160/-20, 160/20, 200/340}{
                     \edef\temp{\noexpand\draw[->, teal, very thick] (axis cs:\a,0) -- (axis cs:\b,0);}
@@ -86,13 +80,10 @@ Con $\Delta f\neq 0$ la curva se desplaza verticalmente en $2\pi\Delta f/K$, y l
                 % equilibrios para Delta f = 0
                 \addplot[teal, only marks, mark=*, mark size=3pt, forget plot] coordinates {(-360,0) (0,0) (360,0)};
                 \addplot[teal, only marks, mark=*, mark size=3pt, mark options={fill=white}, forget plot] coordinates {(-180,0) (180,0)};
-                % equilibrios para Delta f distinto de cero
-                \addplot[Red, only marks, mark=*, mark size=2.5pt, forget plot] coordinates {(-330,0) (30,0)};
-                \addplot[Red, only marks, mark=*, mark size=2.5pt, mark options={fill=white}, forget plot] coordinates {(-210,0) (150,0)};
             \end{axis}
         \end{tikzpicture}
     \end{center}
-    \caption{Diagrama de fase del lazo de primer orden con detector multiplicador, ecuación \eqref{eq:pll no lineal}. Los ceros de la curva son los equilibrios: llenos los estables y vacíos los inestables. Las flechas sobre el eje indican hacia dónde evoluciona el error de fase con $\Delta f=0$: converge a algún múltiplo de $2\pi$. Con un desvío de frecuencia, la curva se desplaza hacia arriba y los equilibrios estables se corren a $\arcsin(2\pi\Delta f/K)$.}\label{fig:pll fase}
+    \caption{Diagrama de fase del lazo de primer orden con detector multiplicador, ecuación \eqref{eq:pll no lineal}, cuando la entrada tiene la frecuencia central del VCO. Los ceros de la curva son los equilibrios: llenos los estables y vacíos los inestables. Las flechas sobre el eje indican hacia dónde evoluciona el error de fase: converge a algún múltiplo de $2\pi$, según la condición inicial.}\label{fig:pll fase}
 \end{figure}
 
 Cerca de un equilibrio estable, $\sin\theta_e\approx\theta_e$ y el detector es lineal con ganancia $K_d=A$. Como esta ganancia depende de la amplitud de la entrada, en la práctica se suele preceder al PLL de un control automático de ganancia.
@@ -145,7 +136,7 @@ y el error converge a un valor residual
 \begin{equation}\label{eq:pll error regimen}
     \theta_{e,\infty} = \frac{2\pi\Delta f}{K}.
 \end{equation}
-Es la linealización del equilibrio $\theta_e=\arcsin(2\pi\Delta f/K)$ de la Figura \ref{fig:pll fase}, válida para $\Delta f$ pequeño. Este error tiene una interpretación simple: para que el VCO oscile a $f_0+\Delta f$ necesita una tensión de control constante, y con un filtro que es solo una ganancia esa tensión solo puede provenir de un error de fase constante.
+Este error tiene una interpretación simple: para que el VCO oscile a $f_0+\Delta f$ necesita una tensión de control constante, y con un filtro que es solo una ganancia esa tensión solo puede provenir de un error de fase constante.
 
 El error residual desaparece si el filtro de lazo incluye un integrador, que puede mantener una tensión de control constante con error nulo. El caso más usado es el filtro proporcional más integral,
 \begin{equation*}
@@ -198,6 +189,46 @@ que tiende a cero: el lazo de segundo orden sigue sin error tanto un salto de fa
         \end{tikzpicture}
     \end{center}
     \caption{Comparación de los lazos de primer orden (con $K=\omega_n$) y de segundo orden con distintos factores de amortiguamiento. A la izquierda, módulo de la transferencia de lazo cerrado $H$: todas son pasabajos, y el lazo de segundo orden con $\zeta$ pequeño presenta un sobrepico. A la derecha, error de fase ante un salto de frecuencia $\Delta f$: el lazo de primer orden queda con un error residual $2\pi\Delta f/K$, mientras que el de segundo orden lo lleva a cero.}\label{fig:pll respuestas}
+\end{figure}
+
+El análisis anterior usa el modelo lineal, pero el efecto del integrador puede verse también con el detector sinusoidal. Supongamos que la entrada tiene un desvío de frecuencia $\Delta f$ respecto de la frecuencia central del VCO, de modo que $d\theta_{in}/dt=2\pi\Delta f$, y que el VCO arranca en su frecuencia central, con tensión de control nula. Con el filtro proporcional más integral y $e=A\sin\theta_e$, el error de fase satisface
+\begin{equation*}
+    \frac{d\theta_e}{dt} = 2\pi\Delta f - K_{vco}\left(K_f A\sin\theta_e + K_iA\int_0^t\sin\theta_e(u)\,du\right).
+\end{equation*}
+Derivando una vez más, el término constante $2\pi\Delta f$ desaparece, y con las definiciones de $\omega_n$ y $\zeta$ (tomando $K_d=A$) queda
+\begin{equation}\label{eq:pll segundo orden no lineal}
+    \frac{d^2\theta_e}{dt^2} + 2\zeta\omega_n\cos\theta_e\,\frac{d\theta_e}{dt} + \omega_n^2\sin\theta_e = 0,
+\end{equation}
+con condiciones iniciales $\theta_e(0)=0$, si tomamos la fase inicial del VCO igual a la de la entrada, y $\frac{d\theta_e}{dt}(0)=2\pi\Delta f$. Es la ecuación de un péndulo con amortiguamiento. El desvío de frecuencia no aparece en la ecuación, sino solo en la condición inicial: el integrador acumula la tensión de control necesaria para compensarlo. Por eso, cualquiera sea $\Delta f$, los equilibrios estables son $\theta_e=2k\pi$ con $d\theta_e/dt=0$, sin error residual.
+
+La Figura \ref{fig:pll plano fase} muestra la evolución de $\theta_e$ y de $d\theta_e/dt$ en el \emph{plano de fase}, para distintos desvíos de frecuencia. Cada trayectoria arranca en $\theta_e=0$, con una velocidad inicial proporcional a $\Delta f$. Con desvíos pequeños, el error de fase crece al principio, mientras el integrador acumula la corrección, y luego vuelve a cero. Con un desvío mayor, el error de fase supera $\pi$ antes de que el lazo logre frenarlo, y el lazo engancha en $\theta_e=2\pi$, que es la misma fase física, después de haber perdido un ciclo.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=12cm, height=7cm,
+                xmin=-0.5, xmax=3, ymin=-1.6, ymax=4.6,
+                xtick={0,1,2}, xticklabels={$0$, $\pi$, $2\pi$},
+                xlabel={$\theta_e$}, ylabel={$\dfrac{1}{\omega_n}\dfrac{d\theta_e}{dt}$},
+                grid=major,
+                legend style={at={(0.5,1.03)}, anchor=south, legend columns=4, draw=none, font=\small},
+                every axis plot/.append style={mark=none},
+                ]
+                \addplot[teal, thick] table[x=th0, y=d0] {figuras/sincronismo/plano_fase.dat};
+                \addlegendentry{$2\pi\Delta f/\omega_n=1$}
+                \addplot[teal, thick, dashed] table[x=th1, y=d1] {figuras/sincronismo/plano_fase.dat};
+                \addlegendentry{$2$}
+                \addplot[black, thick, dashdotted] table[x=th2, y=d2] {figuras/sincronismo/plano_fase.dat};
+                \addlegendentry{$3$}
+                \addplot[Red, very thick] table[x=th3, y=d3] {figuras/sincronismo/plano_fase.dat};
+                \addlegendentry{$3.5$}
+                \addplot[black, only marks, mark=*, mark size=3pt, forget plot] coordinates {(0,0) (2,0)};
+                \addplot[black, only marks, mark=*, mark size=3pt, mark options={fill=white}, forget plot] coordinates {(1,0)};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Plano de fase del lazo de segundo orden con detector sinusoidal, ecuación \eqref{eq:pll segundo orden no lineal}, con $\zeta=0.707$. Cada trayectoria arranca en $\theta_e=0$ con $d\theta_e/dt=2\pi\Delta f$, para distintos desvíos de frecuencia. Todas terminan en un equilibrio con $d\theta_e/dt=0$ y error de fase nulo módulo $2\pi$: con el desvío mayor, el lazo pierde un ciclo y engancha en $\theta_e=2\pi$. El círculo vacío marca el equilibrio inestable en $\theta_e=\pi$.}\label{fig:pll plano fase}
 \end{figure}
 
 \subsection{Ruido y ancho de banda del lazo}\label{sec:pll ruido}
@@ -469,8 +500,8 @@ Si el muestreo es correcto, las dos muestras quedan a la misma distancia del má
                 \fill[Red] (axis cs:0.6,0.4) circle (2.2pt);
                 \node[Red, left, font=\footnotesize] at (axis cs:-0.22,0.8) {adelantada};
                 \node[Red, right, font=\footnotesize] at (axis cs:0.62,0.4) {atrasada};
-                \draw[<->] (axis cs:-0.2,0.05) -- node[below, font=\footnotesize] {$\delta$} (axis cs:0.2,0.05);
-                \draw[<->] (axis cs:0.2,0.05) -- node[below, font=\footnotesize] {$\delta$} (axis cs:0.6,0.05);
+                \draw[<->] (axis cs:-0.2,0.05) -- node[above, font=\footnotesize] {$\delta$} (axis cs:0.2,0.05);
+                \draw[<->] (axis cs:0.2,0.05) -- node[above, font=\footnotesize] {$\delta$} (axis cs:0.6,0.05);
             \end{axis}
         \end{tikzpicture}
     \end{center}

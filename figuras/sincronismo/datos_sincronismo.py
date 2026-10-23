@@ -71,3 +71,23 @@ def media_cuadrado():
 
 if __name__ == "__main__":
     media_cuadrado()
+
+
+def plano_fase(zeta=0.7071, iniciales=(1.0, 2.0, 3.0, 3.5)):
+    """Lazo de segundo orden con detector sinusoidal, en tiempo normalizado w_n t:
+    theta'' + 2 zeta cos(theta) theta' + sin(theta) = 0, theta(0) = 0, theta'(0) = 2 pi Delta f / w_n.
+    Guarda theta/pi y theta' para cada condición inicial."""
+    from scipy.integrate import solve_ivp
+    t = np.arange(0, 30, 0.05)
+    cols, cab = [], []
+    for i, w0 in enumerate(iniciales):
+        s = solve_ivp(lambda tt, y: [y[1], -2 * zeta * np.cos(y[0]) * y[1] - np.sin(y[0])],
+                      [0, 30], [0, w0], t_eval=t, max_step=0.01, rtol=1e-9, atol=1e-9)
+        cols += [s.y[0] / np.pi, s.y[1]]
+        cab += [f"th{i}", f"d{i}"]
+        print(f"theta'(0)={w0}: engancha en theta = {s.y[0, -1] / np.pi:.2f} pi")
+    np.savetxt("plano_fase.dat", np.column_stack(cols), fmt="%.5f", header=" ".join(cab), comments="")
+
+
+if __name__ == "__main__":
+    plano_fase()
