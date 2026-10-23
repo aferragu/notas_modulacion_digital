@@ -668,7 +668,7 @@ En $\tau=0$, por la condición de Nyquist solo quedan los términos $n=0$ y $n=1
                 legend style={font=\small, legend cell align=left},
                 ]
                 \addplot[teal, very thick, mark=none] table[x=tau, y=E] {figuras/sincronismo/gardner_curva.dat};
-                \addlegendentry{$\E{e_k}$, \eqref{eq:gardner exacta}}
+                \addlegendentry{$\E{e_k}$}
                 \addplot[Red, thick, dashed, domain=-0.2:0.2, samples=2] {1.078*x};
                 \addlegendentry{tangente en $\tau=0$}
             \end{axis}
