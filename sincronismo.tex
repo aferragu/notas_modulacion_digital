@@ -1,102 +1,320 @@
-Los diagramas de bloques de los Capítulos \ref{chapter:deteccion ruido} y \ref{chapter:modulacion pasabanda} (Figuras \ref{fig:deteccion ruido} y \ref{fig:deteccion canal ruido}) vienen arrastrando una caja llamada ``Sincronismo'', conectada con una flecha punteada, que nunca se abre -- se supuso siempre, como dice explícitamente el texto que acompaña a la Figura \ref{fig:deteccion ruido}, que ``conocemos el momento exacto donde muestrear la onda recibida'', sin decir cómo se logra eso en la práctica. Este capítulo abre esa caja.
+Los diagramas de bloques del Capítulo \ref{chapter:deteccion ruido} (Figuras \ref{fig:deteccion ruido} y \ref{fig:deteccion canal ruido}) y del Capítulo \ref{chapter:modulacion pasabanda} (Figura \ref{fig:RF acoplado}) incluyen una caja llamada ``Sincronismo'', conectada con una flecha a trazos, que nunca describimos. Se supuso siempre, como dice el texto que acompaña a la Figura \ref{fig:deteccion ruido}, que ``conocemos el momento exacto donde muestrear la onda recibida'', sin decir cómo se logra en la práctica. En este capítulo estudiamos los mecanismos que hay detrás de esa caja.
 
-\subsection*{El problema del sincronismo}
+\section{El problema del sincronismo}\label{sec:problema sincronismo}
 
-Repasemos qué venimos suponiendo, sin decirlo, desde hace varios capítulos. El detector coherente de la Sección \ref{sec:deteccion coherente} multiplica la señal recibida por $2\cos(2\pi f_c t)$ y $-2\sin(2\pi f_c t)$ -- osciladores locales de frecuencia \emph{exactamente} $f_c$ y fase \emph{exactamente} alineada con el oscilador que generó la portadora en el transmisor. Y el detector de la Figura \ref{fig:deteccion ruido} muestrea la salida del filtro de recepción en el instante $kT_s$ -- suponiendo que \emph{conocemos} ese instante con precisión. Ninguna de las dos cosas es gratis: el transmisor y el receptor son dos dispositivos físicamente separados, cada uno con su propio oscilador de referencia (un cristal de cuarzo, típicamente) y su propio reloj de muestreo, sin ningún cable en común que los sincronice.
+Repasemos lo que venimos suponiendo desde hace varios capítulos. El detector coherente de la Sección \ref{sec:deteccion coherente} multiplica la señal recibida por $2\cos(2\pi f_c t)$ y $-2\sin(2\pi f_c t)$, es decir, por osciladores locales de frecuencia igual a $f_c$ y con la misma fase que el oscilador que generó la portadora en el transmisor. Además, el detector de la Figura \ref{fig:deteccion ruido} muestrea la salida del filtro de recepción en los instantes $kT_s$, suponiendo que esos instantes se conocen con precisión. Ninguna de las dos cosas está garantizada: el transmisor y el receptor son dispositivos separados, cada uno con su propio oscilador de referencia (típicamente un cristal de cuarzo) y su propio reloj de muestreo, sin ninguna conexión que los sincronice.
 
-Aunque los osciladores de transmisor y receptor estén diseñados para la misma frecuencia nominal $f_c$, ningún cristal real oscila a una frecuencia exacta -- hay una tolerancia de fabricación (típicamente unas pocas partes por millón). El oscilador local del receptor tiene entonces una frecuencia $f_c+\Delta f$, con $\Delta f$ un \emph{offset de frecuencia de portadora} (\emph{Carrier Frequency Offset}, CFO) desconocido pero acotado, y una fase inicial arbitraria. Lo mismo ocurre, de forma independiente, con el reloj que define los instantes de muestreo $kT_s$: puede estar corrido en fase, o incluso avanzar a una velocidad ligeramente distinta a $f_s$. Sin corregir estos desajustes, ni la fase de la constelación ni el instante de muestreo son los que el resto del texto supone.
+Aunque los osciladores del transmisor y del receptor estén diseñados para la misma frecuencia nominal $f_c$, ningún cristal real oscila exactamente a esa frecuencia: hay una tolerancia de fabricación, típicamente de unas pocas decenas de partes por millón (ppm), que además varía con la temperatura. El oscilador local del receptor tiene entonces una frecuencia $f_c+\Delta f$, con $\Delta f$ un \emph{desvío de frecuencia de portadora} (\emph{Carrier Frequency Offset}, CFO) desconocido pero acotado, y una fase inicial arbitraria. Lo mismo ocurre, de forma independiente, con el reloj que define los instantes de muestreo: puede estar corrido en fase, o incluso avanzar a una velocidad ligeramente distinta de $f_s$.
 
-El problema del sincronismo tiene, entonces, tres capas, que conviene distinguir porque se resuelven con mecanismos distintos y en un orden lógico:
+\begin{ejemplo}[Desvío de frecuencia de un cristal]\label{ejemplo:cfo}
+Consideremos un enlace a $f_c=2.4\ \unit{\giga\hertz}$, en el que transmisor y receptor usan cristales con una tolerancia de $20$ ppm cada uno. En el peor caso los dos osciladores se apartan en sentidos opuestos, y la diferencia de frecuencias es
+\begin{equation*}
+    \Delta f = 2\times 20\times 10^{-6}\times 2.4\times 10^{9}\ \unit{\hertz} = 96\ \unit{\kilo\hertz}.
+\end{equation*}
+Si la velocidad de señalización es de $10^6$ símbolos por segundo ($T_s=1\ \unit{\micro\second}$), durante cada símbolo la fase relativa entre la portadora recibida y el oscilador local avanza $2\pi\,\Delta f\, T_s = 2\pi\times 0.096\approx 0.6\ \unit{\radian}$, unos $35^\circ$. Al cabo de pocos símbolos la constelación recibida dio una vuelta completa. Sin un mecanismo que siga y corrija esta rotación, la detección coherente es imposible.
+\end{ejemplo}
+
+El problema del sincronismo tiene tres partes, que se resuelven con mecanismos distintos:
 \begin{enumerate}
-    \item \textbf{Sincronización de portadora}: estimar y corregir el CFO y la fase del oscilador local, para que la demodulación coherente (Sección \ref{sec:deteccion coherente}) entregue realmente $x_i(t)\approx\sum a_k p(t-kT_s)$ y no una versión rotada, con energía filtrándose entre las componentes en fase y cuadratura.
-    \item \textbf{Temporización de símbolo}: estimar el instante correcto de muestreo $kT_s$, para que la muestra tomada corresponda al máximo del pulso (o, más generalmente, al punto de ISI nula que garantiza el pulso de Nyquist, Sección \ref{sec:nyquist no ideal}).
-    \item \textbf{Sincronización de trama}: una vez enganchados portadora y reloj de símbolo, saber \emph{dónde empieza el mensaje} dentro del flujo continuo de símbolos -- y, como veremos, resolver de paso una ambigüedad de fase que las dos capas anteriores dejan sin resolver.
+    \item \emph{Sincronización de portadora}: estimar y seguir la frecuencia y la fase de la portadora recibida, para que la demodulación coherente (Sección \ref{sec:deteccion coherente}) entregue $x_i(t)\approx\sum_k a_k p(t-kT_s)$ y no una versión rotada, con energía transferida entre las componentes en fase y en cuadratura.
+    \item \emph{Temporización de símbolo}: estimar el instante correcto de muestreo, para que la muestra corresponda al punto de ISI nula que garantiza el pulso de Nyquist (Sección \ref{sec:nyquist no ideal}).
+    \item \emph{Sincronización de trama}: una vez enganchados la portadora y el reloj de símbolo, determinar dónde empieza el mensaje dentro del flujo continuo de símbolos. Como veremos, esto permite resolver además una ambigüedad de fase que la sincronización de portadora deja abierta.
 \end{enumerate}
-Las primeras dos capas comparten una misma herramienta matemática -- un \emph{lazo de enganche de fase} (\emph{Phase-Locked Loop}, PLL) -- aplicada a dos variables físicas distintas (fase de portadora, fase de reloj de símbolo). Conviene entonces derivar el lazo genérico una sola vez, y después particularizarlo dos veces.
+Las dos primeras partes comparten una misma herramienta, el \emph{lazo de enganche de fase} (\emph{Phase-Locked Loop}, PLL), aplicada a dos variables distintas: la fase de la portadora y la fase del reloj de muestreo. Comenzamos entonces por estudiar el PLL en general (Sección \ref{sec:pll}), y luego lo aplicamos a la sincronización de portadora (Sección \ref{sec:sincronizacion portadora}) y a la temporización de símbolo (Sección \ref{sec:temporizacion}). Presentamos estos mecanismos en su forma clásica, como circuitos que operan sobre señales en tiempo continuo. En la Sección \ref{sec:sdr} vemos cómo se implementan las mismas ideas en los receptores digitales actuales, que trabajan sobre la señal muestreada.
 
-\subsection*{El lazo de enganche de fase (PLL)}\label{sec:pll generico}
+\section{El lazo de enganche de fase}\label{sec:pll}
 
-Un PLL es un sistema realimentado que ajusta la fase de un oscilador local hasta que coincide con la de una referencia entrante. Tres bloques lo componen (Figura \ref{fig:pll generico}):
+Un PLL es un sistema realimentado que ajusta la fase de un oscilador local hasta que coincide con la de una señal de referencia. Además de la sincronización, que es lo que nos interesa aquí, los PLL se usan para sintetizar frecuencias (generando, a partir de un cristal, cualquier múltiplo de su frecuencia), para demodular FM y para limpiar el ruido de fase de un reloj. Se componen de tres bloques:
 \begin{itemize}
-    \item Un \emph{detector de fase}, que compara la fase $\theta_{in}(t)$ de la señal entrante con la fase $\theta_{vco}(t)$ del oscilador local, y produce una señal de error $e(t)$ proporcional (para error chico) a la diferencia: $e(t) \approx K_d\,\big(\theta_{in}(t)-\theta_{vco}(t)\big)$, con $K_d$ la ganancia del detector.
-    \item Un \emph{filtro de lazo}, que suaviza $e(t)$ -- en su versión más simple, una ganancia pura, que es la que consideramos aquí (\emph{lazo de primer orden}).
-    \item Un \emph{oscilador controlado por tensión} (VCO), cuya frecuencia instantánea es proporcional a la tensión de control $v(t)$ que recibe: $\displaystyle\frac{d\theta_{vco}}{dt} = K_{vco}\, v(t)$, con $K_{vco}$ la sensibilidad del VCO. Es decir, el VCO \emph{integra} su entrada para producir una fase.
+    \item Un \emph{detector de fase}, que compara la fase $\theta_{in}(t)$ de la señal de entrada con la fase $\theta_{vco}(t)$ del oscilador local y produce una señal de error $e(t)$ que depende de la diferencia $\theta_e(t):=\theta_{in}(t)-\theta_{vco}(t)$.
+    \item Un \emph{filtro de lazo}, que filtra $e(t)$ y entrega la tensión de control $v(t)$.
+    \item Un \emph{oscilador controlado por tensión} (VCO), cuya frecuencia se aparta de un valor central en una cantidad proporcional a la tensión de control.
 \end{itemize}
+
+Para fijar ideas, supongamos que la entrada es una sinusoide $A\sin(2\pi f_0 t+\theta_{in}(t))$ y que el VCO entrega $2\cos(2\pi f_0 t+\theta_{vco}(t))$, siendo $f_0$ la frecuencia central del VCO. Las fases $\theta_{in}$ y $\theta_{vco}$ se miden respecto de una sinusoide de frecuencia $f_0$, de modo que un desvío de frecuencia $\Delta f$ de la entrada aparece como una fase que crece linealmente, $\theta_{in}(t)=2\pi\Delta f\,t+\theta_0$. El VCO verifica
+\begin{equation}\label{eq:vco}
+    \frac{d\theta_{vco}}{dt} = K_{vco}\, v(t),
+\end{equation}
+es decir, su frecuencia instantánea es $f_0+K_{vco}v(t)/(2\pi)$, con $K_{vco}$ la sensibilidad del VCO, en $\unit{\radian\per\second\per\volt}$. Notemos que el VCO \emph{integra} la tensión de control para producir una fase.
+
+\subsection{Detectores de fase}\label{sec:detectores fase}
+
+El detector de fase más simple es un multiplicador, seguido de un filtro pasabajos que elimina los términos de frecuencia $2f_0$:
+\begin{equation*}
+    A\sin(2\pi f_0 t+\theta_{in})\cdot 2\cos(2\pi f_0 t+\theta_{vco}) = A\sin(\theta_{in}-\theta_{vco}) + A\sin(4\pi f_0 t+\theta_{in}+\theta_{vco}),
+\end{equation*}
+de donde
+\begin{equation}\label{eq:detector multiplicador}
+    e(t) = A\sin\theta_e(t).
+\end{equation}
+La característica del detector es sinusoidal (Figura \ref{fig:detectores fase}). Para $\theta_e$ pequeño, $e(t)\approx A\,\theta_e(t)$, es decir, el detector es lineal con ganancia $K_d=A$. Notemos que el error se anula cuando la entrada y el VCO están en cuadratura, uno en seno y el otro en coseno. Esto es una convención: lo que importa es que el error sea nulo, y con pendiente positiva, en el punto de enganche deseado. Notemos también que la ganancia del detector depende de la amplitud de la entrada, por lo que en la práctica se suele preceder al PLL de un control automático de ganancia.
+
+Cuando las señales son digitales, por ejemplo ondas cuadradas de un reloj, el multiplicador se reemplaza por una compuerta O exclusivo (XOR). Su salida vale $1$ cuando las dos entradas difieren y $0$ cuando coinciden, por lo que su valor medio crece linealmente con el desfasaje entre ambas ondas, desde $0$ cuando están en fase hasta $1$ cuando están en contrafase. Restando el valor medio $1/2$, que corresponde al desfasaje de $\pi/2$, se obtiene una característica triangular (Figura \ref{fig:detectores fase}), lineal en un rango de $\pm\pi/2$ alrededor del enganche, que nuevamente ocurre con las señales en cuadratura. Los sintetizadores de frecuencia usan además \emph{detectores de fase y frecuencia}, circuitos secuenciales que comparan los flancos de las dos señales y detectan no solo diferencias de fase, sino también de frecuencia, lo que facilita la adquisición.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=11cm, height=5.5cm,
+                xmin=-360, xmax=360, ymin=-1.3, ymax=1.3,
+                xtick={-360,-270,-180,-90,0,90,180,270,360},
+                xticklabels={$-2\pi$, , $-\pi$, , $0$, , $\pi$, , $2\pi$},
+                ytick={-1,0,1},
+                axis x line=middle, axis y line=left,
+                xlabel={$\theta_e$}, x label style={anchor=west},
+                ylabel={$e/e_{\max}$},
+                legend style={at={(0.5,1.03)}, anchor=south, legend columns=2, draw=none, font=\small},
+                domain=-360:360, samples=361,
+                ]
+                \addplot[teal, very thick] {sin(x)};
+                \addlegendentry{multiplicador}
+                \addplot[Red, thick, dashed] {asin(sin(x))/90};
+                \addlegendentry{XOR}
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Característica de dos detectores de fase, normalizada por su valor máximo: el multiplicador, con salida $A\sin\theta_e$, y la compuerta XOR, con salida triangular. Ambas son periódicas, de período $2\pi$, y lineales cerca de $\theta_e=0$, donde se anulan con pendiente positiva.}\label{fig:detectores fase}
+\end{figure}
+
+\subsection{Modelo lineal}\label{sec:pll lineal}
+
+Mientras el lazo está enganchado, el error de fase es pequeño y podemos reemplazar el detector por su aproximación lineal, $e(t)=K_d\,\theta_e(t)$. Todos los bloques del lazo son entonces lineales e invariantes en el tiempo, y conviene analizarlo con la transformada de Laplace. Llamando $F(s)$ a la transferencia del filtro de lazo, y usando que por \eqref{eq:vco} el VCO tiene transferencia $K_{vco}/s$ de $v$ a $\theta_{vco}$, se obtiene el modelo de la Figura \ref{fig:pll lineal}, que relaciona directamente las fases.
 
 \begin{figure}
     \begin{center}
     \begin{tikzpicture}[blockdiagram]
-        \node [etiqueta] (inicio) {$\theta_{in}(t)$};
-        \node [operator, right=1.3cm of inicio] (sum) {$+$};
-        \node [block, right=2.6cm of sum, align=center] (fd) {Detector\\de fase};
-        \node [block, right=3.4cm of fd, align=center] (vco) {VCO\\[2pt]\footnotesize$\frac{d\theta_{vco}}{dt}=K_{vco}v(t)$};
-        \node [etiqueta, right=1.8cm of vco] (salida) {$\theta_{vco}(t)$};
+        \node [etiqueta] (inicio) {$\Theta_{in}(s)$};
+        \node [operator, right=1.2cm of inicio] (sum) {$+$};
+        \node [block, right=1.4cm of sum] (kd) {$K_d$};
+        \node [block, right=1.4cm of kd] (filtro) {$F(s)$};
+        \node [block, right=1.4cm of filtro] (vco) {$\dfrac{K_{vco}}{s}$};
+        \node [punto, right=1.0cm of vco] (p) {};
+        \node [etiqueta, right=0.8cm of p] (salida) {$\Theta_{vco}(s)$};
         \draw [->] (inicio) -- (sum);
-        \draw [->] (sum) -- node[midway,above] {\footnotesize $\theta_e(t)$} (fd);
-        \draw [->] (fd) -- node[midway,above] {\footnotesize $e(t)\approx K_d\theta_e(t)$} (vco);
+        \draw [->] (sum) -- node[midway,above] {\footnotesize $\Theta_e$} (kd);
+        \draw [->] (kd) -- node[midway,above] {\footnotesize $E$} (filtro);
+        \draw [->] (filtro) -- node[midway,above] {\footnotesize $V$} (vco);
         \draw [->] (vco) -- (salida);
-        \draw [->] (vco.south) -- ++(0,-1.2) -| node[near start, below, xshift=-3.2cm]{\footnotesize $-\theta_{vco}(t)$} (sum.south);
+        \draw [->] (p) -- ++(0,-1.2) -| node[near end, left] {\footnotesize $-$} (sum.south);
+        \node[above, font=\footnotesize] at (kd.north) {detector};
+        \node[above, font=\footnotesize] at (filtro.north) {filtro de lazo};
+        \node[above, font=\footnotesize] at (vco.north) {VCO};
     \end{tikzpicture}
     \end{center}
-    \caption{Lazo de enganche de fase (PLL) genérico, de primer orden: el detector de fase compara la referencia entrante con la realimentación del propio VCO, y la diferencia corrige la frecuencia de este último hasta anular el error.}\label{fig:pll generico}
+    \caption{Modelo lineal del lazo de enganche de fase, en términos de las transformadas de Laplace de las fases. El detector se reemplaza por su ganancia $K_d$ alrededor del enganche, y el VCO es un integrador.}\label{fig:pll lineal}
 \end{figure}
 
-Definamos el error de fase $\theta_e(t) := \theta_{in}(t) - \theta_{vco}(t)$. Combinando las tres relaciones del lazo se obtiene su comportamiento:
-
-\begin{proposicion}[Dinámica del lazo de primer orden]\label{prop:pll dinamica}
-Con $K:=K_{vco}K_d$ (la \emph{ganancia de lazo}), el error de fase satisface
-\begin{equation}\label{eq:pll edo}
-    \frac{d\theta_e}{dt} + K\,\theta_e(t) = \frac{d\theta_{in}}{dt}.
+La transferencia de lazo abierto es $G(s)=K_dK_{vco}F(s)/s$, y las dos transferencias de lazo cerrado que nos interesan son
+\begin{equation}\label{eq:pll transferencias}
+    H(s) := \frac{\Theta_{vco}(s)}{\Theta_{in}(s)} = \frac{G(s)}{1+G(s)}, \qquad\qquad \frac{\Theta_e(s)}{\Theta_{in}(s)} = \frac{1}{1+G(s)} = 1-H(s).
 \end{equation}
-En particular:
+$H(s)$ describe cómo la fase del VCO sigue a la de la entrada, y $1-H(s)$ el error que queda. Para que el lazo siga variaciones lentas de la fase sin error, $H$ debe valer $1$ a frecuencias bajas. Como veremos, $H$ es un filtro pasabajos, y su ancho de banda determina tanto la velocidad del lazo como el ruido que deja pasar.
+
+Para estudiar el comportamiento en régimen usaremos el \emph{teorema del valor final}: si $\theta_e(t)$ tiene límite cuando $t\to\infty$, este vale $\lim_{s\to 0} s\,\Theta_e(s)$. Las tres entradas de prueba habituales son un salto de fase $\Delta\theta$, con $\Theta_{in}(s)=\Delta\theta/s$; un salto de frecuencia $\Delta f$, con $\theta_{in}(t)=2\pi\Delta f\,t$ y $\Theta_{in}(s)=2\pi\Delta f/s^2$; y una rampa de frecuencia, en la que la frecuencia crece a razón de $R$ hercios por segundo, con $\theta_{in}(t)=\pi R t^2$ y $\Theta_{in}(s)=2\pi R/s^3$. Esta última aparece, por ejemplo, por efecto Doppler cuando el transmisor se acelera respecto del receptor, como en los enlaces con satélites.
+
+\subsection{Lazo de primer orden}\label{sec:pll primer orden}
+
+Si el filtro de lazo es una ganancia, $F(s)=K_f$, entonces $G(s)=K/s$, con $K:=K_dK_fK_{vco}$ la \emph{ganancia de lazo}, y
+\begin{equation}\label{eq:pll primer orden}
+    H(s) = \frac{K}{s+K}, \qquad\qquad 1-H(s) = \frac{s}{s+K}.
+\end{equation}
+El lazo cerrado es un pasabajos de primer orden con frecuencia de corte $K/(2\pi)$.
+
+\begin{proposicion}[Errores del lazo de primer orden]\label{prop:pll primer orden}
+Para el lazo de primer orden:
 \begin{enumerate}
-    \item[(a)] Ante un salto de fase puro (la fase entrante salta $\Delta\theta$ en $t=0$ y luego permanece a frecuencia nominal, $d\theta_{in}/dt=0$ para $t>0$), el error decae exponencialmente,
-    \begin{equation*}
-        \theta_e(t) = \theta_e(0)\,\e^{-Kt},
-    \end{equation*}
-    con constante de tiempo $1/K$: el lazo \emph{engancha}.
-    \item[(b)] Ante un offset de frecuencia constante $\Delta f$ (la fase entrante es $\theta_{in}(t)=2\pi\Delta f\,t+\theta_0$), el error de fase converge a un valor residual constante,
+    \item[(a)] Ante un salto de fase, el error decae exponencialmente, $\theta_e(t)=\Delta\theta\,\e^{-Kt}$, con constante de tiempo $1/K$. Decimos que el lazo \emph{engancha}.
+    \item[(b)] Ante un salto de frecuencia $\Delta f$, el error de fase converge a un valor residual constante,
     \begin{equation}\label{eq:pll error regimen}
         \theta_{e,\infty} = \frac{2\pi\Delta f}{K}.
     \end{equation}
 \end{enumerate}
 \end{proposicion}
 \begin{proof}
-Derivando $\theta_e$ y sustituyendo las dos relaciones del lazo ($v(t)=e(t)\approx K_d\theta_e(t)$ para el filtro de lazo sin filtrado adicional, y $d\theta_{vco}/dt=K_{vco}v(t)$ para el VCO):
+Para (a), $\Theta_e(s)=\frac{s}{s+K}\cdot\frac{\Delta\theta}{s}=\frac{\Delta\theta}{s+K}$, cuya antitransformada es $\Delta\theta\,\e^{-Kt}$. Para (b),
 \begin{equation*}
-    \frac{d\theta_e}{dt} = \frac{d\theta_{in}}{dt} - \frac{d\theta_{vco}}{dt} = \frac{d\theta_{in}}{dt} - K_{vco}K_d\,\theta_e(t),
+    \Theta_e(s) = \frac{s}{s+K}\cdot\frac{2\pi\Delta f}{s^2} = \frac{2\pi\Delta f}{s(s+K)}, \qquad \theta_e(t) = \frac{2\pi\Delta f}{K}\left(1-\e^{-Kt}\right),
 \end{equation*}
-que es \eqref{eq:pll edo}. Para (a), con $d\theta_{in}/dt=0$, la ecuación homogénea $\dot\theta_e=-K\theta_e$ tiene solución $\theta_e(t)=\theta_e(0)\e^{-Kt}$. Para (b), en régimen permanente ($\dot\theta_e=0$), \eqref{eq:pll edo} da directamente $K\theta_{e,\infty}=2\pi\Delta f$.
+que converge a \eqref{eq:pll error regimen}.
 \end{proof}
 
-Cuanto mayor la ganancia $K$, más rápida la adquisición en (a) y menor el error residual en (b) -- pero (aunque no lo desarrollamos aquí) también ensancha la banda de ruido que el lazo deja pasar: hay un compromiso entre velocidad de adquisición/error residual y inmunidad al ruido en la elección de $K$.
+El error residual de (b) tiene una interpretación simple: para que el VCO oscile a $f_0+\Delta f$ necesita una tensión de control constante, y en un lazo de primer orden esa tensión solo puede provenir de un error de fase constante. Cuanto mayor es $K$, menor es ese error, pero, como veremos, también mayor es el ruido que el lazo deja pasar. Con una rampa de frecuencia, el error del lazo de primer orden crece sin límite.
 
-Con este comportamiento genérico -- adquisición exponencial, con constante de tiempo $1/K$, y error residual ante un offset de frecuencia -- vamos a reencontrarnos dos veces: primero enganchando la fase de la portadora, después enganchando la fase del reloj de muestreo. En ambos casos la ecuación \eqref{eq:pll edo} es la misma; lo que cambia es qué señal física hace de $\theta_{in}(t)$ y cómo se construye el detector de fase.
+\subsection{Lazo de segundo orden}\label{sec:pll segundo orden}
 
-\subsection*{Sincronización de portadora: el lazo de Costas}
-
-Apliquemos el PLL genérico al problema de la Sección \ref{sec:deteccion coherente}. Sea, para BPSK:
+El error residual desaparece si el filtro de lazo incluye un integrador, que puede mantener una tensión de control constante con error nulo. El caso más usado es el filtro proporcional más integral,
 \begin{equation*}
-x_c(t) = \sum_k a_k\, p(t-kT_s)\cos(2\pi f_c t+\theta),
+    v(t) = K_f\, e(t) + K_i\int_0^t e(u)\,du, \qquad F(s) = K_f + \frac{K_i}{s}.
 \end{equation*}
-con $a_k\in\{-A,A\}$ y $\theta$ la fase (desconocida) del oscilador transmisor. El receptor genera localmente las ramas $2\cos(2\pi f_c t+\theta_{vco})$ y $-2\sin(2\pi f_c t+\theta_{vco})$, con $\theta_{vco}$ la fase de su propio VCO, la estimación actual de $\theta$, y $\theta_e:=\theta-\theta_{vco}$ el error de fase que queremos anular.
+Sustituyendo en \eqref{eq:pll transferencias} y definiendo la \emph{frecuencia natural} $\omega_n$ y el \emph{factor de amortiguamiento} $\zeta$ mediante
+\begin{equation*}
+    \omega_n^2 := K_dK_{vco}K_i, \qquad\qquad 2\zeta\omega_n := K_dK_{vco}K_f,
+\end{equation*}
+se obtiene
+\begin{equation}\label{eq:pll segundo orden}
+    H(s) = \frac{2\zeta\omega_n s+\omega_n^2}{s^2+2\zeta\omega_n s+\omega_n^2}, \qquad\qquad 1-H(s) = \frac{s^2}{s^2+2\zeta\omega_n s+\omega_n^2}.
+\end{equation}
 
-\begin{proposicion}[Señal de error del lazo de Costas]\label{prop:costas}
-Con $m(t):=\sum_k a_k\, p(t-kT_s)$, las salidas de los mezcladores del receptor son
-\begin{equation}\label{eq:xi xq con error de fase}
-    x_i(t) \approx m(t)\cos\theta_e, \qquad\qquad x_q(t) \approx m(t)\sin\theta_e,
+\begin{proposicion}[Errores del lazo de segundo orden]\label{prop:pll segundo orden}
+Para el lazo de segundo orden \eqref{eq:pll segundo orden}, el error de fase en régimen es nulo ante un salto de fase y ante un salto de frecuencia, y vale
+\begin{equation}\label{eq:pll error rampa}
+    \theta_{e,\infty} = \frac{2\pi R}{\omega_n^2}
 \end{equation}
-y su producto resulta, para $\theta_e$ chico,
-\begin{equation}\label{eq:error costas}
-    e(t) := x_i(t)\,x_q(t) \approx \frac{m(t)^2}{2}\sin(2\theta_e) \approx m(t)^2\,\theta_e,
-\end{equation}
-proporcional a $\theta_e$ con coeficiente $m(t)^2\geqslant 0$.
+ante una rampa de frecuencia de $R$ hercios por segundo. Ante un salto de frecuencia $\Delta f$, con $\zeta<1$, el error es
+\begin{equation*}
+    \theta_e(t) = \frac{2\pi\Delta f}{\omega_n\sqrt{1-\zeta^2}}\,\e^{-\zeta\omega_n t}\sin\left(\omega_n\sqrt{1-\zeta^2}\,t\right).
+\end{equation*}
 \end{proposicion}
 \begin{proof}
-Repitiendo el cálculo de la Sección \ref{sec:deteccion coherente} (identidades trigonométricas, descartando los términos en $4\pi f_c t$ que el filtro de recepción elimina) pero dejando $\theta_e$ explícito en vez de suponerlo nulo se obtiene \eqref{eq:xi xq con error de fase}. Sustituyendo en el producto y usando $\sin(2\theta_e)\approx 2\theta_e$ para $\theta_e$ chico da \eqref{eq:error costas}.
+Con el teorema del valor final y $1-H(s)$ de \eqref{eq:pll segundo orden}: para el salto de fase, $s\,\Theta_e(s)=\frac{s^2\,\Delta\theta}{s^2+2\zeta\omega_n s+\omega_n^2}\to 0$; para el salto de frecuencia, $s\,\Theta_e(s)=\frac{s\,2\pi\Delta f}{s^2+2\zeta\omega_n s+\omega_n^2}\to 0$; y para la rampa, $s\,\Theta_e(s)=\frac{2\pi R}{s^2+2\zeta\omega_n s+\omega_n^2}\to \frac{2\pi R}{\omega_n^2}$. Para la respuesta temporal al salto de frecuencia, $\Theta_e(s)=\frac{2\pi\Delta f}{(s+\zeta\omega_n)^2+\omega_n^2(1-\zeta^2)}$, cuya antitransformada es la indicada.
 \end{proof}
 
-Si $\theta_e=0$, recuperamos exactamente lo que la Sección \ref{sec:deteccion coherente} ya usaba ($x_i\approx m(t)$, $x_q\approx 0$). Si $\theta_e\neq 0$, la energía de $m(t)$ se reparte entre $x_i$ y $x_q$: la constelación (en este caso, real, sobre el eje horizontal) aparece \emph{rotada} un ángulo $\theta_e$ (Figura \ref{fig:constelacion rotada}).
+El número de integradores del lazo abierto, contando el del VCO, se denomina \emph{tipo} del lazo. Un lazo de tipo $1$, como el de primer orden, sigue sin error un salto de fase. Uno de tipo $2$, como el anterior, sigue sin error también un salto de frecuencia, y solo deja un error constante ante una rampa de frecuencia. El factor de amortiguamiento controla la forma de la respuesta: con $\zeta$ pequeño la respuesta oscila, y con $\zeta$ grande el error tarda en anularse. El valor $\zeta=1/\sqrt 2\approx 0.707$ es la elección clásica, como compromiso entre ambos efectos. La Figura \ref{fig:pll respuestas} compara las respuestas en frecuencia y la respuesta a un salto de frecuencia de los dos lazos.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                name=bode,
+                width=8.2cm, height=6cm,
+                xmode=log, xmin=0.1, xmax=10, ymin=-20, ymax=6,
+                xlabel={$\omega/\omega_n$}, ylabel={$|H(j\omega)|$ (dB)},
+                grid=major,
+                legend pos=south west, legend style={font=\scriptsize, legend cell align=left},
+                domain=0.1:10, samples=200,
+                ]
+                \addplot[gray, thick, densely dotted] {-10*log10(1+x^2)};
+                \addlegendentry{1.\textsuperscript{er} orden, $K=\omega_n$}
+                \addplot[Red, thick, dashed] {10*log10((1+4*0.25*x^2)/((1-x^2)^2+4*0.25*x^2))};
+                \addlegendentry{$\zeta=0.5$}
+                \addplot[teal, very thick] {10*log10((1+4*0.5*x^2)/((1-x^2)^2+4*0.5*x^2))};
+                \addlegendentry{$\zeta=0.707$}
+                \addplot[black, thick, dashdotted] {10*log10((1+4*x^2)/((1-x^2)^2+4*x^2))};
+                \addlegendentry{$\zeta=1$}
+            \end{axis}
+            \begin{axis}[
+                at={(bode.outer east)}, anchor=outer west,
+                width=8.2cm, height=6cm,
+                xmin=0, xmax=10, ymin=-0.2, ymax=1.1,
+                xlabel={$\omega_n t$}, ylabel={$\theta_e(t)\,\omega_n/(2\pi\Delta f)$},
+                grid=major,
+                domain=0:10, samples=200,
+                ]
+                \addplot[gray, thick, densely dotted] {1-exp(-x)};
+                \addplot[Red, thick, dashed] {exp(-0.5*x)*sin(deg(sqrt(0.75)*x))/sqrt(0.75)};
+                \addplot[teal, very thick] {exp(-0.7071*x)*sin(deg(0.7071*x))/0.7071};
+                \addplot[black, thick, dashdotted] {x*exp(-x)};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Comparación de los lazos de primer orden (con $K=\omega_n$) y de segundo orden con distintos factores de amortiguamiento. A la izquierda, módulo de la transferencia de lazo cerrado $H$: todas son pasabajos, y el lazo de segundo orden con $\zeta$ pequeño presenta un sobrepico. A la derecha, error de fase ante un salto de frecuencia $\Delta f$: el lazo de primer orden queda con un error residual $2\pi\Delta f/K$, mientras que el de segundo orden lo lleva a cero.}\label{fig:pll respuestas}
+\end{figure}
+
+\subsection{Ruido y ancho de banda del lazo}\label{sec:pll ruido}
+
+Supongamos ahora que a la entrada del PLL hay, además de la sinusoide $A\sin(2\pi f_0t+\theta_{in})$, ruido blanco Gaussiano $w(t)$ de densidad espectral $\eta_0/2$, como en el Capítulo \ref{chapter:deteccion ruido}. El ruido perturba la salida del detector de fase y, a través del lazo, la fase del VCO. Para cuantificar este efecto se define el \emph{ancho de banda de ruido} del lazo,
+\begin{equation}\label{eq:ancho banda ruido}
+    B_L := \int_0^\infty |H(j2\pi f)|^2\, df,
+\end{equation}
+que es el ancho de banda de un pasabajos ideal que dejaría pasar la misma potencia de ruido blanco que $H$.
+
+\begin{proposicion}[Varianza del error de fase]\label{prop:pll ruido}
+En el modelo lineal, el ruido a la entrada produce en la fase del VCO un error aleatorio de varianza
+\begin{equation}\label{eq:varianza fase}
+    \sigma_\theta^2 = \frac{\eta_0\, B_L}{P_c},
+\end{equation}
+siendo $P_c=A^2/2$ la potencia de la sinusoide de entrada. Para el lazo de primer orden $B_L=K/4$, y para el de segundo orden
+\begin{equation}\label{eq:BL segundo orden}
+    B_L = \frac{\omega_n}{2}\left(\zeta+\frac{1}{4\zeta}\right).
+\end{equation}
+\end{proposicion}
+\begin{proof}
+A la salida del multiplicador, el ruido es $w(t)\cdot 2\cos(2\pi f_0t+\theta_{vco})$. Multiplicar por $2\cos(2\pi f_0 t)$ desplaza la densidad espectral del ruido a $\pm f_0$ y la multiplica por $4\cdot\frac14$, por lo que, cerca de $f=0$, el ruido a la salida del detector tiene densidad $\frac{\eta_0}{2}+\frac{\eta_0}{2}=\eta_0$. En el modelo lineal la salida del detector es entonces $A\,\theta_e(t)+n(t)$, con $n(t)$ de densidad espectral $\eta_0$, lo que equivale a sumar a la fase de entrada un ruido de fase $n(t)/A$, de densidad espectral $\eta_0/A^2$. Este ruido llega a la fase del VCO filtrado por $H$, con varianza
+\begin{equation*}
+    \sigma_\theta^2 = \int_{-\infty}^{\infty} \frac{\eta_0}{A^2}\,|H(j2\pi f)|^2\, df = \frac{2\eta_0 B_L}{A^2} = \frac{\eta_0B_L}{P_c}.
+\end{equation*}
+Para el lazo de primer orden,
+\begin{equation*}
+    B_L = \int_0^\infty \frac{K^2}{K^2+(2\pi f)^2}\, df = \frac{1}{2\pi}\int_0^\infty\frac{K^2}{K^2+\omega^2}\,d\omega = \frac{1}{2\pi}\cdot K\cdot\frac{\pi}{2} = \frac{K}{4}.
+\end{equation*}
+Para el de segundo orden, la integral de $|H|^2$ con $H$ de \eqref{eq:pll segundo orden} se calcula de la misma manera, descomponiendo en fracciones simples, y da \eqref{eq:BL segundo orden}.
+\end{proof}
+
+El cociente $P_c/(\eta_0B_L)$ es la relación señal a ruido medida en el ancho de banda del lazo, y \eqref{eq:varianza fase} dice que el error de fase tiene varianza igual a su inversa. Como $B_L$ suele ser mucho menor que el ancho de banda de la señal, el PLL promedia el ruido durante un tiempo largo, del orden de $1/B_L$, y puede tener un error de fase pequeño aun cuando la relación señal a ruido de la señal sea moderada.
+
+La Proposición \ref{prop:pll ruido} pone de manifiesto el compromiso central en el diseño de un PLL. Un lazo de ancho de banda grande (con $K$ o $\omega_n$ grandes) engancha rápido, ya que sus constantes de tiempo son del orden de $1/\omega_n$, y sigue con poco error las variaciones de la fase de entrada, ya que por ejemplo el error ante una rampa \eqref{eq:pll error rampa} decrece como $1/\omega_n^2$. Pero deja pasar más ruido, ya que $B_L$ crece proporcionalmente a $\omega_n$. Un lazo angosto filtra mejor el ruido, pero es lento y sigue peor las variaciones de la entrada.
+
+\begin{ejemplo}[Diseño del ancho de banda del lazo]\label{ejemplo:diseno pll}
+Supongamos que la portadora llega con $P_c/\eta_0=50\ \unit{\deci\bel\hertz}$, es decir $10^5\ \unit{\hertz}$, y que queremos un error de fase con desviación estándar $\sigma_\theta\leqslant 0.1\ \unit{\radian}$, unos $6^\circ$. De \eqref{eq:varianza fase} necesitamos $B_L\leqslant 10^{-2}\, P_c/\eta_0 = 1000\ \unit{\hertz}$. Con un lazo de segundo orden y $\zeta=0.707$, \eqref{eq:BL segundo orden} da $B_L\approx 0.53\,\omega_n$, de donde $\omega_n\leqslant 1890\ \unit{\radian\per\second}$. Con esta elección el transitorio dura del orden de $4/(\zeta\omega_n)\approx 3\ \unit{\milli\second}$, y una rampa de frecuencia de $R=10\ \unit{\kilo\hertz\per\second}$ deja un error de fase de $2\pi R/\omega_n^2\approx 0.018\ \unit{\radian}$. Si quisiéramos seguir rampas mucho más rápidas, deberíamos aumentar $\omega_n$ y aceptar más ruido de fase, o bien aumentar la potencia recibida.
+\end{ejemplo}
+
+\subsection{Comportamiento no lineal}\label{sec:pll no lineal}
+
+El modelo lineal vale mientras el error de fase es pequeño. Fuera de ese rango, la característica periódica del detector cambia el comportamiento del lazo de manera cualitativa. Para el lazo de primer orden con detector multiplicador, combinando \eqref{eq:detector multiplicador} con \eqref{eq:vco}, el error de fase ante un desvío de frecuencia $\Delta f$ satisface
+\begin{equation*}
+    \frac{d\theta_e}{dt} = 2\pi\Delta f - K\sin\theta_e.
+\end{equation*}
+El lazo queda enganchado en un punto de equilibrio, es decir con $d\theta_e/dt=0$, solo si existe $\theta_e$ con $\sin\theta_e=2\pi\Delta f/K$, lo que requiere $|\Delta f|\leqslant K/(2\pi)$. Este es el \emph{rango de enganche} del lazo de primer orden. Si el desvío es mayor, $\theta_e$ crece indefinidamente y el VCO nunca alcanza la frecuencia de la entrada. Dentro del rango, el equilibrio $\theta_e=\arcsin(2\pi\Delta f/K)$, que para $\Delta f$ pequeño coincide con \eqref{eq:pll error regimen}, es estable.
+
+Hay otros dos efectos no lineales importantes. El primero es la \emph{adquisición}: si al arrancar el VCO está lejos de la frecuencia de entrada, el lazo puede tardar mucho en engancharse, o no hacerlo, porque el error de fase gira rápidamente y su efecto promedio sobre el VCO es pequeño. Por eso, cuando el desvío de frecuencia inicial es grande frente al ancho de banda del lazo, se usan mecanismos auxiliares de adquisición, como un barrido de la frecuencia del VCO o un lazo previo que estima la frecuencia. El segundo son los \emph{saltos de ciclo}: aun enganchado, un pico de ruido puede llevar el error de fase más allá del punto de equilibrio inestable, en $\theta_e=\pi$ para el detector multiplicador, y el lazo vuelve a engancharse un ciclo más adelante, con un error de $2\pi$. Su frecuencia depende fuertemente de la relación señal a ruido en el lazo, y es otro motivo para mantener $B_L$ pequeño.
+
+\section{Sincronización de portadora}\label{sec:sincronizacion portadora}
+
+Para una portadora pura, el PLL de la sección anterior resuelve el problema directamente. Pero en las modulaciones que estudiamos no hay una portadora pura. Por ejemplo, para BPSK,
+\begin{equation*}
+    x_c(t) = m(t)\cos(2\pi f_c t+\theta), \qquad m(t) := \sum_k a_k\, p(t-kT_s),
+\end{equation*}
+con $a_k\in\{-A,A\}$ y $\theta$ la fase, desconocida, del oscilador del transmisor. Si los símbolos son equiprobables, $\E{a_k}=0$, y por \eqref{eq:dep onda pam iid} la densidad espectral de $m(t)$ no tiene componentes discretas: la de $x_c(t)$ tampoco tiene una línea en $f_c$ a la cual un PLL pueda engancharse. Decimos que la modulación es de \emph{portadora suprimida}. Un PLL alimentado directamente con $x_c(t)$ recibe en su detector de fase una señal $m(t)\sin\theta_e$, cuyo valor medio es nulo, y no engancha.
+
+\subsection{El lazo cuadrático}\label{sec:lazo cuadratico}
+
+La solución clásica es eliminar la modulación con una no linealidad. Elevando $x_c(t)$ al cuadrado:
+\begin{equation*}
+    x_c(t)^2 = m(t)^2\cos^2(2\pi f_c t+\theta) = \frac{m(t)^2}{2} + \frac{m(t)^2}{2}\cos(4\pi f_c t+2\theta).
+\end{equation*}
+Como $m(t)^2\geqslant 0$ tiene valor medio positivo, el segundo término contiene una componente sinusoidal de frecuencia $2f_c$ y fase $2\theta$. Para pulsos rectangulares, de hecho, $m(t)^2=A^2$ es constante y la modulación desaparece por completo. Un filtro pasabanda centrado en $2f_c$ aísla esa componente, un PLL se engancha a ella y su salida, dividida en frecuencia por $2$, da una portadora de frecuencia $f_c$ y fase $\theta$ (Figura \ref{fig:lazo cuadratico}). Este esquema se conoce como \emph{lazo cuadrático}.
+
+\begin{figure}
+    \begin{center}
+    \begin{tikzpicture}[blockdiagram]
+        \node [etiqueta] (entrada) {$x_c(t)$};
+        \node [block, right=0.8cm of entrada] (cuad) {$(\cdot)^2$};
+        \node [block, right=0.8cm of cuad, align=center] (bp) {Pasabanda\\en $2f_c$};
+        \node [block, right=0.8cm of bp] (pll) {PLL};
+        \node [block, right=0.8cm of pll] (div) {$\div 2$};
+        \node [etiqueta, right=0.8cm of div, align=center] (salida) {portadora\\recuperada};
+        \draw [->] (entrada) -- (cuad);
+        \draw [->] (cuad) -- (bp);
+        \draw [->] (bp) -- (pll);
+        \draw [->] (pll) -- node[midway, above] {\footnotesize $2f_c$} (div);
+        \draw [->] (div) -- node[midway, above] {\footnotesize $f_c$} (salida);
+    \end{tikzpicture}
+    \end{center}
+    \caption{Lazo cuadrático para recuperar la portadora de una señal BPSK. El cuadrado elimina la modulación y genera una componente en $2f_c$, a la que se engancha el PLL. La división por $2$ recupera la frecuencia $f_c$, con una ambigüedad de fase de $\pi$.}\label{fig:lazo cuadratico}
+\end{figure}
+
+La división por $2$ introduce una ambigüedad. La componente en $2f_c$ tiene fase $2\theta$, y tanto $\theta$ como $\theta+\pi$ son compatibles con ella. El divisor arranca en uno u otro estado sin forma de distinguirlos, por lo que la portadora recuperada tiene fase $\theta$ o $\theta+\pi$. Esta ambigüedad no es un defecto del circuito: el cuadrado de $x_c$ es el mismo si se cambia $m(t)$ por $-m(t)$ y $\theta$ por $\theta+\pi$, de modo que ninguna operación sobre $x_c^2$ puede distinguir esos dos casos. Volvemos sobre esto en la Sección \ref{sec:ambiguedad fase}.
+
+\subsection{El lazo de Costas}\label{sec:costas}
+
+El lazo cuadrático trabaja a $2f_c$, lo cual puede ser inconveniente a frecuencias altas. El \emph{lazo de Costas} obtiene el mismo resultado trabajando a $f_c$, y entrega además directamente la señal demodulada. El receptor genera localmente $2\cos(2\pi f_c t+\theta_{vco})$ y $-2\sin(2\pi f_c t+\theta_{vco})$, siendo $\theta_{vco}$ la fase de su VCO, es decir, su estimación actual de $\theta$, y multiplica la señal recibida por ambas, como en el detector coherente. El error de fase que queremos anular es $\theta_e:=\theta-\theta_{vco}$.
+
+\begin{proposicion}[Señal de error del lazo de Costas]\label{prop:costas}
+Las salidas de las ramas en fase y en cuadratura, después de los filtros pasabajos, son
+\begin{equation}\label{eq:xi xq con error de fase}
+    x_i(t) = m(t)\cos\theta_e, \qquad\qquad x_q(t) = m(t)\sin\theta_e,
+\end{equation}
+y su producto resulta
+\begin{equation}\label{eq:error costas}
+    e(t) := x_i(t)\,x_q(t) = \frac{m(t)^2}{2}\sin(2\theta_e) \approx m(t)^2\,\theta_e,
+\end{equation}
+donde la última aproximación vale para $\theta_e$ pequeño.
+\end{proposicion}
+\begin{proof}
+Repitiendo el cálculo de la Sección \ref{sec:deteccion coherente} con $\theta_e$ explícito, y descartando los términos de frecuencia $2f_c$ que eliminan los filtros pasabajos, se obtiene \eqref{eq:xi xq con error de fase}. Sustituyendo en el producto y usando $2\sin\theta_e\cos\theta_e=\sin(2\theta_e)\approx 2\theta_e$ se obtiene \eqref{eq:error costas}.
+\end{proof}
+
+Si $\theta_e=0$, recuperamos lo que usaba la Sección \ref{sec:deteccion coherente}: $x_i= m(t)$ y $x_q= 0$. Si $\theta_e\neq 0$, la señal $m(t)$ se reparte entre $x_i$ y $x_q$, y la constelación, que para BPSK está sobre el eje horizontal, aparece rotada un ángulo $\theta_e$ (Figura \ref{fig:constelacion rotada}). Ninguna de las dos salidas por separado sirve como detector de fase, porque $m(t)$ cambia de signo con los símbolos. Su producto, en cambio, sí: como $m(t)^2\geqslant 0$, el valor medio de \eqref{eq:error costas} es proporcional a $\sin(2\theta_e)$, con $K_d=\E{m(t)^2}$. El filtro de lazo realiza ese promedio y corrige la fase del VCO (Figura \ref{fig:costas}).
 
 \begin{figure}
     \begin{center}
@@ -115,117 +333,417 @@ Si $\theta_e=0$, recuperamos exactamente lo que la Sección \ref{sec:deteccion c
             \node[teal] at (0.62,0.13) {\footnotesize $\theta_e$};
         \end{tikzpicture}
     \end{center}
-    \caption{Constelación de BPSK vista con un error de fase $\theta_e$ sin corregir: el punto recibido, en vez de caer sobre el eje $x_i$, aparece rotado un ángulo $\theta_e$, con energía filtrándose hacia $x_q$ -- exactamente lo que \eqref{eq:xi xq con error de fase} predice.}\label{fig:constelacion rotada}
+    \caption{Constelación de BPSK con un error de fase $\theta_e$ sin corregir. El punto recibido no cae sobre el eje $x_i$, sino que aparece rotado un ángulo $\theta_e$, con una componente en $x_q$, como indica \eqref{eq:xi xq con error de fase}.}\label{fig:constelacion rotada}
 \end{figure}
 
-Necesitamos un detector de fase que produzca una señal proporcional a $\theta_e$ a partir de $x_i(t)$ y $x_q(t)$. Ninguno de los dos por separado sirve ($\cos\theta_e$ es par en $\theta_e$, no distingue signo); pero su producto, la Proposición \ref{prop:costas}, sí: en promedio sobre varios símbolos, ya que $m(t)^2$ fluctúa símbolo a símbolo pero es siempre no negativo, $e(t)$ resulta proporcional a $\theta_e$ con el signo correcto -- exactamente el detector de fase que el PLL genérico de la sección anterior necesita, con $K_d\propto \mathrm E[m(t)^2]$. Este esquema -- multiplicar $x_i$ por $x_q$ para generar el error de fase -- se conoce como \emph{lazo de Costas}, y es la forma estándar de recuperar la portadora para BPSK.
+\begin{figure}
+    \begin{center}
+    \begin{tikzpicture}[blockdiagram]
+        \node [etiqueta] (entrada) at (0,0) {$x_c(t)$};
+        \node [punto] (div) at (1.3,0) {};
+        \node [operator] (m1) at (3,1.9) {$\times$};
+        \node [operator] (m2) at (3,-1.9) {$\times$};
+        \node [block] (vco) at (3,0.45) {VCO};
+        \node [block] (fase) at (3,-0.75) {$-90^\circ$};
+        \node [block] (lp1) at (5.6,1.9) {Pasabajos};
+        \node [block] (lp2) at (5.6,-1.9) {Pasabajos};
+        \node [punto] (pi) at (8.3,1.9) {};
+        \node [punto] (pq) at (8.3,-1.9) {};
+        \node [operator] (m3) at (8.3,0) {$\times$};
+        \node [block, align=center] (filtro) at (5.6,0) {Filtro\\de lazo};
+        \node [etiqueta] (det) at (10.2,1.9) {al detector};
+        \draw (entrada) -- (div);
+        \draw [->] (div) |- (m1);
+        \draw [->] (div) |- (m2);
+        \draw [->] (m1) -- (lp1);
+        \draw [->] (m2) -- (lp2);
+        \draw (lp1) -- node[midway,above] {\footnotesize $x_i(t)$} (pi);
+        \draw (lp2) -- node[midway,below] {\footnotesize $x_q(t)$} (pq);
+        \draw [->] (pi) -- (det);
+        \draw [->] (pi) -- (m3);
+        \draw [->] (pq) -- (m3);
+        \draw [->] (m3) -- node[midway,above] {\footnotesize $e(t)$} (filtro);
+        \draw [->] (filtro) |- (vco);
+        \draw [->] (vco) -- node[midway,right] {\footnotesize $2\cos(2\pi f_c t+\theta_{vco})$} (m1);
+        \draw [->] (vco) -- (fase);
+        \draw [->] (fase) -- node[midway,right] {\footnotesize $-2\sin(2\pi f_c t+\theta_{vco})$} (m2);
+    \end{tikzpicture}
+    \end{center}
+    \caption{Lazo de Costas para BPSK. Las ramas en fase y en cuadratura son las del detector coherente. El producto $x_i(t)x_q(t)$ es proporcional a $\sin(2\theta_e)$, y a través del filtro de lazo corrige la fase del VCO. La rama en fase entrega la señal demodulada al resto del receptor.}\label{fig:costas}
+\end{figure}
 
-\subsection*{Generalización a M-QAM: decisión realimentada}\label{sec:decision directed}
+El lazo de Costas y el lazo cuadrático son equivalentes: ambos generan una señal de error proporcional a $m(t)^2\sin(2\theta_e)$, y puede mostrarse que su comportamiento frente al ruido es el mismo. En particular, la característica de su detector tiene período $\pi$ y no $2\pi$, por lo que el lazo de Costas también puede engancharse en $\theta_e=\pi$, con la misma ambigüedad que el lazo cuadrático. Respecto del PLL con portadora pura, ambos sufren una degradación adicional frente al ruido, porque la no linealidad multiplica también el ruido consigo mismo y con la señal. Esta degradación se conoce como \emph{pérdida de cuadratura}, y es pequeña cuando la relación señal a ruido es alta.
 
-Para constelaciones complejas ($M$-QAM, $M$-PSK con $M>2$), conviene trabajar directamente con el símbolo complejo $c_k=a_k+jb_k$ y su versión recibida (rotada) $z_k := x_i(kT_s)+jx_q(kT_s)$.
+\subsection{Modulaciones $M$-PSK}\label{sec:mpsk portadora}
 
-\begin{proposicion}[Señal de error de decisión realimentada]\label{prop:decision directed}
-$z_k \approx c_k\,\e^{j\theta_e}$: el símbolo recibido es el transmitido, rotado el ángulo de error. Si $\hat c_k$ es la decisión del receptor (la estimación de qué símbolo se transmitió, tomada sobre la constelación completa, Sección \ref{sec:modulacion pasabanda m aria}), entonces
-\begin{equation}\label{eq:error decision directed}
-    e_k := \mathrm{Im}\left\{z_k\, \hat c_k^*\right\} \approx |c_k|^2\,\theta_e \qquad (\hat c_k\approx c_k,\ \theta_e\text{ chico}).
-\end{equation}
-\end{proposicion}
-\begin{proof}
-De \eqref{eq:xi xq con error de fase} generalizada a símbolos complejos, $z_k=c_k\e^{j\theta_e}$. Si la decisión es correcta, $\hat c_k\approx c_k$, y
+La misma idea se extiende a $M$-PSK. Escribiendo la señal mediante su envolvente compleja, cada símbolo es $\e^{j(\phi_k+\theta)}$, con $\phi_k\in\{0,2\pi/M,\ldots,2\pi(M-1)/M\}$. Elevando a la potencia $M$,
 \begin{equation*}
-    z_k\,\hat c_k^* \approx c_k\hat c_k^*\,\e^{j\theta_e} \approx |c_k|^2\,\e^{j\theta_e},
+    \left(\e^{j(\phi_k+\theta)}\right)^M = \e^{jM\phi_k}\,\e^{jM\theta} = \e^{jM\theta},
 \end{equation*}
-cuya parte imaginaria es $|c_k|^2\sin\theta_e\approx|c_k|^2\theta_e$ para $\theta_e$ chico.
-\end{proof}
+ya que $M\phi_k$ es múltiplo de $2\pi$. La modulación desaparece, y en la señal pasabanda aparece una componente de frecuencia $Mf_c$ y fase $M\theta$. Un PLL enganchado a ella, seguido de un divisor por $M$, recupera la portadora, ahora con una ambigüedad de $2\pi/M$. Para QPSK, por ejemplo, se eleva a la cuarta potencia y la ambigüedad es de $\pi/2$. Existen también versiones del lazo de Costas para QPSK, con detectores de fase construidos a partir de las ramas en fase y en cuadratura. Para constelaciones QAM, cuyos símbolos tienen distintas amplitudes, el método de la potencia $M$-ésima funciona peor, y se usa en cambio el método de decisión realimentada que veremos en la Sección \ref{sec:decision directed}.
 
-La aproximación $\hat c_k\approx c_k$ vale si la decisión es mayormente correcta -- lo cual, a su vez, requiere que el lazo ya esté razonablemente cerca del enganche. Este esquema de \emph{decisión realimentada} (\emph{decision-directed}, en la literatura), llamado así porque usa las propias decisiones del receptor en vez de un símbolo conocido de antemano, es el mecanismo que efectivamente se usa en la práctica para $M$-QAM: para $\theta_e=0$, $e_k=0$ (nada que corregir); si el lazo se aparta, $e_k$ crece con el error y lo empuja de vuelta. Nótese la condición de funcionamiento que distingue a este lazo del de Costas: se retroalimenta de sus \emph{propios aciertos}, con el riesgo de que, si arranca demasiado desenganchado, las decisiones sean mayormente erróneas y el lazo diverja en vez de converger. Por eso, en la práctica, el lazo arranca con una secuencia de símbolos \emph{verdaderamente} conocidos (no decididos) antes de pasar a régimen de decisión realimentada -- un motivo más, que se suma a los de la Sección \ref{sec:sincronizacion trama}, para necesitar un preámbulo.
+\subsection{Ambigüedad de fase}\label{sec:ambiguedad fase}
 
-\subsection*{Ambigüedad de fase}\label{sec:ambiguedad fase}
+La ambigüedad que encontramos en los lazos anteriores no es un defecto de su diseño, sino una consecuencia de la simetría de la constelación. BPSK es invariante ante una rotación de $\pi$, ya que el punto $-A$ rotado $\pi$ es $A$ y viceversa. Por lo tanto, ninguna medida basada solo en la señal recibida puede distinguir $\theta_e=0$ de $\theta_e=\pi$. Si el lazo engancha en $\theta_e=\pi$, la constelación aparece alineada sobre el eje horizontal pero invertida, y cada símbolo $a_k$ se decodifica como $-a_k$: la constelación recibida es indistinguible de la correcta, pero todos los bits detectados son erróneos. Lo mismo ocurre para cualquier constelación invariante ante rotaciones de $2\pi/q$, es decir, con simetría rotacional de orden $q$: QPSK y $4$-QAM tienen ambigüedad de orden $4$, y en general una constelación $M$-PSK tiene ambigüedad de orden $M$.
 
-Tanto \eqref{eq:error costas} como \eqref{eq:error decision directed} tienen un problema sutil pero importante: no se anulan solo en $\theta_e=0$. Para el lazo de Costas, $\sin(2\theta_e)=0$ también en $\theta_e=\pi$ -- y es un cero del mismo tipo (mismo signo de la derivada), es decir, un punto de enganche igual de estable que $\theta_e=0$. El lazo puede converger a cualquiera de los dos, según las condiciones iniciales o el ruido durante la adquisición. Si engancha en $\theta_e=\pi$, la constelación de BPSK aparece perfectamente alineada sobre el eje horizontal -- pero \emph{invertida}: cada símbolo $a_k$ se decodifica como $-a_k$. La constelación es indistinguible de la correcta; todos los bits detectados, sin embargo, resultan erróneos.
+La solución tiene que venir de fuera del lazo. Una posibilidad es codificar la información de forma \emph{diferencial}: cada símbolo representa un cambio respecto del anterior, y una rotación constante de toda la constelación no altera esos cambios. El costo es que un error de decisión en un símbolo afecta a dos cambios consecutivos, lo que aproximadamente duplica la probabilidad de error de bit. La otra posibilidad, que desarrollamos en la Sección \ref{sec:sincronizacion trama}, es insertar un preámbulo de símbolos conocidos que permite detectar cuál de las rotaciones ocurrió, y corregirla.
 
-Esto no es un defecto de diseño del lazo, sino una consecuencia de la simetría de la propia constelación: BPSK es invariante ante una rotación de $\pi$ (el punto $-A$ rotado $\pi$ es $A$, y viceversa), así que \emph{ninguna} medida basada solo en la forma de la constelación recibida puede distinguir $\theta_e=0$ de $\theta_e=\pi$. Lo mismo ocurre, de forma más general, para cualquier constelación con simetría rotacional de orden $m$ (invariante ante rotaciones de $2\pi/m$): QPSK y $4$-QAM tienen ambigüedad de orden $4$ (múltiplos de $\pi/2$), y en general una constelación $M$-PSK tiene ambigüedad de orden $M$. La resolución no puede venir del lazo de fase en sí -- viene de afuera: o bien codificando la información \emph{diferencialmente} (cada símbolo codifica un \emph{cambio} respecto del anterior, insensible a una rotación global constante), o bien -- la solución que desarrollamos en la Sección \ref{sec:sincronizacion trama} -- insertando un preámbulo de símbolos conocidos que permite, por comparación directa, detectar y corregir cuál de las rotaciones ambiguas ocurrió.
+\section{Temporización de símbolo}\label{sec:temporizacion}
 
-\subsection*{Temporización de símbolo}
+Supongamos ahora resuelta la sincronización de portadora, de modo que el receptor dispone de la señal en banda base $y(t)=\sum_k a_k\,p(t-kT_s)$, a la salida del filtro de recepción. El reloj que dispara el muestreador tampoco coincide con el que generó los símbolos en el transmisor. Llamemos $\tau$ al error de temporización: el receptor muestrea en $kT_s+\tau$ en lugar de hacerlo en $kT_s$.
 
-Supongamos ahora resuelto el sincronismo de portadora: la constelación recibida ya no rota. Queda el segundo problema, independiente del primero: el reloj que dispara el muestreador del receptor tampoco coincide con el que generó los símbolos en el transmisor. Llamemos $\tau$ al error de temporización -- el receptor muestrea en $kT_s+\tau$ en vez de en el instante correcto $kT_s$.
+Los pulsos de Nyquist de la Sección \ref{sec:nyquist no ideal} verifican $p(kT_s)=0$ para todo $k\neq 0$, por lo que la ISI se cancela en los instantes de muestreo correctos. Esa cancelación es sensible a errores de temporización: como muestra la Figura \ref{fig:coseno alzado}, $p(t)$ cae rápidamente a los costados de $t=0$, y un $\tau$ pequeño reintroduce ISI de los símbolos vecinos, además de achicar la muestra útil. Necesitamos entonces recuperar, a partir de la señal recibida, un reloj de frecuencia $f_s$ alineado con los instantes $kT_s$.
 
-La Sección \ref{sec:nyquist no ideal} construyó los pulsos de Nyquist precisamente para que $p(kT_s)=0$ para todo $k\neq 0$: la ISI se cancela \emph{exactamente en el instante de muestreo correcto}. Pero esa cancelación es frágil ante un error de temporización: como muestra la Figura \ref{fig:coseno alzado}, $p(t)$ cae rápido a los costados de $t=0$, así que un $\tau$ chico ya reintroduce ISI de los símbolos vecinos -- el mismo mecanismo, ahora por un desajuste de reloj en vez de un canal no ideal.
+\subsection{Recuperación de reloj por no linealidad}\label{sec:reloj no linealidad}
 
-Necesitamos, nuevamente, un detector de error -- ahora sensible a $\tau$ -- para cerrar un lazo como el ya derivado (Figura \ref{fig:pll generico}), pero controlando la fase del reloj de muestreo en vez de la del oscilador de portadora. La idea más directa (\emph{early-late}) es comparar dos muestras tomadas ligeramente antes y después del instante candidato, y usar su diferencia como señal de error: si el muestreo está temprano, una muestra ve más energía del símbolo siguiente; si está tarde, del anterior. El \emph{detector de Gardner} formaliza esto de manera eficiente, con una sola muestra adicional por símbolo: además de la muestra ``a tiempo'' $y_k:=y(kT_s+\tau)$, toma una muestra en el punto medio entre símbolos, $y_{k-1/2}:=y\big((k-\tfrac12)T_s+\tau\big)$, y forma
-\begin{equation}\label{eq:error gardner}
-    e_k := y_{k-1/2}\,\big(y_k - y_{k-1}\big).
-\end{equation}
-
-\begin{proposicion}[Señal de error de Gardner]\label{prop:gardner}
-Para símbolos $\{a_k\}$ independientes, de media nula y varianza $\sigma^2$, y reteniendo el aporte de los símbolos inmediatamente vecinos a cada muestra,
-\begin{equation}\label{eq:gardner lineal}
-    \mathrm E[e_k] \approx -2\sigma^2\, p'(T_s/2)\;\tau,
-\end{equation}
-lineal en el error de temporización $\tau$, con signo determinado por $p'(T_s/2)$.
-\end{proposicion}
-\begin{proof}
-Usemos lo que ya sabemos del pulso $p(t)$: es par y verifica $p(0)=1$, $p(T_s)=0$. Quedándonos con los dos símbolos vecinos dominantes en cada muestra y expandiendo a primer orden en $\tau$ -- $p(\tau)\approx p(0)=1$ (el término lineal se anula porque $p$ es par) y $p(T_s+\tau)\approx p(T_s)+\tau p'(T_s)=\tau p'(T_s)$:
+El problema es análogo al de la portadora suprimida. Con símbolos de media nula, por \eqref{eq:dep onda pam iid} la densidad espectral de $y(t)$ no tiene componentes discretas, y en particular no tiene una línea en $f_s$ a la cual engancharse. Y la solución es también análoga: una no linealidad. El valor medio de $y(t)^2$ es
 \begin{equation*}
-    y_k \approx a_k,\qquad y_{k-1}\approx a_{k-1}, \qquad y_{k-1/2}\approx (a_{k-1}+a_k)\,p(T_s/2) + \tau\, p'(T_s/2)\,(a_{k-1}-a_k),
+    \E{y(t)^2} = \sum_k\sum_l \E{a_ka_l}\,p(t-kT_s)\,p(t-lT_s) = \sigma_a^2\sum_k p^2(t-kT_s),
 \end{equation*}
-donde para $y_{k-1/2}$ usamos $p(T_s/2+\tau)\approx p(T_s/2)+\tau p'(T_s/2)$ y, por la paridad de $p$, $p(-T_s/2+\tau)\approx p(T_s/2)-\tau p'(T_s/2)$. Sustituyendo en \eqref{eq:error gardner} y tomando valor esperado (usando $\mathrm E[a_k^2-a_{k-1}^2]=0$ y $\mathrm E[(a_k-a_{k-1})^2]=2\sigma^2$) da \eqref{eq:gardner lineal}.
-\end{proof}
+que es una función periódica de período $T_s$, con máximos en los instantes $kT_s$ si $p$ es par y alcanza su máximo en $t=0$. Por lo tanto $y(t)^2$ contiene una componente sinusoidal de frecuencia $f_s$, cuyos máximos marcan los instantes de muestreo correctos. Un filtro pasabanda angosto centrado en $f_s$, o un PLL, extrae esa componente, y sus cruces por cero, desplazados un cuarto de período, generan el reloj de muestreo (Figura \ref{fig:reloj cuadratico}).
 
-El signo de $p'(T_s/2)$ es, típicamente, distinto de cero para un pulso de Nyquist (el pulso todavía está cayendo hacia su primer cero en $T_s/2$) -- la Figura \ref{fig:gardner curva} lo confirma numéricamente para un pulso de coseno alzado. Esta es exactamente la característica de detector de fase que el lazo genérico de la Ecuación \eqref{eq:pll edo} necesita: basta usar $e_k$ como entrada a ese mismo lazo de primer orden ya derivado, ahora controlando la fase del reloj de muestreo en vez de la del VCO de portadora, y la convergencia exponencial ya demostrada aplica sin cambios.
+\begin{figure}
+    \begin{center}
+    \begin{tikzpicture}[blockdiagram]
+        \node [etiqueta] (entrada) {$y(t)$};
+        \node [punto, right=0.6cm of entrada] (p) {};
+        \node [block, right=0.8cm of p] (cuad) {$(\cdot)^2$};
+        \node [block, right=0.8cm of cuad, align=center] (bp) {PLL o pasabanda\\en $f_s$};
+        \node [block, right=0.8cm of bp, align=center] (pulsos) {Generador\\de pulsos};
+        \node [block, below=0.9cm of pulsos] (muestreo) {Muestreador};
+        \node [etiqueta, right=0.8cm of muestreo] (salida) {$y(kT_s)$};
+        \draw (entrada) -- (p);
+        \draw [->] (p) -- (cuad);
+        \draw [->] (cuad) -- (bp);
+        \draw [->] (bp) -- (pulsos);
+        \draw [->] (pulsos) -- node[midway,right] {\footnotesize reloj} (muestreo);
+        \draw [->] (p) |- (muestreo);
+        \draw [->] (muestreo) -- (salida);
+    \end{tikzpicture}
+    \end{center}
+    \caption{Recuperación del reloj de símbolo por no linealidad. El cuadrado de la señal PAM contiene una componente de frecuencia $f_s$, que se extrae con un PLL o un filtro pasabanda angosto y se convierte en los pulsos de reloj que disparan el muestreador.}\label{fig:reloj cuadratico}
+\end{figure}
+
+La amplitud de esa componente depende del exceso de ancho de banda del pulso. Su coeficiente de Fourier es
+\begin{equation*}
+    c_1 = \frac{\sigma_a^2}{T_s}\int_{-\infty}^{\infty}p^2(t)\,\e^{-j2\pi f_st}\,dt = \frac{\sigma_a^2}{T_s}\int_{-\infty}^{\infty}\hat P(\nu)\,\hat P(f_s-\nu)\,d\nu,
+\end{equation*}
+y para un pulso de coseno alzado con exceso de ancho de banda $\alpha$, cuyo espectro se anula fuera de $|f|\leqslant(1+\alpha)f_s/2$, el producto $\hat P(\nu)\hat P(f_s-\nu)$ solo es distinto de cero en un intervalo de ancho $\alpha f_s$. Con el pulso de Nyquist ideal, $\alpha=0$, la componente desaparece: $\sum_k\sinc^2(t/T_s-k)=1$ es constante y el cuadrado no contiene información de temporización. La Figura \ref{fig:media cuadrado} lo muestra. El exceso de ancho de banda, que en la Sección \ref{sec:nyquist no ideal} aparecía como un costo en eficiencia espectral, es entonces lo que permite recuperar el reloj.
 
 \begin{figure}
     \begin{center}
         \begin{tikzpicture}
             \begin{axis}[
-                width=11cm, height=7cm,
-                xlabel={$\tau/T_s$},
-                ylabel={$\mathrm E[e_k]$},
-                xmin=-0.25, xmax=0.25,
-                ymin=-0.25, ymax=0.25,
+                width=11cm, height=5.5cm,
+                xmin=-1, xmax=1, ymin=0.4, ymax=1.08,
+                xtick={-1,-0.5,0,0.5,1},
+                xticklabels={$-T_s$, $-T_s/2$, $0$, $T_s/2$, $T_s$},
+                xlabel={$t$}, ylabel={$\E{y(t)^2}/\sigma_a^2$},
                 grid=major,
-                legend pos=north west,
+                legend style={at={(0.5,1.03)}, anchor=south, legend columns=3, draw=none, font=\small},
+                every axis plot/.append style={mark=none},
                 ]
-                \addplot[teal, very thick, mark=*, mark size=1pt] coordinates {
-                    (-0.250,-0.1975) (-0.225,-0.1956) (-0.200,-0.1887) (-0.175,-0.1773) (-0.150,-0.1614) (-0.125,-0.1415) (-0.100,-0.1181) (-0.075,-0.0918) (-0.050,-0.0632) (-0.025,-0.0331) (0.000,-0.0021) (0.025,0.0290) (0.050,0.0593) (0.075,0.0882) (0.100,0.1150) (0.125,0.1390) (0.150,0.1596) (0.175,0.1763) (0.200,0.1887) (0.225,0.1965) (0.250,0.1995)
-                };
-                \addlegendentry{simulado}
-                \addplot[Red, thick, dashed, domain=-0.25:0.25, samples=2] {2.617*x};
-                \addlegendentry{recta $-2\sigma^2p'(T_s/2)\tau$}
+                \addplot[gray, thick, densely dotted] table[x=t, y=a0] {figuras/sincronismo/media_cuadrado.dat};
+                \addlegendentry{$\alpha=0$}
+                \addplot[teal, very thick] table[x=t, y=a35] {figuras/sincronismo/media_cuadrado.dat};
+                \addlegendentry{$\alpha=0.35$}
+                \addplot[Red, thick, dashed] table[x=t, y=a100] {figuras/sincronismo/media_cuadrado.dat};
+                \addlegendentry{$\alpha=1$}
             \end{axis}
         \end{tikzpicture}
     \end{center}
-    \caption{Señal de error de Gardner promediada, $\mathrm E[e_k]$, en función del error de temporización normalizado $\tau/T_s$, para un pulso de coseno alzado ($\alpha=0{,}35$) y símbolos $a_k=\pm 1$ (simulación con todos los símbolos vecinos, no solo los dos dominantes de la Proposición \ref{prop:gardner}). La curva es aproximadamente lineal y de signo correcto cerca de $\tau=0$, tal como predice \eqref{eq:gardner lineal}, aunque, consistente con la Observación \ref{nota:gardner aproximacion}, la pendiente exacta difiere de la fórmula simplificada por el aporte de los símbolos más alejados.}\label{fig:gardner curva}
+    \caption{Valor medio del cuadrado de una onda PAM con pulsos de coseno alzado, para distintos excesos de ancho de banda. Es periódico de período $T_s$, con máximos en los instantes de muestreo. Con $\alpha=0$ es constante y no contiene información de temporización. La componente de frecuencia $f_s$ crece con $\alpha$.}\label{fig:media cuadrado}
 \end{figure}
 
-\begin{remark}\label{nota:gardner aproximacion}
-La Ecuación \eqref{eq:gardner lineal} retiene solo el aporte de los símbolos inmediatamente vecinos a cada muestra; un cálculo completo, incluyendo los símbolos más alejados que también contribuyen (el pulso de Nyquist no se anula \emph{estrictamente} fuera de $kT_s$ salvo en esos puntos), corrige la constante de proporcionalidad pero no cambia la conclusión cualitativa -- linealidad en $\tau$ y el signo del detector -- que es lo que importa para que el lazo enganche.
-\end{remark}
+\subsection{El sincronizador early-late}\label{sec:early late}
 
-\subsection*{Sincronización de trama}\label{sec:sincronizacion trama}
-
-Con portadora y reloj de símbolo ya enganchados, el receptor recibe un flujo continuo y correctamente muestreado de símbolos -- pero sigue sin saber \emph{dónde}, dentro de ese flujo, empieza el mensaje que le interesa. Y, como vimos, puede no saber tampoco cuál de las rotaciones de fase ambiguas enganchó el lazo de portadora. Ambos problemas se resuelven con la misma herramienta: un \emph{preámbulo}, una secuencia de símbolos $s_0,\ldots,s_{L-1}$ \emph{conocida de antemano por transmisor y receptor}, transmitida al comienzo de cada trama.
-
-El receptor busca el preámbulo \emph{correlacionando} la señal recibida contra la secuencia conocida, desplazando una ventana de longitud $L$ sobre el flujo de símbolos:
+El método anterior no tiene realimentación desde el muestreo: el reloj se extrae de la señal y se usa tal cual. Un método realimentado, que encaja directamente en la teoría del PLL, es el sincronizador \emph{early-late}. La idea es tomar dos muestras de la salida del filtro de recepción, una adelantada y otra atrasada un tiempo $\delta<T_s/2$ respecto del instante de muestreo candidato $kT_s+\tau$, y comparar sus módulos:
 \begin{equation*}
-    R[n] := \sum_{m=0}^{L-1} y_{n+m}\, s_m^*,
+    e_k := \big|y(kT_s+\tau-\delta)\big| - \big|y(kT_s+\tau+\delta)\big|.
 \end{equation*}
-y evaluando $|R[n]|$ para cada posición candidata $n$. Si el preámbulo efectivamente empieza en $n=n_0$, entonces $y_{n_0+m}\approx s_m$ (a menos de ruido y, eventualmente, la rotación de fase ambigua) para $m=0,\ldots,L-1$, y $R[n_0]\approx\sum_m |s_m|^2$ -- la energía del preámbulo, un valor sustancialmente mayor que $R[n]$ para cualquier otro $n$, donde se están correlacionando símbolos de información (esencialmente aleatorios) contra la secuencia conocida. Buscar el máximo de $|R[n]|$ localiza entonces el inicio de la trama.
+Si el muestreo es correcto, las dos muestras quedan a la misma distancia del máximo del pulso y, para un pulso par, tienen el mismo módulo, por lo que $e_k\approx 0$. Si el muestreo está atrasado, la muestra adelantada está más cerca del máximo y el error es positivo. Si está adelantado, es negativo (Figura \ref{fig:early late}). El error, filtrado por un filtro de lazo, controla la fase de un VCO que genera el reloj de muestreo, y el lazo resultante se analiza como en la Sección \ref{sec:pll}, con la fase del reloj, $2\pi\tau/T_s$, en el papel de $\theta_{vco}$.
 
-Para que este pico sea nítido -- y no se confunda con un máximo espurio en otra posición --, la secuencia $\{s_m\}$ debe diseñarse con \emph{buena autocorrelación}: un pico marcado en el desplazamiento nulo y valores chicos en cualquier otro desplazamiento. Existen familias de secuencias diseñadas explícitamente con este criterio; un ejemplo clásico son los \emph{códigos de Barker}, secuencias binarias ($s_m=\pm 1$) cuya autocorrelación fuera del pico principal está acotada por $1$ en valor absoluto. Por ejemplo, la secuencia de Barker de longitud $7$,
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=10cm, height=5cm,
+                xmin=-1.2, xmax=1.2, ymin=0, ymax=1.25,
+                xtick={-1,0,1}, xticklabels={$-T_s$, $0$, $T_s$},
+                ytick=\empty,
+                axis x line=bottom, axis y line=none,
+                clip=false,
+                ]
+                \addplot[gray, thick, domain=-1:1, samples=3] {1-abs(x)};
+                \addplot[gray, thick, domain=-1.2:-1, samples=2] {0};
+                \addplot[gray, thick, domain=1:1.2, samples=2] {0};
+                % muestreo atrasado tau = 0.2, delta = 0.4
+                \draw[Red, densely dashed] (axis cs:0.2,0) -- (axis cs:0.2,1.15) node[above, font=\footnotesize] {$\tau$};
+                \draw[Red, thick] (axis cs:-0.2,0) -- (axis cs:-0.2,0.8);
+                \fill[Red] (axis cs:-0.2,0.8) circle (2.2pt);
+                \draw[Red, thick] (axis cs:0.6,0) -- (axis cs:0.6,0.4);
+                \fill[Red] (axis cs:0.6,0.4) circle (2.2pt);
+                \node[Red, left, font=\footnotesize] at (axis cs:-0.22,0.8) {adelantada};
+                \node[Red, right, font=\footnotesize] at (axis cs:0.62,0.4) {atrasada};
+                \draw[<->] (axis cs:-0.2,0.05) -- node[below, font=\footnotesize] {$\delta$} (axis cs:0.2,0.05);
+                \draw[<->] (axis cs:0.2,0.05) -- node[below, font=\footnotesize] {$\delta$} (axis cs:0.6,0.05);
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Sincronizador early-late, para un pulso triangular, como el que resulta de pulsos rectangulares con filtro acoplado. El instante de muestreo candidato está atrasado un tiempo $\tau$ respecto del máximo. La muestra adelantada queda más cerca del máximo que la atrasada, y la diferencia de sus módulos es positiva, proporcional a $\tau$.}\label{fig:early late}
+\end{figure}
+
+Para un pulso triangular de base $2T_s$, como el que se obtiene al pasar pulsos rectangulares por su filtro acoplado, y un pulso aislado, el cálculo es inmediato: si $|\tau|\leqslant\delta$, las dos muestras caen en flancos opuestos del triángulo y
+\begin{equation*}
+    e = \left(1-\frac{|\tau-\delta|}{T_s}\right)-\left(1-\frac{|\tau+\delta|}{T_s}\right) = \frac{(\tau+\delta)-(\delta-\tau)}{T_s} = \frac{2\tau}{T_s},
+\end{equation*}
+lineal en $\tau$, con ganancia de detector $2/T_s$. Con una secuencia de símbolos, los vecinos agregan términos que, en promedio sobre los símbolos, no cambian el signo del error. Igual que con el detector de fase de la Sección \ref{sec:detectores fase}, lo que importa es que el error se anule con pendiente positiva en el instante correcto.
+
+En la versión clásica con pulsos rectangulares, las dos muestras se reemplazan por dos integradores: uno integra la señal durante la primera parte del intervalo de símbolo y otro durante la segunda. Si el reloj está bien alineado, ambos acumulan lo mismo en valor absoluto, y la diferencia de sus módulos funciona como señal de error.
+
+\section{Sincronización de trama}\label{sec:sincronizacion trama}
+
+Con la portadora y el reloj de símbolo enganchados, el receptor obtiene un flujo continuo de símbolos correctamente muestreados, pero todavía no sabe dónde empieza, dentro de ese flujo, el mensaje que le interesa. Como vimos, tampoco sabe cuál de las rotaciones ambiguas enganchó el lazo de portadora. Ambos problemas se resuelven con la misma herramienta: un \emph{preámbulo}, una secuencia de símbolos $s_0,\ldots,s_{L-1}$ conocida por el transmisor y el receptor, que se transmite al comienzo de cada trama.
+
+El receptor busca el preámbulo \emph{correlacionando} la secuencia recibida con la conocida, desplazando una ventana de longitud $L$ sobre el flujo de símbolos:
+\begin{equation*}
+    R[n] := \sum_{i=0}^{L-1} y_{n+i}\, s_i^*,
+\end{equation*}
+y evaluando $|R[n]|$ para cada posición candidata $n$. Si el preámbulo empieza en $n=n_0$, entonces $y_{n_0+i}\approx s_i$ para $i=0,\ldots,L-1$, salvo por el ruido y por la eventual rotación ambigua, y $|R[n_0]|\approx\sum_i |s_i|^2$, la energía del preámbulo. En cualquier otra posición se está correlacionando la secuencia conocida con símbolos de información, esencialmente aleatorios, y $|R[n]|$ es sustancialmente menor. Buscar el máximo de $|R[n]|$ localiza entonces el inicio de la trama.
+
+Para que este máximo sea nítido y no se confunda con uno espurio en otra posición, la secuencia $\{s_i\}$ debe tener \emph{buena autocorrelación}: un pico marcado en el desplazamiento nulo y valores pequeños en cualquier otro desplazamiento. Existen familias de secuencias diseñadas con este criterio. Un ejemplo clásico son los \emph{códigos de Barker}, secuencias binarias ($s_i=\pm 1$) cuya autocorrelación
+\begin{equation*}
+    C[n] := \sum_{i} s_i\, s_{i+n}
+\end{equation*}
+está acotada por $1$ en valor absoluto fuera del pico. Por ejemplo, la secuencia de Barker de longitud $7$,
 \begin{equation*}
     (s_0,\ldots,s_6) = (+1,+1,+1,-1,-1,+1,-1),
 \end{equation*}
-tiene autocorrelación $R[0]=7$ en el pico, y $|R[n]|\leqslant 1$ para todo $n\neq 0$ -- una relación pico a lóbulo de $7$ a $1$, excelente para una secuencia tan corta.
+tiene $C[0]=7$ en el pico y $|C[n]|\leqslant 1$ para todo $n\neq 0$ (Figura \ref{fig:barker}), una relación de $7$ a $1$ entre el pico y los lóbulos laterales, muy buena para una secuencia tan corta.
 
-El preámbulo cumple, entonces, una doble función, que conecta directamente con lo desarrollado en esta sección:
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=10cm, height=5cm,
+                xmin=-7, xmax=7, ymin=-1.5, ymax=7.8,
+                xtick={-6,...,6}, ytick={-1,0,1,7},
+                axis x line=bottom, axis y line=left,
+                xlabel={$n$},
+                ylabel={$C[n]$},
+                ]
+                \draw[gray] (axis cs:-7,0) -- (axis cs:7,0);
+                \addplot[teal, thick, ycomb, mark=*, mark options={fill=teal}] coordinates {
+                    (-6,-1) (-5,0) (-4,-1) (-3,0) (-2,-1) (-1,0) (0,7) (1,0) (2,-1) (3,0) (4,-1) (5,0) (6,-1)};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Autocorrelación de la secuencia de Barker de longitud $7$. El pico en $n=0$ vale $7$, y fuera de él la autocorrelación vale $0$ o $-1$.}\label{fig:barker}
+\end{figure}
+
+El preámbulo cumple entonces una doble función:
 \begin{itemize}
-    \item \textbf{Marca el inicio de la trama}, vía el pico de correlación recién descripto.
-    \item \textbf{Resuelve la ambigüedad de fase} (Sección \ref{sec:ambiguedad fase}): como el receptor conoce $s_m$, compara la fase del preámbulo \emph{recibido} contra la esperada y determina directamente cuál de las $m$ rotaciones ambiguas enganchó el lazo de Costas (o de decisión realimentada), corrigiéndola antes de decodificar el resto de la trama. De paso, al ser símbolos genuinamente conocidos (no decididos), es exactamente la secuencia de arranque que el lazo de decisión realimentada (Sección \ref{sec:decision directed}) necesitaba antes de poder confiar en sus propias decisiones.
+    \item Marca el inicio de la trama, mediante el pico de correlación descripto.
+    \item Resuelve la ambigüedad de fase (Sección \ref{sec:ambiguedad fase}). Como el receptor conoce los $s_i$, la fase de $R[n_0]$ indica directamente cuál de las $q$ rotaciones ambiguas enganchó el lazo de portadora, y esa rotación se corrige antes de decodificar el resto de la trama.
 \end{itemize}
 
-Con esto se cierra el círculo de este capítulo: la ecualización le devuelve al pulso su forma libre de ISI (Sección \ref{sec:ecualizacion}), y el sincronismo de portadora, de símbolo y de trama garantizan, en conjunto, que el receptor demodula en la fase correcta, muestrea en el instante correcto, y sabe dónde empieza a leer -- las tres suposiciones que, desde el Capítulo \ref{chapter:deteccion ruido}, veníamos dando por sentado.
+\begin{ejemplo}[Transmisión serie asíncrona]\label{ejemplo:uart}
+Un caso simple y muy difundido, en el que la sincronización de trama y la temporización de símbolo se resuelven juntas y sin ningún lazo, es la transmisión serie asíncrona de los puertos serie y los microcontroladores (UART, \emph{Universal Asynchronous Receiver-Transmitter}), que usa por ejemplo la norma RS-232 del Ejemplo \ref{ejemplo:rs485}. Cada carácter viaja en una trama corta (Figura \ref{fig:uart}). La línea en reposo está en nivel alto. Un \emph{bit de arranque} en nivel bajo marca el comienzo de la trama, siguen $8$ bits de datos, empezando por el menos significativo, y un \emph{bit de parada} en nivel alto la cierra.
 
+El receptor muestrea la línea con un reloj local de frecuencia $16$ veces la tasa de bits. Al detectar el flanco descendente del bit de arranque espera $8$ períodos de ese reloj, verifica que la línea siga en nivel bajo, para descartar un pulso espurio, y a partir de allí toma una muestra cada $16$ períodos, es decir, en el centro nominal de cada bit. El receptor se vuelve a sincronizar en cada flanco de arranque, y entre dos flancos funciona en lazo abierto, con su propio reloj.
 
+Esto alcanza porque la trama es corta. Si los relojes del transmisor y del receptor difieren en una fracción $\varepsilon$, la última muestra, la del bit de parada, que se toma $9.5$ bits después del flanco, queda desplazada $9.5\,\varepsilon$ bits respecto del centro del bit. Para que siga cayendo dentro del bit hace falta $9.5\,\varepsilon<0.5$, es decir $\varepsilon\lesssim 5\%$, despreciando la incertidumbre de $1/16$ de bit con que se detecta el flanco. Ese margen se reparte entre los dos extremos, y en la práctica se exige que cada reloj esté dentro de un $2\%$ de su valor nominal, lo que se logra incluso con osciladores poco precisos. De ahí el nombre de transmisión \emph{asíncrona}: el reloj no se transmite ni se recupera, sino que se vuelve a alinear en cada carácter. Con tramas largas o velocidades altas, como en Ethernet o USB, este margen ya no alcanza, y se recurre a la recuperación de reloj mediante lazos como los de la Sección \ref{sec:temporizacion}.
+\end{ejemplo}
 
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}[x=1.3cm, y=1cm]
+            % forma de onda: reposo, arranque, datos 0x4B (LSB primero: 1 1 0 1 0 0 1 0), parada, reposo
+            \draw[very thick, teal] (-1,1) -- (0,1) -- (0,0) -- (1,0) -- (1,1) -- (3,1) -- (3,0) -- (4,0) -- (4,1) -- (5,1) -- (5,0) -- (7,0) -- (7,1) -- (8,1) -- (8,0) -- (9,0) -- (9,1) -- (11,1);
+            \foreach \x in {0,...,10}{
+                \draw[gray, densely dotted] (\x,-0.15) -- (\x,1.35);
+            }
+            \foreach \x in {0,...,9}{
+                \draw[->, Red] ({\x+0.5},1.75) -- ({\x+0.5},1.4);
+            }
+            \node[font=\footnotesize, align=center] at (0.5,-0.45) {arranque};
+            \foreach \k in {0,...,7}{
+                \node[font=\footnotesize] at ({\k+1.5},-0.45) {$d_{\k}$};
+            }
+            \node[font=\footnotesize] at (9.5,-0.45) {parada};
+            \node[font=\footnotesize] at (-0.5,-0.45) {reposo};
+            \node[font=\footnotesize, Red, anchor=south] at (5,1.8) {muestras en el centro de cada bit};
+            \draw[|<->|] (0,-0.9) -- (0.5,-0.9);
+            \node[left, font=\footnotesize] at (0,-0.9) {$8$ ciclos};
+            \draw[|<->|] (0.5,-0.9) -- node[below, font=\footnotesize] {$16$ ciclos} (1.5,-0.9);
+            \draw[->] (0,2.3) node[above, font=\footnotesize] {flanco de arranque} -- (0,1.05);
+        \end{tikzpicture}
+    \end{center}
+    \caption{Trama de una UART con $8$ bits de datos, para el carácter de código $\mathrm{4B}$ en hexadecimal, que se transmite empezando por el bit menos significativo. El receptor detecta el flanco descendente del bit de arranque, espera $8$ ciclos de su reloj de $16$ veces la tasa de bits hasta el centro de ese bit, y luego toma una muestra cada $16$ ciclos.}\label{fig:uart}
+\end{figure}
 
+\section{Sincronismo en receptores digitales (SDR)}\label{sec:sdr}
+
+Los mecanismos anteriores se describieron como circuitos que operan en tiempo continuo, que es como se implementaron durante décadas. En los receptores actuales, y en particular en las \emph{radios definidas por software} (\emph{Software Defined Radio}, SDR), la señal se baja a banda base con un oscilador local fijo, se muestrea con un conversor analógico digital cuyo reloj tampoco está sincronizado con el transmisor, y todo el procesamiento posterior, incluido el sincronismo, se realiza sobre las muestras de la envolvente compleja $z[n]=x_i[n]+jx_q[n]$. Las ideas son las mismas, pero cambian algunos componentes y el orden en que se aplican.
+
+\subsection{El PLL en tiempo discreto}\label{sec:pll discreto}
+
+En un receptor digital no se corrige la frecuencia de ningún oscilador físico. En su lugar, se multiplica la señal muestreada por una exponencial compleja $\e^{-j\phi[n]}$, cuya fase genera un \emph{oscilador controlado numéricamente} (\emph{Numerically Controlled Oscillator}, NCO): un acumulador que suma, en cada muestra, el incremento de fase indicado por el filtro de lazo,
+\begin{equation*}
+    \phi[n+1] = \phi[n] + v[n].
+\end{equation*}
+El acumulador es la versión discreta del integrador del VCO \eqref{eq:vco}. El filtro de lazo proporcional más integral toma la forma $v[n]=k_p\,e[n]+k_i\sum_{m\leqslant n}e[m]$, donde el segundo término acumula la corrección de frecuencia. Mientras el ancho de banda del lazo sea mucho menor que la frecuencia de muestreo, este lazo discreto se comporta como el de segundo orden de la Sección \ref{sec:pll segundo orden}, y su diseño, incluido el compromiso entre ancho de banda y ruido, es el mismo.
+
+Los detectores de fase se calculan directamente sobre las muestras. Para BPSK, el detector del lazo de Costas es el producto $e[n]=x_i[n]\,x_q[n]$ de \eqref{eq:error costas}, calculado sobre la muestra ya rotada por el NCO. Para QPSK se usa $e[n]=\sgn(x_i[n])\,x_q[n]-\sgn(x_q[n])\,x_i[n]$, que es proporcional a $\theta_e$ cerca del enganche.
+
+\subsection{Temporización con el detector de Gardner}\label{sec:gardner}
+
+Como el reloj del conversor no puede ajustarse, la temporización se corrige \emph{interpolando}: a partir de las muestras disponibles, tomadas típicamente a dos o más muestras por símbolo, un filtro interpolador calcula el valor de la señal en el instante $kT_s+\tau$ deseado. El lazo de temporización ajusta $\tau$ a partir de un detector de error calculado sobre esas muestras interpoladas.
+
+El detector más usado es el \emph{detector de Gardner}, que necesita dos muestras por símbolo. Además de la muestra $y_k:=y(kT_s+\tau)$, toma una muestra en el punto medio entre símbolos, $y_{k-1/2}:=y\big((k-\tfrac12)T_s+\tau\big)$, y forma
+\begin{equation}\label{eq:error gardner}
+    e_k := y_{k-1/2}\,\big(y_k - y_{k-1}\big).
+\end{equation}
+La Figura \ref{fig:gardner onda} muestra el funcionamiento. Cuando hay una transición entre $a_{k-1}$ y $a_k$ y el muestreo es correcto, la muestra intermedia cae en el cruce por cero de la onda y $e_k\approx 0$. Si el muestreo está atrasado, la muestra intermedia ya tomó el signo del nuevo símbolo, igual que $y_k-y_{k-1}$, y el error es positivo. Si está adelantado, la muestra intermedia conserva el signo del símbolo anterior y el error es negativo. Cuando no hay transición, $y_k-y_{k-1}\approx 0$ y el detector no aporta información, por lo que el lazo se apoya en las transiciones de la señal.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=12cm, height=5.5cm,
+                xmin=-1.5, xmax=2.5, ymin=-1.6, ymax=1.6,
+                xtick={-1,-0.5,0,0.5,1,1.5,2},
+                xticklabels={$(k-2)T_s$, , $(k-1)T_s$, , $kT_s$, , $(k+1)T_s$},
+                ytick={-1,0,1},
+                axis x line=middle, axis y line=left,
+                legend style={at={(0.5,1.03)}, anchor=south, legend columns=2, draw=none, font=\small},
+                clip=false,
+                ]
+                \addplot[gray, thick, mark=none, forget plot] table[x=t, y=y] {figuras/sincronismo/gardner_onda.dat};
+                \addplot[teal, only marks, mark=*, mark size=2.5pt] coordinates {(0,1) (0.5,0) (1,-1)};
+                \addlegendentry{muestreo correcto: $e_k=0$}
+                \addplot[Red, only marks, mark=square*, mark size=2.3pt] coordinates {(0.25,0.517) (0.75,-0.517) (1.25,-1.384)};
+                \addlegendentry{muestreo atrasado $T_s/4$: $e_k>0$}
+                \draw[Red, densely dotted] (axis cs:0.75,0) -- (axis cs:0.75,-0.517);
+                \node[teal, above right, font=\footnotesize] at (axis cs:0.5,0) {$y_{k-1/2}$};
+                \node[teal, above right, font=\footnotesize] at (axis cs:0,1) {$y_{k-1}$};
+                \node[teal, below left, font=\footnotesize] at (axis cs:1,-1) {$y_{k}$};
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Onda PAM binaria con pulsos de coseno alzado ($\alpha=0.35$) alrededor de una transición de $a_{k-1}=+1$ a $a_k=-1$. Con el muestreo correcto (círculos) la muestra intermedia cae en el cruce por cero y el detector de Gardner da $e_k=0$. Con el muestreo atrasado (cuadrados), la muestra intermedia es negativa, del mismo signo que $y_k-y_{k-1}$, y el error resulta positivo.}\label{fig:gardner onda}
+\end{figure}
+
+\begin{proposicion}[Señal de error de Gardner]\label{prop:gardner}
+Sea $y(t)=\sum_n a_n p(t-nT_s)$, con $p$ un pulso de Nyquist par y $\{a_n\}$ símbolos independientes de media nula y varianza $\sigma_a^2$. Entonces
+\begin{equation}\label{eq:gardner exacta}
+    \E{e_k} = \sigma_a^2\sum_{n} p\big((n-\tfrac12)T_s+\tau\big)\Big[p(nT_s+\tau) - p\big((n-1)T_s+\tau\big)\Big],
+\end{equation}
+que se anula en $\tau=0$. Para $\tau$ pequeño, $\E{e_k}\approx S\,\tau$, con pendiente
+\begin{equation}\label{eq:gardner lineal}
+    S = -2\sigma_a^2\left[p'(T_s/2) - \sum_{n\geqslant 1} p'(nT_s)\Big(p\big((n-\tfrac12)T_s\big)-p\big((n+\tfrac12)T_s\big)\Big)\right].
+\end{equation}
+\end{proposicion}
+\begin{proof}
+Las tres muestras son combinaciones lineales de los símbolos:
+\begin{equation*}
+    y_k = \sum_n a_n\, p\big((k-n)T_s+\tau\big), \quad y_{k-1} = \sum_n a_n\, p\big((k-1-n)T_s+\tau\big), \quad y_{k-1/2} = \sum_n a_n\, p\big((k-\tfrac12-n)T_s+\tau\big).
+\end{equation*}
+Como $\E{a_na_m}=\sigma_a^2\delta_{n,m}$, al tomar valor esperado en \eqref{eq:error gardner} solo sobreviven los productos de un mismo símbolo:
+\begin{equation*}
+    \E{e_k} = \sigma_a^2\sum_n p\big((k-\tfrac12-n)T_s+\tau\big)\Big[p\big((k-n)T_s+\tau\big)-p\big((k-1-n)T_s+\tau\big)\Big],
+\end{equation*}
+y reindexando con $k-n$ en lugar de $n$ se obtiene \eqref{eq:gardner exacta}. En $\tau=0$, como $p(nT_s)=\delta_{n,0}$, solo sobreviven los términos $n=0$ y $n=1$, que dan $p(-T_s/2)-p(T_s/2)=0$ por la paridad de $p$.
+
+Para la pendiente, derivamos \eqref{eq:gardner exacta} respecto de $\tau$ en $\tau=0$:
+\begin{equation*}
+    S = \sigma_a^2\sum_n p'\big((n-\tfrac12)T_s\big)\Big[p(nT_s)-p\big((n-1)T_s\big)\Big] + \sigma_a^2\sum_n p\big((n-\tfrac12)T_s\big)\Big[p'(nT_s)-p'\big((n-1)T_s\big)\Big].
+\end{equation*}
+En la primera suma, por la condición de Nyquist, solo sobreviven $n=0$ y $n=1$, que dan $p'(-T_s/2)-p'(T_s/2)=-2p'(T_s/2)$, ya que $p'$ es impar. En la segunda, reindexando el término en $p'((n-1)T_s)$, queda $\sum_n p'(nT_s)\big[p((n-\tfrac12)T_s)-p((n+\tfrac12)T_s)\big]$. El término $n=0$ es nulo porque $p'(0)=0$, y los términos $n$ y $-n$ coinciden porque $p'$ es impar y $p$ es par, lo que da el factor $2$ de \eqref{eq:gardner lineal}.
+\end{proof}
+
+El primer término de \eqref{eq:gardner lineal}, $-2\sigma_a^2p'(T_s/2)$, proviene de la derivada de la muestra intermedia. Como $p'(T_s/2)<0$, ya que el pulso todavía está cayendo hacia su primer cero en $T_s$, este término es positivo. La suma corrige su valor con el aporte de las colas del pulso, y la corrección no es despreciable: para un coseno alzado con $\alpha=0.35$ y $T_s=1$, el primer término vale $2.62\,\sigma_a^2$, mientras que la pendiente exacta es $S\approx 1.08\,\sigma_a^2$. Lo que importa para el lazo es que $\E{e_k}$ es aproximadamente lineal en $\tau$ cerca de $\tau=0$ y tiene el signo correcto, como muestra la Figura \ref{fig:gardner curva}. Notemos además que $\E{e_k}$ se anula también en $\tau=\pm T_s/2$, pero allí la pendiente es negativa: ese punto de equilibrio es inestable, y el lazo se aleja de él, igual que el PLL respecto de $\theta_e=\pi$.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=11cm, height=6.5cm,
+                xlabel={$\tau/T_s$},
+                ylabel={$\E{e_k}/\sigma_a^2$},
+                xmin=-0.5, xmax=0.5,
+                ymin=-0.3, ymax=0.3,
+                xtick={-0.5,-0.25,0,0.25,0.5},
+                grid=major,
+                legend pos=north west,
+                legend style={font=\small, legend cell align=left},
+                ]
+                \addplot[teal, very thick, mark=none] table[x=tau, y=E] {figuras/sincronismo/gardner_curva.dat};
+                \addlegendentry{exacto, \eqref{eq:gardner exacta}}
+                \addplot[Red, thick, dashed, domain=-0.2:0.2, samples=2] {1.078*x};
+                \addlegendentry{$S\tau$, \eqref{eq:gardner lineal}}
+                \addplot[gray, thick, densely dotted, domain=-0.11:0.11, samples=2] {2.617*x};
+                \addlegendentry{solo $-2\sigma_a^2p'(T_s/2)\,\tau$}
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Valor esperado de la señal de error de Gardner en función del error de temporización, para un pulso de coseno alzado con $\alpha=0.35$ y símbolos independientes de varianza $\sigma_a^2$. Cerca de $\tau=0$ la curva es lineal, con la pendiente $S$ de \eqref{eq:gardner lineal}. Retener solo el primer término de $S$ sobrestima la pendiente, aunque da el signo correcto.}\label{fig:gardner curva}
+\end{figure}
+
+\begin{remark}[Insensibilidad a la fase de portadora]\label{nota:gardner fase}
+Para una constelación compleja, el detector se aplica a las muestras de la envolvente compleja, en la forma
+\begin{equation*}
+    e_k = \mathrm{Re}\left\{z_{k-1/2}^*\,\big(z_k-z_{k-1}\big)\right\}.
+\end{equation*}
+Si la portadora no está sincronizada y la constelación aparece rotada un ángulo $\theta_e$, todas las muestras quedan multiplicadas por $\e^{j\theta_e}$, factor que se cancela en el producto de $z_{k-1/2}^*$ por $z_k-z_{k-1}$. Mientras la rotación varíe lentamente frente a $T_s$, el detector de Gardner funciona sin necesidad de haber sincronizado la portadora.
+\end{remark}
+
+\subsection{Decisión realimentada}\label{sec:decision directed}
+
+Una vez que las muestras se toman en los instantes correctos, la fase de la portadora puede corregirse símbolo a símbolo a partir de las muestras $z_k := z(kT_s)$. Para constelaciones complejas ($M$-QAM, o $M$-PSK con $M>2$) conviene trabajar directamente con el símbolo complejo $c_k=a_k+jb_k$ y su versión recibida, posiblemente rotada.
+
+\begin{proposicion}[Señal de error de decisión realimentada]\label{prop:decision directed}
+Se tiene $z_k = c_k\,\e^{j\theta_e}$, es decir, el símbolo recibido es el transmitido rotado el ángulo de error. Si $\hat c_k$ es la decisión del receptor, tomada sobre la constelación completa (Sección \ref{sec:modulacion pasabanda m aria}), entonces
+\begin{equation}\label{eq:error decision directed}
+    e_k := \mathrm{Im}\left\{z_k\, \hat c_k^*\right\} \approx |c_k|^2\,\theta_e,
+\end{equation}
+siempre que la decisión sea correcta, $\hat c_k=c_k$, y $\theta_e$ sea pequeño.
+\end{proposicion}
+\begin{proof}
+Generalizando \eqref{eq:xi xq con error de fase} a símbolos complejos, $z_k=c_k\e^{j\theta_e}$. Si $\hat c_k= c_k$,
+\begin{equation*}
+    z_k\,\hat c_k^* = c_k c_k^*\,\e^{j\theta_e} = |c_k|^2\,\e^{j\theta_e},
+\end{equation*}
+cuya parte imaginaria es $|c_k|^2\sin\theta_e\approx|c_k|^2\theta_e$.
+\end{proof}
+
+Este esquema se denomina de \emph{decisión realimentada} (\emph{decision-directed}), porque usa las propias decisiones del receptor en lugar de símbolos conocidos de antemano, y es el que se usa en la práctica para $M$-QAM. Si $\theta_e=0$, entonces $e_k=0$ y no hay nada que corregir. Si el lazo se aparta, $e_k$ crece con el error y lo lleva de vuelta. Este detector depende de que las decisiones sean mayormente correctas, lo que a su vez requiere que el lazo ya esté cerca del enganche. Si arranca con un error de fase grande, las decisiones son mayormente erróneas y el lazo puede no converger. Por eso, en la práctica, el lazo arranca con los símbolos conocidos del preámbulo de la Sección \ref{sec:sincronizacion trama}, y recién después pasa a usar sus propias decisiones. Tiene además la misma ambigüedad de fase de la Sección \ref{sec:ambiguedad fase}, ya que si la constelación rotada coincide consigo misma, las decisiones rotan junto con ella y el error se anula.
+
+\subsection{La cadena de sincronismo de un receptor digital}\label{sec:cadena sdr}
+
+El orden en que se aplican los mecanismos en un receptor digital difiere del de la presentación clásica (Figura \ref{fig:cadena sdr}). Primero, si el desvío de frecuencia es grande frente al ancho de banda de los lazos, como en el Ejemplo \ref{ejemplo:cfo}, se lo estima y corrige de forma gruesa, por ejemplo con un \emph{lazo de enganche de frecuencia} (FLL), cuyo detector es sensible a la diferencia de frecuencia y no a la de fase. Luego se resuelve la temporización, con el filtro acoplado, el interpolador y el detector de Gardner, que no depende de la fase de portadora (Observación \ref{nota:gardner fase}). Después, sobre las muestras ya tomadas en los instantes correctos, se corrige la fase fina de la portadora con un lazo de Costas discreto o de decisión realimentada, que necesita esas muestras. Por último, se busca el preámbulo para sincronizar la trama y resolver la ambigüedad de fase.
+
+\begin{figure}
+    \begin{center}
+    \begin{tikzpicture}[blockdiagram, node distance=0.45cm]
+        \node [etiqueta] (entrada) {$z[n]$};
+        \node [block, right=of entrada, align=center] (fll) {Corrección\\gruesa de\\frecuencia};
+        \node [block, right=of fll, align=center] (mf) {Filtro\\acoplado};
+        \node [block, right=of mf, align=center] (ted) {Interpolador\\y Gardner};
+        \node [block, right=of ted, align=center] (costas) {Fase fina\\(Costas o\\decisión\\realimentada)};
+        \node [block, right=of costas, align=center] (trama) {Búsqueda\\del\\preámbulo};
+        \node [etiqueta, right=of trama] (salida) {$\hat c_k$};
+        \draw [->] (entrada) -- (fll);
+        \draw [->] (fll) -- (mf);
+        \draw [->] (mf) -- (ted);
+        \draw [->] (ted) -- node[midway, below] {\footnotesize $z_k$} (costas);
+        \draw [->] (costas) -- (trama);
+        \draw [->] (trama) -- (salida);
+    \end{tikzpicture}
+    \end{center}
+    \caption{Cadena típica de sincronismo en un receptor digital. Las muestras $z[n]$ de la envolvente compleja se toman con un reloj libre, a dos o más muestras por símbolo, y a partir del bloque de temporización se trabaja con una muestra por símbolo, $z_k$.}\label{fig:cadena sdr}
+\end{figure}
+
+Estos bloques son los que aparecen, con distintos nombres, en las herramientas de procesamiento para SDR. En GNU Radio, por ejemplo, un entorno de software libre muy usado con estos equipos, la cadena de la Figura \ref{fig:cadena sdr} se arma con bloques como \emph{FLL Band-Edge}, para la corrección gruesa de frecuencia, \emph{Symbol Sync}, que implementa la interpolación y detectores de temporización como el de Gardner, \emph{Costas Loop}, para la fase fina, y bloques de correlación para buscar el preámbulo. Los parámetros que esos bloques piden, como el ancho de banda del lazo y el factor de amortiguamiento, son los de la Sección \ref{sec:pll}.
+
+Con esto se completa la descripción de la caja de sincronismo. La ecualización (Sección \ref{sec:ecualizacion}) le devuelve al pulso recibido su forma libre de ISI, y la sincronización de portadora, de símbolo y de trama garantizan, en conjunto, que el receptor demodula con la fase correcta, muestrea en el instante correcto y sabe dónde empieza a leer. Estas son las suposiciones que, desde el Capítulo \ref{chapter:deteccion ruido}, veníamos dando por sentadas.
