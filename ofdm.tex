@@ -1,0 +1,277 @@
+Cerramos el Capítulo \ref{chapter:propagacion guiada} con un problema: para compensar un canal cuya respuesta en frecuencia decrece fuertemente con la frecuencia, el ecualizador de cero forzado necesita ganancias muy grandes en el borde de la banda, y amplifica el ruido en la misma proporción. Allí sugerimos una idea distinta: en lugar de transmitir una única señal de banda ancha e invertir el canal de una sola vez, partir la banda en muchos tramos angostos, cada uno lo suficientemente chico como para que el canal sea aproximadamente constante dentro de él. En este capítulo desarrollamos esa idea, que da lugar a la \emph{modulación por división en frecuencias ortogonales} (\emph{Orthogonal Frequency Division Multiplexing}, OFDM).
+
+\section{Motivación: transmitir en paralelo}\label{sec:ofdm motivacion}
+
+Consideremos un canal con respuesta en frecuencia $\hat H(f)$ no constante en la banda de la señal, como el cable del Capítulo \ref{chapter:propagacion guiada}. Si transmitimos una única señal QAM de velocidad de señalización $f_s$, el pulso recibido se extiende sobre varios símbolos y hay que ecualizar. Si en cambio repartimos los datos en $N$ señales QAM de velocidad $f_s/N$, cada una con su propia portadora, cada señal ocupa un ancho de banda $N$ veces menor. Con $N$ suficientemente grande, $\hat H(f)$ es aproximadamente constante en la banda de cada una, y cada subcanal se comporta como un canal plano, que solo atenúa y desfasa: no hay ISI que ecualizar.
+
+El mismo argumento vale en el dominio del tiempo. En un canal inalámbrico, la señal llega al receptor por varios caminos, reflejada en edificios y otros obstáculos, y cada camino tiene un retardo distinto. En un entorno urbano, los ecos pueden llegar con varios microsegundos de diferencia. Si el tiempo de símbolo es comparable a esos retardos, los ecos de cada símbolo caen sobre los siguientes y hay ISI severa. Al repartir los datos en $N$ señales más lentas, cada símbolo dura $N$ veces más, y los ecos afectan solo una fracción pequeña de cada uno. Veremos además que esa fracción puede descartarse por completo.
+
+La idea de transmitir en paralelo sobre varias portadoras es antigua: es la \emph{multiplexación por división de frecuencia} (FDM) de la telefonía y la radiodifusión analógicas, en la que cada canal ocupa su propia banda, separada de las vecinas por una banda de guarda. El aporte de OFDM es doble. Por un lado, elige las portadoras de modo que sus espectros pueden solaparse sin interferirse, eliminando las bandas de guarda. Por otro, permite generar y separar las $N$ señales con una sola transformada de Fourier discreta, en lugar de $N$ moduladores y $N$ demoduladores.
+
+\section{Subportadoras ortogonales}\label{sec:ofdm ortogonalidad}
+
+Trabajamos con la envolvente compleja (Definición \ref{def:envolvente compleja}). Un \emph{símbolo OFDM} de duración $T$ es la suma de $N$ \emph{subportadoras} de frecuencias $k\Delta f$, $k=0,\ldots,N-1$, cada una modulada por un símbolo complejo $X_k$ de una constelación QAM:
+\begin{equation}\label{eq:simbolo ofdm}
+    x(t) = \sum_{k=0}^{N-1} X_k\,\e^{j2\pi k\Delta f\,t}, \qquad 0\leqslant t<T.
+\end{equation}
+Cada término es una exponencial compleja de frecuencia $k\Delta f$ multiplicada por un pulso rectangular de duración $T$, y transporta un símbolo QAM. En la señal pasabanda, las subportadoras quedan en las frecuencias $f_c+k\Delta f$. En la práctica los índices se toman simétricos alrededor de $f_c$, pero esto no cambia nada de lo que sigue.
+
+La elección clave es la separación entre subportadoras. Si $\Delta f=1/T$, las exponenciales son \emph{ortogonales} en el intervalo del símbolo:
+\begin{equation}\label{eq:ortogonalidad ofdm}
+    \frac{1}{T}\int_0^T \e^{j2\pi k t/T}\,\e^{-j2\pi l t/T}\,dt = \frac{1}{T}\int_0^T \e^{j2\pi (k-l) t/T}\,dt = \delta_{k,l},
+\end{equation}
+ya que para $k\neq l$ se integra un número entero de períodos de una exponencial compleja. En consecuencia, el receptor recupera cada símbolo correlacionando el símbolo OFDM recibido con la subportadora correspondiente:
+\begin{equation}\label{eq:demodulacion ofdm}
+    \frac{1}{T}\int_0^T x(t)\,\e^{-j2\pi k t/T}\,dt = \sum_{l=0}^{N-1}X_l\,\delta_{k,l} = X_k.
+\end{equation}
+Las demás subportadoras no interfieren, aunque ocupen la misma banda.
+
+En frecuencia, cada subportadora es un pulso rectangular de duración $T$ desplazado a $k/T$, cuyo espectro es un $\sinc$ centrado en $k/T$, con ceros en todos los múltiplos de $1/T$ (Figura \ref{fig:espectro ofdm}). Los espectros se solapan, pero en la frecuencia central de cada subportadora todos los demás se anulan. Como cada símbolo QAM ocupa en la práctica un ancho de banda del orden de $1/T$, las $N$ subportadoras ocupan aproximadamente $N/T$, y transmiten $N$ símbolos cada $T$ segundos. La eficiencia espectral es entonces la misma que la de una única portadora con pulsos de Nyquist ideales, sin las bandas de guarda del FDM clásico.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                width=12cm, height=5.5cm,
+                xmin=-2.5, xmax=6.5, ymin=-0.3, ymax=1.15,
+                xtick={0,1,2,3,4}, xticklabels={$0$, $1/T$, $2/T$, $3/T$, $4/T$},
+                ytick=\empty,
+                axis x line=bottom, axis y line=none,
+                xlabel={$f$},
+                domain=-2.5:6.5, samples=300,
+                ]
+                \draw[gray] (axis cs:-2.5,0) -- (axis cs:6.5,0);
+                \addplot[teal, thick] {sin(deg(pi*x))/(pi*x+1e-9)};
+                \addplot[Red, thick, dashed] {sin(deg(pi*(x-1)))/(pi*(x-1)+1e-9)};
+                \addplot[teal, thick] {sin(deg(pi*(x-2)))/(pi*(x-2)+1e-9)};
+                \addplot[Red, thick, dashed] {sin(deg(pi*(x-3)))/(pi*(x-3)+1e-9)};
+                \addplot[teal, thick] {sin(deg(pi*(x-4)))/(pi*(x-4)+1e-9)};
+                \foreach \k in {0,...,4}{
+                    \edef\temp{\noexpand\draw[gray, densely dotted] (axis cs:\k,0) -- (axis cs:\k,1);}
+                    \temp
+                }
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Espectros de cinco subportadoras de un símbolo OFDM, separadas $\Delta f=1/T$. Cada una es un $\sinc$ centrado en su frecuencia, con ceros en los múltiplos de $1/T$. Los espectros se solapan, pero en la frecuencia central de cada subportadora (líneas punteadas) todos los demás valen cero.}\label{fig:espectro ofdm}
+\end{figure}
+
+\section{Implementación con la transformada de Fourier discreta}\label{sec:ofdm dft}
+
+Generar $N$ subportadoras con $N$ osciladores y separarlas con $N$ correladores sería impracticable para los valores de $N$ que se usan, de cientos o miles. La solución es trabajar con muestras. Recordemos la \emph{transformada de Fourier discreta} (DFT) de una secuencia $\{x[n]\}_{n=0}^{N-1}$ y su inversa (IDFT):
+\begin{equation}\label{eq:dft}
+    X[k] = \sum_{n=0}^{N-1} x[n]\,\e^{-j2\pi kn/N}, \qquad\qquad x[n] = \frac{1}{N}\sum_{k=0}^{N-1} X[k]\,\e^{j2\pi kn/N},
+\end{equation}
+con $k,n=0,\ldots,N-1$.
+
+Muestreemos el símbolo OFDM \eqref{eq:simbolo ofdm} con $N$ muestras por símbolo, en los instantes $t=nT/N$. Como $\Delta f=1/T$,
+\begin{equation}\label{eq:ofdm idft}
+    x[n] := x\!\left(\frac{nT}{N}\right) = \sum_{k=0}^{N-1} X_k\,\e^{j2\pi kn/N}, \qquad n=0,\ldots,N-1,
+\end{equation}
+que es, salvo el factor $N$, la IDFT de los símbolos $X_0,\ldots,X_{N-1}$. Recíprocamente, por \eqref{eq:dft}, el receptor los recupera con la DFT de las muestras recibidas:
+\begin{equation}\label{eq:ofdm dft}
+    X_k = \frac{1}{N}\sum_{n=0}^{N-1} x[n]\,\e^{-j2\pi kn/N},
+\end{equation}
+que es la versión discreta de la correlación \eqref{eq:demodulacion ofdm}. La frecuencia de muestreo es $N/T$, igual al ancho de banda de la señal, como corresponde a una envolvente compleja de ese ancho de banda.
+
+El transmisor y el receptor quedan entonces como en la Figura \ref{fig:ofdm bloques}. El transmisor agrupa los bits en bloques, los convierte en $N$ símbolos QAM, calcula la IDFT, y convierte las $N$ muestras en una señal analógica que se lleva a la frecuencia de la portadora. El receptor realiza las operaciones inversas. La DFT y su inversa se calculan con la \emph{transformada rápida de Fourier} (FFT), que requiere del orden de $N\log_2 N$ operaciones en lugar de $N^2$. Por ejemplo, con $N=1024$ son unas $10^4$ operaciones en lugar de $10^6$. Esta es la razón por la que OFDM, propuesta en la década de 1960, se volvió práctica recién cuando el procesamiento digital lo permitió.
+
+\begin{figure}
+    \begin{center}
+    \begin{tikzpicture}[blockdiagram, node distance=0.75cm, every node/.append style={font=\small}]
+        \node [etiqueta] (bits) {bits};
+        \node [block, right=of bits, align=center] (map) {Serie a\\paralelo\\y QAM};
+        \node [block, right=of map] (idft) {IDFT};
+        \node [block, right=of idft, align=center] (cp) {Prefijo\\cíclico};
+        \node [block, right=of cp, align=center] (da) {Paralelo\\a serie\\y D/A};
+        \node [block, right=of da, align=center] (up) {A la\\portadora};
+        \node [block, below=1.4cm of up, align=center] (canal) {Canal};
+        \node [block, left=of canal, align=center] (down) {A banda\\base y A/D};
+        \node [block, left=of down, align=center] (sp) {Quita\\prefijo};
+        \node [block, left=of sp] (dft) {DFT};
+        \node [block, left=of dft, align=center] (eq) {Ecualiza\\y decide};
+        \node [etiqueta, left=of eq] (salida) {bits};
+        \draw [->] (bits) -- (map);
+        \draw [->] (map) -- node[above] {\footnotesize $X_k$} (idft);
+        \draw [->] (idft) -- node[above] {\footnotesize $x[n]$} (cp);
+        \draw [->] (cp) -- (da);
+        \draw [->] (da) -- (up);
+        \draw [->] (up) -- (canal);
+        \draw [->] (canal) -- (down);
+        \draw [->] (down) -- (sp);
+        \draw [->] (sp) -- node[above] {\footnotesize $y[n]$} (dft);
+        \draw [->] (dft) -- node[above] {\footnotesize $Y_k$} (eq);
+        \draw [->] (eq) -- (salida);
+    \end{tikzpicture}
+    \end{center}
+    \caption{Diagrama de bloques de un transmisor (arriba) y un receptor (abajo) OFDM. Los $N$ símbolos QAM de cada bloque se transforman con una IDFT en las $N$ muestras del símbolo OFDM, a las que se antepone el prefijo cíclico. El receptor descarta el prefijo, calcula la DFT y ecualiza cada subportadora por separado.}\label{fig:ofdm bloques}
+\end{figure}
+
+\section{El canal y el prefijo cíclico}\label{sec:prefijo ciclico}
+
+Veamos ahora qué le hace el canal a un símbolo OFDM. Trabajando con las muestras, el canal es un filtro discreto con respuesta al impulso $h[0],\ldots,h[L-1]$, que incluye los ecos del multicamino o la cola del pulso en un cable, y la señal recibida es
+\begin{equation*}
+    r[n] = \sum_{m=0}^{L-1} h[m]\,x[n-m] + w[n],
+\end{equation*}
+con $w[n]$ el ruido. Esta convolución tiene dos efectos indeseados. Las primeras $L-1$ muestras de cada símbolo OFDM reciben la cola del símbolo anterior, lo que produce ISI entre símbolos OFDM consecutivos. Y, más sutil, aunque el símbolo estuviera aislado, la convolución lineal no preserva la ortogonalidad de las subportadoras, porque una exponencial truncada a $N$ muestras deja de ser una exponencial al pasar por el filtro.
+
+Ambos problemas se resuelven con el \emph{prefijo cíclico}: antes de transmitir las $N$ muestras $x[0],\ldots,x[N-1]$ de cada símbolo, se transmite una copia de sus últimas $L_p$ muestras, $x[N-L_p],\ldots,x[N-1]$, con $L_p\geqslant L-1$ (Figura \ref{fig:prefijo ciclico}). El receptor descarta las $L_p$ muestras del prefijo y se queda con las $N$ siguientes. Las colas del símbolo anterior caen enteramente dentro del prefijo descartado, lo que elimina la ISI entre símbolos OFDM. Y en las $N$ muestras que se conservan, cada vez que la convolución necesita una muestra $x[n-m]$ con $n-m<0$, encuentra en el prefijo la muestra $x[n-m+N]$. Es decir, las muestras que se conservan son
+\begin{equation}\label{eq:convolucion circular}
+    y[n] = \sum_{m=0}^{L-1} h[m]\,x\big[(n-m)\bmod N\big] + w[n], \qquad n=0,\ldots,N-1,
+\end{equation}
+una \emph{convolución circular} de $x$ con $h$.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}[x=1cm, y=1cm]
+            % símbolo anterior
+            \fill[gray!15] (0,0) rectangle (1.4,1);
+            \draw (0,0) rectangle (1.4,1);
+            \node[font=\footnotesize] at (0.7,0.5) {anterior};
+            % prefijo y símbolo actual
+            \fill[Red!20] (1.4,0) rectangle (3.0,1);
+            \draw (1.4,0) rectangle (3.0,1);
+            \node[font=\footnotesize, align=center] at (2.2,0.5) {prefijo};
+            \fill[teal!10] (3.0,0) rectangle (11.0,1);
+            \draw (3.0,0) rectangle (11.0,1);
+            \fill[Red!20] (9.4,0) rectangle (11.0,1);
+            \draw (9.4,0) -- (9.4,1);
+            \node[font=\footnotesize] at (6.2,0.5) {$x[0],\ldots,x[N-1]$};
+            \node[font=\footnotesize] at (10.2,0.5) {final};
+            % siguiente
+            \fill[gray!15] (11.0,0) rectangle (12.4,1);
+            \draw (11.0,0) rectangle (12.4,1);
+            \node[font=\footnotesize] at (11.7,0.5) {siguiente};
+            % copia
+            \draw[->, Red, thick] (10.2,1.05) to[out=150, in=30] node[above, font=\footnotesize] {copia} (2.2,1.05);
+            % cotas
+            \draw[|<->|] (1.4,-0.3) -- node[below, font=\footnotesize] {$L_p$ muestras} (3.0,-0.3);
+            \draw[|<->|] (3.0,-0.3) -- node[below, font=\footnotesize] {$N$ muestras: ventana de la DFT} (11.0,-0.3);
+            % respuesta al impulso del canal
+            \draw[->] (0.9,-1.6) -- (3.3,-1.6);
+            \foreach \x/\h in {1.4/0.7, 1.75/0.45, 2.1/0.3, 2.45/0.15}{
+                \draw[teal, thick] (\x,-1.6) -- (\x,{-1.6+\h});
+                \fill[teal] (\x,{-1.6+\h}) circle (1.5pt);
+            }
+            \node[font=\footnotesize, anchor=west] at (3.4,-1.45) {$h[0],\ldots,h[L-1]$, con $L-1\leqslant L_p$};
+        \end{tikzpicture}
+    \end{center}
+    \caption{Prefijo cíclico. Antes de cada símbolo OFDM se transmite una copia de sus últimas $L_p$ muestras. Si la respuesta al impulso del canal no es más larga que el prefijo, los ecos del símbolo anterior caen dentro del prefijo, que el receptor descarta, y sobre la ventana de $N$ muestras el canal actúa como una convolución circular.}\label{fig:prefijo ciclico}
+\end{figure}
+
+\begin{proposicion}[Canal equivalente de OFDM]\label{prop:canal ofdm}
+Sean $Y_k := \frac{1}{N}\sum_{n=0}^{N-1}y[n]\,\e^{-j2\pi kn/N}$ las salidas de la DFT del receptor. Entonces
+\begin{equation}\label{eq:canal ofdm}
+    Y_k = H_k\,X_k + W_k, \qquad k=0,\ldots,N-1,
+\end{equation}
+donde $H_k:=\sum_{m=0}^{L-1}h[m]\,\e^{-j2\pi km/N}$ es la respuesta en frecuencia del canal en la frecuencia de la subportadora $k$, y $W_k:=\frac{1}{N}\sum_{n}w[n]\,\e^{-j2\pi kn/N}$.
+\end{proposicion}
+\begin{proof}
+Sustituyendo \eqref{eq:convolucion circular} en la definición de $Y_k$ e intercambiando las sumas, el término de señal es
+\begin{equation*}
+    \sum_{m=0}^{L-1} h[m]\,\e^{-j2\pi km/N}\;\frac{1}{N}\sum_{n=0}^{N-1} x\big[(n-m)\bmod N\big]\,\e^{-j2\pi k(n-m)/N}.
+\end{equation*}
+Como $\e^{-j2\pi k(n-m)/N}$ es periódica en $n-m$ de período $N$, la suma interior recorre las $N$ muestras de $x$ en otro orden, y vale $X_k$ por \eqref{eq:ofdm dft}. El factor exterior es $H_k$. Este es el teorema de convolución para la DFT: la DFT de una convolución circular es el producto de las DFT.
+\end{proof}
+
+La Proposición \ref{prop:canal ofdm} es el resultado central de este capítulo. Gracias al prefijo cíclico, el canal, que en el dominio del tiempo mezcla cada muestra con las anteriores, queda representado por $N$ canales independientes, uno por subportadora, cada uno de los cuales solo multiplica el símbolo por un número complejo $H_k$. No hay interferencia entre símbolos ni entre subportadoras.
+
+Esto simplifica radicalmente la ecualización. En una transmisión de portadora única, cada muestra recibida es una combinación de varios símbolos, y el ecualizador transversal de la Sección \ref{sec:ecualizacion} necesita muchos coeficientes para deshacer esa mezcla. En OFDM, cada $Y_k$ depende de un solo símbolo, $X_k$, y basta con
+\begin{equation*}
+    \hat X_k = \frac{Y_k}{H_k} = X_k + \frac{W_k}{H_k},
+\end{equation*}
+es decir, corregir la amplitud y la fase de cada subportadora con un único número complejo, y decidir sobre la constelación QAM como en la Sección \ref{sec:deteccion coherente}. Es la inversión del canal $\hat C(f)=1/\hat P_d(f)$ del Teorema \ref{teorema:zfe inversion}, pero ahora exacta y sin truncamiento, aplicada en cada subportadora por separado. El ruido $W_k/H_k$ sigue amplificándose en las subportadoras donde $|H_k|$ es pequeño, como en el ecualizador de cero forzado. La diferencia es que ahora ese efecto queda localizado en subportadoras identificadas, y podemos decidir cuánta información transmitir en cada una, como veremos en la Sección \ref{sec:carga bits}.
+
+Para ecualizar, el receptor necesita conocer los $H_k$. Se estiman transmitiendo símbolos conocidos, llamados \emph{pilotos}: si $X_k$ es conocido, $Y_k/X_k$ es una estimación de $H_k$, afectada por ruido. Los pilotos pueden ocupar un símbolo OFDM completo al comienzo de cada trama, como el preámbulo de la Sección \ref{sec:sincronizacion trama}, o algunas subportadoras fijas en todos los símbolos, lo que permite seguir las variaciones del canal en el tiempo.
+
+El prefijo tiene un costo: de cada $N+L_p$ muestras transmitidas, solo $N$ llevan información, por lo que la tasa se reduce en un factor $N/(N+L_p)$, y la energía del prefijo también se descarta. Por eso $N$ se elige grande frente a la duración esperada de la respuesta al impulso del canal, con el límite que imponen la complejidad, la latencia y la sensibilidad a los desvíos de frecuencia, que discutimos en la Sección \ref{sec:ofdm practica}.
+
+\section{Ruido y carga de bits}\label{sec:carga bits}
+
+Supongamos que el ruido $w[n]$ está formado por muestras complejas Gaussianas independientes, de media nula y varianza $\sigma_w^2$, como resulta de muestrear la envolvente compleja de un ruido blanco filtrado a la banda de la señal. Entonces los $W_k$ son también Gaussianos, de media nula, con
+\begin{equation*}
+    \E{W_k\,W_l^*} = \frac{1}{N^2}\sum_{n=0}^{N-1}\sum_{n'=0}^{N-1}\E{w[n]\,w[n']^*}\,\e^{-j2\pi (kn-ln')/N} = \frac{\sigma_w^2}{N^2}\sum_{n=0}^{N-1}\e^{-j2\pi(k-l)n/N} = \frac{\sigma_w^2}{N}\,\delta_{k,l},
+\end{equation*}
+es decir, no correlacionados entre subportadoras y con la misma varianza $\sigma_W^2:=\sigma_w^2/N$. Como son conjuntamente Gaussianos, son independientes. Cada subportadora es entonces un canal QAM con ruido Gaussiano, como los del Capítulo \ref{chapter:modulacion pasabanda}, con relación señal a ruido
+\begin{equation}\label{eq:snr subportadora}
+    \mathrm{SNR}_k = \frac{|H_k|^2\,\E{|X_k|^2}}{\sigma_W^2}.
+\end{equation}
+Si todas las subportadoras usan la misma potencia, la relación señal a ruido de cada una es la de la señal sin atenuación multiplicada por $|H_k|^2$: sigue la forma de la respuesta en frecuencia del canal.
+
+Para una constelación $M$-QAM cuadrada, con la notación del Ejemplo de $M$-QAM de la Sección \ref{sec:deteccion coherente}, la distancia entre la muestra ecualizada y el umbral más cercano en cada eje es $A$, y el ruido en cada eje tiene varianza $\sigma_W^2/(2|H_k|^2)$. Como $\E{|X_k|^2}=2(M-1)A^2/3$, la probabilidad de error de símbolo en la subportadora $k$ es
+\begin{equation}\label{eq:pe subportadora}
+    P_{e,k} \approx 4\left(1-\frac{1}{\sqrt M}\right) Q\left(\sqrt{\frac{3\,\mathrm{SNR}_k}{M-1}}\right).
+\end{equation}
+Fijada una probabilidad de error de diseño, \eqref{eq:pe subportadora} determina la relación señal a ruido mínima para cada tamaño de constelación. Para $P_{e,k}=10^{-6}$, por ejemplo, $4$-QAM requiere $13.8\ \unit{\deci\bel}$, $16$-QAM $20.9\ \unit{\deci\bel}$, $64$-QAM $27.2\ \unit{\deci\bel}$ y $256$-QAM $33.3\ \unit{\deci\bel}$: unos $6\ \unit{\deci\bel}$ más por cada $2$ bits adicionales por símbolo.
+
+Esto sugiere elegir en cada subportadora la constelación más grande que su relación señal a ruido permite, lo que se denomina \emph{carga de bits} (\emph{bit loading}). Las subportadoras con buena relación señal a ruido transportan muchos bits, las peores transportan pocos, y aquellas en las que el canal atenúa demasiado no se usan. En lugar de amplificar el ruido para recuperar una banda en la que el canal atenúa mucho, como hace el ecualizador de cero forzado, OFDM simplemente transmite menos información en ella. Para usar carga de bits, el transmisor necesita conocer la relación señal a ruido de cada subportadora, que el receptor mide y le comunica al inicializarse el enlace. Por eso se usa en canales que varían lentamente, como el par telefónico.
+
+\begin{ejemplo}[Carga de bits en un par telefónico]\label{ejemplo:carga bits}
+Consideremos un tramo de $3\ \unit{\kilo\meter}$ del par trenzado AWG24 del Ejemplo \ref{ejemplo:H canal}, cuya atenuación, por efecto pelicular, es de unos $12.1\ \unit{\deci\bel\per\kilo\meter}$ a $1\ \unit{\mega\hertz}$ y crece como $\sqrt f$. Transmitimos con $N=256$ subportadoras separadas $\Delta f=4.3125\ \unit{\kilo\hertz}$, que cubren hasta $1.1\ \unit{\mega\hertz}$, como en ADSL, sin usar la de frecuencia nula. Supongamos que, sin la atenuación del cable, la relación señal a ruido sería de $50\ \unit{\deci\bel}$ en todas las subportadoras. Con el cable, la relación señal a ruido de la subportadora $k$ es
+\begin{equation*}
+    \mathrm{SNR}_k\ [\unit{\deci\bel}] = 50 - 3\times 12.1\,\sqrt{\frac{k\Delta f}{1\ \unit{\mega\hertz}}},
+\end{equation*}
+que va desde unos $48\ \unit{\deci\bel}$ en las primeras subportadoras hasta unos $12\ \unit{\deci\bel}$ en la última. Asignando a cada subportadora la mayor constelación cuadrada que cumple $P_{e,k}\leqslant 10^{-6}$, con un máximo de $256$-QAM, se obtiene la distribución de la Figura \ref{fig:carga bits}: $49$ subportadoras con $8$ bits, $42$ con $6$, $57$ con $4$, $82$ con $2$, y $25$ sin usar. En total son unos $1036$ bits por símbolo OFDM. Como en ADSL se transmiten unos $4000$ símbolos OFDM por segundo, esto da unos $4.1\ \unit{\mega\bps}$. Un sistema de portadora única sobre el mismo par debería, en cambio, ecualizar una atenuación que varía en casi $40\ \unit{\deci\bel}$ a lo largo de la banda, con la consiguiente amplificación del ruido en las frecuencias altas.
+\end{ejemplo}
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}
+            \begin{axis}[
+                name=snr,
+                width=12cm, height=5cm,
+                xmin=0, xmax=1.12, ymin=0, ymax=52,
+                ylabel={$\mathrm{SNR}_k$ (dB)},
+                xticklabels={},
+                grid=major,
+                ]
+                \addplot[teal, very thick, mark=none] table[x=f, y=snr] {figuras/ofdm/carga_bits.dat};
+                \foreach \s/\lab in {13.8/4, 20.9/16, 27.2/64, 33.3/256}{
+                    \edef\temp{\noexpand\draw[Red, densely dashed] (axis cs:0,\s) -- (axis cs:1.12,\s) node[pos=0.02, above right, font=\noexpand\scriptsize] {$\lab$-QAM};}
+                    \temp
+                }
+            \end{axis}
+            \begin{axis}[
+                at={(snr.south west)}, anchor=north west, yshift=-0.3cm,
+                width=12cm, height=4cm,
+                xmin=0, xmax=1.12, ymin=0, ymax=9,
+                ytick={0,2,4,6,8},
+                xlabel={frecuencia de la subportadora (MHz)}, ylabel={bits por símbolo},
+                grid=major,
+                ]
+                \addplot[teal, thick, const plot, mark=none, fill=teal!25] table[x=f, y=bits] {figuras/ofdm/carga_bits.dat} \closedcycle;
+            \end{axis}
+        \end{tikzpicture}
+    \end{center}
+    \caption{Carga de bits en $3\ \unit{\kilo\meter}$ de par trenzado, para el Ejemplo \ref{ejemplo:carga bits}. Arriba, relación señal a ruido de cada subportadora, que cae con la frecuencia por la atenuación del cable, junto con los umbrales de cada constelación para $P_e=10^{-6}$. Abajo, bits asignados a cada subportadora.}\label{fig:carga bits}
+\end{figure}
+
+\section{Aspectos prácticos}\label{sec:ofdm practica}
+
+\paragraph{Sincronismo de frecuencia.} La ortogonalidad \eqref{eq:ortogonalidad ofdm} requiere que, en el receptor, las subportadoras estén exactamente en los múltiplos de $\Delta f$. Un desvío de frecuencia de portadora $\delta f$ desplaza todo el espectro de la Figura \ref{fig:espectro ofdm}: la DFT ya no muestrea cada $\sinc$ en su máximo ni a los demás en sus ceros, y cada $Y_k$ recibe contribuciones de las subportadoras vecinas. Esta \emph{interferencia entre subportadoras} es despreciable solo si $\delta f$ es una fracción pequeña de $\Delta f$. Como $\Delta f$ es $N$ veces menor que el ancho de banda de la señal, OFDM es mucho más sensible a los desvíos de frecuencia que una portadora única de la misma velocidad. Por ejemplo, en Wi-Fi, con $\Delta f=312.5\ \unit{\kilo\hertz}$, el desvío de hasta $96\ \unit{\kilo\hertz}$ del Ejemplo \ref{ejemplo:cfo} es casi un tercio de la separación entre subportadoras. Los receptores OFDM estiman y corrigen el desvío, típicamente a partir del preámbulo, antes de calcular la DFT.
+
+\paragraph{Sincronismo de símbolo.} La temporización, en cambio, es más tolerante. Si la ventana de la DFT se adelanta algunas muestras pero sigue dentro de la parte del prefijo que no alcanzan los ecos del símbolo anterior, las $N$ muestras tomadas son una rotación circular del símbolo. La DFT de una secuencia rotada circularmente $d$ muestras es la original multiplicada por $\e^{-j2\pi kd/N}$, un factor de fase que se absorbe en la estimación de $H_k$.
+
+\paragraph{Relación entre potencia pico y potencia media.} Cada muestra $x[n]$ es la suma de $N$ términos con fases que dependen de los datos, y para $N$ grande se comporta aproximadamente como una variable Gaussiana. Ocasionalmente, muchos términos se suman en fase, y la potencia instantánea supera en mucho a la media. El amplificador de potencia del transmisor debe ser lineal en todo ese rango para no distorsionar la señal, lo que obliga a operarlo lejos de su potencia máxima, con menor eficiencia. Es una de las principales desventajas de OFDM frente a la portadora única.
+
+\section{Aplicaciones}\label{sec:ofdm aplicaciones}
+
+OFDM es hoy la modulación de la mayoría de los sistemas de banda ancha, tanto guiados como inalámbricos. La Tabla \ref{tab:ofdm sistemas} resume los parámetros de algunos de ellos.
+
+\begin{table}
+    \begin{center}
+    \footnotesize
+    \begin{tabular}{l|l|c|c|c|c|l}
+        Sistema & Medio & Subportadoras & $\Delta f$ & $T$ & Prefijo & Modulación \\ \hline
+        ADSL & par telefónico & $256$ & $4.3125\ \unit{\kilo\hertz}$ & $232\ \unit{\micro\second}$ & $14.5\ \unit{\micro\second}$ & carga de bits \\
+        Wi-Fi (802.11a/g) & radio & $52$ de $64$ & $312.5\ \unit{\kilo\hertz}$ & $3.2\ \unit{\micro\second}$ & $0.8\ \unit{\micro\second}$ & BPSK a $64$-QAM \\
+        ISDB-T (modo 3) & radio & $5617$ & $0.992\ \unit{\kilo\hertz}$ & $1008\ \unit{\micro\second}$ & $1/32$ a $1/4$ de $T$ & DQPSK a $64$-QAM \\
+        LTE & radio & hasta $1200$ & $15\ \unit{\kilo\hertz}$ & $66.7\ \unit{\micro\second}$ & $4.7\ \unit{\micro\second}$ & QPSK a $256$-QAM
+    \end{tabular}
+    \end{center}
+    \caption{Parámetros de algunos sistemas que usan OFDM. En ADSL la señal se transmite en banda base, y la modulación OFDM se denomina allí \emph{Discrete Multitone} (DMT). En Wi-Fi, de las $64$ posiciones de la FFT se usan $48$ subportadoras de datos y $4$ pilotos. En ADSL cada subportadora lleva hasta $15$ bits. En ISDB-T y LTE el número de subportadoras depende del modo o del ancho de banda del canal.}\label{tab:ofdm sistemas}
+\end{table}
+
+En ADSL el canal es fijo, y se usa carga de bits como en el Ejemplo \ref{ejemplo:carga bits}. En los sistemas inalámbricos, en cambio, el canal varía con el movimiento de los terminales y de los objetos que reflejan la señal, y no es práctico informar al transmisor la relación señal a ruido de cada subportadora. Se usa entonces la misma constelación en todas, elegida según la calidad global del enlace, y se protege la información con códigos correctores de errores, que permiten recuperar los bits de las subportadoras que caen en una atenuación profunda a partir de los demás.
+
+No todos los sistemas de banda ancha usan OFDM. La televisión digital por cable (DVB-C, por ejemplo) usa una única portadora con $64$-QAM o $256$-QAM en cada canal de $6$ a $8\ \unit{\mega\hertz}$, con un ecualizador en el receptor. El cable coaxil bien terminado es un canal benigno, con pocos ecos y una atenuación que varía poco dentro de un canal, y la portadora única evita los costos de OFDM: el prefijo, la sensibilidad al desvío de frecuencia y la relación entre potencia pico y media. La televisión digital terrestre, en cambio, debe convivir con el multicamino, con ecos que pueden llegar con decenas de microsegundos de retardo. La norma ISDB-T, adoptada en Uruguay y en buena parte de América del Sur, usa OFDM con símbolos de alrededor de un milisegundo y prefijos de hasta un cuarto de esa duración. Esto permite además operar \emph{redes de frecuencia única}, en las que varios transmisores emiten la misma señal en la misma frecuencia: para el receptor, la señal de un transmisor lejano es simplemente un eco más, que el prefijo absorbe.

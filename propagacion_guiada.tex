@@ -329,25 +329,25 @@ Llamamos a $\Gamma_L(f)$ el \emph{coeficiente de reflexión de carga}. Notemos e
             }}
             \begin{axis}[instantanea, name=a1,
                 legend style={at={(0.5,1.05)}, anchor=south, legend columns=3, draw=none, font=\small}]
-                \addplot[teal, thick, densely dashed] table[x=z, y=inc0] {figuras/propagacion/pulso_reflejado.dat};
+                \addplot[TealBlue, thick, densely dashed] table[x=z, y=inc0] {figuras/propagacion/pulso_reflejado.dat};
                 \addlegendentry{incidente}
-                \addplot[Red, thick, densely dashed] table[x=z, y=ref0] {figuras/propagacion/pulso_reflejado.dat};
+                \addplot[SeaGreen, thick, densely dashed] table[x=z, y=ref0] {figuras/propagacion/pulso_reflejado.dat};
                 \addlegendentry{reflejada}
-                \addplot[black, very thick] table[x=z, y=tot0] {figuras/propagacion/pulso_reflejado.dat};
+                \addplot[teal, very thick] table[x=z, y=tot0] {figuras/propagacion/pulso_reflejado.dat};
                 \addlegendentry{total}
                 \node[anchor=north east] at (rel axis cs:1,1) {$t=1.5\,T$};
             \end{axis}
             \begin{axis}[instantanea, name=a2, at={(a1.south west)}, anchor=north west, yshift=-0.4cm]
-                \addplot[teal, thick, densely dashed] table[x=z, y=inc1] {figuras/propagacion/pulso_reflejado.dat};
-                \addplot[Red, thick, densely dashed] table[x=z, y=ref1] {figuras/propagacion/pulso_reflejado.dat};
-                \addplot[black, very thick] table[x=z, y=tot1] {figuras/propagacion/pulso_reflejado.dat};
+                \addplot[TealBlue, thick, densely dashed] table[x=z, y=inc1] {figuras/propagacion/pulso_reflejado.dat};
+                \addplot[SeaGreen, thick, densely dashed] table[x=z, y=ref1] {figuras/propagacion/pulso_reflejado.dat};
+                \addplot[teal, very thick] table[x=z, y=tot1] {figuras/propagacion/pulso_reflejado.dat};
                 \node[anchor=north west] at (rel axis cs:0.02,1) {$t=3.5\,T$};
             \end{axis}
             \begin{axis}[instantanea, name=a3, at={(a2.south west)}, anchor=north west, yshift=-0.4cm,
                 xticklabels={$0$, $vT$, $2vT$, $\ell=3vT$}, xlabel={$z$}]
-                \addplot[teal, thick, densely dashed] table[x=z, y=inc2] {figuras/propagacion/pulso_reflejado.dat};
-                \addplot[Red, thick, densely dashed] table[x=z, y=ref2] {figuras/propagacion/pulso_reflejado.dat};
-                \addplot[black, very thick] table[x=z, y=tot2] {figuras/propagacion/pulso_reflejado.dat};
+                \addplot[TealBlue, thick, densely dashed] table[x=z, y=inc2] {figuras/propagacion/pulso_reflejado.dat};
+                \addplot[SeaGreen, thick, densely dashed] table[x=z, y=ref2] {figuras/propagacion/pulso_reflejado.dat};
+                \addplot[teal, very thick] table[x=z, y=tot2] {figuras/propagacion/pulso_reflejado.dat};
                 \node[anchor=north east] at (rel axis cs:1,1) {$t=4.5\,T$};
             \end{axis}
         \end{tikzpicture}
@@ -409,11 +409,11 @@ con $\theta(d)=\angle\Gamma_L - 2\beta d$ barriendo todos los valores posibles a
                 samples=300, domain=0:1, clip=false,
                 ]
                 \addplot[gray, thick] {1};
-                \addlegendentry{$\Gamma_L=0$}
+                \addlegendentry{$\Gamma_L=0$,}
                 \addplot[teal, very thick] {sqrt(1.2 + 2*(-0.2*cos(720*x) + 0.4*sin(720*x)))};
-                \addlegendentry{$\Gamma_L=-0.2+j0.4$}
+                \addlegendentry{$\Gamma_L=-0.2+j0.4$,}
                 \addplot[Red, thick, dashed] {2*abs(sin(360*x))};
-                \addlegendentry{$\Gamma_L=-1$ (cortocircuito)}
+                \addlegendentry{$\Gamma_L=-1$ (cortocircuito).}
                 \draw[teal, densely dotted] (axis cs:1,1.447) -- (axis cs:0,1.447) node[right, font=\small] {$1+|\Gamma_L|$};
                 \draw[teal, densely dotted] (axis cs:1,0.553) -- (axis cs:0,0.553) node[right, font=\small] {$1-|\Gamma_L|$};
                 \draw[|<->|, Red] (axis cs:0,2.12) -- node[above, font=\small] {$\lambda/2$} (axis cs:0.5,2.12);
@@ -1055,32 +1055,32 @@ Si el pulso recibido ya es de Nyquist ($\tilde p_m=\delta_{m,0}$, sin ISI), ento
 
 La expresión $\hat C(f)=1/\hat P_d(f)$ esconde un problema: si algunas ganancias son muy altas, el ruido puede verse amplificado. En cualquier frecuencia donde $|\hat P_d(f)|$ sea pequeño, el ecualizador necesita una ganancia $|\hat C(f)|=1/|\hat P_d(f)|$ muy grande. Y $\hat P_d(f)$ hereda la forma de la respuesta del canal $\hat H(f)$ que obtuvimos en la Sección \ref{sec:dispersion pulsos}: decrece con la frecuencia, por lo que corregirlo cerca del borde de la banda exige ganancias cada vez mayores (Figura \ref{fig:amplificacion ruido}). Pero el ruido a la entrada del ecualizador (Capítulo \ref{chapter:deteccion ruido}) tiene potencia en todas las frecuencias, y esa misma ganancia lo amplifica en la misma proporción en que reconstruye la señal. En el límite, si $\hat P_d(f)\to 0$ en alguna banda, $\hat C(f)\to\infty$: el ZFE intenta reconstruir información que, en esa banda, ya quedó por debajo del ruido.
 
-\begin{figure}
-    \begin{center}
-        \begin{tikzpicture}
-            \begin{axis}[
-                width=11cm, height=6.5cm,
-                xmin=0, xmax=0.5, ymin=-25, ymax=25,
-                xtick={0,0.1,0.2,0.3,0.4,0.5},
-                xticklabels={$0$, $0.1f_s$, $0.2f_s$, $0.3f_s$, $0.4f_s$, $f_s/2$},
-                xlabel={$f$}, ylabel={dB},
-                grid=major,
-                legend style={at={(0.5,1.03)}, anchor=south, legend columns=2, draw=none, font=\small},
-                every axis plot/.append style={mark=none},
-                ]
-                \addplot[teal, very thick] table[x=f, y=P0] {figuras/propagacion/amplificacion_ruido.dat};
-                \addlegendentry{$|\hat P_d(f)|$, longitud $\ell_1$}
-                \addplot[teal, very thick, dashed] table[x=f, y=C0] {figuras/propagacion/amplificacion_ruido.dat};
-                \addlegendentry{$|\hat C(f)|$, longitud $\ell_1$}
-                \addplot[Red, very thick] table[x=f, y=P1] {figuras/propagacion/amplificacion_ruido.dat};
-                \addlegendentry{$|\hat P_d(f)|$, longitud $2\ell_1$}
-                \addplot[Red, very thick, dashed] table[x=f, y=C1] {figuras/propagacion/amplificacion_ruido.dat};
-                \addlegendentry{$|\hat C(f)|$, longitud $2\ell_1$}
-            \end{axis}
-        \end{tikzpicture}
-    \end{center}
-    \caption{Módulo de $\hat P_d(f)$, calculado a partir de las muestras del pulso rectangular a la salida del cable \eqref{eq:H coaxil}, y ganancia $|\hat C(f)|=1/|\hat P_d(f)|$ del ZFE de infinitos coeficientes, para dos longitudes del cable, $\ell_1$ (el tramo largo de la Figura \ref{fig:ojo cable}) y $2\ell_1$. Las curvas son simétricas respecto de $0\ \unit{\deci\bel}$: todo lo que el canal atenúa en una frecuencia, el ecualizador lo amplifica, incluido el ruido. Al duplicar la longitud, la ganancia necesaria en el borde de la banda pasa de unos $9\ \unit{\deci\bel}$ a unos $23\ \unit{\deci\bel}$.}\label{fig:amplificacion ruido}
-\end{figure}
+% \begin{figure}
+%     \begin{center}
+%         \begin{tikzpicture}
+%             \begin{axis}[
+%                 width=11cm, height=6.5cm,
+%                 xmin=0, xmax=0.5, ymin=-25, ymax=25,
+%                 xtick={0,0.1,0.2,0.3,0.4,0.5},
+%                 xticklabels={$0$, $0.1f_s$, $0.2f_s$, $0.3f_s$, $0.4f_s$, $f_s/2$},
+%                 xlabel={$f$}, ylabel={dB},
+%                 grid=major,
+%                 legend style={at={(0.5,1.03)}, anchor=south, legend columns=2, draw=none, font=\small},
+%                 every axis plot/.append style={mark=none},
+%                 ]
+%                 \addplot[teal, very thick] table[x=f, y=P0] {figuras/propagacion/amplificacion_ruido.dat};
+%                 \addlegendentry{$|\hat P_d(f)|$, longitud $\ell_1$}
+%                 \addplot[teal, very thick, dashed] table[x=f, y=C0] {figuras/propagacion/amplificacion_ruido.dat};
+%                 \addlegendentry{$|\hat C(f)|$, longitud $\ell_1$}
+%                 \addplot[Red, very thick] table[x=f, y=P1] {figuras/propagacion/amplificacion_ruido.dat};
+%                 \addlegendentry{$|\hat P_d(f)|$, longitud $2\ell_1$}
+%                 \addplot[Red, very thick, dashed] table[x=f, y=C1] {figuras/propagacion/amplificacion_ruido.dat};
+%                 \addlegendentry{$|\hat C(f)|$, longitud $2\ell_1$}
+%             \end{axis}
+%         \end{tikzpicture}
+%     \end{center}
+%     \caption{Módulo de $\hat P_d(f)$, calculado a partir de las muestras del pulso rectangular a la salida del cable \eqref{eq:H coaxil}, y ganancia $|\hat C(f)|=1/|\hat P_d(f)|$ del ZFE de infinitos coeficientes, para dos longitudes del cable, $\ell_1$ (el tramo largo de la Figura \ref{fig:ojo cable}) y $2\ell_1$. Las curvas son simétricas respecto de $0\ \unit{\deci\bel}$: todo lo que el canal atenúa en una frecuencia, el ecualizador lo amplifica, incluido el ruido. Al duplicar la longitud, la ganancia necesaria en el borde de la banda pasa de unos $9\ \unit{\deci\bel}$ a unos $23\ \unit{\deci\bel}$.}\label{fig:amplificacion ruido}
+% \end{figure}
 
 Esto sugiere una idea distinta, que desarrollamos en el Capítulo \ref{chapter:ofdm}: en lugar de invertir $\hat P_d(f)$ de una sola vez sobre todo el ancho de banda, \emph{partir} la banda en tramos angostos, cada uno lo suficientemente chico como para que $\hat P_d(f)$ sea aproximadamente constante dentro de él. En cada tramo, ecualizar se reduce a dividir por un único número complejo, y en los tramos donde el canal atenúa demasiado se puede simplemente transmitir menos información, en lugar de amplificar el ruido. Esta es la idea de OFDM, y es la solución utilizada, por ejemplo, en ADSL y VDSL sobre el par telefónico, cuya atenuación crece rápidamente con la frecuencia y con la distancia a la central: la banda se divide en cientos de subportadoras, y cada una se modula con una constelación de tamaño acorde a la relación señal a ruido que el par ofrece en esa frecuencia.
 

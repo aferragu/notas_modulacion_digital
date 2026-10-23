@@ -415,13 +415,13 @@ La solución tiene que venir de fuera del lazo. Una posibilidad es codificar la 
 
 Supongamos ahora resuelta la sincronización de portadora, de modo que el receptor dispone de la señal en banda base $y(t)=\sum_k a_k\,p(t-kT_s)$, a la salida del filtro de recepción. El reloj que dispara el muestreador tampoco coincide con el que generó los símbolos en el transmisor. Llamemos $\tau$ al error de temporización: el receptor muestrea en $kT_s+\tau$ en lugar de hacerlo en $kT_s$.
 
-Los pulsos de Nyquist de la Sección \ref{sec:nyquist no ideal} verifican $p(kT_s)=0$ para todo $k\neq 0$, por lo que la ISI se cancela en los instantes de muestreo correctos. Esa cancelación es sensible a errores de temporización: como muestra la Figura \ref{fig:coseno alzado}, $p(t)$ cae rápidamente a los costados de $t=0$, y un $\tau$ pequeño reintroduce ISI de los símbolos vecinos, además de achicar la muestra útil. Necesitamos entonces recuperar, a partir de la señal recibida, un reloj de frecuencia $f_s$ alineado con los instantes $kT_s$.
+El pulso recibido está diseñado para muestrearse en un instante preciso de cada intervalo de símbolo: en su máximo, si proviene de un filtro acoplado (Sección \ref{sec:filtro acoplado}), o en el punto de ISI nula, si es un pulso de Nyquist (Sección \ref{sec:nyquist no ideal}). Un error de temporización degrada la muestra: achica su parte útil y, en general, reintroduce ISI de los símbolos vecinos. Necesitamos entonces recuperar, a partir de la señal recibida, un reloj de frecuencia $f_s$ alineado con los instantes $kT_s$.
 
 El problema es análogo al de la portadora suprimida. Con símbolos de media nula, por \eqref{eq:dep onda pam iid} la densidad espectral de $y(t)$ no tiene componentes discretas, y en particular no tiene una línea en $f_s$ a la cual engancharse. Y la solución es también análoga: una no linealidad. El valor medio de $y(t)^2$ es
 \begin{equation*}
     \E{y(t)^2} = \sum_k\sum_l \E{a_ka_l}\,p(t-kT_s)\,p(t-lT_s) = \sigma_a^2\sum_k p^2(t-kT_s),
 \end{equation*}
-que es una función periódica de período $T_s$, con máximos en los instantes $kT_s$ si $p$ es par y alcanza su máximo en $t=0$. Por lo tanto $y(t)^2$ contiene una componente sinusoidal de frecuencia $f_s$, cuyos máximos marcan los instantes de muestreo correctos. Un filtro pasabanda angosto centrado en $f_s$, o un PLL, extrae esa componente, y sus cruces por cero, desplazados un cuarto de período, generan el reloj de muestreo (Figura \ref{fig:reloj cuadratico}).
+que es una función periódica de período $T_s$, cualquiera sea la forma del pulso. Si $p$ es par y alcanza su máximo en $t=0$, sus máximos están en los instantes $kT_s$. Por lo tanto $y(t)^2$ contiene, en general, componentes sinusoidales de frecuencia $f_s$ y sus múltiplos, y la de frecuencia $f_s$ tiene sus máximos en los instantes de muestreo correctos. Un filtro pasabanda angosto centrado en $f_s$, o un PLL, extrae esa componente, y sus cruces por cero, desplazados un cuarto de período, generan el reloj de muestreo (Figura \ref{fig:reloj cuadratico}).
 
 \begin{figure}
     \begin{center}
@@ -445,7 +445,11 @@ que es una función periódica de período $T_s$, con máximos en los instantes 
     \caption{Recuperación del reloj de símbolo por no linealidad. El cuadrado de la señal PAM contiene una componente de frecuencia $f_s$, que se extrae con un PLL o un filtro pasabanda angosto y se convierte en los pulsos de reloj que disparan el muestreador.}\label{fig:reloj cuadratico}
 \end{figure}
 
-La amplitud de esa componente depende del exceso de ancho de banda del pulso. Su coeficiente de Fourier es proporcional a la transformada de $p^2(t)$ evaluada en $f_s$, es decir, a la convolución $\int\hat P(\nu)\hat P(f_s-\nu)\,d\nu$. Para un pulso de coseno alzado con exceso de ancho de banda $\alpha$, los espectros $\hat P(\nu)$ y $\hat P(f_s-\nu)$ solo se superponen en un intervalo de ancho $\alpha f_s$. Con el pulso de Nyquist ideal, $\alpha=0$, la componente desaparece: $\sum_k\sinc^2(t/T_s-k)=1$ es constante y el cuadrado no contiene información de temporización (Figura \ref{fig:media cuadrado}). El exceso de ancho de banda, que en la Sección \ref{sec:nyquist no ideal} aparecía como un costo en eficiencia espectral, es entonces lo que permite recuperar el reloj.
+La amplitud de la componente de frecuencia $f_s$ es el coeficiente de Fourier
+\begin{equation*}
+    c_1 = \frac{\sigma_a^2}{T_s}\int_{-\infty}^{\infty}p^2(t)\,\e^{-j2\pi f_st}\,dt = \frac{\sigma_a^2}{T_s}\int_{-\infty}^{\infty}\hat P(\nu)\,\hat P(f_s-\nu)\,d\nu,
+\end{equation*}
+que depende de la forma del pulso. Para que sea distinto de cero, los espectros $\hat P(\nu)$ y $\hat P(f_s-\nu)$ deben superponerse, es decir, el ancho de banda del pulso debe superar $f_s/2$, el mínimo que permite el criterio de Nyquist. Un pulso de ancho de banda mínimo, como el sinc, no deja ninguna componente: $\sum_k\sinc^2(t/T_s-k)=1$ es constante y el cuadrado no contiene información de temporización. La condición es necesaria pero no suficiente. El pulso rectangular de duración $T_s$ tiene ancho de banda infinito, pero como los rectángulos de símbolos consecutivos no se superponen, $\sum_k p^2(t-kT_s)=1$ también es constante. A la salida del filtro acoplado, en cambio, el pulso es triangular, de duración $2T_s$, y la suma ya no es constante (Figura \ref{fig:media cuadrado}). Lo que importa es entonces la forma del pulso a la entrada del cuadrador. Para los pulsos de coseno alzado, la superposición de $\hat P(\nu)$ y $\hat P(f_s-\nu)$ ocupa un intervalo de ancho $\alpha f_s$, y la componente crece con el exceso de ancho de banda $\alpha$. En ese caso, el exceso de ancho de banda, que en la Sección \ref{sec:nyquist no ideal} aparecía como un costo en eficiencia espectral, es lo que permite recuperar el reloj.
 
 \begin{figure}
     \begin{center}
@@ -460,16 +464,16 @@ La amplitud de esa componente depende del exceso de ancho de banda del pulso. Su
                 legend style={at={(0.5,1.03)}, anchor=south, legend columns=3, draw=none, font=\small},
                 every axis plot/.append style={mark=none},
                 ]
-                \addplot[gray, thick, densely dotted] table[x=t, y=a0] {figuras/sincronismo/media_cuadrado.dat};
-                \addlegendentry{$\alpha=0$}
-                \addplot[teal, very thick] table[x=t, y=a35] {figuras/sincronismo/media_cuadrado.dat};
-                \addlegendentry{$\alpha=0.35$}
-                \addplot[Red, thick, dashed] table[x=t, y=a100] {figuras/sincronismo/media_cuadrado.dat};
-                \addlegendentry{$\alpha=1$}
+                \addplot[gray, thick, densely dotted] table[x=t, y=rect] {figuras/sincronismo/media_cuadrado.dat};
+                \addlegendentry{rectangular}
+                \addplot[Red, thick, dashed] table[x=t, y=tri] {figuras/sincronismo/media_cuadrado.dat};
+                \addlegendentry{triangular}
+                \addplot[teal, very thick] table[x=t, y=rc35] {figuras/sincronismo/media_cuadrado.dat};
+                \addlegendentry{coseno alzado, $\alpha=0.35$}
             \end{axis}
         \end{tikzpicture}
     \end{center}
-    \caption{Valor medio del cuadrado de una onda PAM con pulsos de coseno alzado, para distintos excesos de ancho de banda. Es periódico de período $T_s$, con máximos en los instantes de muestreo. Con $\alpha=0$ es constante y no contiene información de temporización. La componente de frecuencia $f_s$ crece con $\alpha$.}\label{fig:media cuadrado}
+    \caption{Valor medio del cuadrado de una onda PAM, normalizado por $\sigma_a^2$, para tres pulsos. Con pulsos rectangulares de duración $T_s$ es constante, igual que con el sinc, y no contiene información de temporización. Con el pulso triangular que resulta del filtro acoplado, y con un coseno alzado, es periódico de período $T_s$, con máximos en los instantes de muestreo.}\label{fig:media cuadrado}
 \end{figure}
 
 El método anterior no tiene realimentación desde el muestreo: el reloj se extrae de la señal y se usa tal cual. Un método realimentado, que encaja directamente en la teoría del PLL, es el sincronizador \emph{early-late}. La idea es tomar dos muestras de la salida del filtro de recepción, una adelantada y otra atrasada un tiempo $\delta<T_s/2$ respecto del instante de muestreo candidato $kT_s+\tau$, y comparar sus módulos:

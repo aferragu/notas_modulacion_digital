@@ -58,15 +58,19 @@ def p_alpha(t, a):
 
 
 def media_cuadrado():
-    """E[y^2(t)]/sigma^2 = sum_k p^2(t - k T_s), periódica de período T_s."""
+    """E[y^2(t)]/sigma^2 = sum_k p^2(t - k T_s), periódica de período T_s, para tres pulsos:
+    rectangular de duración T_s, triangular de duración 2 T_s (rectangular con filtro acoplado)
+    y coseno alzado con alpha = 0.35."""
     t = np.linspace(-1, 1, 201)
     k = np.arange(-400, 401)
+    rect = lambda x: ((x >= -0.5) & (x < 0.5)).astype(float)
+    tri = lambda x: np.clip(1 - np.abs(x), 0, None)
     cols = [t]
-    for a in (0.0, 0.35, 1.0):
-        cols.append(np.array([np.sum(p_alpha(tt - k, a) ** 2) for tt in t]))
-    np.savetxt("media_cuadrado.dat", np.column_stack(cols), fmt="%.5f", header="t a0 a35 a100", comments="")
-    for a, c in zip((0, 0.35, 1), cols[1:]):
-        print(f"alpha={a}: min {c.min():.4f} max {c.max():.4f}")
+    for f in (rect, tri, lambda x: p_alpha(x, 0.35)):
+        cols.append(np.array([np.sum(f(tt - k) ** 2) for tt in t]))
+    np.savetxt("media_cuadrado.dat", np.column_stack(cols), fmt="%.5f", header="t rect tri rc35", comments="")
+    for nombre, c in zip(("rect", "tri", "rc35"), cols[1:]):
+        print(f"{nombre}: min {c.min():.4f} max {c.max():.4f}")
 
 
 if __name__ == "__main__":
