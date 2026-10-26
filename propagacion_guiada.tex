@@ -749,6 +749,119 @@ Se obtienen así dos conclusiones. La primera es que la resistencia crece como $
     R(f) \approx \sqrt{\frac{\pi f \mu}{\sigma}}\, \left(\frac{1}{2\pi a} + \frac{1}{2\pi b}\right).
 \end{equation}
 
+La Figura \ref{fig:coaxil corte} muestra los campos y las corrientes en un corte transversal del cable coaxil. El campo eléctrico es radial, del conductor interior a la pantalla, y el campo magnético forma circunferencias concéntricas alrededor del conductor interior. Ambos están confinados al dieléctrico entre los conductores. La corriente del conductor interior circula por su superficie exterior, y la de la pantalla, en sentido contrario, por su superficie interior: en ambos casos, por la cara que mira hacia el dieléctrico, donde están los campos. Por eso en \eqref{eq:R skin coaxil} intervienen el radio $a$ del conductor interior y el radio interior $b$ de la pantalla, y no su espesor. La Figura \ref{fig:coaxil longitudinal} muestra un corte longitudinal, con una instantánea de una onda que viaja por el cable. Los campos y las corrientes cambian de sentido cada media longitud de onda, y la onda se propaga por el dieléctrico, guiada por los conductores.
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}[scale=1.25]
+            \def\ra{0.6}
+            \def\rb{2.0}
+            \def\rc{2.35}
+            \def\dl{0.09}
+            % pantalla y conductor interior
+            \fill[gray!35, even odd rule] (0,0) circle (\rc) (0,0) circle (\rb);
+            \fill[teal!70, even odd rule] (0,0) circle (\rb+\dl) (0,0) circle (\rb);
+            \fill[gray!35] (0,0) circle (\ra);
+            \fill[teal!70, even odd rule] (0,0) circle (\ra) (0,0) circle (\ra-\dl);
+            \draw (0,0) circle (\ra) (0,0) circle (\rb) (0,0) circle (\rc);
+            % campo eléctrico radial
+            \foreach \t in {0,30,...,330}{
+                \draw[->, Red, thick] (\t:\ra+0.08) -- (\t:\rb-0.08);
+            }
+            % campo magnético azimutal
+            \foreach \r in {1.05,1.55}{
+                \draw[teal!70!black, densely dashed] (0,0) circle (\r);
+                \draw[->, teal!70!black, thick] (15:\r) arc[start angle=15, end angle=25, radius=\r];
+                \draw[->, teal!70!black, thick] (195:\r) arc[start angle=195, end angle=205, radius=\r];
+            }
+            % corrientes
+            \draw[thick] (0,0) circle (0.13);
+            \fill (0,0) circle (0.04);
+            \foreach \t in {45,135,225,315}{
+                \draw[thick] (\t:{(\rb+\rc)/2}) circle (0.12);
+                \draw[thick] ($(\t:{(\rb+\rc)/2})+(-0.08,-0.08)$) -- ($(\t:{(\rb+\rc)/2})+(0.08,0.08)$);
+                \draw[thick] ($(\t:{(\rb+\rc)/2})+(-0.08,0.08)$) -- ($(\t:{(\rb+\rc)/2})+(0.08,-0.08)$);
+            }
+            % cotas
+            \draw[|<->|] (0,-2.75) -- node[below, font=\footnotesize] {$a$} (\ra,-2.75);
+            \draw[|<->|] (0,-3.2) -- node[below, font=\footnotesize] {$b$} (\rb,-3.2);
+            \draw[gray] (\ra,0) -- (\ra,-2.75);
+            \draw[gray] (\rb,0) -- (\rb,-3.2);
+            % rótulos
+            \node[Red, font=\footnotesize, fill=white, inner sep=1pt] at (60:1.3) {$\vec E$};
+            \node[teal!70!black, font=\footnotesize, fill=white, inner sep=1pt] at (100:1.3) {$\vec B$};
+            \node[font=\footnotesize, anchor=west] at (2.7,1.4) {pantalla};
+            \draw[gray] (2.7,1.4) -- (35:2.2);
+            \node[font=\footnotesize, anchor=west] at (2.7,0.6) {dieléctrico};
+            \draw[gray] (2.7,0.6) -- (12:1.8);
+            \node[font=\footnotesize, anchor=west] at (2.7,-0.2) {conductor interior};
+            \draw[gray] (2.7,-0.2) -- (-5:0.45);
+            \node[font=\footnotesize, anchor=west, align=left] at (2.7,-1.1) {capas de espesor $\delta$\\por donde circula la corriente};
+            \draw[gray] (2.7,-1.0) -- (-20:2.04);
+            \draw[gray] (2.7,-1.0) -- (-60:0.56);
+        \end{tikzpicture}
+    \end{center}
+    \caption{Corte transversal de un cable coaxil, en un instante en que la corriente sale del plano por el conductor interior ($\odot$) y vuelve por la pantalla ($\otimes$). El campo eléctrico es radial y el campo magnético forma circunferencias alrededor del conductor interior, ambos en el dieléctrico. A alta frecuencia, la corriente circula por capas de espesor del orden de $\delta(f)$ en las superficies de los conductores que miran hacia el dieléctrico.}\label{fig:coaxil corte}
+\end{figure}
+
+\begin{figure}
+    \begin{center}
+        \begin{tikzpicture}[x=1.15cm, y=1cm]
+            \def\L{12}
+            \def\lam{6}
+            % conductores
+            \fill[gray!35] (0,1.5) rectangle (\L,1.85);
+            \fill[gray!35] (0,-1.85) rectangle (\L,-1.5);
+            \fill[gray!35] (0,-0.35) rectangle (\L,0.35);
+            \draw (0,1.5) -- (\L,1.5) (0,1.85) -- (\L,1.85);
+            \draw (0,-1.5) -- (\L,-1.5) (0,-1.85) -- (\L,-1.85);
+            \draw (0,0.35) -- (\L,0.35) (0,-0.35) -- (\L,-0.35);
+            % capas superficiales enfrentadas
+            \fill[teal!70] (0,1.5) rectangle (\L,1.56);
+            \fill[teal!70] (0,-1.56) rectangle (\L,-1.5);
+            \fill[teal!70] (0,0.29) rectangle (\L,0.35);
+            \fill[teal!70] (0,-0.35) rectangle (\L,-0.29);
+            % campo eléctrico: proporcional a cos(2 pi z / lambda)
+            \foreach \z in {0.25,0.75,...,11.75}{
+                \pgfmathsetmacro{\v}{cos(360*\z/\lam)}
+                \pgfmathsetmacro{\h}{0.5*\v}
+                \ifdim \h pt>0.06pt
+                    \draw[->, Red, thick] (\z,{0.925-\h}) -- (\z,{0.925+\h});
+                    \draw[->, Red, thick] (\z,{-0.925+\h}) -- (\z,{-0.925-\h});
+                \else\ifdim \h pt<-0.06pt
+                    \draw[->, Red, thick] (\z,{0.925-\h}) -- (\z,{0.925+\h});
+                    \draw[->, Red, thick] (\z,{-0.925+\h}) -- (\z,{-0.925-\h});
+                \fi\fi
+            }
+            % corrientes superficiales
+            \foreach \z/\s in {0/1, 3/-1, 6/1, 9/-1, 12/1}{
+                \pgfmathsetmacro{\zi}{max(0.15,min(\L-0.15,\z-0.9))}
+                \pgfmathsetmacro{\zf}{max(0.15,min(\L-0.15,\z+0.9))}
+                \ifnum\s=1
+                    \draw[->, black, thick] (\zi,0.19) -- (\zf,0.19);
+                    \draw[->, black, thick] (\zi,-0.19) -- (\zf,-0.19);
+                    \draw[->, black, thick] (\zf,1.64) -- (\zi,1.64);
+                    \draw[->, black, thick] (\zf,-1.64) -- (\zi,-1.64);
+                \else
+                    \draw[->, black, thick] (\zf,0.19) -- (\zi,0.19);
+                    \draw[->, black, thick] (\zf,-0.19) -- (\zi,-0.19);
+                    \draw[->, black, thick] (\zi,1.64) -- (\zf,1.64);
+                    \draw[->, black, thick] (\zi,-1.64) -- (\zf,-1.64);
+                \fi
+            }
+            % rótulos
+            \draw[|<->|] (0,2.15) -- node[above, font=\footnotesize] {$\lambda$} (\lam,2.15);
+            \draw[->, thick] (8.2,2.35) -- node[above, font=\footnotesize] {propagación} (11.2,2.35);
+            \node[font=\footnotesize, anchor=east] at (-0.1,1.68) {pantalla};
+            \node[font=\footnotesize, anchor=east] at (-0.1,0.925) {dieléctrico};
+            \node[font=\footnotesize, anchor=east, align=right] at (-0.1,0) {conductor\\interior};
+            \node[font=\footnotesize, anchor=east] at (-0.1,-1.68) {pantalla};
+            \node[Red, font=\footnotesize, fill=white, inner sep=1pt] at (1.5,0.925) {$\vec E$};
+        \end{tikzpicture}
+    \end{center}
+    \caption{Corte longitudinal de un cable coaxil, con una instantánea de una onda que viaja hacia la derecha. El campo eléctrico (flechas rojas) va del conductor interior a la pantalla donde la tensión es positiva, y en sentido contrario donde es negativa, y su intensidad sigue la forma sinusoidal de la tensión a lo largo del cable. Las corrientes (flechas negras) circulan en sentidos opuestos por el conductor interior y por la pantalla, concentradas en sus superficies enfrentadas, y cambian de sentido cada media longitud de onda. El campo magnético, perpendicular al plano del dibujo, acompaña a la corriente.}\label{fig:coaxil longitudinal}
+\end{figure}
+
 \begin{remark}
 La derivación anterior aproxima la superficie del conductor como plana, lo cual es válido en el régimen $\delta(f)\ll a$. Este régimen se cumple ampliamente en las frecuencias de interés: por ejemplo, para cobre, $\delta(10\ \unit{\mega\hertz})\approx 21\ \unit{\micro\meter}$, muy por debajo del radio típico de un conductor. Un tratamiento exacto para un conductor cilíndrico requiere resolver la ecuación de difusión en coordenadas cilíndricas (funciones de Bessel), y está fuera del alcance de este curso.
 \end{remark}
