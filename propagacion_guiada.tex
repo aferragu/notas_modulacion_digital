@@ -587,6 +587,8 @@ Como el stub es una susceptancia pura, solo puede modificar la parte imaginaria 
 \begin{enumerate}
     \item \emph{Buscar $d$:} avanzar desde la carga hacia el generador hasta encontrar un punto donde $y(d) = 1+jb$. Como trabajamos en paralelo, conviene leer la carta directamente en admitancias. Por la simetría de \eqref{eq:gamma normalizado}, la admitancia normalizada correspondiente a un punto $\Gamma$ es exactamente la impedancia normalizada que se lee en la grilla en el punto \emph{diametralmente opuesto}, $-\Gamma$. Basta entonces con reemplazar el punto de la carga por su opuesto, que está sobre el mismo círculo de ROE, y a partir de allí leer la grilla como $g$ (en lugar de $r$) y $b$ (en lugar de $x$). Avanzar hacia el generador sigue siendo girar en sentido horario sobre el círculo de ROE, hasta cortar la circunferencia $g=1$, que es la que en la grilla de impedancias corresponde a $r=1$. En general hay dos cortes, y por lo tanto dos soluciones.
     \item \emph{Buscar $\ell_s$:} elegir la longitud del stub que cancela la susceptancia $b$ encontrada en el paso anterior, es decir tal que $y_{cc}(\ell_s) = -jb$, usando \eqref{eq:stub susceptancias}. Con esto, la admitancia total en el punto de conexión es $1+jb-jb=1$, y la línea queda adaptada desde ese punto hacia el generador. Sobre la carta, el stub desplaza el punto a lo largo de la circunferencia $g=1$ hasta el centro.
+
+    La longitud del stub también puede obtenerse de la carta, recorriendo el stub como cualquier otra línea. Un stub cortocircuitado es una línea terminada en $\Gamma=-1$, cuya admitancia se lee en el punto opuesto, el extremo derecho de la carta, donde $y=\infty$. Alejarse del cortocircuito hacia el punto de conexión es girar en sentido horario, y como el stub no tiene pérdidas y termina en una reactancia pura, el giro es sobre el borde de la carta, la circunferencia $g=0$, donde la admitancia es una susceptancia pura. Se gira hasta el punto del borde rotulado con la susceptancia buscada, $-b$, y el ángulo recorrido, leído en la escala exterior, da $\ell_s$. Para un stub en circuito abierto se arranca en el extremo izquierdo, donde $y=0$.
 \end{enumerate}
 Entre la carga y el stub sigue habiendo onda estacionaria, pero queda confinada a ese tramo de longitud $d$.
 
@@ -606,9 +608,11 @@ de donde $\Gamma(d)=-0.2\pm j0.4$. Como $\Gamma(d)=\Gamma_L\e^{-j2\beta d}$ y $\
     y(d) = \frac{1-\Gamma(d)}{1+\Gamma(d)} = \frac{1.2+j0.4}{0.8-j0.4} = 1+j1.
 \end{equation*}
 
-\emph{Paso 2.} Hay que cancelar $b=1$, es decir un stub con $y_{cc}(\ell_s)=-j1 \Leftrightarrow \cot(\beta\ell_s)=1 \Leftrightarrow \beta\ell_s = \frac{\pi}{4}$, de donde $\ell_s=\frac{\lambda}{8}$. En el punto de conexión la susceptancia es capacitiva ($b=+1$), por lo que el stub debe ser inductivo, lo que es consistente con $\ell_s=\lambda/8<\lambda/4$.
+\emph{Paso 2.} Hay que cancelar $b=1$, es decir, se necesita un stub con $y_{cc}(\ell_s)=-j1$. Sobre la carta, partimos del extremo derecho, que en la escala exterior se lee en $0.25\lambda$, y giramos en sentido horario sobre el borde hasta el punto rotulado $-1$, en la parte inferior, que se lee en $0.375\lambda$. El largo del stub es entonces $\ell_s=0.375\lambda-0.25\lambda=\lambda/8$. Analíticamente, $-\cot(\beta\ell_s)=-1 \Leftrightarrow \beta\ell_s = \frac{\pi}{4}$, de donde $\ell_s=\frac{\lambda}{8}$. En el punto de conexión la susceptancia es capacitiva ($b=+1$), por lo que el stub debe ser inductivo, lo que es consistente con $\ell_s=\lambda/8<\lambda/4$.
 
-Un stub cortocircuitado de longitud $\lambda/8$, conectado en paralelo a $0.199\lambda$ de la carga, adapta la línea. La segunda solución corresponde al otro corte, $\Gamma(d)=-0.2+j0.4$, que se alcanza girando $270^\circ$, es decir a $d=3\lambda/8$ de la carga. Allí $y(d)=1-j1$, es decir $\zeta(d)=0.5+j0.5$, que es la carga del Ejemplo \ref{ejemplo:smith}, como era de esperar ya que $\lambda/8+3\lambda/8=\lambda/2$ es una vuelta completa. Hay que cancelar $b=-1$, con un stub tal que $-\cot(\beta\ell_s)=1$, es decir $\beta\ell_s=3\pi/4$ y $\ell_s=3\lambda/8$. En este caso ocurre lo contrario: $y(d)=1-j1$ es inductiva y el stub de $3\lambda/8$ es capacitivo. En la práctica se prefiere la solución más cercana a la carga, porque la adaptación resulta menos sensible a variaciones de la frecuencia.
+Un stub cortocircuitado de longitud $\lambda/8$, conectado en paralelo a $0.199\lambda$ de la carga, adapta la línea. La segunda solución corresponde al otro corte, $\Gamma(d)=-0.2+j0.4$, que se alcanza girando $270^\circ$, es decir a $d=3\lambda/8$ de la carga. Allí $y(d)=1-j1$, es decir $\zeta(d)=0.5+j0.5$, que es la carga del Ejemplo \ref{ejemplo:smith}, como era de esperar ya que $\lambda/8+3\lambda/8=\lambda/2$ es una vuelta completa. Hay que cancelar $b=-1$, con un stub tal que $-\cot(\beta\ell_s)=1$, es decir $\beta\ell_s=3\pi/4$ y $\ell_s=3\lambda/8$. Sobre la carta, desde el extremo derecho hay que girar $270^\circ$ sobre el borde hasta el punto rotulado $+1$, en la parte superior, que se lee en $0.125\lambda$, y $\ell_s=0.125\lambda+0.5\lambda-0.25\lambda=3\lambda/8$. En este caso ocurre lo contrario: $y(d)=1-j1$ es inductiva y el stub de $3\lambda/8$ es capacitivo. En la práctica se prefiere la solución más cercana a la carga, porque la adaptación resulta menos sensible a variaciones de la frecuencia.
+
+Todo el procedimiento se expresa en longitudes de onda, ya que el ángulo girado sobre la carta es $2\beta d=4\pi d/\lambda$. Para obtener las longitudes físicas hay que usar la longitud de onda en la línea, $\lambda=v_p/f$. Por ejemplo, con el cable coaxil del Ejemplo \ref{ejemplo:coaxil parametros}, con $v_p\approx 2\times 10^8\ \unit{\meter\per\second}$, a $f=100\ \unit{\mega\hertz}$ se tiene $\lambda=2\ \unit{\meter}$: en la primera solución el stub se conecta a $d\approx 0.199\lambda\approx 40\ \unit{\centi\meter}$ de la carga y tiene un largo $\ell_s=\lambda/8=25\ \unit{\centi\meter}$.
 \end{ejemplo}
 
 \begin{figure}
@@ -635,12 +639,18 @@ Un stub cortocircuitado de longitud $\lambda/8$, conectado en paralelo a $0.199\
             \draw[->, black, thick] (0.2,0.4) arc[start angle=126.87, end angle=176, radius=0.5];
             \node[left, fill=white, inner sep=1pt] at (0.02,0.24) {\footnotesize stub: $-j1$};
             \fill[black] (0,0) circle (0.012);
+            % largo del stub: sobre el borde, desde y = infinito hasta -j1
+            \draw[->, black, thick, densely dashed] (0:0.975) arc[start angle=0, end angle=-87, radius=0.975];
+            \fill[black] (1,0) circle (0.014);
+            \fill[black] (0,-1) circle (0.014);
+            \node[fill=white, inner sep=1pt] at (-45:0.85) {\footnotesize $\ell_s=\lambda/8$};
+            \node[fill=white, inner sep=1pt, anchor=north] at (0,-1.04) {\footnotesize $-j1$};
             % segunda solución
             \draw[teal, thick, fill=white] (0.2,-0.4) circle (0.014);
             \node[teal, below right, fill=white, inner sep=1pt] at (0.21,-0.41) {\footnotesize $1-j1$};
         \end{tikzpicture}
     \end{center}
-    \caption{Adaptación con stub del Ejemplo \ref{ejemplo:stub}, leyendo la carta como carta de admitancias. El punto opuesto a la carga $\zeta_L=2+j1$ da su admitancia $y_L=0.4-j0.2$. Al alejarse de la carga se gira en sentido horario sobre el círculo de ROE (a trazos) hasta cortar la circunferencia $g=1$ en $y=1+j1$, a $d\approx 0.199\lambda$ según la escala exterior. El stub suma una susceptancia $-j1$, que lleva el punto por la circunferencia $g=1$ hasta el centro, donde la línea queda adaptada. El círculo vacío marca el segundo corte, $y=1-j1$, que corresponde a la otra solución.}\label{fig:smith stub}
+    \caption{Adaptación con stub del Ejemplo \ref{ejemplo:stub}, leyendo la carta como carta de admitancias. El punto opuesto a la carga $\zeta_L=2+j1$ da su admitancia $y_L=0.4-j0.2$. Al alejarse de la carga se gira en sentido horario sobre el círculo de ROE (a trazos) hasta cortar la circunferencia $g=1$ en $y=1+j1$, a $d\approx 0.199\lambda$ según la escala exterior. El stub suma una susceptancia $-j1$, que lleva el punto por la circunferencia $g=1$ hasta el centro, donde la línea queda adaptada. El largo del stub cortocircuitado se obtiene girando sobre el borde de la carta (arco a trazos) desde el extremo derecho, $y=\infty$, hasta la susceptancia $-j1$: un cuarto de vuelta, es decir $\ell_s=\lambda/8$. El círculo vacío marca el segundo corte, $y=1-j1$, que corresponde a la otra solución.}\label{fig:smith stub}
 \end{figure}
 
 \section{Dispersión y su efecto sobre los pulsos}\label{sec:dispersion pulsos}
@@ -677,7 +687,7 @@ con $Z_0=\sqrt{L/C}$. En esta aproximación $\beta(f)$ sigue siendo lineal en $f
 
 En los cables de cobre, en las frecuencias de interés, $R$ no es constante sino que \emph{crece} con la frecuencia. La causa es el \emph{efecto pelicular} (\emph{skin effect}). A baja frecuencia, la corriente se distribuye uniformemente en toda la sección del conductor. A alta frecuencia, el campo magnético variable generado por la propia corriente induce corrientes de Foucault que se oponen a la circulación de corriente en el interior del conductor, y la corriente se concentra en una capa delgada cerca de la superficie. Al reducirse la sección efectivamente conductora, la resistencia por unidad de longitud aumenta.
 
-Formalicemos esto. Dentro de un buen conductor, donde la corriente de conducción domina ampliamente a la de desplazamiento ($\sigma\gg 2\pi f\varepsilon$), las ecuaciones de Maxwell se reducen a $\nabla\times \vec H = \sigma \vec E$ (Ampère) y $\nabla\times \vec E = -\mu\,\partial \vec H/\partial t$ (Faraday), con $\sigma$ la conductividad y $\mu$ la permeabilidad del conductor. Tomando rotor de la segunda, sustituyendo la primera y usando que $\nabla\cdot \vec E\approx 0$ dentro de un buen conductor (no se acumula carga libre):
+Formalicemos esto. Dentro de un buen conductor, donde la corriente de conducción domina ampliamente a la de desplazamiento ($\sigma\gg 2\pi f\varepsilon$), las ecuaciones de Maxwell se reducen a $\nabla\times \vec B = \mu\sigma \vec E$ (Ampère) y $\nabla\times \vec E = -\partial \vec B/\partial t$ (Faraday), con $\sigma$ la conductividad y $\mu$ la permeabilidad del conductor. Tomando rotor de la segunda, sustituyendo la primera, y usando la identidad $\nabla\times(\nabla\times\vec E)=\nabla(\nabla\cdot\vec E)-\nabla^2\vec E$ junto con $\nabla\cdot \vec E\approx 0$ dentro de un buen conductor (no se acumula carga libre):
 \begin{equation*}
     \nabla^2 \vec E = \mu\sigma\, \frac{\partial \vec E}{\partial t},
 \end{equation*}
@@ -740,7 +750,7 @@ Se obtienen así dos conclusiones. La primera es que la resistencia crece como $
 \end{equation}
 
 \begin{remark}
-La derivación anterior aproxima la superficie del conductor como plana, lo cual es válido en el régimen $\delta(f)\ll a$. Este régimen se cumple ampliamente en las frecuencias de interés: por ejemplo, para cobre, $\delta(10\ \unit{\mega\hertz})\approx 21\ \unit{\micro\meter}$, muy por debajo del radio típico de un conductor. Un tratamiento exacto para un conductor cilíndrico requiere resolver la ecuación de difusión en coordenadas cilíndricas (funciones de Bessel), y está fuera del alcance de este curso. A frecuencias muy bajas, donde $\delta(f)$ deja de ser pequeña frente a $a$, la corriente vuelve a ocupar toda la sección y $R(f)$ tiende al valor de continua $R_{dc}=1/(\sigma \pi a^2)$.
+La derivación anterior aproxima la superficie del conductor como plana, lo cual es válido en el régimen $\delta(f)\ll a$. Este régimen se cumple ampliamente en las frecuencias de interés: por ejemplo, para cobre, $\delta(10\ \unit{\mega\hertz})\approx 21\ \unit{\micro\meter}$, muy por debajo del radio típico de un conductor. Un tratamiento exacto para un conductor cilíndrico requiere resolver la ecuación de difusión en coordenadas cilíndricas (funciones de Bessel), y está fuera del alcance de este curso.
 \end{remark}
 
 \subsection*{La respuesta en frecuencia del cable}
