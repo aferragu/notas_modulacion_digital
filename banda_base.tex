@@ -958,10 +958,10 @@ La primera condición puede escribirse como:
     p(t) \left[\sum_{k=-\infty}^{+\infty} \delta(t-kT_s)\right] = \delta(t).
 \end{equation*}
 Transformando por Fourier:
-\begin{equation*}
+\begin{equation}\label{eq:nyquist frecuencia}
  \hat{P}(f)\ast \left[\frac{1}{T_s} \sum_{n=-\infty}^{+\infty} \delta(f-n f_s)\right]\equiv  1
   \Leftrightarrow  \sum_{n=-\infty}^{+\infty} \hat{P}(f-n f_s) \equiv T_s.
-\end{equation*}
+\end{equation}
 
 Por lo tanto, para que no haya ISI, en frecuencia la suma de todas las copias desplazadas de $\hat{P}(f)$ debe dar una constante. Como en cada intervalo $[kf_s,(k+1)f_s]$ solo se superponen a lo sumo dos copias (por la segunda condición), que la suma sea constante implica necesariamente que $\hat{P}(f)$ debe tener simetría vestigial respecto a $f_s/2$, como se ilustra en la Figura \ref{fig:simetria vestigial}.
 

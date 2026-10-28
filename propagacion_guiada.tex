@@ -1030,43 +1030,44 @@ Es decir, $y(t)$ es una onda PAM con pulso $\hat{p}(t)$, retardada $NT_s$.
 
 \begin{figure}
     \begin{center}
-    \begin{tikzpicture}[scale=2]
-        \draw[->] (-1.5,0) -- (3.5,0) node [below right] {$t$};
-        \draw [->] (0,-0.2) -- (0,1.2);
-        \draw [teal,very thick,domain=-1:3,samples=200] plot (\x,{sin(pi*\x r)/(pi*\x)});
-        \node[teal] at (.6,1) {$\tilde{p}(t)$};
-        \draw[dotted] (0.7,{sin(pi*0.7 r)/(pi*0.7)}) -- (0.7,0) node [anchor=north] {$T_s$};
-        \draw[dotted] (-0.7,{sin(pi*(-0.7) r)/(-pi*0.7)}) -- (-0.7,0) node [anchor=north] {$-T_s$};
-        \draw[dotted] (1.4,{sin(pi*1.4 r)/(pi*1.4)}) -- (1.4,0) node [anchor=south] {$2T_s$};
-    \end{tikzpicture}
-
-    \bigskip
-
-    \begin{tikzpicture}[blockdiagram]
-        \matrix[row sep=5 mm, column sep=5mm]{
-            \node [etiqueta] (inicio) {$x_R(t)$}; & \node [punto] (p1) {}; & \node [block] (T1) {$T_s$}; & \node [punto] (p2) {}; & \node [block] (T2) {$T_s$}; & \node[punto] (p3) {}; & & \node [etiqueta]  {$\cdots$}; &  & \node [punto] (p4) {}; & \node [block] (T3) {$T_s$};\\
-            & \node [multD] (m1) {$c_{-N}$}; & & \node[multD] (m2) {$c_{-N+1}$}; & & & &  & & & & \node [multD] (m3) {$c_{N}$};\\
-            & & & \node [operator] (sum1) {$+$}; & & \node [operator] (sum2) {$+$}; & \node [punto] (p5) {};& &\node [etiqueta]  {$\cdots$}; & & \node [punto] (p6) {};&\node [operator] (sum3) {$+$}; & \node [etiqueta] (salida) {$y(t)$};\\
-        };
-        \draw (inicio) -- (p1);
-        \draw [->] (p1) -- (T1);
-        \draw (T1) -- (p2);
-        \draw [->] (p2) -- (T2);
-        \draw [->] (T2) -- (p3);
-        \draw [->] (p4) -- (T3);
-        \draw [->] (p1) -- (m1);
-        \draw [->] (p2) -- (m2);
-        \draw [->] (T3) -|  (m3);
-        \draw [->] (m1) |- (sum1);
-        \draw [->] (m2) -- (sum1);
-        \draw [->] (sum1) -- (sum2);
-        \draw [->] (sum2) -- (p5);
-        \draw [->] (p6) -- (sum3);
-        \draw [->] (m3) -- (sum3);
-        \draw [->] (sum3) -- (salida);
+    \begin{tikzpicture}[blockdiagram, >=stealth, line width=0.6pt]
+        \node [etiqueta] (entrada) at (0,0) {$x_R(t)$};
+        \foreach \x/\nom in {1.5/t0, 4.5/t1, 7.5/t2, 11.5/t3}{
+            \node [punto] (\nom) at (\x,0) {};
+            \fill (\x,0) circle (1.5pt);
+        }
+        \node [block, minimum width=1cm, minimum height=0.8cm] (d1) at (3,0) {$T_s$};
+        \node [block, minimum width=1cm, minimum height=0.8cm] (d2) at (6,0) {$T_s$};
+        \node [etiqueta] (pts) at (8.8,0) {$\cdots$};
+        \node [block, minimum width=1cm, minimum height=0.8cm] (d3) at (10.2,0) {$T_s$};
+        \foreach \x/\nom/\c in {1.5/m0/c_{-N}, 4.5/m1/c_{-N+1}, 7.5/m2/c_{-N+2}, 11.5/m3/c_{N}}{
+            \node [multD, minimum size=0.55cm, inner sep=0pt] (\nom) at (\x,-1.4) {};
+            \node [anchor=east, font=\small] at (\x-0.3,-1.4) {$\c$};
+        }
+        \node [operator] (suma) at (13,-2.9) {$+$};
+        \node [etiqueta] (salida) at (14.5,-2.9) {$y(t)$};
+        \draw (entrada) -- (t0);
+        \draw [->] (t0) -- (d1);
+        \draw (d1) -- (t1);
+        \draw [->] (t1) -- (d2);
+        \draw (d2) -- (t2);
+        \draw (t2) -- (pts);
+        \draw [->] (pts) -- (d3);
+        \draw (d3) -- (t3);
+        \foreach \t/\m in {t0/m0, t1/m1, t2/m2, t3/m3}{
+            \draw [->] (\t) -- (\m);
+        }
+        \draw (m0) |- (suma);
+        \foreach \m in {m1, m2, m3}{
+            \draw (\m) -- (\m |- suma);
+            \fill (\m |- suma) circle (1.5pt);
+        }
+        \node [etiqueta] at (9.5,-2.65) {$\cdots$};
+        \draw [->] (m3 |- suma) -- (suma);
+        \draw [->] (suma) -- (salida);
     \end{tikzpicture}
     \end{center}
-    \caption{Filtro ecualizador de cero forzado. Se mide la respuesta a un pulso $\tilde{p}(t)$ del canal y se calculan los coeficientes para forzar la condición de ISI nula en los $N$ símbolos adyacentes.}\label{fig:filtro eq}
+    \caption{Ecualizador transversal: una cadena de $2N$ retardos de duración $T_s$, cuyas salidas se multiplican por los coeficientes $c_{-N},\ldots,c_N$ y se suman. Con los coeficientes elegidos por el criterio de cero forzado, la salida no tiene ISI con los $N$ símbolos adyacentes a cada lado.}\label{fig:filtro eq}
 \end{figure}
 
 La idea es elegir los $\{c_n\}$ de modo de \emph{forzar los ceros} $\hat{p}(kT_s) = 0$ para $k=\pm 1, \pm 2,\ldots,\pm N$, lo que asegura que no hay ISI con los $N$ símbolos adyacentes. Junto con $\hat p(0)=1$, para no perder la ganancia de la muestra útil, estas condiciones dan $2N+1$ ecuaciones para determinar las $2N+1$ ganancias $c_n$. Este criterio se denomina de \emph{cero forzado}, y el filtro resultante, ecualizador de cero forzado (ZFE, por \emph{Zero Forcing Equalizer}).
@@ -1081,7 +1082,7 @@ donde abreviamos $\tilde p_m := \tilde p(mT_s)$, las muestras del pulso recibido
 \begin{equation}\label{eq:sistema zfe}
     \sum_{n=-N}^N \tilde p_{k-n}\, c_n = \delta_{k,0}, \qquad k=-N,\ldots,N.
 \end{equation}
-En forma matricial, $\mathbf P\,\mathbf c = \mathbf e_0$, donde $\mathbf c=(c_{-N},\ldots,c_N)^\top$, $\mathbf e_0$ es el vector con un $1$ en la posición central y ceros en el resto, y $\mathbf P$ es la matriz $(2N+1)\times(2N+1)$ de entradas $P_{k,n}=\tilde p_{k-n}$. Como $P_{k,n}$ depende solo de $k-n$, $\mathbf P$ es una \emph{matriz de Toeplitz} (constante en cada diagonal). La solución es $\mathbf c = \mathbf P^{-1}\mathbf e_0$, que existe siempre que $\mathbf P$ sea invertible, lo que ocurre en los casos de interés práctico.
+En forma matricial, $\mathbf P\,\mathbf c = \mathbf e_0$, donde $\mathbf c=(c_{-N},\ldots,c_N)^\top$, $\mathbf e_0$ es el vector con un $1$ en la posición central y ceros en el resto, y $\mathbf P$ es la matriz $(2N+1)\times(2N+1)$ de entradas $P_{k,n}=\tilde p_{k-n}$. Como $P_{k,n}$ depende solo de $k-n$, $\mathbf P$ es una \emph{matriz de Toeplitz} (constante en cada diagonal). La solución es $\mathbf c = \mathbf P^{-1}\mathbf e_0$, que existe siempre que $\mathbf P$ sea invertible. Una condición suficiente es que $|\tilde p_0|>\sum_{m\neq 0}|\tilde p_m|$, ya que entonces en cada fila de $\mathbf P$ el elemento de la diagonal supera a la suma de los demás. Esa condición dice que la muestra útil supera a la peor suma posible de interferencias de los símbolos vecinos, es decir, que el ojo ya está abierto antes de ecualizar.
 
 \begin{ejemplo}[ZFE de tres ganancias, $N=1$]\label{ejemplo:zfe n1}
 Supongamos que, al medir el canal, obtenemos las siguientes muestras del pulso recibido, simétricas: $\tilde p_0=1$, $\tilde p_{\pm 1}=0.2$, $\tilde p_{\pm 2}=0.05$, y $\tilde p_m\approx 0$ para $|m|>2$. Con $N=1$, el sistema \eqref{eq:sistema zfe} tiene tres ecuaciones ($k=-1,0,1$) en las incógnitas $c_{-1},c_0,c_1$:
@@ -1099,6 +1100,8 @@ Por la simetría de $\tilde p$, la solución también es simétrica, $c_{-1}=c_1
     c_0 \approx 1.0825, \qquad c_{-1}=c_1\approx -0.2062.
 \end{equation*}
 Verificando, $\hat p(0)=1$ y $\hat p(\pm T_s)=0$, como se pidió. Pero $\hat p(\pm 2T_s)\approx 0.0129$, que no es cero: el ZFE con $N=1$ solo garantiza los ceros dentro del rango pedido (Figura \ref{fig:zfe ejemplo}). Veremos a continuación de dónde proviene este residuo.
+
+Elegimos muestras simétricas para simplificar las cuentas. El pulso que sale de un cable es causal, y toda su ISI cae sobre los símbolos siguientes (Figura \ref{fig:pulso cable}): las muestras con $m<0$ son nulas, y el sistema se plantea y resuelve de la misma manera.
 \end{ejemplo}
 
 \begin{figure}
@@ -1140,35 +1143,36 @@ Para ajustar el filtro es necesario conocer las muestras $\tilde p_m$, lo que se
 
 \subsection*{Equivalencia con la inversión del canal}
 
-El residuo del Ejemplo \ref{ejemplo:zfe n1} sugiere que el ZFE de $2N+1$ términos es una aproximación de un filtro de infinitos términos. Para formalizarlo, dada una sucesión $\{x_n\}_{n\in\mathbb Z}$, definamos su \emph{transformada}
+El residuo del Ejemplo \ref{ejemplo:zfe n1} sugiere que el ZFE de $2N+1$ términos es una aproximación de un filtro de infinitos términos. Para ver cuál, conviene mirar el ecualizador en frecuencia. Cada retardo de duración $T_s$ multiplica la transformada de la señal por $\e^{-j2\pi fT_s}$, por lo que, descontando el retardo global $NT_s$, el filtro transversal de coeficientes $\{c_n\}$ tiene respuesta en frecuencia
+\begin{equation}\label{eq:respuesta ecualizador}
+    \hat C(f) = \sum_{n} c_n\, \e^{-j2\pi f nT_s}.
+\end{equation}
+Como todos los retardos son múltiplos de $T_s$, $\hat C(f)$ es periódica de período $f_s=1/T_s$, y los $c_n$ son sus coeficientes de Fourier:
 \begin{equation*}
-    \hat X(f) := \sum_{n=-\infty}^{\infty} x_n\, \e^{-j2\pi f nT_s},
+    c_n = \frac{1}{f_s}\int_{-f_s/2}^{f_s/2} \hat C(f)\,\e^{j2\pi f nT_s}\, df.
 \end{equation*}
-que es una función periódica de $f$, de período $f_s=1/T_s$, cuyos coeficientes de Fourier son los $x_n$. Aplicada a las muestras del pulso recibido, $\hat P_d(f):=\sum_m \tilde p_m\,\e^{-j2\pi fmT_s}$ es el análogo, en el dominio discreto de las muestras, de la transformada $\hat P(f)$ del pulso continuo.
+Llamemos $\hat Q(f)$ a la transformada del pulso recibido $\tilde p(t)$. El pulso a la salida del ecualizador, $\hat p(t)=\sum_n c_n\tilde p(t-nT_s)$, tiene transformada $\hat C(f)\,\hat Q(f)$.
 
-\begin{teorema}[ZFE de infinitos términos e inversión en frecuencia]\label{teorema:zfe inversion}
-Si $\hat P_d(f)\neq 0$ para todo $f$, existe una única sucesión $\{c_n\}_{n\in\mathbb Z}$ que resuelve el sistema \eqref{eq:sistema zfe} \emph{sin truncar} ($k\in\mathbb Z$ en vez de $k=-N,\ldots,N$), y está dada por los coeficientes de Fourier de $1/\hat P_d(f)$:
-\begin{equation*}
-    c_n = \frac{1}{f_s}\int_{-f_s/2}^{f_s/2} \frac{\e^{j2\pi f nT_s}}{\hat P_d(f)}\; df.
-\end{equation*}
+Recordemos ahora el criterio de Nyquist en frecuencia de la Sección \ref{sec:nyquist no ideal}: un pulso vale $1$ en $t=0$ y $0$ en los demás múltiplos de $T_s$, es decir, no produce ISI, si y solo si la suma de las copias de su transformada desplazadas en múltiplos de $f_s$ es constante e igual a $T_s$, como en \eqref{eq:nyquist frecuencia}. Aplicando este criterio al pulso ecualizado se obtiene el ecualizador ideal.
+
+\begin{teorema}[ZFE de infinitos coeficientes e inversión en frecuencia]\label{teorema:zfe inversion}
+El pulso ecualizado no tiene ISI, $\hat p(kT_s)=\delta_{k,0}$ para todo $k\in\mathbb Z$, si y solo si
+\begin{equation}\label{eq:zfe inversion}
+    \hat C(f) = \frac{1}{\hat P_d(f)}, \qquad\text{con}\qquad \hat P_d(f) := \frac{1}{T_s}\sum_{k} \hat Q(f-kf_s) = \sum_{m} \tilde p_m\,\e^{-j2\pi f mT_s}.
+\end{equation}
+En particular, si $\hat P_d(f)\neq 0$ para todo $f$, los coeficientes del ecualizador quedan unívocamente determinados como los coeficientes de Fourier de $1/\hat P_d(f)$.
 \end{teorema}
 \begin{proof}
-Sea $\{c_n\}$ una solución del sistema sin truncar, y $y_k:=\sum_n \tilde p_{k-n}c_n$, que por hipótesis vale $\delta_{k,0}$. Calculemos la transformada de $\{y_k\}$, sustituyendo $m:=k-n$:
+Por el criterio de Nyquist aplicado a $\hat p$, no hay ISI si y solo si $\sum_k \hat C(f-kf_s)\,\hat Q(f-kf_s) = T_s$. Como $\hat C$ es periódica de período $f_s$, se tiene $\hat C(f-kf_s)=\hat C(f)$, que sale de la suma:
 \begin{equation*}
-    \hat Y(f) = \sum_k y_k\, \e^{-j2\pi f kT_s} = \sum_n c_n \sum_m \tilde p_m\, \e^{-j2\pi f(m+n)T_s} = \left(\sum_n c_n\, \e^{-j2\pi fnT_s}\right)\left(\sum_m \tilde p_m\, \e^{-j2\pi fmT_s}\right) = \hat C(f)\,\hat P_d(f).
+    \hat C(f)\sum_k \hat Q(f-kf_s) = T_s \quad\Longleftrightarrow\quad \hat C(f)\,\hat P_d(f)=1.
 \end{equation*}
-Este es el \emph{teorema de convolución} discreto, análogo al continuo: la transformada de una convolución es el producto de las transformadas. Por otro lado, como $y_k=\delta_{k,0}$ para todo $k$:
-\begin{equation*}
-\hat Y(f)=\sum_k \delta_{k,0}\e^{-j2\pi fkT_s}=1.
-\end{equation*}
-Combinando ambas expresiones para $\hat Y(f)$:
-\begin{equation*}
-    \hat C(f)\, \hat P_d(f) = 1 \quad\Longrightarrow\quad \hat C(f) = \frac{1}{\hat P_d(f)},
-\end{equation*}
-bien definida en todo $f$ porque $\hat P_d(f)\neq 0$ por hipótesis. Como los $c_n$ son los coeficientes de Fourier de $\hat C(f)$, la fórmula de inversión de Fourier los determina de manera única.
+La segunda expresión de $\hat P_d$ es la misma identidad que se usó para deducir el criterio de Nyquist: la transformada de $\tilde p(t)\sum_m\delta(t-mT_s)=\sum_m\tilde p_m\,\delta(t-mT_s)$ es, por un lado, $\sum_m\tilde p_m\,\e^{-j2\pi fmT_s}$, y por otro, la convolución de $\hat Q(f)$ con el tren de deltas $\frac{1}{T_s}\sum_k\delta(f-kf_s)$.
 \end{proof}
 
-Es decir, el ZFE de infinitos coeficientes es la inversión de $\hat P_d(f)$, el cociente que uno esperaría escribir directamente en frecuencia, obtenido aquí a partir del sistema de ecuaciones \eqref{eq:sistema zfe}. El filtro de $2N+1$ términos del Ejemplo \ref{ejemplo:zfe n1} corresponde a tomar los $2N+1$ coeficientes centrales de esta serie de Fourier, y el residuo $\hat p(\pm 2T_s)\approx 0.0129$ que encontramos es el error de truncar la serie a pocos términos.
+El ecualizador ideal no invierte el espectro $\hat Q(f)$ del pulso recibido, sino su versión \emph{plegada}, $\hat P_d(f)$: la suma de sus copias desplazadas en múltiplos de $f_s$, que según \eqref{eq:zfe inversion} solo depende de las muestras $\tilde p_m$. Esto es razonable, ya que el receptor solo usa las muestras tomadas cada $T_s$, y al muestrear las copias se suman. El período $f_s$ no es una elección: lo impone el espaciado $T_s$ de los retardos del ecualizador, que es el mismo que el de los símbolos.
+
+El ZFE de $2N+1$ coeficientes que resuelve \eqref{eq:sistema zfe} es una aproximación de este filtro ideal. Sus coeficientes no son exactamente los $2N+1$ coeficientes centrales de la serie de Fourier de $1/\hat P_d(f)$, pero se acercan a ellos al crecer $N$. En el Ejemplo \ref{ejemplo:zfe n1}, $\hat P_d(f)=1+0.4\cos(2\pi fT_s)+0.1\cos(4\pi fT_s)$, y los coeficientes del filtro ideal son $c_0\approx 1.0832$, $c_{\pm 1}\approx -0.2039$, $c_{\pm 2}\approx -0.0160$, etc., frente a $c_0\approx 1.0825$ y $c_{\pm1}\approx -0.2062$ del ZFE con $N=1$. Con $N=3$, los coeficientes centrales ya coinciden en las cuatro primeras cifras. El residuo $\hat p(\pm 2T_s)\approx 0.0129$ es el precio de usar solo tres coeficientes.
 
 \begin{remark}[Verificación en el caso trivial]
 Si el pulso recibido ya es de Nyquist ($\tilde p_m=\delta_{m,0}$, sin ISI), entonces $\hat P_d(f)\equiv 1$ y el Teorema \ref{teorema:zfe inversion} da $c_0=1$ y $c_n=0$ para $n\neq 0$: el ecualizador resulta el filtro identidad, como debe ser.
@@ -1176,7 +1180,11 @@ Si el pulso recibido ya es de Nyquist ($\tilde p_m=\delta_{m,0}$, sin ISI), ento
 
 \subsection*{El costo de invertir en banda ancha}
 
-La expresión $\hat C(f)=1/\hat P_d(f)$ esconde un problema: si algunas ganancias son muy altas, el ruido puede verse amplificado. En cualquier frecuencia donde $|\hat P_d(f)|$ sea pequeño, el ecualizador necesita una ganancia $|\hat C(f)|=1/|\hat P_d(f)|$ muy grande. Y $\hat P_d(f)$ hereda la forma de la respuesta del canal $\hat H(f)$ que obtuvimos en la Sección \ref{sec:dispersion pulsos}: decrece con la frecuencia, por lo que corregirlo cerca del borde de la banda exige ganancias cada vez mayores. Pero el ruido a la entrada del ecualizador (Capítulo \ref{chapter:deteccion ruido}) tiene potencia en todas las frecuencias, y esa misma ganancia lo amplifica en la misma proporción en que reconstruye la señal. En el límite, si $\hat P_d(f)\to 0$ en alguna banda, $\hat C(f)\to\infty$: el ZFE intenta reconstruir información que, en esa banda, ya quedó por debajo del ruido.
+La expresión $\hat C(f)=1/\hat P_d(f)$ esconde un problema: si algunas ganancias son muy altas, el ruido puede verse amplificado. En cualquier frecuencia donde $|\hat P_d(f)|$ sea pequeño, el ecualizador necesita una ganancia $|\hat C(f)|=1/|\hat P_d(f)|$ muy grande. Y $\hat P_d(f)$ hereda la forma de la respuesta del canal $\hat H(f)$ que obtuvimos en la Sección \ref{sec:dispersion pulsos}: decrece con la frecuencia, por lo que corregirlo cerca del borde de la banda exige ganancias cada vez mayores. Pero el ruido a la entrada del ecualizador (Capítulo \ref{chapter:deteccion ruido}) tiene potencia en todas las frecuencias, y esa misma ganancia lo amplifica en la misma proporción en que reconstruye la señal. Esto puede cuantificarse. Si las muestras del ruido a la entrada del ecualizador son independientes, de varianza $\sigma^2$, cada muestra de salida es una combinación de ellas con coeficientes $c_n$, y tiene varianza $\sigma^2\sum_n|c_n|^2$. Por la identidad de Parseval para la serie de Fourier,
+\begin{equation*}
+    \sigma^2\sum_n|c_n|^2 = \sigma^2\,\frac{1}{f_s}\int_{-f_s/2}^{f_s/2}|\hat C(f)|^2\,df = \sigma^2\,\frac{1}{f_s}\int_{-f_s/2}^{f_s/2}\frac{df}{|\hat P_d(f)|^2},
+\end{equation*}
+es decir, el ruido queda multiplicado por el valor medio de $1/|\hat P_d(f)|^2$ en la banda. En el Ejemplo \ref{ejemplo:zfe n1}, $\sum_n c_n^2\approx 1.26$, un aumento del ruido de $1\ \unit{\deci\bel}$. Pero si $|\hat P_d(f)|$ es pequeño en algún tramo de la banda, ese tramo domina el promedio y el factor puede ser muy grande. En el límite, si $\hat P_d(f)\to 0$ en alguna banda, $\hat C(f)\to\infty$: el ZFE intenta reconstruir información que, en esa banda, ya quedó por debajo del ruido.
 
 % \begin{figure}
 %     \begin{center}
